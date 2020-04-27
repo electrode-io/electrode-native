@@ -1,16 +1,16 @@
-import { epilog, tryCatchWrap } from '../lib'
+import { epilog, tryCatchWrap } from '../lib';
 import {
   AppVersionDescriptor,
   deviceConfig,
   getLocalIp,
   log,
   PackagePath,
-} from 'ern-core'
-import { runMiniApp } from 'ern-orchestrator'
-import { Argv } from 'yargs'
+} from 'ern-core';
+import { runMiniApp } from 'ern-orchestrator';
+import { Argv } from 'yargs';
 
-export const command = 'run-ios'
-export const desc = 'Run one or more MiniApps in the iOS Runner application'
+export const command = 'run-ios';
+export const desc = 'Run one or more MiniApps in the iOS Runner application';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -63,8 +63,8 @@ export const builder = (argv: Argv) => {
       describe: 'Use the previously selected device to avoid prompt',
       type: 'boolean',
     })
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   baseComposite,
@@ -78,28 +78,28 @@ export const commandHandler = async ({
   port,
   usePreviousDevice,
 }: {
-  baseComposite?: PackagePath
-  descriptor?: AppVersionDescriptor
-  dev?: boolean
-  host?: string
-  launchArgs?: string
-  launchEnvVars?: string
-  mainMiniAppName?: string
-  miniapps?: PackagePath[]
-  port?: string
-  usePreviousDevice?: boolean
+  baseComposite?: PackagePath;
+  descriptor?: AppVersionDescriptor;
+  dev?: boolean;
+  host?: string;
+  launchArgs?: string;
+  launchEnvVars?: string;
+  mainMiniAppName?: string;
+  miniapps?: PackagePath[];
+  port?: string;
+  usePreviousDevice?: boolean;
 }) => {
   if (process.platform !== 'darwin') {
-    return log.error('This command is only supported on macOS')
+    return log.error('This command is only supported on macOS');
   }
-  deviceConfig.updateDeviceConfig('ios', usePreviousDevice)
+  deviceConfig.updateDeviceConfig('ios', usePreviousDevice);
 
   if (!host && dev) {
     try {
-      host = getLocalIp()
+      host = getLocalIp();
     } catch (e) {
       // Swallow
-      log.debug(e)
+      log.debug(e);
     }
   }
 
@@ -113,7 +113,7 @@ export const commandHandler = async ({
     mainMiniAppName,
     miniapps,
     port,
-  })
-}
+  });
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

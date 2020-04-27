@@ -1,17 +1,17 @@
-import { AppVersionDescriptor, PackagePath } from 'ern-core'
-import { getActiveCauldron } from 'ern-cauldron-api'
-import { deleteBranch, deleteTag } from 'ern-orchestrator'
+import { AppVersionDescriptor, PackagePath } from 'ern-core';
+import { getActiveCauldron } from 'ern-cauldron-api';
+import { deleteBranch, deleteTag } from 'ern-orchestrator';
 import {
   askUserToChooseANapDescriptorFromCauldron,
   epilog,
   logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
-} from '../../lib'
-import { Argv } from 'yargs'
-import inquirer from 'inquirer'
+} from '../../lib';
+import { Argv } from 'yargs';
+import inquirer from 'inquirer';
 
-export const command = 'delete-ref'
-export const desc = 'Deletes a branch/tag in multiple GitHub repositories'
+export const command = 'delete-ref';
+export const desc = 'Deletes a branch/tag in multiple GitHub repositories';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -37,8 +37,8 @@ export const builder = (argv: Argv) => {
       describe: 'Name of the tag to delete',
       type: 'string',
     })
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   branch,
@@ -47,11 +47,11 @@ export const commandHandler = async ({
   miniAppsOnly,
   tag,
 }: {
-  branch?: string
-  descriptor?: AppVersionDescriptor
-  jsApiImplsOnly?: boolean
-  miniAppsOnly?: boolean
-  tag?: string
+  branch?: string;
+  descriptor?: AppVersionDescriptor;
+  jsApiImplsOnly?: boolean;
+  miniAppsOnly?: boolean;
+  tag?: string;
 } = {}) => {
   if (!branch && !tag) {
     const { branchOrTag } = await inquirer.prompt([
@@ -61,18 +61,18 @@ export const commandHandler = async ({
         name: 'branchOrTag',
         type: 'list',
       },
-    ])
+    ]);
     const { branchOrTagName } = await inquirer.prompt([
       <inquirer.Question>{
         message: `Please input the name of the ${branchOrTag} to delete`,
         name: 'branchOrTagName',
         type: 'input',
       },
-    ])
+    ]);
     if (branchOrTag === 'branch') {
-      branch = branchOrTagName
+      branch = branchOrTagName;
     } else {
-      tag = branchOrTagName
+      tag = branchOrTagName;
     }
   }
 
@@ -80,7 +80,7 @@ export const commandHandler = async ({
     descriptor ||
     (await askUserToChooseANapDescriptorFromCauldron({
       onlyNonReleasedVersions: true,
-    }))
+    }));
 
   await logErrorAndExitIfNotSatisfied({
     isEnvVariableDefined: {
@@ -93,22 +93,22 @@ export const commandHandler = async ({
       extraErrorMessage:
         'This command cannot work on a non existing native application version',
     },
-  })
+  });
 
-  const cauldron = await getActiveCauldron()
+  const cauldron = await getActiveCauldron();
 
   const packages: PackagePath[] = await cauldron.getContainerJsPackages({
     descriptor,
     jsApiImplsOnly,
     miniAppsOnly,
     type: 'versions',
-  })
+  });
 
   if (branch) {
-    await deleteBranch({ name: branch, packages })
+    await deleteBranch({ name: branch, packages });
   } else if (tag) {
-    await deleteTag({ name: tag, packages })
+    await deleteTag({ name: tag, packages });
   }
-}
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

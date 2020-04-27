@@ -1,4 +1,4 @@
-import { PackagePath } from 'ern-core'
+import { PackagePath } from 'ern-core';
 
 export interface ContainerTransformerConfig {
   /**
@@ -11,22 +11,22 @@ export interface ContainerTransformerConfig {
    * - If version is omitted, the latest version will be used
    * - If version is specified, the exact version will be used
    */
-  transformer: PackagePath
+  transformer: PackagePath;
   /**
    * Local file system path to the generated Container to transform
    */
-  containerPath: string
+  containerPath: string;
   /**
    * The platform of the Container to transform
    */
-  platform: 'android' | 'ios'
+  platform: 'android' | 'ios';
   /**
    * Version of Electrode Native used
    */
-  ernVersion?: string
+  ernVersion?: string;
   /**
    * Optional extra configuration.
    * Specific to the transformer
    */
-  extra?: any
+  extra?: any;
 }

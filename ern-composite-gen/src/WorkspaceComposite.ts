@@ -1,5 +1,5 @@
-import fs from 'fs-extra'
-import path from 'path'
+import fs from 'fs-extra';
+import path from 'path';
 import {
   BaseMiniApp,
   findNativeDependencies,
@@ -9,132 +9,132 @@ import {
   NativePlatform,
   PackagePath,
   readPackageJson,
-} from 'ern-core'
-import { Composite } from './Composite'
+} from 'ern-core';
+import { Composite } from './Composite';
 
 export class WorkspaceComposite implements Composite {
   /**
    * Path to the Composite
    */
-  public readonly path: string
+  public readonly path: string;
 
   /**
    * package.json of the Composite
    */
-  public readonly packageJson: any
+  public readonly packageJson: any;
 
   /**
    * Path to the workspace directory containing the miniapps
    */
-  public readonly miniappsDir: string
+  public readonly miniappsDir: string;
 
-  private cachedNativeDependencies: NativeDependencies
+  private cachedNativeDependencies: NativeDependencies;
 
   public constructor(workspacePath: string) {
-    this.path = workspacePath
-    this.miniappsDir = path.join(workspacePath, 'miniapps')
+    this.path = workspacePath;
+    this.miniappsDir = path.join(workspacePath, 'miniapps');
   }
 
   public async getJsApiImpls(): Promise<PackagePath[]> {
     // todo
-    return Promise.resolve([])
+    return Promise.resolve([]);
   }
 
   public async getMiniApps(): Promise<BaseMiniApp[]> {
-    const res: BaseMiniApp[] = []
+    const res: BaseMiniApp[] = [];
     for (const file of await fs.readdir(this.miniappsDir)) {
-      const f = path.join(this.miniappsDir, file)
+      const f = path.join(this.miniappsDir, file);
       if ((await fs.stat(f)).isDirectory()) {
         res.push(
           new BaseMiniApp({
             miniAppPath: f,
             packagePath: PackagePath.fromString(f),
-          })
-        )
+          }),
+        );
       }
     }
-    return res
+    return res;
   }
 
   public async getResolvedNativeDependencies(): Promise<{
-    pluginsWithMismatchingVersions: string[]
-    resolved: PackagePath[]
+    pluginsWithMismatchingVersions: string[];
+    resolved: PackagePath[];
   }> {
-    const nativeDependencies = await this.getNativeDependencies()
+    const nativeDependencies = await this.getNativeDependencies();
     return nativeDepenciesVersionResolution.resolveNativeDependenciesVersionsEx(
-      nativeDependencies
-    )
+      nativeDependencies,
+    );
   }
 
   public async getInjectableNativeDependencies(
-    platform: NativePlatform
+    platform: NativePlatform,
   ): Promise<PackagePath[]> {
-    const dependencies = await this.getResolvedNativeDependencies()
-    const result: PackagePath[] = []
+    const dependencies = await this.getResolvedNativeDependencies();
+    const result: PackagePath[] = [];
     for (const dependency of dependencies.resolved) {
       // Always include react-native
       if (dependency.name === 'react-native') {
-        result.push(dependency)
-        continue
+        result.push(dependency);
+        continue;
       }
 
       if (platform === 'android') {
         if (await manifest.getPluginConfig(dependency, 'android')) {
-          result.push(dependency)
+          result.push(dependency);
         }
       } else if (await manifest.getPluginConfig(dependency, 'ios')) {
-        result.push(dependency)
+        result.push(dependency);
       }
     }
-    return result
+    return result;
   }
 
   public async getMiniAppsPackages(): Promise<
     Array<{
-      name: string
-      path: string
-      packagePath: PackagePath
+      name: string;
+      path: string;
+      packagePath: PackagePath;
     }>
   > {
-    const miniapps = await this.getMiniApps()
-    const res = []
+    const miniapps = await this.getMiniApps();
+    const res = [];
     for (const miniapp of miniapps) {
-      const pJson = await readPackageJson(miniapp.path)
+      const pJson = await readPackageJson(miniapp.path);
       res.push({
         name: pJson.name,
         packagePath: miniapp.packagePath,
         path: miniapp.path,
-      })
+      });
     }
-    return res
+    return res;
   }
 
   public async getNativeDependencies({
     manifestId,
   }: {
-    manifestId?: string | undefined
+    manifestId?: string | undefined;
   } = {}): Promise<NativeDependencies> {
     if (this.cachedNativeDependencies) {
-      return Promise.resolve(this.cachedNativeDependencies)
+      return Promise.resolve(this.cachedNativeDependencies);
     }
     const nativeDependencies = await findNativeDependencies(
       path.join(this.path, 'node_modules'),
       {
         manifestId,
-      }
-    )
+      },
+    );
 
     // Filter out MiniApps that can be falsy considered as native dependencies
     // if developer(s) forgot to npm ignore the android/ios directory
-    const miniAppsPackages = await this.getMiniAppsPackages()
-    const miniAppsPaths = miniAppsPackages.map(p => p.path)
+    const miniAppsPackages = await this.getMiniAppsPackages();
+    const miniAppsPaths = miniAppsPackages.map(p => p.path);
     nativeDependencies.all = nativeDependencies.all.filter(
-      x => !miniAppsPaths.includes(x.basePath)
-    )
+      x => !miniAppsPaths.includes(x.basePath),
+    );
     nativeDependencies.thirdPartyNotInManifest = nativeDependencies.thirdPartyNotInManifest.filter(
-      x => !miniAppsPaths.includes(x.basePath)
-    )
-    this.cachedNativeDependencies = nativeDependencies
-    return this.cachedNativeDependencies
+      x => !miniAppsPaths.includes(x.basePath),
+    );
+    this.cachedNativeDependencies = nativeDependencies;
+    return this.cachedNativeDependencies;
   }
 }

@@ -1,30 +1,30 @@
-import { PackagePath } from './PackagePath'
-import shell from './shell'
-import path from 'path'
-import Platform from './Platform'
-import GitManifest from './GitManifest'
-import { LocalManifest } from './LocalManifest'
-import Mustache from 'mustache'
-import _ from 'lodash'
-import fs from 'fs-extra'
-import { isDependencyApi, isDependencyApiImpl } from './utils'
-import config from './config'
-import log from './log'
-import { NativePlatform } from './NativePlatform'
+import { PackagePath } from './PackagePath';
+import shell from './shell';
+import path from 'path';
+import Platform from './Platform';
+import GitManifest from './GitManifest';
+import { LocalManifest } from './LocalManifest';
+import Mustache from 'mustache';
+import _ from 'lodash';
+import fs from 'fs-extra';
+import { isDependencyApi, isDependencyApiImpl } from './utils';
+import config from './config';
+import log from './log';
+import { NativePlatform } from './NativePlatform';
 
 export type PluginConfig<T extends NativePlatform> = T extends 'android'
   ? AndroidPluginConfig
-  : IosPluginConfig
+  : IosPluginConfig;
 
 /**
  * Represent the plugin structure as seen in the manifest
  * i.e the config.json structure
  */
 export interface ManifestPluginConfig {
-  android?: PluginConfig<'android'>
-  ios?: PluginConfig<'ios'>
-  origin?: PluginOrigin
-  path?: string
+  android?: PluginConfig<'android'>;
+  ios?: PluginConfig<'ios'>;
+  origin?: PluginOrigin;
+  path?: string;
 }
 
 /**
@@ -34,19 +34,19 @@ export interface NpmPluginOrigin {
   /**
    * Identifies the plugin origin (npm)
    */
-  type: 'npm'
+  type: 'npm';
   /**
    * Optional registry scope of the plugin
    */
-  scope?: string
+  scope?: string;
   /**
    * Name of the plugin
    */
-  name: string
+  name: string;
   /**
    * Version of the plugin
    */
-  version?: string
+  version?: string;
 }
 
 /**
@@ -57,18 +57,18 @@ export interface GitPluginOrigin {
   /**
    * Identifies the plugin origin (git)
    */
-  type: 'git'
+  type: 'git';
   /**
    * Url of the git repository
    */
-  url: string
+  url: string;
   /**
    * Version of the plugin
    */
-  version: string
+  version: string;
 }
 
-export type PluginOrigin = NpmPluginOrigin | GitPluginOrigin
+export type PluginOrigin = NpmPluginOrigin | GitPluginOrigin;
 
 /**
  * Platform independent plugin configuration
@@ -78,19 +78,19 @@ export interface CommonPluginConfig extends CommonPluginDirectives {
    * Relative path to the directory containing the plugin source code.
    * Will default to 'ios' or 'android' unless specified otherwise.
    */
-  root: string
+  root: string;
   /**
    * Optional plugin hook
    */
-  pluginHook?: PluginHook
+  pluginHook?: PluginHook;
   /**
    * Location of the source code of this plugin
    */
-  origin: PluginOrigin
+  origin: PluginOrigin;
   /**
    * Local path to the directory containing the plugin configuration
    */
-  path?: string
+  path?: string;
 }
 
 /**
@@ -100,19 +100,19 @@ export interface CommonPluginDirectives {
   /**
    * Apply a git patch
    */
-  applyPatch?: PluginApplyPatchDirective
+  applyPatch?: PluginApplyPatchDirective;
   /**
    * Array of copy directives.
    * Represents the file(s) to be copied from the plugin source code
    * to the Container.
    */
-  copy?: PluginCopyDirective[]
+  copy?: PluginCopyDirective[];
   /**
    * Array of replace in file directives.
    * Represents string replacements in plugin files, before adding them
    * to the Container.
    */
-  replaceInFile?: PluginReplaceInFileDirective[]
+  replaceInFile?: PluginReplaceInFileDirective[];
 }
 
 /**
@@ -125,13 +125,13 @@ export interface PluginHook {
    * Name of the plugin hook (name of the source file containing the
    * hook, without extension)
    */
-  name: string
+  name: string;
   /**
    * Indicates if this hook is configurable.
    * It tells whether the plugin requires some configuration to be provided
    * upon instantiation by the client code.
    */
-  configurable: boolean
+  configurable: boolean;
 }
 
 /**
@@ -141,27 +141,27 @@ export interface AndroidPluginConfig extends CommonPluginConfig {
   /**
    * Name of the Android module containing the plugin.
    */
-  moduleName: string
+  moduleName: string;
   /**
    * Dependencies (maven artifacts) required by this plugin.
    * Will be added as compile statements in Container build.gradle
    */
-  dependencies?: string[]
+  dependencies?: string[];
   /**
    * Repositories to retrieves dependencies from.
    * Will be added to the repositories of the Container build.gradle
    */
-  repositories?: string[]
+  repositories?: string[];
   /**
    * Permissions needed by this plugin.
    * Will be added to the Container Android Manifest file.
    */
-  permissions?: string[]
+  permissions?: string[];
   /**
    * An array of one or more Android hardware or software features.
    * Will be added to the Container Android Manifest file.
    */
-  features?: string[]
+  features?: string[];
 }
 
 /**
@@ -171,22 +171,22 @@ export interface IosPluginConfig extends CommonPluginConfig {
   /**
    * Directives specific to Container pbxproj patching
    */
-  pbxproj: PbxProjDirectives
+  pbxproj: PbxProjDirectives;
   /**
    * Set specific build settings in the plugin pbxproj
    */
-  setBuildSettings?: IosPluginSetBuildSettingsDirective[]
+  setBuildSettings?: IosPluginSetBuildSettingsDirective[];
   /**
    * Array of public headers to add to the container
    */
-  containerPublicHeader?: string[]
+  containerPublicHeader?: string[];
   /**
    * Path to a Podfile to use for the Container, relative to
    * the directory containing the plugin config.json file
    * Used for RN >= 0.61.0 only
    * Can only be set for 'react-native' plugin configuration
    */
-  podfile?: string
+  podfile?: string;
   /**
    * Path to a podspec file to use for the plugin, relative to
    * the directory containing the plugin config.json file
@@ -196,12 +196,12 @@ export interface IosPluginConfig extends CommonPluginConfig {
    * module needs to be different than the one shipped within
    * the native module
    */
-  podspec?: string
+  podspec?: string;
   /**
    * Array of extra pod statements that will be injected in
    * Container Podfile
    */
-  extraPods?: string[]
+  extraPods?: string[];
   /**
    * Indicates whether this plugin requires manual linking
    * If that's the case, all plugin directives will be processed
@@ -209,7 +209,7 @@ export interface IosPluginConfig extends CommonPluginConfig {
    * Otherwise, only `podfile`, `podspec` and `extraPods` directives
    * will be processed
    */
-  requiresManualLinking?: boolean
+  requiresManualLinking?: boolean;
 }
 
 /**
@@ -219,43 +219,43 @@ export interface PbxProjDirectives {
   /**
    * Add header file(s) to pbxproj
    */
-  addHeader?: IosPluginAddHeaderDirective[]
+  addHeader?: IosPluginAddHeaderDirective[];
   /**
    * Add file(s) to the pbxproj
    */
-  addFile?: IosPluginAddFileDirective[]
+  addFile?: IosPluginAddFileDirective[];
   /**
    * Add Framework(s) to the pbxproj
    */
-  addFramework?: string[]
+  addFramework?: string[];
   /**
    * Add Framework(s) search path(s) to the pbxproj
    */
-  addFrameworkSearchPath?: string[]
+  addFrameworkSearchPath?: string[];
   /**
    * Add Header(s) Search path(s) to the pbxproj
    */
-  addHeaderSearchPath?: string[]
+  addHeaderSearchPath?: string[];
   /**
    * Add source file(s) to the pbxproj
    */
-  addSource?: IosPluginAddSourceDirective[]
+  addSource?: IosPluginAddSourceDirective[];
   /**
    * Add static library(ies) to the pbxproj
    */
-  addStaticLibrary?: string[]
+  addStaticLibrary?: string[];
   /**
    * Add Framework reference(s) to the pbxbproj
    */
-  addFrameworkReference?: string[]
+  addFrameworkReference?: string[];
   /**
    * Add project(s) to the pbxproj
    */
-  addProject?: IosPluginAddProjectDirective[]
+  addProject?: IosPluginAddProjectDirective[];
   /**
    * Add embedded framework(s) to the pbxproj
    */
-  addEmbeddedFramework?: string[]
+  addEmbeddedFramework?: string[];
 }
 
 /**
@@ -265,11 +265,11 @@ export interface IosPluginAddFileDirective {
   /**
    * Relative path (from plugin root) to the file to add
    */
-  path: string
+  path: string;
   /**
    * Target iOS project group to add the file to
    */
-  group: string
+  group: string;
 }
 
 /**
@@ -281,21 +281,21 @@ export interface IosPluginAddHeaderDirective {
    * ex: IOS/*.swift
    *
    */
-  from?: string
+  from?: string;
   /**
    * Relative path (from plugin root) to the source file(s) to add
    * If `from` is specified, this is the path of the target directory
    * If `from` is not specified, this is the path of the source file
    */
-  path: string
+  path: string;
   /**
    * Target iOS project group to add the header to
    */
-  group: string
+  group: string;
   /**
    * Indicates whether the header should be flagged as public or not
    */
-  public?: boolean
+  public?: boolean;
 }
 
 /**
@@ -307,17 +307,17 @@ export interface IosPluginAddSourceDirective {
    * ex: IOS/*.swift
    *
    */
-  from?: string
+  from?: string;
   /**
    * Target iOS project group to add the source file to
    */
-  group: string
+  group: string;
   /**
    * Relative path (from plugin root) to the source file(s) to add
    * If `from` is specified, this is the path of the target directory
    * If `from` is not specified, this is the path of the source file
    */
-  path: string
+  path: string;
 }
 
 /**
@@ -327,11 +327,11 @@ export interface PluginCopyDirective {
   /**
    * Relative path (from plugin root) to the file to copy
    */
-  source: string
+  source: string;
   /**
    * Destination path to copy the file to
    */
-  dest: string
+  dest: string;
 }
 
 /**
@@ -342,17 +342,17 @@ export interface PluginApplyPatchDirective {
    * Relative path (from plugin root) to the patch file to apply
    */
 
-  patch: string
+  patch: string;
   /**
    * Relative path (from container out directory) from which to run git apply
    * Mutually exclusive with inNodeModules
    */
-  root: string
+  root: string;
   /**
    * If true, root will be set to root location of the plugin in node nodules
    * Mutually exclusive with root
    */
-  inNodeModules?: boolean
+  inNodeModules?: boolean;
 }
 
 /**
@@ -363,15 +363,15 @@ export interface PluginReplaceInFileDirective {
    * Relative path (from plugin root) of the file to
    * apply a string replacement on
    */
-  path: string
+  path: string;
   /**
    * The string to replace (can be a RegExp)
    */
-  string: string
+  string: string;
   /**
    * The replacement string
    */
-  replaceWith: string
+  replaceWith: string;
 }
 
 /**
@@ -383,23 +383,23 @@ export interface IosPluginAddProjectDirective {
    * Target Dependencies instead of Link Binary With Libraries
    * section of the target project Build Phases
    */
-  addAsTargetDependency?: boolean
+  addAsTargetDependency?: boolean;
   /**
    * Relative path (from plugin root) of the xcodeproj to add
    */
-  path: string
+  path: string;
   /**
    * Frameworks to add
    */
-  frameworks: string[]
+  frameworks: string[];
   /**
    * Static lib(s) associated to the project
    */
-  staticLibs: IosPluginStaticLib[]
+  staticLibs: IosPluginStaticLib[];
   /**
    * Group to add the xcodeproj to
    */
-  group: string
+  group: string;
 }
 
 export interface IosPluginBuildSettings {
@@ -407,16 +407,16 @@ export interface IosPluginBuildSettings {
    * Configuration(s) for which these build settings apply.
    * For example [ 'Debug' , 'Release' ]
    */
-  configurations: string[]
+  configurations: string[];
 
   /**
    * Build settings as key values pairs
    */
-  settings: { [key: string]: string }
+  settings: { [key: string]: string };
 }
 export interface IosPluginSetBuildSettingsDirective {
-  path: string
-  buildSettings: IosPluginBuildSettings[] | IosPluginBuildSettings
+  path: string;
+  buildSettings: IosPluginBuildSettings[] | IosPluginBuildSettings;
 }
 
 /**
@@ -426,50 +426,50 @@ export interface IosPluginStaticLib {
   /**
    * Name of the static lib, including extension (.a)
    */
-  name: string
+  name: string;
   /**
    * Target of the static lib
    */
-  target: string
+  target: string;
 }
 
 export interface OverrideManifestConfig {
-  url: string
-  type: 'partial' | 'full'
-  source: 'cauldron' | '.ernrc'
+  url: string;
+  type: 'partial' | 'full';
+  source: 'cauldron' | '.ernrc';
 }
 
-const pluginConfigFileName = 'config.json'
-const npmScopeModuleRe = /@(.*)\/(.*)/
+const pluginConfigFileName = 'config.json';
+const npmScopeModuleRe = /@(.*)\/(.*)/;
 
-const ERN_MANIFEST_MASTER_GIT_REPO = `https://github.com/electrode-io/electrode-native-manifest.git`
+const ERN_MANIFEST_MASTER_GIT_REPO = `https://github.com/electrode-io/electrode-native-manifest.git`;
 
 export class Manifest {
-  public static getOverrideManifestConfig: () => Promise<OverrideManifestConfig | void>
+  public static getOverrideManifestConfig: () => Promise<OverrideManifestConfig | void>;
 
-  public readonly masterManifest: LocalManifest | GitManifest
-  private manifestOverrideType: 'partial' | 'full'
-  private overrideManifest: LocalManifest | GitManifest
+  public readonly masterManifest: LocalManifest | GitManifest;
+  private manifestOverrideType: 'partial' | 'full';
+  private overrideManifest: LocalManifest | GitManifest;
 
   constructor(masterManifest: LocalManifest | GitManifest) {
-    this.masterManifest = masterManifest
+    this.masterManifest = masterManifest;
   }
 
   public async initOverrideManifest() {
     if (!this.overrideManifest && Manifest.getOverrideManifestConfig) {
-      const overrideManifestConfig = await Manifest.getOverrideManifestConfig()
+      const overrideManifestConfig = await Manifest.getOverrideManifestConfig();
       if (overrideManifestConfig) {
         const manifestOverrideUrl = this.modifyOverrideManifestUrlIfNeeded(
-          overrideManifestConfig.url
-        )
-        this.manifestOverrideType = overrideManifestConfig.type
+          overrideManifestConfig.url,
+        );
+        this.manifestOverrideType = overrideManifestConfig.type;
         if (await fs.pathExists(manifestOverrideUrl)) {
-          this.overrideManifest = new LocalManifest(manifestOverrideUrl)
+          this.overrideManifest = new LocalManifest(manifestOverrideUrl);
         } else {
           this.overrideManifest = new GitManifest(
             Platform.overrideManifestDirectory,
-            manifestOverrideUrl
-          )
+            manifestOverrideUrl,
+          );
         }
       }
     }
@@ -482,26 +482,26 @@ export class Manifest {
     //   "replaceValue": "new.github.com"
     // }
     const overrideManifestUrlModifier = config.get(
-      'overrideManifestUrlModifier'
-    )
+      'overrideManifestUrlModifier',
+    );
     if (overrideManifestUrlModifier) {
-      const obj = JSON.parse(overrideManifestUrlModifier)
-      url = url.replace(obj.searchValue, obj.replaceValue)
+      const obj = JSON.parse(overrideManifestUrlModifier);
+      url = url.replace(obj.searchValue, obj.replaceValue);
     }
-    return url
+    return url;
   }
 
   public async hasManifestId(manifestId: string): Promise<boolean> {
-    await this.initOverrideManifest()
+    await this.initOverrideManifest();
     if (this.overrideManifest && this.manifestOverrideType === 'partial') {
       return (
         (await this.masterManifest.hasManifestId(manifestId)) ||
         (await this.overrideManifest.hasManifestId(manifestId))
-      )
+      );
     } else if (this.overrideManifest && this.manifestOverrideType === 'full') {
-      return this.overrideManifest.hasManifestId(manifestId)
+      return this.overrideManifest.hasManifestId(manifestId);
     } else {
-      return this.masterManifest.hasManifestId(manifestId)
+      return this.masterManifest.hasManifestId(manifestId);
     }
   }
 
@@ -509,74 +509,74 @@ export class Manifest {
     manifestId = 'default',
     platformVersion = Platform.currentVersion,
   }: {
-    manifestId?: string
-    platformVersion?: string
+    manifestId?: string;
+    platformVersion?: string;
   } = {}) {
-    await this.initOverrideManifest()
-    let manifestData: any = {}
+    await this.initOverrideManifest();
+    let manifestData: any = {};
     if (this.overrideManifest && this.manifestOverrideType === 'partial') {
       // Merge both manifests. If a dependency exists at two different versions in both
       // manifest, the ovveride will take precedence for the version
       const overrideManifestData = await this.overrideManifest.getManifestData({
         manifestId,
         platformVersion,
-      })
+      });
       const masterManifestData = await this.masterManifest.getManifestData({
         manifestId,
         platformVersion,
-      })
+      });
 
       manifestData.targetNativeDependencies = _.unionBy(
         overrideManifestData
           ? overrideManifestData.targetNativeDependencies
           : [],
         masterManifestData ? masterManifestData.targetNativeDependencies : [],
-        d => PackagePath.fromString(<string>d).name
-      )
+        d => PackagePath.fromString(<string>d).name,
+      );
 
       manifestData.targetJsDependencies = _.unionBy(
         overrideManifestData ? overrideManifestData.targetJsDependencies : [],
         masterManifestData ? masterManifestData.targetJsDependencies : [],
-        d => PackagePath.fromString(<string>d).name
-      )
+        d => PackagePath.fromString(<string>d).name,
+      );
     } else if (this.overrideManifest && this.manifestOverrideType === 'full') {
       manifestData = await this.overrideManifest.getManifestData({
         manifestId,
         platformVersion,
-      })
+      });
     } else {
       manifestData = await this.masterManifest.getManifestData({
         manifestId,
         platformVersion,
-      })
+      });
     }
-    return manifestData
+    return manifestData;
   }
 
   public async getNativeDependencies({
     manifestId,
     platformVersion,
   }: {
-    manifestId?: string
-    platformVersion?: string
+    manifestId?: string;
+    platformVersion?: string;
   } = {}): Promise<PackagePath[]> {
-    const m = await this.getManifestData({ manifestId, platformVersion })
+    const m = await this.getManifestData({ manifestId, platformVersion });
     return m
       ? _.map(m.targetNativeDependencies, d => PackagePath.fromString(d))
-      : []
+      : [];
   }
 
   public async getJsDependencies({
     manifestId,
     platformVersion,
   }: {
-    manifestId?: string
-    platformVersion?: string
+    manifestId?: string;
+    platformVersion?: string;
   } = {}): Promise<PackagePath[]> {
-    const m = await this.getManifestData({ manifestId, platformVersion })
+    const m = await this.getManifestData({ manifestId, platformVersion });
     return m
       ? _.map(m.targetJsDependencies, d => PackagePath.fromString(d))
-      : []
+      : [];
   }
 
   public async getNativeDependency(
@@ -585,15 +585,15 @@ export class Manifest {
       manifestId = 'default',
       platformVersion = Platform.currentVersion,
     }: {
-      manifestId?: string
-      platformVersion?: string
-    } = {}
+      manifestId?: string;
+      platformVersion?: string;
+    } = {},
   ): Promise<PackagePath | void> {
     const nativeDependencies = await this.getNativeDependencies({
       manifestId,
       platformVersion,
-    })
-    return _.find(nativeDependencies, d => d.name === dependency.name)
+    });
+    return _.find(nativeDependencies, d => d.name === dependency.name);
   }
 
   public async getJsDependency(
@@ -602,138 +602,138 @@ export class Manifest {
       manifestId,
       platformVersion,
     }: {
-      manifestId?: string
-      platformVersion?: string
-    } = {}
+      manifestId?: string;
+      platformVersion?: string;
+    } = {},
   ): Promise<PackagePath | void> {
     const jsDependencies = await this.getJsDependencies({
       manifestId,
       platformVersion,
-    })
-    return _.find(jsDependencies, d => d.name === dependency.name)
+    });
+    return _.find(jsDependencies, d => d.name === dependency.name);
   }
 
   public async getJsAndNativeDependencies({
     manifestId,
     platformVersion,
   }: {
-    manifestId?: string
-    platformVersion?: string
+    manifestId?: string;
+    platformVersion?: string;
   } = {}) {
-    const m = await this.getManifestData({ manifestId, platformVersion })
+    const m = await this.getManifestData({ manifestId, platformVersion });
     const manifestDeps = manifest
       ? _.union(m.targetJsDependencies, m.targetNativeDependencies)
-      : []
-    return _.map(manifestDeps, d => PackagePath.fromString(<string>d))
+      : [];
+    return _.map(manifestDeps, d => PackagePath.fromString(<string>d));
   }
 
   public async getPluginConfigPath(
     plugin: PackagePath,
-    platformVersion: string
+    platformVersion: string,
   ): Promise<string | void> {
-    let pluginConfigPath
+    let pluginConfigPath;
     if (this.overrideManifest && this.manifestOverrideType === 'partial') {
       pluginConfigPath = await this.overrideManifest.getPluginConfigurationPath(
         plugin,
-        platformVersion
-      )
+        platformVersion,
+      );
       if (!pluginConfigPath) {
         pluginConfigPath = await this.masterManifest.getPluginConfigurationPath(
           plugin,
-          platformVersion
-        )
+          platformVersion,
+        );
       }
     } else if (this.overrideManifest && this.manifestOverrideType === 'full') {
       pluginConfigPath = await this.overrideManifest.getPluginConfigurationPath(
         plugin,
-        platformVersion
-      )
+        platformVersion,
+      );
     } else {
       pluginConfigPath = await this.masterManifest.getPluginConfigurationPath(
         plugin,
-        platformVersion
-      )
+        platformVersion,
+      );
     }
-    return pluginConfigPath
+    return pluginConfigPath;
   }
 
   public async isPluginConfigInManifest(
     plugin: PackagePath,
-    platformVersion: string
+    platformVersion: string,
   ): Promise<boolean> {
     const pluginConfigPath = await this.getPluginConfigPath(
       plugin,
-      platformVersion
-    )
-    return pluginConfigPath !== undefined
+      platformVersion,
+    );
+    return pluginConfigPath !== undefined;
   }
 
   public async getPluginConfigFromManifest(
     plugin: PackagePath,
     platformVersion: string,
     projectName: string,
-    platform: NativePlatform
+    platform: NativePlatform,
   ): Promise<PluginConfig<'android' | 'ios'> | undefined> {
     const pluginConfigPath = await this.getPluginConfigPath(
       plugin,
-      platformVersion
-    )
+      platformVersion,
+    );
     if (!pluginConfigPath) {
       throw new Error(
-        `There is no configuration for ${plugin.name} plugin in Manifest matching platform version ${platformVersion}`
-      )
+        `There is no configuration for ${plugin.name} plugin in Manifest matching platform version ${platformVersion}`,
+      );
     }
 
-    let result: ManifestPluginConfig
+    let result: ManifestPluginConfig;
     let configFile = await fs.readFile(
       path.join(pluginConfigPath, pluginConfigFileName),
-      'utf-8'
-    )
-    configFile = Mustache.render(configFile, { projectName })
-    result = JSON.parse(configFile)
+      'utf-8',
+    );
+    configFile = Mustache.render(configFile, { projectName });
+    result = JSON.parse(configFile);
 
     // Add default value (convention) for Android subsection for missing fields
     if (platform === 'android' && result.android) {
-      const res = result.android
+      const res = result.android;
 
-      res.root = res.root ?? 'android'
+      res.root = res.root ?? 'android';
 
       const matchedFiles = shell
         .find(pluginConfigPath)
         .filter((file: string) => {
-          return file.match(/\.java$/)
-        })
+          return file.match(/\.java$/);
+        });
       if (matchedFiles && matchedFiles.length === 1) {
-        const pluginHookClass = path.basename(matchedFiles[0], '.java')
+        const pluginHookClass = path.basename(matchedFiles[0], '.java');
         res.pluginHook = {
           configurable: false,
           name: pluginHookClass,
-        }
+        };
         if (
           fs
             .readFileSync(matchedFiles[0], 'utf-8')
             .includes('public static class Config')
         ) {
-          res.pluginHook.configurable = true
+          res.pluginHook.configurable = true;
         }
       }
-      res.path = pluginConfigPath
-      return res
+      res.path = pluginConfigPath;
+      return res;
     } else if (platform === 'ios' && result.ios) {
-      const res = result.ios
+      const res = result.ios;
 
-      res.root = res.root ?? 'ios'
+      res.root = res.root ?? 'ios';
 
       const matchedHeaderFiles = shell
         .find(pluginConfigPath)
         .filter((file: string) => {
-          return file.match(/\.h$/)
-        })
+          return file.match(/\.h$/);
+        });
       const matchedSourceFiles = shell
         .find(pluginConfigPath)
         .filter((file: string) => {
-          return file.match(/\.m$/)
-        })
+          return file.match(/\.m$/);
+        });
 
       if (
         matchedHeaderFiles &&
@@ -741,14 +741,14 @@ export class Manifest {
         matchedSourceFiles &&
         matchedSourceFiles.length === 1
       ) {
-        const pluginHookClass = path.basename(matchedHeaderFiles[0], '.h')
+        const pluginHookClass = path.basename(matchedHeaderFiles[0], '.h');
         res.pluginHook = {
           configurable: true,
           name: pluginHookClass,
-        }
+        };
       }
-      res.path = pluginConfigPath
-      return res
+      res.path = pluginConfigPath;
+      return res;
     }
   }
 
@@ -759,13 +759,13 @@ export class Manifest {
         scope: `${npmScopeModuleRe.exec(plugin.name!)![1]}`,
         type: 'npm',
         version: plugin.version,
-      }
+      };
     } else {
       return {
         name: plugin.name!,
         type: 'npm',
         version: plugin.version,
-      }
+      };
     }
   }
 
@@ -773,64 +773,68 @@ export class Manifest {
     plugin: PackagePath,
     platform: 'android',
     projectName?: string,
-    platformVersion?: string
-  ): Promise<PluginConfig<'android'> | undefined>
+    platformVersion?: string,
+  ): Promise<PluginConfig<'android'> | undefined>;
 
   public async getPluginConfig(
     plugin: PackagePath,
     platform: 'ios',
     projectName?: string,
-    platformVersion?: string
-  ): Promise<PluginConfig<'ios'> | undefined>
+    platformVersion?: string,
+  ): Promise<PluginConfig<'ios'> | undefined>;
 
   public async getPluginConfig(
     plugin: PackagePath,
     platform: NativePlatform,
     projectName: string = 'ElectrodeContainer',
-    platformVersion: string = Platform.currentVersion
+    platformVersion: string = Platform.currentVersion,
   ): Promise<PluginConfig<'android' | 'ios'> | undefined> {
-    await this.initOverrideManifest()
-    let result
+    await this.initOverrideManifest();
+    let result;
     if (await isDependencyApi(plugin)) {
       log.debug(
-        'API plugin detected. Retrieving API plugin default configuration'
-      )
-      result = this.getApiPluginDefaultConfig(plugin, projectName, platform)
+        'API plugin detected. Retrieving API plugin default configuration',
+      );
+      result = this.getApiPluginDefaultConfig(plugin, projectName, platform);
     } else if (await isDependencyApiImpl(plugin)) {
       log.debug(
-        'APIImpl plugin detected. Retrieving APIImpl plugin default configuration'
-      )
-      result = this.getApiImplPluginDefaultConfig(plugin, projectName, platform)
+        'APIImpl plugin detected. Retrieving APIImpl plugin default configuration',
+      );
+      result = this.getApiImplPluginDefaultConfig(
+        plugin,
+        projectName,
+        platform,
+      );
     } else if (await this.isPluginConfigInManifest(plugin, platformVersion)) {
       log.debug(
-        'Third party plugin detected. Retrieving plugin configuration from manifest'
-      )
+        'Third party plugin detected. Retrieving plugin configuration from manifest',
+      );
       result = await this.getPluginConfigFromManifest(
         plugin,
         platformVersion,
         projectName,
-        platform
-      )
+        platform,
+      );
     } else {
       log.warn(
-        `Unsupported plugin. No configuration found in manifest for ${plugin.name}.`
-      )
-      return
+        `Unsupported plugin. No configuration found in manifest for ${plugin.name}.`,
+      );
+      return;
     }
 
     if (result && !result.origin) {
-      result.origin = this.getDefaultNpmPluginOrigin(plugin)
+      result.origin = this.getDefaultNpmPluginOrigin(plugin);
     } else if (result && !result.origin.version) {
-      result.origin.version = plugin.version
+      result.origin.version = plugin.version;
     }
 
-    return result
+    return result;
   }
 
   public getApiPluginDefaultConfig(
     plugin: PackagePath,
     projectName: string = 'UNKNOWN',
-    platform: NativePlatform
+    platform: NativePlatform,
   ): PluginConfig<'android' | 'ios'> {
     return platform === 'android'
       ? {
@@ -865,13 +869,13 @@ export class Manifest {
           },
           requiresManualLinking: true,
           root: 'ios',
-        }
+        };
   }
 
   public getApiImplPluginDefaultConfig(
     plugin: PackagePath,
     projectName: string = 'UNKNOWN',
-    platform: NativePlatform
+    platform: NativePlatform,
   ): PluginConfig<'android' | 'ios'> {
     return platform === 'android'
       ? {
@@ -898,17 +902,17 @@ export class Manifest {
           },
           requiresManualLinking: true,
           root: 'ios',
-        }
+        };
   }
 }
 
-const manifestLocalConfig = config.get('manifest', {})
-const manifestLocalMasterUrl = manifestLocalConfig?.master?.url
+const manifestLocalConfig = config.get('manifest', {});
+const manifestLocalMasterUrl = manifestLocalConfig?.master?.url;
 export const manifest = manifestLocalMasterUrl
   ? new Manifest(new LocalManifest(manifestLocalMasterUrl))
   : new Manifest(
       new GitManifest(
         Platform.masterManifestDirectory,
-        ERN_MANIFEST_MASTER_GIT_REPO
-      )
-    )
+        ERN_MANIFEST_MASTER_GIT_REPO,
+      ),
+    );

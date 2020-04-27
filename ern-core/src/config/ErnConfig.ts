@@ -4,7 +4,7 @@ export interface ErnConfig {
    * @param key Config key
    * @param defaultValue Default value to return if key does not exist
    */
-  get(key?: string, defaultValue?: any): any
+  get(key?: string, defaultValue?: any): any;
 
   /**
    * Set a value for a given key
@@ -13,12 +13,12 @@ export interface ErnConfig {
    * @param key Config key
    * @param value Value to set for this key
    */
-  set(key: string, value: any): void
+  set(key: string, value: any): void;
 
   /**
    * Delete a given key and associated value
    * @param key Config key
    * @returns true if the key to delete was found, false otherwise
    */
-  del(key: string): boolean
+  del(key: string): boolean;
 }

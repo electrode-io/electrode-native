@@ -1,11 +1,11 @@
-import { NativePlatform } from 'ern-core'
-import path from 'path'
+import { NativePlatform } from 'ern-core';
+import path from 'path';
 
 export function getAssetsPath(
   platform: NativePlatform,
-  assetDirectoryName: string
+  assetDirectoryName: string,
 ): string {
   return platform === 'android'
     ? path.normalize(`lib/src/main/assets/${assetDirectoryName}`)
-    : path.normalize('ElectrodeContainer/Resources')
+    : path.normalize('ElectrodeContainer/Resources');
 }

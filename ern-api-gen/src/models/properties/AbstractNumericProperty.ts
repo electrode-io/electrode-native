@@ -1,4 +1,4 @@
-import { Property } from './Property'
+import { Property } from './Property';
 
 export class AbstractNumericProperty extends Property {
   public static allowedProps = [
@@ -8,5 +8,5 @@ export class AbstractNumericProperty extends Property {
     'exclusiveMinimum',
     'exclusiveMaximum',
     'multipleOf',
-  ]
+  ];
 }

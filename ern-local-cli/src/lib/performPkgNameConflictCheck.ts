@@ -1,8 +1,8 @@
-import { isPackagePublished } from 'ern-core'
-import inquirer from 'inquirer'
+import { isPackagePublished } from 'ern-core';
+import inquirer from 'inquirer';
 
 export async function performPkgNameConflictCheck(
-  name: string
+  name: string,
 ): Promise<boolean> {
   if (await isPackagePublished(name)) {
     const { continueIfPkgNameExists } = await inquirer.prompt([
@@ -12,8 +12,8 @@ export async function performPkgNameConflictCheck(
         name: 'continueIfPkgNameExists',
         type: 'confirm',
       },
-    ])
-    return continueIfPkgNameExists
+    ]);
+    return continueIfPkgNameExists;
   }
-  return true // If package name doesn't exist continue with command execution
+  return true; // If package name doesn't exist continue with command execution
 }

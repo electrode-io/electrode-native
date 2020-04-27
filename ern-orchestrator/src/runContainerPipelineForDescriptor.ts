@@ -1,6 +1,6 @@
-import { getActiveCauldron } from 'ern-cauldron-api'
-import { AppVersionDescriptor, kax, log } from 'ern-core'
-import { runContainerPipeline } from './runContainerPipeline'
+import { getActiveCauldron } from 'ern-cauldron-api';
+import { AppVersionDescriptor, kax, log } from 'ern-core';
+import { runContainerPipeline } from './runContainerPipeline';
 
 /**
  * Given a full native application descriptor and a local Container path,
@@ -11,29 +11,29 @@ export async function runContainerPipelineForDescriptor({
   containerPath,
   containerVersion,
 }: {
-  descriptor: AppVersionDescriptor
-  containerPath: string
-  containerVersion: string
+  descriptor: AppVersionDescriptor;
+  containerPath: string;
+  containerVersion: string;
 }) {
   if (!descriptor.platform || !descriptor.version) {
-    throw new Error('Can only work with a full native application descriptor')
+    throw new Error('Can only work with a full native application descriptor');
   }
 
-  const cauldron = await getActiveCauldron()
+  const cauldron = await getActiveCauldron();
 
   const containerGenConfig = await kax
     .task('Getting pipeline configuration from Cauldron')
-    .run(cauldron.getContainerGeneratorConfig(descriptor))
+    .run(cauldron.getContainerGeneratorConfig(descriptor));
 
-  const pipeline = containerGenConfig?.pipeline
+  const pipeline = containerGenConfig?.pipeline;
   if (!pipeline) {
-    log.warn(`No pipeline configuration found for ${descriptor}`)
+    log.warn(`No pipeline configuration found for ${descriptor}`);
   } else {
     return runContainerPipeline({
       containerPath,
       containerVersion,
       pipeline,
       platform: descriptor.platform,
-    })
+    });
   }
 }

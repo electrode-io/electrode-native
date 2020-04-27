@@ -1,11 +1,11 @@
-import { AppVersionDescriptor, kax, log } from 'ern-core'
-import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../../lib'
-import { getBinaryStoreFromCauldron } from 'ern-orchestrator'
-import { Argv } from 'yargs'
-import untildify from 'untildify'
+import { AppVersionDescriptor, kax, log } from 'ern-core';
+import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../../lib';
+import { getBinaryStoreFromCauldron } from 'ern-orchestrator';
+import { Argv } from 'yargs';
+import untildify from 'untildify';
 
-export const command = 'add <descriptor> <pathToBinary>'
-export const desc = 'Add a mobile application binary to the binary store'
+export const command = 'add <descriptor> <pathToBinary>';
+export const desc = 'Add a mobile application binary to the binary store';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -15,32 +15,32 @@ export const builder = (argv: Argv) => {
       type: 'string',
     })
     .coerce('pathToBinary', p => untildify(p))
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   descriptor,
   flavor,
   pathToBinary,
 }: {
-  descriptor: AppVersionDescriptor
-  flavor?: string
-  pathToBinary: string
+  descriptor: AppVersionDescriptor;
+  flavor?: string;
+  pathToBinary: string;
 }) => {
   await logErrorAndExitIfNotSatisfied({
     napDescriptorExistInCauldron: { descriptor },
     pathExist: { p: pathToBinary },
-  })
+  });
 
-  const binaryStore = await getBinaryStoreFromCauldron()
+  const binaryStore = await getBinaryStoreFromCauldron();
   await kax
     .task('Uploading binary to store')
-    .run(binaryStore.addBinary(descriptor, pathToBinary, { flavor }))
+    .run(binaryStore.addBinary(descriptor, pathToBinary, { flavor }));
   log.info(
     `${descriptor} binary ${
       flavor ? `[flavor: ${flavor}]` : ''
-    } was successfuly uploaded to the store`
-  )
-}
+    } was successfuly uploaded to the store`,
+  );
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

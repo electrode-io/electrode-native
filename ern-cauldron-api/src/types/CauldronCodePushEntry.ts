@@ -1,7 +1,7 @@
-import { CauldronCodePushMetadata } from './CauldronCodePushMetadata'
+import { CauldronCodePushMetadata } from './CauldronCodePushMetadata';
 
 export interface CauldronCodePushEntry {
-  metadata: CauldronCodePushMetadata
-  miniapps: string[]
-  jsApiImpls: string[]
+  metadata: CauldronCodePushMetadata;
+  miniapps: string[];
+  jsApiImpls: string[];
 }

@@ -1,18 +1,18 @@
-import { AppVersionDescriptor, log, PackagePath } from 'ern-core'
-import { getActiveCauldron } from 'ern-cauldron-api'
-import { syncCauldronContainer } from 'ern-orchestrator'
+import { AppVersionDescriptor, log, PackagePath } from 'ern-core';
+import { getActiveCauldron } from 'ern-cauldron-api';
+import { syncCauldronContainer } from 'ern-orchestrator';
 import {
   askUserToChooseANapDescriptorFromCauldron,
   emptyContainerIfSingleMiniAppOrJsApiImpl,
   epilog,
   logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
-} from '../../lib'
-import { Argv } from 'yargs'
+} from '../../lib';
+import { Argv } from 'yargs';
 
-export const command = 'batch'
+export const command = 'batch';
 export const desc =
-  'Cauldron command to batch many operations as a single Cauldron update'
+  'Cauldron command to batch many operations as a single Cauldron update';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -50,8 +50,8 @@ export const builder = (argv: Argv) => {
       type: 'boolean',
     })
     .coerce('updateMiniapps', d => d.map(PackagePath.fromString))
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   addMiniapps = [],
@@ -61,18 +61,18 @@ export const commandHandler = async ({
   resetCache,
   updateMiniapps = [],
 }: {
-  addMiniapps: PackagePath[]
-  containerVersion?: string
-  delMiniapps: PackagePath[]
-  descriptor?: AppVersionDescriptor
-  resetCache?: boolean
-  updateMiniapps: PackagePath[]
+  addMiniapps: PackagePath[];
+  containerVersion?: string;
+  delMiniapps: PackagePath[];
+  descriptor?: AppVersionDescriptor;
+  resetCache?: boolean;
+  updateMiniapps: PackagePath[];
 }) => {
   descriptor =
     descriptor ||
     (await askUserToChooseANapDescriptorFromCauldron({
       onlyNonReleasedVersions: true,
-    }))
+    }));
 
   await logErrorAndExitIfNotSatisfied({
     isNewerContainerVersion: containerVersion
@@ -109,43 +109,43 @@ export const commandHandler = async ({
       extraErrorMessage:
         'This command cannot work on a non existing native application version',
     },
-  })
+  });
 
   const cauldronCommitMessage = [
     `Batch operation on ${descriptor} native application`,
-  ]
+  ];
 
-  const cauldron = await getActiveCauldron()
+  const cauldron = await getActiveCauldron();
   await syncCauldronContainer(
     async () => {
       // Del MiniApps
       for (const delMiniApp of delMiniapps) {
         if (!(await emptyContainerIfSingleMiniAppOrJsApiImpl(descriptor!))) {
-          await cauldron.removeMiniAppFromContainer(descriptor!, delMiniApp)
+          await cauldron.removeMiniAppFromContainer(descriptor!, delMiniApp);
         }
-        cauldronCommitMessage.push(`- Remove ${delMiniApp} MiniApp`)
+        cauldronCommitMessage.push(`- Remove ${delMiniApp} MiniApp`);
       }
       // Update MiniApps
       for (const updatedMiniApp of updateMiniapps) {
         cauldronCommitMessage.push(
-          `- Update ${updatedMiniApp.basePath} MiniApp version to v${updatedMiniApp.version}`
-        )
+          `- Update ${updatedMiniApp.basePath} MiniApp version to v${updatedMiniApp.version}`,
+        );
       }
       // Add MiniApps
       for (const addedMiniApp of addMiniapps) {
-        cauldronCommitMessage.push(`-Add ${addedMiniApp.basePath} MiniApp`)
+        cauldronCommitMessage.push(`-Add ${addedMiniApp.basePath} MiniApp`);
       }
 
       await cauldron.syncContainerMiniApps(descriptor!, [
         ...addMiniapps,
         ...updateMiniapps,
-      ])
+      ]);
     },
     descriptor,
     cauldronCommitMessage,
-    { containerVersion, resetCache }
-  )
-  log.info(`Batch operations were succesfully performed for ${descriptor}`)
-}
+    { containerVersion, resetCache },
+  );
+  log.info(`Batch operations were succesfully performed for ${descriptor}`);
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

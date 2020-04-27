@@ -3,14 +3,14 @@ import {
   epilog,
   logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
-} from '../lib'
-import { start } from 'ern-orchestrator'
-import { AppVersionDescriptor, PackagePath } from 'ern-core'
-import { Argv } from 'yargs'
-import untildify from 'untildify'
+} from '../lib';
+import { start } from 'ern-orchestrator';
+import { AppVersionDescriptor, PackagePath } from 'ern-core';
+import { Argv } from 'yargs';
+import untildify from 'untildify';
 
-export const command = 'start'
-export const desc = 'Start a composite MiniApp'
+export const command = 'start';
+export const desc = 'Start a composite MiniApp';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -105,15 +105,15 @@ export const builder = (argv: Argv) => {
     })
     .group(
       ['activityName', 'launchFlags', 'packageName'],
-      'Android binary launch options:'
+      'Android binary launch options:',
     )
     .group(
       ['bundleId', 'launchEnvVars', 'launchArgs'],
-      'iOS binary launch options:'
+      'iOS binary launch options:',
     )
     .group(['disableBinaryStore', 'flavor'], 'Binary store specific options:')
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   activityName,
@@ -135,24 +135,24 @@ export const commandHandler = async ({
   disableBinaryStore,
   resetCache,
 }: {
-  activityName?: string
-  baseComposite?: PackagePath
-  bundleId?: string
-  compositeDir?: string
-  descriptor?: AppVersionDescriptor
-  extraJsDependencies?: PackagePath[]
-  flavor?: string
-  host?: string
-  jsApiImpls?: PackagePath[]
-  launchArgs?: string
-  launchEnvVars?: string
-  launchFlags?: string
-  miniapps?: PackagePath[]
-  packageName?: string
-  port?: string
-  watchNodeModules?: string[]
-  disableBinaryStore?: boolean
-  resetCache?: boolean
+  activityName?: string;
+  baseComposite?: PackagePath;
+  bundleId?: string;
+  compositeDir?: string;
+  descriptor?: AppVersionDescriptor;
+  extraJsDependencies?: PackagePath[];
+  flavor?: string;
+  host?: string;
+  jsApiImpls?: PackagePath[];
+  launchArgs?: string;
+  launchEnvVars?: string;
+  launchFlags?: string;
+  miniapps?: PackagePath[];
+  packageName?: string;
+  port?: string;
+  watchNodeModules?: string[];
+  disableBinaryStore?: boolean;
+  resetCache?: boolean;
 } = {}) => {
   await logErrorAndExitIfNotSatisfied({
     metroServerIsNotRunning: {
@@ -160,10 +160,10 @@ export const commandHandler = async ({
       host: host || 'localhost',
       port: port || '8081',
     },
-  })
+  });
 
   if (!miniapps && !descriptor) {
-    descriptor = await askUserToChooseANapDescriptorFromCauldron()
+    descriptor = await askUserToChooseANapDescriptorFromCauldron();
   }
 
   await start({
@@ -185,7 +185,7 @@ export const commandHandler = async ({
     port,
     resetCache,
     watchNodeModules,
-  })
-}
+  });
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

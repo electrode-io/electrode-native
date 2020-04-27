@@ -1,5 +1,5 @@
-import ApiImplGen from './generators/ApiImplGen'
-import { PackagePath } from 'ern-core'
+import ApiImplGen from './generators/ApiImplGen';
+import { PackagePath } from 'ern-core';
 
 export default async function regenerateApiImpl({
   api,
@@ -7,10 +7,10 @@ export default async function regenerateApiImpl({
   reactNativeVersion,
   platforms,
 }: {
-  api: PackagePath
-  paths: any
-  reactNativeVersion: string
-  platforms: string[]
+  api: PackagePath;
+  paths: any;
+  reactNativeVersion: string;
+  platforms: string[];
 }) {
   try {
     await new ApiImplGen().generateApiImplementation(
@@ -18,9 +18,9 @@ export default async function regenerateApiImpl({
       paths,
       reactNativeVersion,
       platforms,
-      true
-    )
+      true,
+    );
   } catch (e) {
-    throw e
+    throw e;
   }
 }

@@ -2,10 +2,10 @@ import {
   bundleMiniApps,
   ContainerGenerator,
   ContainerGenResult,
-} from 'ern-container-gen'
-import { Composite } from 'ern-composite-gen'
-import { AndroidGenerator } from 'ern-container-gen-android'
-import { IosGenerator } from 'ern-container-gen-ios'
+} from 'ern-container-gen';
+import { Composite } from 'ern-composite-gen';
+import { AndroidGenerator } from 'ern-container-gen-android';
+import { IosGenerator } from 'ern-container-gen-ios';
 import {
   AppVersionDescriptor,
   BundlingResult,
@@ -15,9 +15,9 @@ import {
   NativePlatform,
   PackagePath,
   Platform,
-} from 'ern-core'
-import { getActiveCauldron } from 'ern-cauldron-api'
-import * as constants from './constants'
+} from 'ern-core';
+import { getActiveCauldron } from 'ern-cauldron-api';
+import * as constants from './constants';
 
 // Run container generator locally, without relying on the Cauldron, given a list of miniapp packages
 // The string used to represent a miniapp package can be anything supported by `yarn add` command
@@ -37,17 +37,17 @@ export async function runLocalContainerGen(
     devJsBundle,
     resetCache,
   }: {
-    outDir?: string
-    ignoreRnpmAssets?: boolean
-    jsMainModuleName?: string
-    extra?: any
-    sourceMapOutput?: string
-    devJsBundle?: boolean
-    resetCache?: boolean
-  }
+    outDir?: string;
+    ignoreRnpmAssets?: boolean;
+    jsMainModuleName?: string;
+    extra?: any;
+    sourceMapOutput?: string;
+    devJsBundle?: boolean;
+    resetCache?: boolean;
+  },
 ): Promise<ContainerGenResult> {
   try {
-    const generator = getGeneratorForPlatform(platform)
+    const generator = getGeneratorForPlatform(platform);
 
     return kax.task('Generating Container').run(
       generator.generate({
@@ -62,11 +62,11 @@ export async function runLocalContainerGen(
         resetCache,
         sourceMapOutput,
         targetPlatform: platform,
-      })
-    )
+      }),
+    );
   } catch (e) {
-    log.error(`runLocalContainerGen failed: ${e}`)
-    throw e
+    log.error(`runLocalContainerGen failed: ${e}`);
+    throw e;
   }
 }
 
@@ -81,30 +81,30 @@ export async function runCauldronContainerGen(
     resetCache,
     sourceMapOutput,
   }: {
-    devJsBundle?: boolean
-    jsMainModuleName?: string
-    outDir?: string
-    resetCache?: boolean
-    sourceMapOutput?: string
-  } = {}
+    devJsBundle?: boolean;
+    jsMainModuleName?: string;
+    outDir?: string;
+    resetCache?: boolean;
+    sourceMapOutput?: string;
+  } = {},
 ): Promise<ContainerGenResult> {
   try {
-    const cauldron = await getActiveCauldron()
+    const cauldron = await getActiveCauldron();
 
     if (!napDescriptor.platform) {
-      throw new Error(`${napDescriptor} does not specify a platform`)
+      throw new Error(`${napDescriptor} does not specify a platform`);
     }
 
     const plugins = await composite.getInjectableNativeDependencies(
-      napDescriptor.platform
-    )
+      napDescriptor.platform,
+    );
 
-    const platform = napDescriptor.platform
+    const platform = napDescriptor.platform;
     const containerGeneratorConfig = await cauldron.getContainerGeneratorConfig(
-      napDescriptor
-    )
+      napDescriptor,
+    );
 
-    const generator = getGeneratorForPlatform(platform)
+    const generator = getGeneratorForPlatform(platform);
 
     const containerGenResult = await kax
       .task(`Generating Container for ${napDescriptor.toString()}`)
@@ -127,13 +127,13 @@ export async function runCauldronContainerGen(
           resetCache: resetCache ?? containerGeneratorConfig?.resetCache,
           sourceMapOutput,
           targetPlatform: platform,
-        })
-      )
+        }),
+      );
 
-    return containerGenResult
+    return containerGenResult;
   } catch (e) {
-    log.error(`runCauldronContainerGen failed: ${e}`)
-    throw e
+    log.error(`runCauldronContainerGen failed: ${e}`);
+    throw e;
   }
 }
 
@@ -146,40 +146,40 @@ export async function runCaudronBundleGen(
     resetCache,
     resolutions,
   }: {
-    baseComposite?: PackagePath
-    compositeDir?: string
-    outDir: string
-    resetCache?: boolean
-    resolutions?: { [pkg: string]: string }
-  }
+    baseComposite?: PackagePath;
+    compositeDir?: string;
+    outDir: string;
+    resetCache?: boolean;
+    resolutions?: { [pkg: string]: string };
+  },
 ): Promise<BundlingResult> {
   try {
-    const cauldron = await getActiveCauldron()
+    const cauldron = await getActiveCauldron();
     const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
-      napDescriptor
-    )
+      napDescriptor,
+    );
     baseComposite =
       baseComposite ||
       (compositeGenConfig?.baseComposite &&
-        PackagePath.fromString(compositeGenConfig.baseComposite))
-    const miniapps = await cauldron.getContainerMiniApps(napDescriptor)
-    const jsApiImpls = await cauldron.getContainerJsApiImpls(napDescriptor)
+        PackagePath.fromString(compositeGenConfig.baseComposite));
+    const miniapps = await cauldron.getContainerMiniApps(napDescriptor);
+    const jsApiImpls = await cauldron.getContainerJsApiImpls(napDescriptor);
     const containerGenConfig = await cauldron.getContainerGeneratorConfig(
-      napDescriptor
-    )
-    let pathToYarnLock
+      napDescriptor,
+    );
+    let pathToYarnLock;
     if (!containerGenConfig || !containerGenConfig.bypassYarnLock) {
       pathToYarnLock = await cauldron.getPathToYarnLock(
         napDescriptor,
-        constants.CONTAINER_YARN_KEY
-      )
+        constants.CONTAINER_YARN_KEY,
+      );
     } else {
       log.debug(
-        'Bypassing yarn.lock usage as bypassYarnLock flag is set in Cauldron config'
-      )
+        'Bypassing yarn.lock usage as bypassYarnLock flag is set in Cauldron config',
+      );
     }
     if (!napDescriptor.platform) {
-      throw new Error(`${napDescriptor} does not specify a platform`)
+      throw new Error(`${napDescriptor} does not specify a platform`);
     }
 
     return kax.task('Bundling MiniApps').run(
@@ -194,22 +194,22 @@ export async function runCaudronBundleGen(
           pathToYarnLock: pathToYarnLock || undefined,
           resetCache,
           resolutions,
-        }
-      )
-    )
+        },
+      ),
+    );
   } catch (e) {
-    log.error(`runCauldronBundleGen failed: ${e}`)
-    throw e
+    log.error(`runCauldronBundleGen failed: ${e}`);
+    throw e;
   }
 }
 
 function getGeneratorForPlatform(platform: string): ContainerGenerator {
   switch (platform) {
     case 'android':
-      return new AndroidGenerator()
+      return new AndroidGenerator();
     case 'ios':
-      return new IosGenerator()
+      return new IosGenerator();
     default:
-      throw new Error(`Unsupported platform : ${platform}`)
+      throw new Error(`Unsupported platform : ${platform}`);
   }
 }

@@ -1,15 +1,16 @@
-import { epilog, tryCatchWrap } from '../lib'
+import { epilog, tryCatchWrap } from '../lib';
 import {
   AppVersionDescriptor,
   deviceConfig,
   PackagePath,
   readPackageJson,
-} from 'ern-core'
-import { parseJsonFromStringOrFile, runMiniApp } from 'ern-orchestrator'
-import { Argv } from 'yargs'
+} from 'ern-core';
+import { parseJsonFromStringOrFile, runMiniApp } from 'ern-orchestrator';
+import { Argv } from 'yargs';
 
-export const command = 'run-android'
-export const desc = 'Run one or more MiniApps in the Android Runner application'
+export const command = 'run-android';
+export const desc =
+  'Run one or more MiniApps in the Android Runner application';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -65,8 +66,8 @@ export const builder = (argv: Argv) => {
       describe: 'Use the previously selected device to avoid prompt',
       type: 'boolean',
     })
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   baseComposite,
@@ -80,25 +81,25 @@ export const commandHandler = async ({
   port,
   usePreviousDevice,
 }: {
-  baseComposite?: PackagePath
-  extra?: string
-  descriptor?: AppVersionDescriptor
-  dev?: boolean
-  host?: string
-  launchFlags?: string
-  mainMiniAppName?: string
-  miniapps?: PackagePath[]
-  port?: string
-  usePreviousDevice?: boolean
+  baseComposite?: PackagePath;
+  extra?: string;
+  descriptor?: AppVersionDescriptor;
+  dev?: boolean;
+  host?: string;
+  launchFlags?: string;
+  mainMiniAppName?: string;
+  miniapps?: PackagePath[];
+  port?: string;
+  usePreviousDevice?: boolean;
 }) => {
-  deviceConfig.updateDeviceConfig('android', usePreviousDevice)
+  deviceConfig.updateDeviceConfig('android', usePreviousDevice);
 
-  const miniAppPackageJson = await readPackageJson(process.cwd())
+  const miniAppPackageJson = await readPackageJson(process.cwd());
   const extraObj =
     (extra && (await parseJsonFromStringOrFile(extra))) ||
     miniAppPackageJson.ern
       ? miniAppPackageJson.ern
-      : {}
+      : {};
 
   await runMiniApp('android', {
     baseComposite,
@@ -110,8 +111,8 @@ export const commandHandler = async ({
     mainMiniAppName,
     miniapps,
     port,
-  })
-  process.exit(0)
-}
+  });
+  process.exit(0);
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

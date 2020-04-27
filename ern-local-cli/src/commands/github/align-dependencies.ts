@@ -1,17 +1,17 @@
-import { getActiveCauldron } from 'ern-cauldron-api'
-import { AppVersionDescriptor, PackagePath } from 'ern-core'
-import { alignPackageJsonOnManifest } from 'ern-orchestrator'
+import { getActiveCauldron } from 'ern-cauldron-api';
+import { AppVersionDescriptor, PackagePath } from 'ern-core';
+import { alignPackageJsonOnManifest } from 'ern-orchestrator';
 import {
   askUserToChooseANapDescriptorFromCauldron,
   epilog,
   logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
-} from '../../lib'
-import { Argv } from 'yargs'
+} from '../../lib';
+import { Argv } from 'yargs';
 
-export const command = 'align-dependencies'
+export const command = 'align-dependencies';
 export const desc =
-  'Align dependencies of all GitHub based packages on a manifest id'
+  'Align dependencies of all GitHub based packages on a manifest id';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -34,8 +34,8 @@ export const builder = (argv: Argv) => {
       describe: 'Only update package.json of MiniApps',
       type: 'boolean',
     })
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   descriptor,
@@ -43,16 +43,16 @@ export const commandHandler = async ({
   manifestId = 'default',
   miniAppsOnly,
 }: {
-  descriptor?: AppVersionDescriptor
-  jsApiImplsOnly?: boolean
-  manifestId?: string
-  miniAppsOnly?: boolean
+  descriptor?: AppVersionDescriptor;
+  jsApiImplsOnly?: boolean;
+  manifestId?: string;
+  miniAppsOnly?: boolean;
 } = {}) => {
   descriptor =
     descriptor ||
     (await askUserToChooseANapDescriptorFromCauldron({
       onlyNonReleasedVersions: true,
-    }))
+    }));
 
   await logErrorAndExitIfNotSatisfied({
     isEnvVariableDefined: {
@@ -68,18 +68,18 @@ export const commandHandler = async ({
       extraErrorMessage:
         'This command cannot work on a non existing native application version',
     },
-  })
+  });
 
-  const cauldron = await getActiveCauldron()
+  const cauldron = await getActiveCauldron();
 
   const packages: PackagePath[] = await cauldron.getContainerJsPackages({
     descriptor,
     jsApiImplsOnly,
     miniAppsOnly,
     type: 'branches',
-  })
+  });
 
-  await alignPackageJsonOnManifest({ manifestId, packages })
-}
+  await alignPackageJsonOnManifest({ manifestId, packages });
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

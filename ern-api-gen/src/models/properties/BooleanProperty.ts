@@ -1,5 +1,5 @@
-import { Property } from './Property'
+import { Property } from './Property';
 
 export class BooleanProperty extends Property {
-  public static TYPE = 'boolean'
+  public static TYPE = 'boolean';
 }

@@ -1,9 +1,9 @@
-import ConfigHelp from './cmd/ConfigHelp'
-import Generate from './cmd/Generate'
-import Langs from './cmd/Langs'
-import Meta from './cmd/Meta'
-import { Cli, Help } from './java/cli'
-import { log } from 'ern-core'
+import ConfigHelp from './cmd/ConfigHelp';
+import Generate from './cmd/Generate';
+import Langs from './cmd/Langs';
+import Meta from './cmd/Meta';
+import { Cli, Help } from './java/cli';
+import { log } from 'ern-core';
 
 /**
  * User: lanwen
@@ -22,15 +22,15 @@ export default class SwaggerCodegen {
       .withDefaultCommand(Langs)
       .withCommands(Generate, Meta, Langs, Help, ConfigHelp)
       .build()
-      .parse(args)
+      .parse(args);
   }
 }
 if (require.main === module) {
   SwaggerCodegen.main(process.argv.slice(2)).then(
     x => log.info(x),
     err => {
-      log.error(err.message)
-      process.exit(1)
-    }
-  )
+      log.error(err.message);
+      process.exit(1);
+    },
+  );
 }

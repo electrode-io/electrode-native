@@ -1,17 +1,17 @@
-import Mustache from '../src/java/Mustache'
-import { expect } from 'chai'
+import Mustache from '../src/java/Mustache';
+import { expect } from 'chai';
 
-const RENDER = 'render:'
+const RENDER = 'render:';
 
 function mustache(data, out) {
   return function() {
-    const { title } = this.test
-    const template = title.substring(title.indexOf(RENDER) + RENDER.length + 1)
+    const { title } = this.test;
+    const template = title.substring(title.indexOf(RENDER) + RENDER.length + 1);
     const str = Mustache.compiler()
       .compile(template)
-      .execute(data)
-    expect(str, template).to.eql(out)
-  }
+      .execute(data);
+    expect(str, template).to.eql(out);
+  };
 }
 describe('Mustache', function() {
   it('should render 1, 2, 3', function() {
@@ -20,9 +20,9 @@ describe('Mustache', function() {
       .execute({
         arr: [1, 2, 3],
         other: 'ef',
-      })
-    expect(out).to.eql(`1, 2, 3`)
-  })
+      });
+    expect(out).to.eql(`1, 2, 3`);
+  });
   it(
     'should render: {{#arr.+isMatch}}{{value}}{{/arr.+isMatch}}',
     mustache(
@@ -43,9 +43,9 @@ describe('Mustache', function() {
         ],
         other: 'ef',
       },
-      'ac'
-    )
-  )
+      'ac',
+    ),
+  );
   it(
     'should render: {{#arr.b}}{{.}}{{/arr.b}}',
     mustache(
@@ -60,9 +60,9 @@ describe('Mustache', function() {
         ],
         other: 'ef',
       },
-      'he'
-    )
-  )
+      'he',
+    ),
+  );
   it(
     'should render: {{#arr.b-isMatch}}{{c}}{{/arr.b-isMatch}}',
     mustache(
@@ -87,9 +87,9 @@ describe('Mustache', function() {
         ],
         other: 'ef',
       },
-      'he'
-    )
-  )
+      'he',
+    ),
+  );
   it(
     'should render: {{#arr}}{{b-c}}{{/arr}}',
     mustache(
@@ -104,9 +104,9 @@ describe('Mustache', function() {
         ],
         other: 'ef',
       },
-      'he'
-    )
-  )
+      'he',
+    ),
+  );
 
   it(
     'should deep render: {{#arr.b.c}}{{.}}{{/arr.b.c}}',
@@ -126,9 +126,9 @@ describe('Mustache', function() {
         ],
         other: 'ef',
       },
-      'he'
-    )
-  )
+      'he',
+    ),
+  );
   it(
     'should deep missing, render: {{#arr.b.c}}{{.}}{{/arr.b.c}}',
     mustache(
@@ -152,27 +152,27 @@ describe('Mustache', function() {
         ],
         other: 'ef',
       },
-      'he'
-    )
-  )
+      'he',
+    ),
+  );
   it(
     'shound render: {{#test.0}}hello{{/test.0}}',
     mustache(
       {
         test: [1, 2, 3],
       },
-      'hello'
-    )
-  )
+      'hello',
+    ),
+  );
   it(
     'shound render: me{{#test.0}}hello{{/test.0}}',
     mustache(
       {
         test: [],
       },
-      'me'
-    )
-  )
+      'me',
+    ),
+  );
   it(
     'shound render: {{#apiInfo}}{{#apis.0}}{{#operations}}{{#operation.0}}hello{{/operation.0}}{{/operations}}{{/apis.0}}{{/apiInfo}}',
     mustache(
@@ -185,9 +185,9 @@ describe('Mustache', function() {
           ],
         },
       },
-      ''
-    )
-  )
+      '',
+    ),
+  );
   it(
     'shound with data render: {{#apiInfo}}{{#apis.0}}{{#operations}}{{#operation.0}}hello{{/operation.0}}{{/operations}}{{/apis.0}}{{/apiInfo}}',
     mustache(
@@ -200,9 +200,9 @@ describe('Mustache', function() {
           ],
         },
       },
-      ''
-    )
-  )
+      '',
+    ),
+  );
 
   it(
     "should render: {{#imports}}import {{import}} from '../{{#modelPackage}}{{modelPackage}}/{{/modelPackage}}{{import}}';{{/imports}}",
@@ -215,7 +215,7 @@ describe('Mustache', function() {
         ],
         modelPackage: 'model',
       },
-      "import Hello from '../model/Hello';"
-    )
-  )
-})
+      "import Hello from '../model/Hello';",
+    ),
+  );
+});

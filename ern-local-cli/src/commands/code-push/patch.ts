@@ -1,5 +1,5 @@
-import { AppVersionDescriptor, log } from 'ern-core'
-import { performCodePushPatch } from 'ern-orchestrator'
+import { AppVersionDescriptor, log } from 'ern-core';
+import { performCodePushPatch } from 'ern-orchestrator';
 import {
   askUserForCodePushDeploymentName,
   askUserForCodePushLabel,
@@ -7,11 +7,11 @@ import {
   epilog,
   logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
-} from '../../lib'
-import { Argv } from 'yargs'
+} from '../../lib';
+import { Argv } from 'yargs';
 
-export const command = 'patch'
-export const desc = 'Patch a CodePush release'
+export const command = 'patch';
+export const desc = 'Patch a CodePush release';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -53,8 +53,8 @@ export const builder = (argv: Argv) => {
         'Percentage of users this release should be immediately available to',
       type: 'number',
     })
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   deploymentName,
@@ -65,19 +65,19 @@ export const commandHandler = async ({
   mandatory,
   rollout,
 }: {
-  deploymentName?: string
-  description?: string
-  descriptor?: AppVersionDescriptor
-  disabled?: boolean
-  label?: string
-  mandatory?: boolean
-  rollout?: number
+  deploymentName?: string;
+  description?: string;
+  descriptor?: AppVersionDescriptor;
+  disabled?: boolean;
+  label?: string;
+  mandatory?: boolean;
+  rollout?: number;
 }) => {
   descriptor =
     descriptor ||
     (await askUserToChooseANapDescriptorFromCauldron({
       onlyReleasedVersions: true,
-    }))
+    }));
 
   await logErrorAndExitIfNotSatisfied({
     napDescriptorExistInCauldron: {
@@ -85,19 +85,19 @@ export const commandHandler = async ({
       extraErrorMessage:
         'You cannot CodePush to a non existing native application version.',
     },
-  })
+  });
 
   deploymentName =
-    deploymentName || (await askUserForCodePushDeploymentName(descriptor))
-  label = label || (await askUserForCodePushLabel())
+    deploymentName || (await askUserForCodePushDeploymentName(descriptor));
+  label = label || (await askUserForCodePushLabel());
 
   await performCodePushPatch(descriptor, deploymentName, label, {
     description,
     isDisabled: disabled,
     isMandatory: mandatory,
     rollout,
-  })
-  log.info(`Successfully patched ${descriptor} ${deploymentName} ${label}`)
-}
+  });
+  log.info(`Successfully patched ${descriptor} ${deploymentName} ${label}`);
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

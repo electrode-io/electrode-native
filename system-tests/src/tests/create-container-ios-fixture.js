@@ -1,12 +1,12 @@
-const run = require('../utils/run')
-const assert = require('../utils/assert')
-const sameDirContent = require('../utils/sameDirContent')
-const f = require('../../fixtures/constants')
+const run = require('../utils/run');
+const assert = require('../utils/assert');
+const sameDirContent = require('../utils/sameDirContent');
+const f = require('../../fixtures/constants');
 
 const miniapps = [
   `${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion}`,
   `${f.movieDetailsMiniAppPkgName}@${f.movieDetailsMiniAppPkgVersion}`,
-]
+];
 
 const excludeFilter = [
   'project.pbxproj',
@@ -17,20 +17,20 @@ const excludeFilter = [
   'yarn.lock',
 ]
   .map(s => `**/${s}`)
-  .join(',')
+  .join(',');
 
 const command = `create-container --miniapps ${miniapps.join(
-  ' '
-)} -p ios --skipInstall --out ${process.cwd()}`
+  ' ',
+)} -p ios --skipInstall --out ${process.cwd()}`;
 
 if (process.platform === 'darwin') {
-  run(command)
+  run(command);
   assert(
     sameDirContent(f.pathToIosContainerFixture, process.cwd(), {
       excludeFilter,
     }),
-    'Generated IOS Container differ from reference fixture !'
-  )
+    'Generated IOS Container differ from reference fixture !',
+  );
 } else {
-  run(command)
+  run(command);
 }

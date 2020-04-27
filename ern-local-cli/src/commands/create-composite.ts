@@ -1,4 +1,4 @@
-import { generateComposite } from 'ern-composite-gen'
+import { generateComposite } from 'ern-composite-gen';
 import {
   AppVersionDescriptor,
   kax,
@@ -6,21 +6,21 @@ import {
   NativePlatform,
   PackagePath,
   Platform,
-} from 'ern-core'
-import { getActiveCauldron } from 'ern-cauldron-api'
+} from 'ern-core';
+import { getActiveCauldron } from 'ern-cauldron-api';
 import {
   askUserToChooseANapDescriptorFromCauldron,
   epilog,
   logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
-} from '../lib'
-import { Argv } from 'yargs'
-import fs from 'fs-extra'
-import path from 'path'
-import untildify from 'untildify'
+} from '../lib';
+import { Argv } from 'yargs';
+import fs from 'fs-extra';
+import path from 'path';
+import untildify from 'untildify';
 
-export const command = 'create-composite'
-export const desc = 'Create a JS composite project locally'
+export const command = 'create-composite';
+export const desc = 'Create a JS composite project locally';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -62,8 +62,8 @@ export const builder = (argv: Argv) => {
       type: 'string',
     })
     .coerce('outDir', p => untildify(p))
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   baseComposite,
@@ -74,30 +74,30 @@ export const commandHandler = async ({
   miniapps,
   outDir,
 }: {
-  baseComposite?: PackagePath
-  descriptor?: AppVersionDescriptor
-  extraJsDependencies?: PackagePath[]
-  fromGitBranches?: boolean
-  jsApiImpls?: PackagePath[]
-  miniapps?: PackagePath[]
-  outDir?: string
-  platform?: NativePlatform
+  baseComposite?: PackagePath;
+  descriptor?: AppVersionDescriptor;
+  extraJsDependencies?: PackagePath[];
+  fromGitBranches?: boolean;
+  jsApiImpls?: PackagePath[];
+  miniapps?: PackagePath[];
+  outDir?: string;
+  platform?: NativePlatform;
 } = {}) => {
   if (outDir && (await fs.pathExists(outDir))) {
     if ((await fs.readdir(outDir)).length > 0) {
       throw new Error(
         `${outDir} directory exists and is not empty.
-Output directory should either not exist (it will be created) or should be empty.`
-      )
+Output directory should either not exist (it will be created) or should be empty.`,
+      );
     }
   }
-  outDir = outDir || path.join(Platform.rootDirectory, 'miniAppsComposite')
+  outDir = outDir || path.join(Platform.rootDirectory, 'miniAppsComposite');
 
-  const cauldron = await getActiveCauldron({ throwIfNoActiveCauldron: false })
+  const cauldron = await getActiveCauldron({ throwIfNoActiveCauldron: false });
   if (!cauldron && !miniapps) {
     throw new Error(
-      "A Cauldron must be active if you don't explicitly provide miniapps"
-    )
+      "A Cauldron must be active if you don't explicitly provide miniapps",
+    );
   }
 
   // Full native application selector was not provided.
@@ -105,11 +105,11 @@ Output directory should either not exist (it will be created) or should be empty
   // containing all the native applications versions in the cauldron
   // Not needed if miniapps are directly provided
   if (!descriptor && !miniapps) {
-    descriptor = await askUserToChooseANapDescriptorFromCauldron()
+    descriptor = await askUserToChooseANapDescriptorFromCauldron();
   }
 
-  let pathToYarnLock
-  let resolutions
+  let pathToYarnLock;
+  let resolutions;
   if (descriptor) {
     await logErrorAndExitIfNotSatisfied({
       napDescriptorExistInCauldron: {
@@ -117,29 +117,32 @@ Output directory should either not exist (it will be created) or should be empty
         extraErrorMessage:
           'You cannot create a composite for a non-existing native application version.',
       },
-    })
+    });
     miniapps = await cauldron.getContainerMiniApps(descriptor, {
       favorGitBranches: !!fromGitBranches,
-    })
-    jsApiImpls = await cauldron.getContainerJsApiImpls(descriptor)
+    });
+    jsApiImpls = await cauldron.getContainerJsApiImpls(descriptor);
     const containerGenConfig = await cauldron.getContainerGeneratorConfig(
-      descriptor
-    )
+      descriptor,
+    );
     if (!containerGenConfig || !containerGenConfig.bypassYarnLock) {
-      pathToYarnLock = await cauldron.getPathToYarnLock(descriptor, 'container')
+      pathToYarnLock = await cauldron.getPathToYarnLock(
+        descriptor,
+        'container',
+      );
     } else {
       log.debug(
-        'Bypassing yarn.lock usage as bypassYarnLock flag is set in config'
-      )
+        'Bypassing yarn.lock usage as bypassYarnLock flag is set in config',
+      );
     }
     const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
-      descriptor
-    )
+      descriptor,
+    );
     baseComposite =
       baseComposite ||
       (compositeGenConfig?.baseComposite &&
-        PackagePath.fromString(compositeGenConfig.baseComposite))
-    resolutions = compositeGenConfig && compositeGenConfig.resolutions
+        PackagePath.fromString(compositeGenConfig.baseComposite));
+    resolutions = compositeGenConfig && compositeGenConfig.resolutions;
   }
 
   await kax.task('Generating Composite').run(
@@ -151,10 +154,10 @@ Output directory should either not exist (it will be created) or should be empty
       outDir,
       pathToYarnLock,
       resolutions,
-    })
-  )
+    }),
+  );
 
-  log.info(`Composite successfully generated in ${outDir}`)
-}
+  log.info(`Composite successfully generated in ${outDir}`);
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

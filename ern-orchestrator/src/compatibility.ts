@@ -5,12 +5,12 @@ import {
   manifest,
   MiniApp,
   PackagePath,
-} from 'ern-core'
-import { getActiveCauldron } from 'ern-cauldron-api'
-import _ from 'lodash'
-import chalk from 'chalk'
-import Table from 'cli-table'
-import semver from 'semver'
+} from 'ern-core';
+import { getActiveCauldron } from 'ern-cauldron-api';
+import _ from 'lodash';
+import chalk from 'chalk';
+import Table from 'cli-table';
+import semver from 'semver';
 
 //
 // Check compatibility of a given miniapp against one or multiple native apps
@@ -18,15 +18,15 @@ export async function checkCompatibilityWithNativeApp(
   miniApp: MiniApp,
   appName: string,
   platformName?: string,
-  versionName?: string
+  versionName?: string,
 ): Promise<any> {
   const compatReport: any[] = await kax.task('Checking compatibility').run(
     getNativeAppCompatibilityReport(miniApp, {
       appName,
       platformName,
       versionName,
-    })
-  )
+    }),
+  );
 
   for (const r of compatReport) {
     log.info(
@@ -34,13 +34,13 @@ export async function checkCompatibilityWithNativeApp(
         ' : ' +
         (r.isCompatible
           ? chalk.green('COMPATIBLE')
-          : chalk.red('NOT COMPATIBLE'))
-    )
+          : chalk.red('NOT COMPATIBLE')),
+    );
 
-    logCompatibilityReportTable(r.compatibility)
+    logCompatibilityReportTable(r.compatibility);
 
     if (appName && platformName && versionName) {
-      return r
+      return r;
     }
   }
 }
@@ -49,21 +49,21 @@ export async function checkCompatibilityWithNativeApp(
 // Check compatibility of a given miniapp against a given platform version
 export async function checkCompatibilityWithPlatform(
   miniApp: MiniApp,
-  platformVersion: string
+  platformVersion: string,
 ) {
-  const miniappDependencies = miniApp.getPackageJsonDependencies()
+  const miniappDependencies = miniApp.getPackageJsonDependencies();
   const platformDependencies = await manifest.getJsAndNativeDependencies({
     platformVersion,
-  })
+  });
 
-  const report = getCompatibility(miniappDependencies, platformDependencies)
-  const isCompatible = report.incompatible.length === 0
+  const report = getCompatibility(miniappDependencies, platformDependencies);
+  const isCompatible = report.incompatible.length === 0;
 
   log.info(
-    isCompatible ? chalk.green('COMPATIBLE') : chalk.red('NOT COMPATIBLE')
-  )
+    isCompatible ? chalk.green('COMPATIBLE') : chalk.red('NOT COMPATIBLE'),
+  );
 
-  logCompatibilityReportTable(report)
+  logCompatibilityReportTable(report);
 }
 
 //
@@ -76,18 +76,18 @@ export async function logCompatibilityReportTable(report: any) {
       chalk.cyan('Needed Version'),
       chalk.cyan('Local Version'),
     ],
-  })
+  });
 
   for (const compatibleEntry of report.compatible) {
     table.push([
       compatibleEntry.dependencyName,
       chalk.green(
-        compatibleEntry.remoteVersion ? compatibleEntry.remoteVersion : ''
+        compatibleEntry.remoteVersion ? compatibleEntry.remoteVersion : '',
       ),
       chalk.green(
-        compatibleEntry.localVersion ? compatibleEntry.localVersion : ''
+        compatibleEntry.localVersion ? compatibleEntry.localVersion : '',
       ),
-    ])
+    ]);
   }
 
   for (const compatibleNonStrictEntry of report.compatibleNonStrict) {
@@ -96,14 +96,14 @@ export async function logCompatibilityReportTable(report: any) {
       chalk.yellow(
         compatibleNonStrictEntry.remoteVersion
           ? compatibleNonStrictEntry.remoteVersion
-          : ''
+          : '',
       ),
       chalk.yellow(
         compatibleNonStrictEntry.localVersion
           ? compatibleNonStrictEntry.localVersion
-          : ''
+          : '',
       ),
-    ])
+    ]);
   }
 
   for (const incompatibleEntry of report.incompatible) {
@@ -111,10 +111,10 @@ export async function logCompatibilityReportTable(report: any) {
       incompatibleEntry.dependencyName,
       incompatibleEntry.remoteVersion,
       chalk.red(incompatibleEntry.localVersion),
-    ])
+    ]);
   }
 
-  log.info(table.toString())
+  log.info(table.toString());
 }
 
 //
@@ -126,22 +126,22 @@ export async function getNativeAppCompatibilityReport(
     platformName,
     versionName,
   }: {
-    appName?: string
-    platformName?: string
-    versionName?: string
-  }
+    appName?: string;
+    platformName?: string;
+    versionName?: string;
+  },
 ) {
-  const result: any[] = []
-  const cauldron = await getActiveCauldron()
-  const nativeApps = await cauldron.getAllNativeApps()
+  const result: any[] = [];
+  const cauldron = await getActiveCauldron();
+  const nativeApps = await cauldron.getAllNativeApps();
 
   // Todo : pass miniapp to these functions instead (or just move compat methods in MiniApp class maybe)
-  const nativeDependencies = await miniApp.getNativeDependencies()
+  const nativeDependencies = await miniApp.getNativeDependencies();
   const miniappDependencies = [
     ...nativeDependencies.apis,
     ...nativeDependencies.nativeApisImpl,
     ...nativeDependencies.thirdPartyInManifest,
-  ]
+  ];
 
   // I so love building pyramids !!! :P
   for (const nativeApp of nativeApps) {
@@ -153,19 +153,19 @@ export async function getNativeAppCompatibilityReport(
               const napDescriptor = new AppVersionDescriptor(
                 nativeApp.name,
                 nativeAppPlatform.name,
-                nativeAppVersion.name
-              )
+                nativeAppVersion.name,
+              );
               const nativeAppDependencies = await cauldron.getNativeDependencies(
-                napDescriptor
-              )
+                napDescriptor,
+              );
               const compatibility = getCompatibility(
                 miniappDependencies,
                 nativeAppDependencies,
                 {
                   uncompatibleIfARemoteDepIsMissing:
                     nativeAppVersion.isReleased,
-                }
-              )
+                },
+              );
               result.push({
                 appBinary: nativeAppVersion.binary,
                 appName: nativeApp.name,
@@ -174,7 +174,7 @@ export async function getNativeAppCompatibilityReport(
                 compatibility,
                 isCompatible: compatibility.incompatible.length === 0,
                 isReleased: nativeAppVersion.isReleased,
-              })
+              });
             }
           }
         }
@@ -182,7 +182,7 @@ export async function getNativeAppCompatibilityReport(
     }
   }
 
-  return result
+  return result;
 }
 
 //
@@ -239,26 +239,26 @@ export function getCompatibility(
   {
     uncompatibleIfARemoteDepIsMissing,
   }: {
-    uncompatibleIfARemoteDepIsMissing?: boolean
-  } = {}
+    uncompatibleIfARemoteDepIsMissing?: boolean;
+  } = {},
 ) {
   const result: any = {
     compatible: [],
     compatibleNonStrict: [],
     incompatible: [],
-  }
+  };
 
   for (const remoteDep of remoteDeps) {
     const localDep = _.find(localDeps, d =>
-      remoteDep.same(d, { ignoreVersion: true })
-    )
-    const localDepVersion = localDep ? localDep.version : undefined
+      remoteDep.same(d, { ignoreVersion: true }),
+    );
+    const localDepVersion = localDep ? localDep.version : undefined;
 
     const entry = {
       dependencyName: remoteDep.name,
       localVersion: localDepVersion,
       remoteVersion: remoteDep.version,
-    }
+    };
 
     // If a remote dependency exists locally the following applies in term
     // of compatibility
@@ -286,65 +286,65 @@ export function getCompatibility(
           semver.major(<string>remoteDep.version)
         ) {
           if (semver.lt(localDepVersion, <string>remoteDep.version)) {
-            result.compatibleNonStrict.push(entry)
+            result.compatibleNonStrict.push(entry);
           } else {
-            result.incompatible.push(entry)
+            result.incompatible.push(entry);
           }
         } else {
-          result.incompatible.push(entry)
+          result.incompatible.push(entry);
         }
       } else {
-        result.incompatible.push(entry)
+        result.incompatible.push(entry);
       }
     } else if (localDepVersion && localDepVersion === remoteDep.version) {
-      result.compatible.push(entry)
+      result.compatible.push(entry);
     }
   }
 
   if (uncompatibleIfARemoteDepIsMissing) {
     for (const localDep of localDeps) {
-      const remoteDep = _.find(remoteDeps, d => d.name! === localDep.name!)
-      const remoteDepVersion = remoteDep ? remoteDep.version : undefined
+      const remoteDep = _.find(remoteDeps, d => d.name! === localDep.name!);
+      const remoteDepVersion = remoteDep ? remoteDep.version : undefined;
 
       const entry = {
         dependencyName: localDep.name!,
         localVersion: localDep.version,
         remoteVersion: remoteDepVersion || 'MISSING',
-      }
+      };
 
       if (!remoteDepVersion) {
-        result.incompatible.push(entry)
+        result.incompatible.push(entry);
       }
     }
   }
 
-  return result
+  return result;
 }
 
 export async function areCompatible(
   miniApps: PackagePath[],
-  targetDescriptor: AppVersionDescriptor
+  targetDescriptor: AppVersionDescriptor,
 ): Promise<boolean> {
   for (const miniApp of miniApps) {
     const miniAppInstance = await kax
       .task(
-        `Checking native dependencies version alignment of ${miniApp} with ${targetDescriptor}`
+        `Checking native dependencies version alignment of ${miniApp} with ${targetDescriptor}`,
       )
-      .run(MiniApp.fromPackagePath(new PackagePath(miniApp.toString())))
+      .run(MiniApp.fromPackagePath(new PackagePath(miniApp.toString())));
     const report = await checkCompatibilityWithNativeApp(
       miniAppInstance,
       targetDescriptor.name,
       targetDescriptor.platform || undefined,
-      targetDescriptor.version || undefined
-    )
+      targetDescriptor.version || undefined,
+    );
     if (!report.isCompatible) {
-      log.warn('At least one native dependency version is not aligned !')
-      return false
+      log.warn('At least one native dependency version is not aligned !');
+      return false;
     } else {
       log.info(
-        `${miniApp} native dependencies versions are aligned with ${targetDescriptor}`
-      )
+        `${miniApp} native dependencies versions are aligned with ${targetDescriptor}`,
+      );
     }
   }
-  return true
+  return true;
 }

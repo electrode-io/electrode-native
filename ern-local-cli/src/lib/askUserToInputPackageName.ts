@@ -1,4 +1,4 @@
-import inquirer from 'inquirer'
+import inquirer from 'inquirer';
 
 export async function askUserToInputPackageName({
   defaultPackageName,
@@ -10,6 +10,6 @@ export async function askUserToInputPackageName({
       name: 'packageName',
       type: 'input',
     },
-  ])
-  return packageName
+  ]);
+  return packageName;
 }

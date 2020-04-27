@@ -1,5 +1,5 @@
-import { NumberProperty } from './NumberProperty'
+import { NumberProperty } from './NumberProperty';
 
 export class DecimalProperty extends NumberProperty {
-  public static FORMAT = 'decimal'
+  public static FORMAT = 'decimal';
 }

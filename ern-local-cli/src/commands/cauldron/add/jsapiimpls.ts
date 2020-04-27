@@ -1,17 +1,17 @@
-import { AppVersionDescriptor, log, PackagePath } from 'ern-core'
-import { getActiveCauldron } from 'ern-cauldron-api'
-import { syncCauldronContainer } from 'ern-orchestrator'
+import { AppVersionDescriptor, log, PackagePath } from 'ern-core';
+import { getActiveCauldron } from 'ern-cauldron-api';
+import { syncCauldronContainer } from 'ern-orchestrator';
 import {
   askUserToChooseANapDescriptorFromCauldron,
   epilog,
   logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
-} from '../../../lib'
-import { Argv } from 'yargs'
+} from '../../../lib';
+import { Argv } from 'yargs';
 
-export const command = 'jsapiimpls <jsapiimpls..>'
+export const command = 'jsapiimpls <jsapiimpls..>';
 export const desc =
-  'Add one or more JS API implementation(s) to a given native application version in the Cauldron'
+  'Add one or more JS API implementation(s) to a given native application version in the Cauldron';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -33,8 +33,8 @@ export const builder = (argv: Argv) => {
         'Indicates whether to reset the React Native cache prior to bundling',
       type: 'boolean',
     })
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   containerVersion,
@@ -42,16 +42,16 @@ export const commandHandler = async ({
   jsapiimpls,
   resetCache,
 }: {
-  containerVersion?: string
-  descriptor?: AppVersionDescriptor
-  jsapiimpls: PackagePath[]
-  resetCache?: boolean
+  containerVersion?: string;
+  descriptor?: AppVersionDescriptor;
+  jsapiimpls: PackagePath[];
+  resetCache?: boolean;
 }) => {
   descriptor =
     descriptor ||
     (await askUserToChooseANapDescriptorFromCauldron({
       onlyNonReleasedVersions: true,
-    }))
+    }));
 
   await logErrorAndExitIfNotSatisfied({
     isNewerContainerVersion: containerVersion
@@ -70,7 +70,7 @@ export const commandHandler = async ({
       extraErrorMessage:
         'This command cannot work on a non existing native application version',
     },
-  })
+  });
 
   const cauldronCommitMessage = [
     `${
@@ -78,21 +78,21 @@ export const commandHandler = async ({
         ? `Add ${jsapiimpls[0]} JS API implementation to ${descriptor}`
         : `Add multiple JS API implementations to ${descriptor}`
     }`,
-  ]
+  ];
 
-  const cauldron = await getActiveCauldron()
+  const cauldron = await getActiveCauldron();
   await syncCauldronContainer(
     async () => {
       for (const jsApiImpl of jsapiimpls) {
-        cauldronCommitMessage.push(`- Add ${jsApiImpl} JS API Implementation`)
+        cauldronCommitMessage.push(`- Add ${jsApiImpl} JS API Implementation`);
       }
-      await cauldron.syncContainerJsApiImpls(descriptor!, jsapiimpls)
+      await cauldron.syncContainerJsApiImpls(descriptor!, jsapiimpls);
     },
     descriptor,
     cauldronCommitMessage,
-    { containerVersion, resetCache }
-  )
-  log.info(`JS API implementation(s) successfully added to ${descriptor}`)
-}
+    { containerVersion, resetCache },
+  );
+  log.info(`JS API implementation(s) successfully added to ${descriptor}`);
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

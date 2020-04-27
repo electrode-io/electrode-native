@@ -1,46 +1,46 @@
 /* tslint:disable:variable-name */
-import JavascriptClientCodegen from './JavascriptClientCodegen'
-import SupportingFile from '../SupportingFile'
+import JavascriptClientCodegen from './JavascriptClientCodegen';
+import SupportingFile from '../SupportingFile';
 
 export default class ES6Codegen extends JavascriptClientCodegen {
-  public __templateDir = 'es6'
-  public invokerPackage = ''
+  public __templateDir = 'es6';
+  public invokerPackage = '';
 
   constructor() {
-    super()
+    super();
     this.__supportingFiles = this.__supportingFiles.filter(
-      v => v.templateFile !== 'mocha.opts'
-    )
+      v => v.templateFile !== 'mocha.opts',
+    );
     this.__supportingFiles.push(
-      new SupportingFile('babelrc.mustache', '', '.babelrc')
-    )
+      new SupportingFile('babelrc.mustache', '', '.babelrc'),
+    );
     this.__supportingFiles.push(
-      new SupportingFile('npmignore.mustache', '', '.npmignore')
-    )
+      new SupportingFile('npmignore.mustache', '', '.npmignore'),
+    );
     this.__supportingFiles.push(
-      new SupportingFile('gitignore.mustache', '', '.gitignore')
-    )
+      new SupportingFile('gitignore.mustache', '', '.gitignore'),
+    );
 
-    this.usePromises = true
+    this.usePromises = true;
   }
 
   public processOpts() {
-    super.processOpts()
+    super.processOpts();
     const f = this[
       `addSupportingFilesFor${JavascriptClientCodegen.camelize(
-        this.getLibrary()
+        this.getLibrary(),
       )}`
-    ]
+    ];
     if (f) {
-      f.call(this)
+      f.call(this);
     }
   }
 
   public getName() {
-    return 'ES6'
+    return 'ES6';
   }
 
   public apiFileFolder() {
-    return this.__outputFolder + '/src/api'
+    return this.__outputFolder + '/src/api';
   }
 }

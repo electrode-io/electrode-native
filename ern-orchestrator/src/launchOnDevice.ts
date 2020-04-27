@@ -1,6 +1,6 @@
-import { ios, IosDevice, kax, shell } from 'ern-core'
-import { buildIosRunner } from './buildIosRunner'
-import { spawnSync } from 'child_process'
+import { ios, IosDevice, kax, shell } from 'ern-core';
+import { buildIosRunner } from './buildIosRunner';
+import { spawnSync } from 'child_process';
 
 export async function launchOnDevice(
   pathToIosRunner: string,
@@ -8,19 +8,19 @@ export async function launchOnDevice(
   {
     launchArgs,
     launchEnvVars,
-  }: { launchArgs?: string; launchEnvVars?: string } = {}
+  }: { launchArgs?: string; launchEnvVars?: string } = {},
 ) {
-  const iPhoneDevice = await ios.askUserToSelectAniPhoneDevice(devices)
-  shell.pushd(pathToIosRunner)
+  const iPhoneDevice = await ios.askUserToSelectAniPhoneDevice(devices);
+  shell.pushd(pathToIosRunner);
 
   try {
     await kax
       .task('Building iOS Runner project')
-      .run(buildIosRunner(pathToIosRunner, iPhoneDevice.udid))
+      .run(buildIosRunner(pathToIosRunner, iPhoneDevice.udid));
 
     const kaxDeployTask = kax.task(
-      `Installing iOS Runner on ${iPhoneDevice.name}`
-    )
+      `Installing iOS Runner on ${iPhoneDevice.name}`,
+    );
     try {
       const iosDeployInstallArgs = [
         '--bundle',
@@ -28,30 +28,30 @@ export async function launchOnDevice(
         '--id',
         iPhoneDevice.udid,
         '--justlaunch',
-      ]
+      ];
       if (launchArgs) {
-        iosDeployInstallArgs.push('--args')
-        iosDeployInstallArgs.push(launchArgs.split(' '))
+        iosDeployInstallArgs.push('--args');
+        iosDeployInstallArgs.push(launchArgs.split(' '));
       }
       if (launchEnvVars) {
-        iosDeployInstallArgs.push('--envs')
-        iosDeployInstallArgs.push(launchEnvVars.split(' '))
+        iosDeployInstallArgs.push('--envs');
+        iosDeployInstallArgs.push(launchEnvVars.split(' '));
       }
       const iosDeployOutput = spawnSync('ios-deploy', iosDeployInstallArgs, {
         encoding: 'utf8',
-      })
+      });
       if (iosDeployOutput.error) {
         kaxDeployTask.fail(
-          `Installation failed. Make sure you have run 'npm install -g ios-deploy'.`
-        )
+          `Installation failed. Make sure you have run 'npm install -g ios-deploy'.`,
+        );
       } else {
-        kaxDeployTask.succeed()
+        kaxDeployTask.succeed();
       }
     } catch (e) {
-      kaxDeployTask.fail(e.message)
-      throw e
+      kaxDeployTask.fail(e.message);
+      throw e;
     }
   } finally {
-    shell.popd()
+    shell.popd();
   }
 }

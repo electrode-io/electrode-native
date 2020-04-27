@@ -1,4 +1,4 @@
 export interface CauldronObject {
-  name: string
-  config?: any
+  name: string;
+  config?: any;
 }

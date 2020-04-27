@@ -2,12 +2,12 @@ import {
   findDirectoriesHavingRnConfig,
   handleCopyDirective,
   NativePlatform,
-} from 'ern-core'
-import { getAssetsPath } from './getAssetsPath'
-import readDir from 'fs-readdir-recursive'
-import path from 'path'
+} from 'ern-core';
+import { getAssetsPath } from './getAssetsPath';
+import readDir from 'fs-readdir-recursive';
+import path from 'path';
 
-export const supportedAssetsExts = ['.ttf', '.otf']
+export const supportedAssetsExts = ['.ttf', '.otf'];
 
 /**
  * Copy in Container, the assets of all packages found in Composite,
@@ -24,29 +24,29 @@ export async function copyRnConfigAssets({
   outDir,
   platform,
 }: {
-  compositePath: string
-  outDir: string
-  platform: NativePlatform
+  compositePath: string;
+  outDir: string;
+  platform: NativePlatform;
 }) {
-  const dirs = await findDirectoriesHavingRnConfig(compositePath)
+  const dirs = await findDirectoriesHavingRnConfig(compositePath);
 
   for (const dir of dirs) {
-    const rnConfig: any = require(path.join(dir, 'react-native.config.js'))
+    const rnConfig: any = require(path.join(dir, 'react-native.config.js'));
     const assets =
-      rnConfig.assets || (rnConfig.dependency && rnConfig.dependency.assets)
+      rnConfig.assets || (rnConfig.dependency && rnConfig.dependency.assets);
     if (assets) {
       for (const assetDir of assets) {
-        const absDir = path.join(dir, assetDir)
+        const absDir = path.join(dir, assetDir);
         readDir(absDir)
           .filter(p => {
-            return supportedAssetsExts.includes(path.extname(p))
+            return supportedAssetsExts.includes(path.extname(p));
           })
           .map(p => path.join(assetDir, p))
           .forEach(p => {
             handleCopyDirective(dir, outDir, [
               { source: p, dest: getAssetsPath(platform, 'fonts') },
-            ])
-          })
+            ]);
+          });
       }
     }
   }

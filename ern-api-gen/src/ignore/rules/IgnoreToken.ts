@@ -1,36 +1,36 @@
 export class IgnoreToken {
-  public name
-  public pattern
+  public name;
+  public pattern;
 
   constructor(name, pattern) {
-    this.name = name
-    this.pattern = pattern
-    IgnoreToken[name] = this
+    this.name = name;
+    this.pattern = pattern;
+    IgnoreToken[name] = this;
   }
 
   public getPattern() {
-    return this.pattern
+    return this.pattern;
   }
 
   public ordinal() {
-    return ENUMS.indexOf(this)
+    return ENUMS.indexOf(this);
   }
 
   public toString() {
-    return this.name
+    return this.name;
   }
 
   public equals(that) {
     if (that == null) {
-      return false
+      return false;
     }
     if (this === that) {
-      return true
+      return true;
     }
     if (typeof that === 'string') {
-      return this.name === that
+      return this.name === that;
     }
-    return this.name === that.name
+    return this.name === that.name;
   }
 }
 
@@ -45,7 +45,7 @@ const ENUMS = [
   new IgnoreToken('PATH_DELIM', '/'),
   new IgnoreToken('ROOTED_MARKER', '/'),
   new IgnoreToken('TEXT', null),
-]
+];
 
 export default {
   COMMENT: ENUMS[0],
@@ -58,4 +58,4 @@ export default {
   PATH_DELIM: ENUMS[7],
   ROOTED_MARKER: ENUMS[8],
   TEXT: ENUMS[9],
-}
+};

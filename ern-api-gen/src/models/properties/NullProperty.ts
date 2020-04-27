@@ -1,5 +1,5 @@
-import { Property } from './Property'
+import { Property } from './Property';
 
 export class NullProperty extends Property {
-  public static TYPE = 'null'
+  public static TYPE = 'null';
 }

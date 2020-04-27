@@ -1,4 +1,4 @@
-import { PackagePath } from 'ern-core'
+import { PackagePath } from 'ern-core';
 
 export interface ContainerPublisherConfig {
   /**
@@ -11,37 +11,37 @@ export interface ContainerPublisherConfig {
    * - If version is omitted, the latest version will be used
    * - If version is specified, the exact version will be used
    */
-  publisher: PackagePath
+  publisher: PackagePath;
   /**
    * Local file system path to the generated Container to publish
    */
-  containerPath: string
+  containerPath: string;
   /**
    * The platform of the Container to publish
    */
-  platform: 'android' | 'ios'
+  platform: 'android' | 'ios';
   /**
    * Version to use for publishing the Container
    */
-  containerVersion: string
+  containerVersion: string;
   /**
    * Version of Electrode Native used
    */
-  ernVersion?: string
+  ernVersion?: string;
   /**
    * Option url to publish the container to.
    * Specific to the publisher type
    */
-  url?: string
+  url?: string;
   /**
    * Optional extra configuration.
    * Specific to the publisher
    */
-  extra?: any
+  extra?: any;
   /**
    * Publish the container in place rather
    * than copying it to a temporary directory
    * to run publisher from
    */
-  inPlace?: boolean
+  inPlace?: boolean;
 }

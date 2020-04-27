@@ -1,5 +1,5 @@
-import { cauldronFileUriScheme, getActiveCauldron } from 'ern-cauldron-api'
-import fs from 'fs-extra'
+import { cauldronFileUriScheme, getActiveCauldron } from 'ern-cauldron-api';
+import fs from 'fs-extra';
 
 /**
  *
@@ -10,21 +10,21 @@ import fs from 'fs-extra'
  * the cauldron:// file scheme.
  */
 export async function parseJsonFromStringOrFile(s: string): Promise<any> {
-  let result
+  let result;
   try {
     if (s.startsWith(cauldronFileUriScheme)) {
-      const cauldron = await getActiveCauldron()
+      const cauldron = await getActiveCauldron();
       const file = await cauldron.getFile({
         cauldronFilePath: s,
-      })
-      result = JSON.parse(file.toString())
+      });
+      result = JSON.parse(file.toString());
     } else if (await fs.pathExists(s)) {
-      result = await fs.readJson(s)
+      result = await fs.readJson(s);
     } else {
-      result = JSON.parse(s)
+      result = JSON.parse(s);
     }
   } catch (e) {
-    throw new Error('[parseJsonFromStringOrFile] Invalid JSON or file')
+    throw new Error('[parseJsonFromStringOrFile] Invalid JSON or file');
   }
-  return result
+  return result;
 }

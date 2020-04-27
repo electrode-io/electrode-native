@@ -1,4 +1,4 @@
 export interface CauldronStartCommandConfigAndroid {
-  packageName: string
-  activityName?: string
+  packageName: string;
+  activityName?: string;
 }

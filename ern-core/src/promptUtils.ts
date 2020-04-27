@@ -1,8 +1,8 @@
-import inquirer from 'inquirer'
+import inquirer from 'inquirer';
 
 export async function askUserToChooseAnOption(
   choices: string[],
-  message?: string
+  message?: string,
 ): Promise<any> {
   const { userSelectedOption } = await inquirer.prompt([
     <inquirer.Question>{
@@ -11,6 +11,6 @@ export async function askUserToChooseAnOption(
       name: 'userSelectedOption',
       type: 'list',
     },
-  ])
-  return userSelectedOption
+  ]);
+  return userSelectedOption;
 }

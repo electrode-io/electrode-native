@@ -1,7 +1,7 @@
-import fs from 'fs-extra'
-import path from 'path'
-import beautify from 'js-beautify'
-import os from 'os'
+import fs from 'fs-extra';
+import path from 'path';
+import beautify from 'js-beautify';
+import os from 'os';
 
 export async function createMetroConfig({
   cwd,
@@ -10,11 +10,11 @@ export async function createMetroConfig({
   extraNodeModules,
   watchFolders,
 }: {
-  cwd?: string
-  projectRoot?: string
-  blacklistRe?: RegExp[]
-  extraNodeModules?: { [pkg: string]: string }
-  watchFolders?: string[]
+  cwd?: string;
+  projectRoot?: string;
+  blacklistRe?: RegExp[];
+  extraNodeModules?: { [pkg: string]: string };
+  watchFolders?: string[];
 }) {
   return fs.writeFile(
     path.join(cwd ?? path.resolve(), 'metro.config.js'),
@@ -24,7 +24,9 @@ module.exports = {
   ${
     watchFolders
       ? `watchFolders: [ 
-        ${watchFolders.map(x => `"${x.replace(/\\/g, '\\\\')}"`).join(`,${os.EOL}`)} 
+        ${watchFolders
+          .map(x => `"${x.replace(/\\/g, '\\\\')}"`)
+          .join(`,${os.EOL}`)} 
       ],`
       : ''
   }
@@ -87,6 +89,6 @@ module.exports = {
     assetPlugins: ['ern-bundle-store-metro-asset-plugin'],
   },
 };
-`)
-  )
+`),
+  );
 }

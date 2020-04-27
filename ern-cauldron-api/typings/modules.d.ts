@@ -1,1 +1,1 @@
-declare module 'mock-fs'
+declare module 'mock-fs';

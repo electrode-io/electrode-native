@@ -1,9 +1,9 @@
-import inquirer from 'inquirer'
+import inquirer from 'inquirer';
 
 export async function askUserInput({
   message,
 }: {
-  message: string
+  message: string;
 }): Promise<string> {
   const { result } = await inquirer.prompt([
     <inquirer.Question>{
@@ -11,6 +11,6 @@ export async function askUserInput({
       name: 'result',
       type: 'input',
     },
-  ])
-  return result
+  ]);
+  return result;
 }

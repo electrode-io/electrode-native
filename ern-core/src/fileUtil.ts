@@ -1,5 +1,5 @@
-import fs from 'fs'
-import shell from './shell'
+import fs from 'fs';
+import shell from './shell';
 
 /**
  * Recursively apply file mode for a given path
@@ -7,7 +7,7 @@ import shell from './shell'
  * @param path
  */
 export function chmodr(fileMode: string, filePath: string) {
-  shell.chmod('-R', fileMode, filePath)
+  shell.chmod('-R', fileMode, filePath);
 }
 
 /**
@@ -17,7 +17,7 @@ export function chmodr(fileMode: string, filePath: string) {
 export async function isExecutable(filePath: string): Promise<boolean> {
   return new Promise<boolean>(resolve => {
     fs.access(filePath, fs.constants.X_OK, err => {
-      err ? resolve(false) : resolve(true)
-    })
-  })
+      err ? resolve(false) : resolve(true);
+    });
+  });
 }

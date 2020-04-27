@@ -1,34 +1,34 @@
-import { PackagePath } from 'ern-core'
+import { PackagePath } from 'ern-core';
 
 export interface CompositeGeneratorConfig {
   /**
    * Base Composite
    */
-  baseComposite?: PackagePath
+  baseComposite?: PackagePath;
   /**
    * Additional JavaScript dependencies to add to the Composite
    */
-  extraJsDependencies?: PackagePath[]
+  extraJsDependencies?: PackagePath[];
   /**
    * JS API implementations that should be included in the generated Composite
    */
-  jsApiImplDependencies?: PackagePath[]
+  jsApiImplDependencies?: PackagePath[];
   /**
    *  MiniApps that should be included in the generated Composite
    */
-  miniApps: PackagePath[]
+  miniApps: PackagePath[];
   /**
    * The output directory where to generate the Composite
    */
-  outDir: string
+  outDir: string;
   /**
    * Path to the current Composite yarn lock
    */
-  pathToYarnLock?: string
+  pathToYarnLock?: string;
   /**
    * 1:1 mapping to resolutions field of composite package.json
    * https://yarnpkg.com/lang/en/docs/selective-version-resolutions
    * Can be used to force the version of selected packages
    */
-  resolutions?: { [pkg: string]: string }
+  resolutions?: { [pkg: string]: string };
 }

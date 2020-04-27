@@ -3,5 +3,5 @@
 // For example :
 // function foo(param1 = required('param1'), param2)
 export default function required(name: string) {
-  throw new Error(`${name} is required`)
+  throw new Error(`${name} is required`);
 }

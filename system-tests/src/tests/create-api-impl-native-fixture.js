@@ -1,7 +1,7 @@
-const run = require('../utils/run')
-const assert = require('../utils/assert')
-const sameDirContent = require('../utils/sameDirContent')
-const f = require('../../fixtures/constants')
+const run = require('../utils/run');
+const assert = require('../utils/assert');
+const sameDirContent = require('../utils/sameDirContent');
+const f = require('../../fixtures/constants');
 
 const excludeFilter = [
   'ElectrodeApiImpl.xcodeproj',
@@ -18,16 +18,16 @@ const excludeFilter = [
   'Podfile.lock',
 ]
   .map(s => `**/${s}`)
-  .join(',')
+  .join(',');
 
 run(
   `create-api-impl ${f.movieApiPkgName} -p ${
     f.movieApiImplPkgName
-  } --skipNpmCheck --nativeOnly --outputDirectory ${process.cwd()} --force`
-)
+  } --skipNpmCheck --nativeOnly --outputDirectory ${process.cwd()} --force`,
+);
 assert(
   sameDirContent(f.pathToNativeApiImplFixture, process.cwd(), {
     excludeFilter,
   }),
-  'Generated API Native Impl differ from reference fixture !'
-)
+  'Generated API Native Impl differ from reference fixture !',
+);

@@ -1,1 +1,1 @@
-export const containerMetadataFileName = 'container-metadata.json'
+export const containerMetadataFileName = 'container-metadata.json';

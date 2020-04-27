@@ -1,26 +1,26 @@
-import path from 'path'
-import fs from 'fs-extra'
-import { ModuleTypes } from 'ern-core'
-import { CodegenConfigurator, DefaultGenerator } from './index'
+import path from 'path';
+import fs from 'fs-extra';
+import { ModuleTypes } from 'ern-core';
+import { CodegenConfigurator, DefaultGenerator } from './index';
 import {
   FLOW_BIN_VERSION,
   FLOW_CONFIG_FILE,
   INITIAL_SCHEMA_FILE,
   MODEL_FILE,
   PKG_FILE,
-} from './Constants'
+} from './Constants';
 
 export const GENERATE = [
   ['android', 'ERNAndroid'],
   ['javascript', 'ERNES6'],
   ['IOS', 'ERNSwift'],
-]
+];
 
 export async function generateSwagger(
   { apiSchemaPath = MODEL_FILE, name, namespace = '', ...optional },
-  outFolder: string
+  outFolder: string,
 ) {
-  const inputSpec = path.resolve(outFolder, apiSchemaPath)
+  const inputSpec = path.resolve(outFolder, apiSchemaPath);
   const shared = {
     apiPackage: `${namespace}.api`,
     description: optional.apiDescription,
@@ -30,7 +30,7 @@ export async function generateSwagger(
     projectVersion: optional.apiVersion,
     version: optional.apiVersion,
     ...optional,
-  }
+  };
 
   for (const [projectName, lang] of GENERATE) {
     const cc = new CodegenConfigurator({
@@ -38,9 +38,9 @@ export async function generateSwagger(
       lang,
       outputDir: outFolder + '/' + projectName,
       projectName,
-    })
-    const opts = await cc.toClientOptInput()
-    new DefaultGenerator().opts(opts).generate()
+    });
+    const opts = await cc.toClientOptInput();
+    new DefaultGenerator().opts(opts).generate();
   }
 }
 export function generatePackageJson({
@@ -54,19 +54,19 @@ export function generatePackageJson({
   packageName,
   ...conf
 }: {
-  npmScope?: string
-  reactNativeVersion?: string
-  apiVersion?: string
-  apiDescription?: string
-  apiAuthor?: string
-  apiLicense?: string
-  bridgeVersion?: string
-  packageName?: string
-  config?: any
+  npmScope?: string;
+  reactNativeVersion?: string;
+  apiVersion?: string;
+  apiDescription?: string;
+  apiAuthor?: string;
+  apiLicense?: string;
+  bridgeVersion?: string;
+  packageName?: string;
+  config?: any;
 }) {
   // Reset the apiSchemaPath to schema.json
   // if --schemaPath option is used to create the Api
-  const options = { ...conf, apiSchemaPath: MODEL_FILE }
+  const options = { ...conf, apiSchemaPath: MODEL_FILE };
   // tslint:disable:object-literal-sort-keys
   return JSON.stringify(
     {
@@ -94,22 +94,22 @@ export function generatePackageJson({
       },
     },
     null,
-    2
-  ).concat('\n')
+    2,
+  ).concat('\n');
 }
 
 export async function generateInitialSchema({
   namespace,
   apiSchemaPath,
 }: {
-  namespace?: string
-  apiSchemaPath: string
+  namespace?: string;
+  apiSchemaPath: string;
 }) {
   const pathToSchemaFile =
     apiSchemaPath && fs.existsSync(apiSchemaPath)
       ? apiSchemaPath
-      : path.join(__dirname, '..', INITIAL_SCHEMA_FILE)
-  return fs.readFile(pathToSchemaFile)
+      : path.join(__dirname, '..', INITIAL_SCHEMA_FILE);
+  return fs.readFile(pathToSchemaFile);
 }
 
 export function generateFlowConfig(): string {
@@ -122,24 +122,24 @@ export function generateFlowConfig(): string {
 [lints]
 
 [options]
-`
+`;
 }
 
 export default async function generateProject(
   config: any = {},
-  outFolder: string
+  outFolder: string,
 ) {
   await fs.writeFile(
     path.join(outFolder, PKG_FILE),
-    generatePackageJson(config)
-  )
+    generatePackageJson(config),
+  );
   await fs.writeFile(
     path.join(outFolder, MODEL_FILE),
-    await generateInitialSchema(config)
-  )
+    await generateInitialSchema(config),
+  );
   await fs.writeFile(
     path.join(outFolder, FLOW_CONFIG_FILE),
-    generateFlowConfig()
-  )
-  await generateSwagger(config, outFolder)
+    generateFlowConfig(),
+  );
+  await generateSwagger(config, outFolder);
 }

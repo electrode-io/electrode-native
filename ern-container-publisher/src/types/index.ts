@@ -1,2 +1,2 @@
-export * from './ContainerPublisher'
-export * from './ContainerPublisherConfig'
+export * from './ContainerPublisher';
+export * from './ContainerPublisherConfig';

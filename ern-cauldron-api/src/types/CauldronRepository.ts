@@ -1,4 +1,4 @@
 export interface CauldronRepository {
-  alias: string
-  url: string
+  alias: string;
+  url: string;
 }

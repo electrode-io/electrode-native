@@ -1,17 +1,17 @@
-import { Cauldron, ICauldronDocumentStore } from './types'
+import { Cauldron, ICauldronDocumentStore } from './types';
 
 export default class InMemoryDocumentStore implements ICauldronDocumentStore {
-  public latestCommitedCauldron: any
-  public latestCommitMessage: string | string[]
-  public isPendingTransaction: boolean
-  private readonly pendingCauldron: Cauldron
+  public latestCommitedCauldron: any;
+  public latestCommitMessage: string | string[];
+  public isPendingTransaction: boolean;
+  private readonly pendingCauldron: Cauldron;
 
   constructor(cauldron: Cauldron) {
     if (!cauldron) {
-      throw new Error('A Cauldron document object must be provided')
+      throw new Error('A Cauldron document object must be provided');
     }
-    this.pendingCauldron = cauldron
-    this.isPendingTransaction = false
+    this.pendingCauldron = cauldron;
+    this.isPendingTransaction = false;
   }
 
   // ===========================================================
@@ -20,14 +20,14 @@ export default class InMemoryDocumentStore implements ICauldronDocumentStore {
 
   public async commit(message: string | string[]) {
     if (!this.isPendingTransaction) {
-      this.latestCommitedCauldron = this.pendingCauldron
-      this.latestCommitMessage = message
+      this.latestCommitedCauldron = this.pendingCauldron;
+      this.latestCommitMessage = message;
     }
-    return Promise.resolve()
+    return Promise.resolve();
   }
 
   public async getCauldron(): Promise<Cauldron> {
-    return Promise.resolve(this.pendingCauldron)
+    return Promise.resolve(this.pendingCauldron);
   }
 
   // ===========================================================
@@ -35,19 +35,19 @@ export default class InMemoryDocumentStore implements ICauldronDocumentStore {
   // ===========================================================
 
   public async beginTransaction() {
-    this.isPendingTransaction = true
-    return Promise.resolve()
+    this.isPendingTransaction = true;
+    return Promise.resolve();
   }
 
   public async commitTransaction(message: string | string[]) {
     if (this.isPendingTransaction) {
-      this.isPendingTransaction = false
-      return this.commit(message)
+      this.isPendingTransaction = false;
+      return this.commit(message);
     }
   }
 
   public async discardTransaction() {
-    this.isPendingTransaction = false
-    return Promise.resolve()
+    this.isPendingTransaction = false;
+    return Promise.resolve();
   }
 }

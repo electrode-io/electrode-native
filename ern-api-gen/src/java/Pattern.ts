@@ -6,54 +6,54 @@ const Pattern = {
   matches(regex, str) {
     return Pattern.compile(regex)
       .matcher(str)
-      .find()
+      .find();
   },
   split(regex, str) {
-    return Pattern.compile(regex).split(str)
+    return Pattern.compile(regex).split(str);
   },
   quote(str) {
-    return (str + '').replace(/[.?*+^$[\]\\(){}|-]/g, '\\$&')
+    return (str + '').replace(/[.?*+^$[\]\\(){}|-]/g, '\\$&');
   },
   compile(pattern, opts = '') {
-    let re = new RegExp(pattern, 'g' + opts)
+    let re = new RegExp(pattern, 'g' + opts);
 
     const p = {
       matcher(str) {
-        let found
+        let found;
         return {
           find() {
-            found = re.exec(str)
-            return found != null
+            found = re.exec(str);
+            return found != null;
           },
           start() {
-            return found.index
+            return found.index;
           },
           groupCount() {
-            return found.length
+            return found.length;
           },
           group(idx = 0) {
-            return found[idx]
+            return found[idx];
           },
           end() {
-            return re.lastIndex
+            return re.lastIndex;
           },
           replaceAll(replaceWith) {
-            return str.replace(re, replaceWith)
+            return str.replace(re, replaceWith);
           },
           reset() {
-            found = null
-            re = new RegExp(pattern, 'g' + opts)
+            found = null;
+            re = new RegExp(pattern, 'g' + opts);
           },
-        }
+        };
       },
       split(str, count?: any) {
-        return re[Symbol.split](str, count)
+        return re[Symbol.split](str, count);
       },
       pattern() {
-        return p
+        return p;
       },
-    }
-    return p
+    };
+    return p;
   },
-}
-export default Pattern
+};
+export default Pattern;

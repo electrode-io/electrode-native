@@ -1,8 +1,8 @@
-const fs = require('fs')
-const dircompare = require('dir-compare')
-const jsdiff = require('diff')
-const path = require('path')
-require('colors')
+const fs = require('fs');
+const dircompare = require('dir-compare');
+const jsdiff = require('diff');
+const path = require('path');
+require('colors');
 
 //
 // Given two directories paths (pathA and pathB) and an array of file names
@@ -15,27 +15,27 @@ module.exports = function(
   pathB,
   {
     excludeFilter, // File/directory name exclude filter. Comma separated minimatch patterns.
-  } = {}
+  } = {},
 ) {
-  let result = true
+  let result = true;
   const directoriesDiff = dircompare.compareSync(pathA, pathB, {
     compareContent: true,
     excludeFilter,
-  })
+  });
   for (const diff of directoriesDiff.diffSet) {
     if (diff.state === 'distinct') {
-      console.log('A difference in content was found !')
-      console.log(JSON.stringify(diff))
+      console.log('A difference in content was found !');
+      console.log(JSON.stringify(diff));
       let diffLine = jsdiff.diffLines(
         fs.readFileSync(path.join(diff.path1, diff.name1)).toString(),
-        fs.readFileSync(path.join(diff.path2, diff.name2)).toString()
-      )
+        fs.readFileSync(path.join(diff.path2, diff.name2)).toString(),
+      );
       diffLine.forEach(part => {
-        let color = part.added ? 'green' : part.removed ? 'red' : 'grey'
-        process.stderr.write(part.value[color])
-      })
-      result = false
+        let color = part.added ? 'green' : part.removed ? 'red' : 'grey';
+        process.stderr.write(part.value[color]);
+      });
+      result = false;
     }
   }
-  return result
-}
+  return result;
+};

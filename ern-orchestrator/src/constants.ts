@@ -1,4 +1,4 @@
-export const CONTAINER_YARN_KEY = 'container'
+export const CONTAINER_YARN_KEY = 'container';
 
 export const availableUserConfigKeys = [
   {
@@ -87,4 +87,4 @@ export const availableUserConfigKeys = [
     name: 'manifest',
     values: ['object'],
   },
-]
+];

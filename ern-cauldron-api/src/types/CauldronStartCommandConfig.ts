@@ -1,7 +1,7 @@
-import { CauldronStartCommandConfigAndroid } from './CauldronStartCommandConfigAndroid'
-import { CauldronStartCommandConfigIos } from './CauldronStartCommandConfigIos'
+import { CauldronStartCommandConfigAndroid } from './CauldronStartCommandConfigAndroid';
+import { CauldronStartCommandConfigIos } from './CauldronStartCommandConfigIos';
 
 export interface CauldronStartCommandConfig {
-  android?: CauldronStartCommandConfigAndroid
-  ios?: CauldronStartCommandConfigIos
+  android?: CauldronStartCommandConfigAndroid;
+  ios?: CauldronStartCommandConfigIos;
 }

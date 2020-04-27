@@ -1,1 +1,1 @@
-declare module 'decompress-zip'
+declare module 'decompress-zip';

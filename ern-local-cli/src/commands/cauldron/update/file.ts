@@ -1,33 +1,33 @@
-import { log } from 'ern-core'
-import { getActiveCauldron } from 'ern-cauldron-api'
-import { epilog, tryCatchWrap } from '../../../lib'
-import { Argv } from 'yargs'
-import fs from 'fs-extra'
-import untildify from 'untildify'
+import { log } from 'ern-core';
+import { getActiveCauldron } from 'ern-cauldron-api';
+import { epilog, tryCatchWrap } from '../../../lib';
+import { Argv } from 'yargs';
+import fs from 'fs-extra';
+import untildify from 'untildify';
 
-export const command = 'file <localFilePath> <cauldronFilePath>'
-export const desc = 'Update a file in the Cauldron'
+export const command = 'file <localFilePath> <cauldronFilePath>';
+export const desc = 'Update a file in the Cauldron';
 
 export const builder = (argv: Argv) =>
-  argv.coerce('localFilePath', p => untildify(p)).epilog(epilog(exports))
+  argv.coerce('localFilePath', p => untildify(p)).epilog(epilog(exports));
 
 export const commandHandler = async ({
   cauldronFilePath,
   localFilePath,
 }: {
-  cauldronFilePath: string
-  localFilePath: string
+  cauldronFilePath: string;
+  localFilePath: string;
 }) => {
   if (await fs.pathExists(localFilePath)) {
-    throw new Error(`File ${localFilePath} does not exist`)
+    throw new Error(`File ${localFilePath} does not exist`);
   }
 
-  const cauldron = await getActiveCauldron()
+  const cauldron = await getActiveCauldron();
   await cauldron.updateFile({
     cauldronFilePath,
     localFilePath,
-  })
-  log.info(`${cauldronFilePath} file successfully updated`)
-}
+  });
+  log.info(`${cauldronFilePath} file successfully updated`);
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

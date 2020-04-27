@@ -1,7 +1,7 @@
-import { getActiveCauldron } from 'ern-cauldron-api'
-import { AppVersionDescriptor, NativePlatform } from 'ern-core'
-import _ from 'lodash'
-import inquirer from 'inquirer'
+import { getActiveCauldron } from 'ern-cauldron-api';
+import { AppVersionDescriptor, NativePlatform } from 'ern-core';
+import _ from 'lodash';
+import inquirer from 'inquirer';
 
 //
 // Inquire user to choose a native application version from the Cauldron, optionally
@@ -12,22 +12,22 @@ export async function askUserToChooseANapDescriptorFromCauldron({
   onlyNonReleasedVersions,
   message,
 }: {
-  platform?: NativePlatform
-  onlyReleasedVersions?: boolean
-  onlyNonReleasedVersions?: boolean
-  message?: string
+  platform?: NativePlatform;
+  onlyReleasedVersions?: boolean;
+  onlyNonReleasedVersions?: boolean;
+  message?: string;
 } = {}): Promise<AppVersionDescriptor> {
-  const cauldron = await getActiveCauldron()
+  const cauldron = await getActiveCauldron();
   const napDescriptorStrings = await cauldron.getNapDescriptorStrings({
     onlyNonReleasedVersions,
     onlyReleasedVersions,
     platform,
-  })
+  });
 
   if (_.isEmpty(napDescriptorStrings)) {
     throw new Error(
-      'Could not find any qualifying native application version in the Cauldron'
-    )
+      'Could not find any qualifying native application version in the Cauldron',
+    );
   }
 
   const { userSelectedCompleteNapDescriptor } = await inquirer.prompt([
@@ -37,7 +37,7 @@ export async function askUserToChooseANapDescriptorFromCauldron({
       name: 'userSelectedCompleteNapDescriptor',
       type: 'list',
     },
-  ])
+  ]);
 
-  return AppVersionDescriptor.fromString(userSelectedCompleteNapDescriptor)
+  return AppVersionDescriptor.fromString(userSelectedCompleteNapDescriptor);
 }

@@ -1,4 +1,4 @@
-import inquirer from 'inquirer'
+import inquirer from 'inquirer';
 
 export async function askUserForCodePushLabel(): Promise<string> {
   const { userInputedLabel } = await inquirer.prompt([
@@ -7,6 +7,6 @@ export async function askUserForCodePushLabel(): Promise<string> {
       name: 'userInputedLabel',
       type: 'input',
     },
-  ])
-  return userInputedLabel
+  ]);
+  return userInputedLabel;
 }

@@ -1,5 +1,5 @@
-import Xml from '../Xml'
-import { newHashMap } from '../../java/javaUtil'
+import Xml from '../Xml';
+import { newHashMap } from '../../java/javaUtil';
 
 export class Property {
   public static allowedProps = [
@@ -17,44 +17,44 @@ export class Property {
     'required',
     'xml',
     ['default', null, '_'],
-  ]
+  ];
 
-  public getParent
-  public type
-  public format
-  public xml
-  public vendorExtensions
+  public getParent;
+  public type;
+  public format;
+  public xml;
+  public vendorExtensions;
 
   constructor(obj?: any, parent?: any) {
     if (parent) {
-      this.getParent = () => parent
+      this.getParent = () => parent;
     }
   }
 
   public getType() {
-    return this.type || (this.constructor as any).TYPE
+    return this.type || (this.constructor as any).TYPE;
   }
 
   public getFormat() {
-    return this.format || (this.constructor as any).FORMAT
+    return this.format || (this.constructor as any).FORMAT;
   }
 
   public setXml(xml) {
     if (xml instanceof Xml) {
-      this.xml = xml
+      this.xml = xml;
     }
-    this.xml = new Xml(xml)
+    this.xml = new Xml(xml);
   }
 
   public getVendorExtensions() {
     if (!this.vendorExtensions) {
-      return newHashMap()
+      return newHashMap();
     }
-    return this.vendorExtensions
+    return this.vendorExtensions;
   }
 
   public toString() {
-    return `[${this.constructor.name}]${JSON.stringify(this, null, 2)}`
+    return `[${this.constructor.name}]${JSON.stringify(this, null, 2)}`;
   }
 
   public toXml() {

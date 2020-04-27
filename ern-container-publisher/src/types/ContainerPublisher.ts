@@ -1,18 +1,18 @@
-import { NativePlatform } from 'ern-core'
-import { ContainerPublisherConfig } from './ContainerPublisherConfig'
+import { NativePlatform } from 'ern-core';
+import { ContainerPublisherConfig } from './ContainerPublisherConfig';
 
 export interface ContainerPublisher {
   /**
    *  Name of the Container publisher
    */
-  readonly name: string
+  readonly name: string;
   /**
    * An array of one or more native platform(s)
    * that the Container publisher supports
    */
-  readonly platforms: NativePlatform[]
+  readonly platforms: NativePlatform[];
   /**
    *  Publish a Container
    */
-  publish(config: ContainerPublisherConfig): Promise<void>
+  publish(config: ContainerPublisherConfig): Promise<void>;
 }

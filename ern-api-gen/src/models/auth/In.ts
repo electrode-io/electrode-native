@@ -1,34 +1,34 @@
 export class In {
-  public static readonly HEADER = new In('header')
-  public static readonly QUERY = new In('query')
+  public static readonly HEADER = new In('header');
+  public static readonly QUERY = new In('query');
 
-  public key
+  public key;
 
   constructor(key) {
-    this.key = key
+    this.key = key;
   }
 
   public toValue() {
-    return this.key
+    return this.key;
   }
 
   public toJSON() {
-    return this.key
+    return this.key;
   }
   public toString() {
-    return this.key
+    return this.key;
   }
 }
 
 export default function forValue(value) {
   if (value == null || value instanceof In) {
-    return value
+    return value;
   }
-  value = value.toLowerCase()
+  value = value.toLowerCase();
   if (value === In.HEADER.key) {
-    return In.HEADER
+    return In.HEADER;
   }
   if (value === In.QUERY.key) {
-    return In.QUERY
+    return In.QUERY;
   }
 }

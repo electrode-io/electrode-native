@@ -1,6 +1,6 @@
-import { LongProperty } from './LongProperty'
+import { LongProperty } from './LongProperty';
 
 export class Int64Property extends LongProperty {
-  public static FORMAT = 'int64'
-  public static TYPE = 'integer'
+  public static FORMAT = 'int64';
+  public static TYPE = 'integer';
 }

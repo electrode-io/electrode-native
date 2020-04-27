@@ -1,27 +1,27 @@
-import { newHashMap, newHashSet } from '../java/javaUtil'
-import { isNotEmpty } from '../java/StringUtils'
+import { newHashMap, newHashSet } from '../java/javaUtil';
+import { isNotEmpty } from '../java/StringUtils';
 
 export function splitCommaSeparatedList(input) {
-  const results: any[] = []
+  const results: any[] = [];
   if (isNotEmpty(input)) {
     for (const value of input.split(',')) {
       if (isNotEmpty(value)) {
-        results.push(value)
+        results.push(value);
       }
     }
   }
-  return results
+  return results;
 }
 
 export function parseCommaSeparatedTuples(input) {
-  const results: any[] = []
+  const results: any[] = [];
   for (const tuple of splitCommaSeparatedList(input)) {
-    const [name, value] = tuple.split('=', 2)
+    const [name, value] = tuple.split('=', 2);
     if (name != null && value != null) {
-      results.push([name, value])
+      results.push([name, value]);
     }
   }
-  return results
+  return results;
 }
 
 /**
@@ -35,52 +35,52 @@ export function parseCommaSeparatedTuples(input) {
  */
 export function applySystemPropertiesKvp(systemProperties, configurator) {
   for (const [key, value] of createMapFromKeyValuePairs(systemProperties)) {
-    configurator.addSystemProperty(key, value)
+    configurator.addSystemProperty(key, value);
   }
 }
 
 export function applyInstantiationTypesKvp(instantiationTypes, configurator) {
   for (const [key, value] of createMapFromKeyValuePairs(instantiationTypes)) {
-    configurator.addInstantiationType(key, value)
+    configurator.addInstantiationType(key, value);
   }
 }
 
 export function applyImportMappingsKvp(importMappings, configurator) {
   for (const [key, value] of createMapFromKeyValuePairs(importMappings)) {
-    configurator.addImportMapping(key, value)
+    configurator.addImportMapping(key, value);
   }
 }
 
 export function applyTypeMappingsKvp(typeMappings, configurator) {
   for (const [key, value] of createMapFromKeyValuePairs(typeMappings)) {
-    configurator.addTypeMapping(key, value)
+    configurator.addTypeMapping(key, value);
   }
 }
 
 export function applyAdditionalPropertiesKvp(
   additionalProperties,
-  configurator
+  configurator,
 ) {
   for (const [key, value] of createMapFromKeyValuePairs(additionalProperties)) {
-    configurator.addAdditionalProperty(key, value)
+    configurator.addAdditionalProperty(key, value);
   }
 }
 
 export function applyLanguageSpecificPrimitivesCsv(
   languageSpecificPrimitives,
-  configurator
+  configurator,
 ) {
   for (const item of createSetFromCsvList(languageSpecificPrimitives)) {
-    configurator.addLanguageSpecificPrimitive(item)
+    configurator.addLanguageSpecificPrimitive(item);
   }
 }
 
 export function createSetFromCsvList(csvProperty) {
-  return newHashSet(...splitCommaSeparatedList(csvProperty))
+  return newHashSet(...splitCommaSeparatedList(csvProperty));
 }
 
 export function createMapFromKeyValuePairs(commaSeparatedKVPairs) {
-  return newHashMap(...parseCommaSeparatedTuples(commaSeparatedKVPairs))
+  return newHashMap(...parseCommaSeparatedTuples(commaSeparatedKVPairs));
 }
 
 export default {
@@ -92,4 +92,4 @@ export default {
   applyTypeMappingsKvp,
   createMapFromKeyValuePairs,
   createSetFromCsvList,
-}
+};

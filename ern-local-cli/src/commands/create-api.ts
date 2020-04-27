@@ -1,5 +1,5 @@
-import fs from 'fs-extra'
-import { ApiGen } from 'ern-api-gen'
+import fs from 'fs-extra';
+import { ApiGen } from 'ern-api-gen';
 import {
   checkIfModuleNameContainsSuffix,
   log,
@@ -7,7 +7,7 @@ import {
   ModuleTypes,
   PackagePath,
   utils as coreUtils,
-} from 'ern-core'
+} from 'ern-core';
 import {
   askUserToInputPackageName,
   epilog,
@@ -15,11 +15,11 @@ import {
   performPkgNameConflictCheck,
   promptUserToUseSuffixModuleName,
   tryCatchWrap,
-} from '../lib'
-import { Argv } from 'yargs'
+} from '../lib';
+import { Argv } from 'yargs';
 
-export const command = 'create-api <apiName>'
-export const desc = 'Create a new api'
+export const command = 'create-api <apiName>';
+export const desc = 'Create a new api';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -52,8 +52,8 @@ export const builder = (argv: Argv) => {
         'Skip the check ensuring package does not already exists in NPM registry',
       type: 'boolean',
     })
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   apiAuthor,
@@ -65,80 +65,82 @@ export const commandHandler = async ({
   scope,
   skipNpmCheck,
 }: {
-  apiAuthor?: string
-  apiName: string
-  apiVersion?: string
-  manifestId?: string
-  packageName: string
-  schemaPath?: string
-  scope?: string
-  skipNpmCheck?: boolean
+  apiAuthor?: string;
+  apiName: string;
+  apiVersion?: string;
+  manifestId?: string;
+  packageName: string;
+  schemaPath?: string;
+  scope?: string;
+  skipNpmCheck?: boolean;
 }) => {
   await logErrorAndExitIfNotSatisfied({
     isValidElectrodeNativeModuleName: {
       name: apiName,
     },
-  })
+  });
 
   if (manifestId) {
     await logErrorAndExitIfNotSatisfied({
       manifestIdExists: {
         id: manifestId,
       },
-    })
+    });
   }
 
   if (schemaPath && !(await fs.pathExists(schemaPath))) {
-    throw new Error(`Cannot resolve path to ${schemaPath}`)
+    throw new Error(`Cannot resolve path to ${schemaPath}`);
   }
 
   if (!checkIfModuleNameContainsSuffix(apiName, ModuleTypes.API)) {
-    apiName = await promptUserToUseSuffixModuleName(apiName, ModuleTypes.API)
+    apiName = await promptUserToUseSuffixModuleName(apiName, ModuleTypes.API);
   }
 
   // Construct the package name
   if (!packageName) {
     const defaultPackageName = coreUtils.getDefaultPackageNameForModule(
       apiName,
-      ModuleTypes.API
-    )
-    packageName = await askUserToInputPackageName({ defaultPackageName })
+      ModuleTypes.API,
+    );
+    packageName = await askUserToInputPackageName({ defaultPackageName });
   }
 
   await logErrorAndExitIfNotSatisfied({
     isValidNpmPackageName: {
       name: packageName,
     },
-  })
+  });
 
   if (!skipNpmCheck && !(await performPkgNameConflictCheck(packageName))) {
-    throw new Error('Aborting command')
+    throw new Error('Aborting command');
   }
 
   const bridgeDep = await manifest.getNativeDependency(
     PackagePath.fromString('react-native-electrode-bridge'),
-    { manifestId }
-  )
+    { manifestId },
+  );
   if (!bridgeDep) {
     throw new Error(
-      'react-native-electrode-bridge not found in manifest. cannot infer version to use'
-    )
+      'react-native-electrode-bridge not found in manifest. cannot infer version to use',
+    );
   }
   if (!bridgeDep.version) {
-    throw new Error('react-native-electrode-bridge version needs to be defined')
+    throw new Error(
+      'react-native-electrode-bridge version needs to be defined',
+    );
   }
 
   const reactNative = await manifest.getNativeDependency(
     PackagePath.fromString('react-native'),
-    { manifestId }
-  )
+    { manifestId },
+  );
   if (!reactNative) {
     throw new Error(
-      'react-native-electrode-bridge not found in manifest. cannot infer version to use'
-    )
+      'react-native-electrode-bridge not found in manifest. cannot infer version to use',
+    );
   }
 
-  log.info(`Generating ${apiName} API`)
+  log.info(`Generating ${apiName} API`);
 
   await ApiGen.generateApi({
     apiAuthor,
@@ -149,8 +151,8 @@ export const commandHandler = async ({
     npmScope: scope,
     packageName,
     reactNativeVersion: reactNative.version,
-  })
-  log.info('Success')
-}
+  });
+  log.info('Success');
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

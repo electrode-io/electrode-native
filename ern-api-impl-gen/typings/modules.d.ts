@@ -1,1 +1,1 @@
-declare module 'xcode-ern'
+declare module 'xcode-ern';

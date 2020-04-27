@@ -1,25 +1,25 @@
 export const withoutGitOrFileSystemPath = [
   'package@1.2.3',
   '@scope/package@1.2.3',
-]
+];
 
 export const withGitOrFileSystemPath = [
   'git+ssh://github.com:electrode/react-native.git#master',
   'file:/Users/username',
-]
+];
 
 export const withoutFileSystemPath = [
   'git+ssh://github.com:electrode/react-native.git#master',
   'package@1.2.3',
-]
+];
 
-export const withFileSystemPath = ['file:/Users/username']
+export const withFileSystemPath = ['file:/Users/username'];
 
-export const completeNapDescriptors = ['myapp:android:17.14.0', 'myapp:ios:1']
+export const completeNapDescriptors = ['myapp:android:17.14.0', 'myapp:ios:1'];
 
-export const incompleteNapDescriptors = ['myapp', 'myapp:android']
+export const incompleteNapDescriptors = ['myapp', 'myapp:android'];
 
-export const validNpmPackageNames = ['hello-world', '@hello/world']
+export const validNpmPackageNames = ['hello-world', '@hello/world'];
 
 export const invalidNpmPackageNames = [
   ' leading - space:and:weirdchars',
@@ -34,7 +34,7 @@ export const invalidNpmPackageNames = [
   "invalid-char-'",
   'invalid-char-!',
   'invalid-char-*',
-]
+];
 
 export const validElectrodeNativeModuleNames = [
   'MyApp',
@@ -43,14 +43,14 @@ export const validElectrodeNativeModuleNames = [
   'MYAPIIMPLEMENTATION',
   'hell0w0rld',
   'my_app',
-]
+];
 
 export const invalidElectrodeNativeModuleNames = [
   'My-App',
   '1nvalid',
   'my*app',
   'my$app',
-]
+];
 
 export const miniAppNameWithSuffix = [
   'MiniAppTest',
@@ -58,7 +58,7 @@ export const miniAppNameWithSuffix = [
   'testminiapp',
   'miniappTest',
   'thisMiniAppIsValid',
-]
+];
 
 export const apiNameWithSuffix = [
   'ApiTest',
@@ -66,7 +66,7 @@ export const apiNameWithSuffix = [
   'testapi',
   'apiTest',
   'thisapiIsValid',
-]
+];
 
 export const apiNativeImplNameWithSuffix = [
   'ApiImplNativeTest',
@@ -74,7 +74,7 @@ export const apiNativeImplNameWithSuffix = [
   'testapiImplNative',
   'apiImplNativeTest',
   'thisapiImplNativeIsValid',
-]
+];
 
 export const apiJsImplNameWithSuffix = [
   'ApiImplJsTest',
@@ -82,23 +82,23 @@ export const apiJsImplNameWithSuffix = [
   'testapiImplJs',
   'apiImplJsTest',
   'thisapiImplJsIsValid',
-]
+];
 
 export const differentNativeApplicationPlatformDescriptors = [
   'testapp:android:1.0.0',
   'testapp:android:2.0.0',
   'testapp:ios:1.0.0',
   'testapp:android:3.0.0',
-]
+];
 
 export const sameNativeApplicationPlatformDescriptors = [
   'testapp:android:1.0.0',
   'testapp:android:2.0.0',
   'testapp:android:3.0.0',
-]
+];
 
-export const npmPkgNameExists = 'chai'
-export const npmPkgNameDoesNotExists = 'zxc-pkg-not-in-npm-bnm'
-export const npmPkgName = 'chai'
-export const moduleTypeNotSupported = 'moduleTypeNotSupported'
-export const validCompleteNapDescriptor = 'myapp:android:17.14.0'
+export const npmPkgNameExists = 'chai';
+export const npmPkgNameDoesNotExists = 'zxc-pkg-not-in-npm-bnm';
+export const npmPkgName = 'chai';
+export const moduleTypeNotSupported = 'moduleTypeNotSupported';
+export const validCompleteNapDescriptor = 'myapp:android:17.14.0';

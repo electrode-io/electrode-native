@@ -1,12 +1,12 @@
-import { PackagePath } from 'ern-core'
-import { MODEL_FILE } from './Constants'
-import path from 'path'
+import { PackagePath } from 'ern-core';
+import { MODEL_FILE } from './Constants';
+import path from 'path';
 
-const cwd = path.join.bind(path, process.cwd())
+const cwd = path.join.bind(path, process.cwd());
 
 // Generate a configuration. This looks in the apigen schema
 // and the things passed in.
-const isApiRe = /.*react-native-(.*)-api$/
+const isApiRe = /.*react-native-(.*)-api$/;
 
 //
 // Options :
@@ -38,91 +38,91 @@ export default function normalizeConfig({
   packageName,
   ...rest
 }: {
-  name: string
-  bridgeVersion: string
-  reactNativeVersion: string
-  targetDependencies: PackagePath[]
-  apiVersion?: string
-  apiDescription?: string
-  apiAuthor?: string
-  namespace?: string
-  npmScope?: string
-  apiSchemaPath?: string
-  moduleName?: string
-  artifactId?: string
-  packageName: string
-  rest?: any
+  name: string;
+  bridgeVersion: string;
+  reactNativeVersion: string;
+  targetDependencies: PackagePath[];
+  apiVersion?: string;
+  apiDescription?: string;
+  apiAuthor?: string;
+  namespace?: string;
+  npmScope?: string;
+  apiSchemaPath?: string;
+  moduleName?: string;
+  artifactId?: string;
+  packageName: string;
+  rest?: any;
 }) {
-  let simpleName: string = name
+  let simpleName: string = name;
 
   if (isApiRe.test(name)) {
-    simpleName = isApiRe.exec(name)!.pop()!
+    simpleName = isApiRe.exec(name)!.pop()!;
   }
 
-  const config: any = {}
+  const config: any = {};
 
   if (simpleName) {
     if (/^@/.test(simpleName)) {
       const reExec = /^@(.+?)\/(?:react-native-)?(.+?)(?:-api)?$/.exec(
-        simpleName
-      )
-      const pkgName = reExec![1]
-      const apiName = reExec![2]
+        simpleName,
+      );
+      const pkgName = reExec![1];
+      const apiName = reExec![2];
 
-      simpleName = apiName
+      simpleName = apiName;
       if (!namespace) {
-        namespace = pkgName ? `com.${pkgName}.${simpleName}` : simpleName
+        namespace = pkgName ? `com.${pkgName}.${simpleName}` : simpleName;
       }
     }
-    config.moduleName = simpleName
+    config.moduleName = simpleName;
   }
   if (namespace) {
-    config.namespace = namespace
+    config.namespace = namespace;
   }
   if (!config.namespace) {
     config.namespace = npmScope
       ? `com.${npmScope}.${simpleName}.ern`
-      : `com.${simpleName}.ern`
+      : `com.${simpleName}.ern`;
   }
   if (apiVersion) {
-    config.apiVersion = apiVersion
+    config.apiVersion = apiVersion;
   }
   if (apiDescription) {
-    config.apiDescription = apiDescription
+    config.apiDescription = apiDescription;
   }
   if (npmScope) {
-    config.npmScope = npmScope
+    config.npmScope = npmScope;
   }
   if (!config.moduleName) {
-    config.moduleName = moduleName || simpleName
+    config.moduleName = moduleName || simpleName;
   }
   if (!config.apiAuthor) {
-    config.apiAuthor = apiAuthor || process.env.EMAIL || process.env.USER
+    config.apiAuthor = apiAuthor || process.env.EMAIL || process.env.USER;
   }
   if (!config.apiVersion) {
-    config.apiVersion = '1.0.0'
+    config.apiVersion = '1.0.0';
   }
   if (!config.apiDescription) {
-    config.apiDescription = `ERN Generated API for ${config.moduleName}`
+    config.apiDescription = `ERN Generated API for ${config.moduleName}`;
   }
   if (bridgeVersion) {
-    config.bridgeVersion = bridgeVersion
+    config.bridgeVersion = bridgeVersion;
   }
   if (reactNativeVersion) {
-    config.reactNativeVersion = reactNativeVersion
+    config.reactNativeVersion = reactNativeVersion;
   }
   if (apiSchemaPath) {
-    config.apiSchemaPath = apiSchemaPath
+    config.apiSchemaPath = apiSchemaPath;
   }
   if (!config.artifactId) {
-    config.artifactId = `react-native-${simpleName}-api`
+    config.artifactId = `react-native-${simpleName}-api`;
   }
   if (targetDependencies) {
-    config.targetDependencies = targetDependencies
+    config.targetDependencies = targetDependencies;
   }
 
   if (packageName) {
-    config.packageName = packageName
+    config.packageName = packageName;
   }
-  return config
+  return config;
 }

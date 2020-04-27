@@ -6,28 +6,28 @@ import {
   NativePlatform,
   PackagePath,
   Platform,
-} from 'ern-core'
-import { getActiveCauldron } from 'ern-cauldron-api'
+} from 'ern-core';
+import { getActiveCauldron } from 'ern-cauldron-api';
 import {
   parseJsonFromStringOrFile,
   runCauldronCompositeGen,
   runCauldronContainerGen,
   runLocalCompositeGen,
   runLocalContainerGen,
-} from 'ern-orchestrator'
+} from 'ern-orchestrator';
 import {
   askUserToChooseANapDescriptorFromCauldron,
   askUserToSelectAPlatform,
   epilog,
   logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
-} from '../lib'
-import { Argv } from 'yargs'
-import fs from 'fs-extra'
-import untildify from 'untildify'
+} from '../lib';
+import { Argv } from 'yargs';
+import fs from 'fs-extra';
+import untildify from 'untildify';
 
-export const command = 'create-container'
-export const desc = 'Create a Container locally'
+export const command = 'create-container';
+export const desc = 'Create a Container locally';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -106,8 +106,8 @@ export const builder = (argv: Argv) => {
       type: 'string',
     })
     .coerce('outDir', p => untildify(p))
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   baseComposite,
@@ -125,40 +125,40 @@ export const commandHandler = async ({
   skipInstall,
   sourceMapOutput,
 }: {
-  baseComposite?: PackagePath
-  compositeDir?: string
-  descriptor?: AppVersionDescriptor
-  devJsBundle?: boolean
-  extra?: string
-  fromGitBranches?: boolean
-  ignoreRnpmAssets?: boolean
-  jsApiImpls?: PackagePath[]
-  miniapps?: PackagePath[]
-  outDir?: string
-  platform?: NativePlatform
-  resetCache?: boolean
-  skipInstall?: boolean
-  sourceMapOutput?: string
+  baseComposite?: PackagePath;
+  compositeDir?: string;
+  descriptor?: AppVersionDescriptor;
+  devJsBundle?: boolean;
+  extra?: string;
+  fromGitBranches?: boolean;
+  ignoreRnpmAssets?: boolean;
+  jsApiImpls?: PackagePath[];
+  miniapps?: PackagePath[];
+  outDir?: string;
+  platform?: NativePlatform;
+  resetCache?: boolean;
+  skipInstall?: boolean;
+  sourceMapOutput?: string;
 } = {}) => {
   if (outDir && (await fs.pathExists(outDir))) {
     if ((await fs.readdir(outDir)).length > 0) {
       throw new Error(
         `${outDir} directory exists and is not empty.
-Output directory should either not exist (it will be created) or should be empty.`
-      )
+Output directory should either not exist (it will be created) or should be empty.`,
+      );
     }
   }
 
-  compositeDir = compositeDir || createTmpDir()
+  compositeDir = compositeDir || createTmpDir();
 
-  const cauldron = await getActiveCauldron({ throwIfNoActiveCauldron: false })
+  const cauldron = await getActiveCauldron({ throwIfNoActiveCauldron: false });
   if (!cauldron && !miniapps) {
     throw new Error(
-      "A Cauldron must be active, if you don't explicitly provide miniapps"
-    )
+      "A Cauldron must be active, if you don't explicitly provide miniapps",
+    );
   }
 
-  const extraObj = (extra && (await parseJsonFromStringOrFile(extra))) || {}
+  const extraObj = (extra && (await parseJsonFromStringOrFile(extra))) || {};
 
   // Full native application selector was not provided.
   // Ask the user to select a completeNapDescriptor from a list
@@ -167,7 +167,7 @@ Output directory should either not exist (it will be created) or should be empty
   if (!descriptor && !miniapps) {
     descriptor = await askUserToChooseANapDescriptorFromCauldron({
       onlyNonReleasedVersions: true,
-    })
+    });
   }
 
   if (descriptor) {
@@ -177,23 +177,23 @@ Output directory should either not exist (it will be created) or should be empty
         extraErrorMessage:
           'You cannot create a container for a non-existing native application version.',
       },
-    })
+    });
     const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
-      descriptor
-    )
+      descriptor,
+    );
     baseComposite =
       baseComposite ||
       (compositeGenConfig?.baseComposite &&
-        PackagePath.fromString(compositeGenConfig.baseComposite))
+        PackagePath.fromString(compositeGenConfig.baseComposite));
   }
 
   if (!descriptor && miniapps) {
-    platform = platform || (await askUserToSelectAPlatform())
+    platform = platform || (await askUserToSelectAPlatform());
 
     if (platform === 'ios') {
-      extraObj.iosConfig = extraObj.iosConfig || {}
+      extraObj.iosConfig = extraObj.iosConfig || {};
       extraObj.iosConfig.skipInstall =
-        extraObj.iosConfig.skipInstall || skipInstall
+        extraObj.iosConfig.skipInstall || skipInstall;
     }
 
     const composite = await kax.task('Generating Composite locally').run(
@@ -201,10 +201,10 @@ Output directory should either not exist (it will be created) or should be empty
         baseComposite,
         jsApiImpls,
         outDir: compositeDir,
-      })
-    )
+      }),
+    );
 
-    outDir = outDir || Platform.getContainerGenOutDirectory(platform)
+    outDir = outDir || Platform.getContainerGenOutDirectory(platform);
     await kax.task('Generating Container locally').run(
       runLocalContainerGen(platform, composite, {
         devJsBundle,
@@ -213,31 +213,31 @@ Output directory should either not exist (it will be created) or should be empty
         outDir,
         resetCache,
         sourceMapOutput,
-      })
-    )
+      }),
+    );
   } else if (descriptor) {
     const composite = await kax.task('Generating Composite from Cauldron').run(
       runCauldronCompositeGen(descriptor, {
         baseComposite,
         favorGitBranches: !!fromGitBranches,
         outDir: compositeDir,
-      })
-    )
+      }),
+    );
 
     outDir =
-      outDir || Platform.getContainerGenOutDirectory(descriptor.platform!)
+      outDir || Platform.getContainerGenOutDirectory(descriptor.platform!);
     await kax.task('Generating Container from Cauldron').run(
       runCauldronContainerGen(descriptor, composite, {
         devJsBundle,
         outDir,
         resetCache,
         sourceMapOutput,
-      })
-    )
+      }),
+    );
   }
   log.info(
-    `Container successfully generated in ${outDir}\nComposite generated in ${compositeDir}`
-  )
-}
+    `Container successfully generated in ${outDir}\nComposite generated in ${compositeDir}`,
+  );
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

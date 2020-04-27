@@ -1,17 +1,17 @@
-import { Rule } from './Rule'
-import FileSystems from '../../java/FileSystems'
+import { Rule } from './Rule';
+import FileSystems from '../../java/FileSystems';
 
 export class FileRule extends Rule {
-  public matcher
+  public matcher;
 
   constructor(syntax, definition) {
-    super(syntax, definition)
+    super(syntax, definition);
     this.matcher = FileSystems.getDefault().getPathMatcher(
-      'glob:' + this.getPattern()
-    )
+      'glob:' + this.getPattern(),
+    );
   }
 
   public matches(relativePath) {
-    return this.matcher.matches(relativePath)
+    return this.matcher.matches(relativePath);
   }
 }

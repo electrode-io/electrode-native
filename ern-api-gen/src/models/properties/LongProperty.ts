@@ -1,5 +1,5 @@
-import { NumberProperty } from './NumberProperty'
+import { NumberProperty } from './NumberProperty';
 
 export class LongProperty extends NumberProperty {
-  public static FORMAT = 'long'
+  public static FORMAT = 'long';
 }

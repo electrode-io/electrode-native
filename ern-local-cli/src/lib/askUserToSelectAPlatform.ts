@@ -1,5 +1,5 @@
-import { NativePlatform } from 'ern-core'
-import inquirer from 'inquirer'
+import { NativePlatform } from 'ern-core';
+import inquirer from 'inquirer';
 
 export async function askUserToSelectAPlatform(): Promise<NativePlatform> {
   const { userSelectedPlatform } = await inquirer.prompt([
@@ -9,7 +9,7 @@ export async function askUserToSelectAPlatform(): Promise<NativePlatform> {
       name: 'userSelectedPlatform',
       type: 'list',
     },
-  ])
+  ]);
 
-  return userSelectedPlatform as NativePlatform
+  return userSelectedPlatform as NativePlatform;
 }

@@ -1,10 +1,10 @@
-import { Argv } from 'yargs'
-import { epilog, tryCatchWrap } from '../../../lib'
-import { getActiveCauldron } from 'ern-cauldron-api'
-import { AnyAppDescriptor } from 'ern-core'
+import { Argv } from 'yargs';
+import { epilog, tryCatchWrap } from '../../../lib';
+import { getActiveCauldron } from 'ern-cauldron-api';
+import { AnyAppDescriptor } from 'ern-core';
 
-export const command = 'get'
-export const desc = 'Echoes configuration stored in Cauldron'
+export const command = 'get';
+export const desc = 'Echoes configuration stored in Cauldron';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -28,8 +28,8 @@ export const builder = (argv: Argv) => {
       describe: 'Echoes the config strictly associated to the descriptor',
       type: 'boolean',
     })
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   descriptor,
@@ -37,28 +37,28 @@ export const commandHandler = async ({
   key,
   strict,
 }: {
-  descriptor?: AnyAppDescriptor
-  json?: boolean
-  key?: string
-  strict: boolean
+  descriptor?: AnyAppDescriptor;
+  json?: boolean;
+  key?: string;
+  strict: boolean;
 }) => {
   const cauldron = await getActiveCauldron({
     ignoreRequiredErnVersionMismatch: true,
-  })
-  let result: any
+  });
+  let result: any;
   if (key && strict) {
-    result = await cauldron.getConfigForKeyStrict(key, descriptor)
+    result = await cauldron.getConfigForKeyStrict(key, descriptor);
   } else if (key && !strict) {
-    result = await cauldron.getConfigForKey(key, descriptor)
+    result = await cauldron.getConfigForKey(key, descriptor);
   } else if (!key && strict) {
-    result = await cauldron.getConfigStrict(descriptor)
+    result = await cauldron.getConfigStrict(descriptor);
   } else if (!key && !strict) {
-    result = await cauldron.getConfig(descriptor)
+    result = await cauldron.getConfig(descriptor);
   }
 
   process.stdout.write(
-    json ? JSON.stringify(result) : JSON.stringify(result, null, 2)
-  )
-}
+    json ? JSON.stringify(result) : JSON.stringify(result, null, 2),
+  );
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

@@ -1,11 +1,11 @@
-import gen from '../src/generateProject'
-import ernUtilDev from 'ern-util-dev'
-import normalizeConfig from '../src/normalizeConfig'
+import gen from '../src/generateProject';
+import ernUtilDev from 'ern-util-dev';
+import normalizeConfig from '../src/normalizeConfig';
 
 describe('generateProject', function() {
-  const { runBefore, runAfter, cwd } = ernUtilDev(__dirname)
-  beforeEach(runBefore)
-  afterEach(runAfter)
+  const { runBefore, runAfter, cwd } = ernUtilDev(__dirname);
+  beforeEach(runBefore);
+  afterEach(runAfter);
 
   it('should generate with options', async () => {
     await gen(
@@ -19,7 +19,7 @@ describe('generateProject', function() {
         apiLicense: 'ISC',
         bridgeVersion: '1.0.0',
       }),
-      cwd()
-    )
-  })
-})
+      cwd(),
+    );
+  });
+});

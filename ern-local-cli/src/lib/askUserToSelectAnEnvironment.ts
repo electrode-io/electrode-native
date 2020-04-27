@@ -1,4 +1,4 @@
-import inquirer from 'inquirer'
+import inquirer from 'inquirer';
 
 export async function askUserToSelectAnEnvironment(): Promise<string> {
   const { targetEnv } = await inquirer.prompt([
@@ -9,6 +9,6 @@ export async function askUserToSelectAnEnvironment(): Promise<string> {
       name: 'targetEnv',
       type: 'list',
     },
-  ])
-  return targetEnv
+  ]);
+  return targetEnv;
 }

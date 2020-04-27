@@ -1,7 +1,7 @@
-import { NativePlatform } from 'ern-core'
-import { getContainerMetadataPath } from './getContainerMetadataPath'
-import { inferContainerPlatform } from './inferContainerPlatform'
-import fs from 'fs-extra'
+import { NativePlatform } from 'ern-core';
+import { getContainerMetadataPath } from './getContainerMetadataPath';
+import { inferContainerPlatform } from './inferContainerPlatform';
+import fs from 'fs-extra';
 
 /**
  * Get the native platform of a Container given its path.
@@ -13,18 +13,18 @@ import fs from 'fs-extra'
  */
 export function getContainerPlatform(containerPath: string): NativePlatform {
   if (!fs.pathExistsSync(containerPath)) {
-    throw new Error(`${containerPath} does not exist`)
+    throw new Error(`${containerPath} does not exist`);
   }
-  const containerMetadataPath = getContainerMetadataPath(containerPath)
+  const containerMetadataPath = getContainerMetadataPath(containerPath);
   if (!fs.pathExistsSync(containerMetadataPath)) {
-    return inferContainerPlatform(containerPath)
+    return inferContainerPlatform(containerPath);
   }
 
-  const containerMetadataFile = fs.readFileSync(containerMetadataPath)
-  const containerMetadata = JSON.parse(containerMetadataFile.toString())
+  const containerMetadataFile = fs.readFileSync(containerMetadataPath);
+  const containerMetadata = JSON.parse(containerMetadataFile.toString());
   if (!containerMetadata.platform) {
-    return inferContainerPlatform(containerPath)
+    return inferContainerPlatform(containerPath);
   }
 
-  return containerMetadata.platform
+  return containerMetadata.platform;
 }

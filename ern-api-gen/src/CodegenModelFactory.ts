@@ -1,7 +1,7 @@
-import { newHashMap } from './java/javaUtil'
+import { newHashMap } from './java/javaUtil';
 
 export default class CodegenModelFactory {
-  public static typeMapping = newHashMap()
+  public static typeMapping = newHashMap();
 
   /**
    * Configure a different implementation class.
@@ -13,16 +13,16 @@ export default class CodegenModelFactory {
     if (
       !(implementation.prototype instanceof type.getDefaultImplementation())
     ) {
-      throw new Error(implementation + " doesn't extend " + type)
+      throw new Error(implementation + " doesn't extend " + type);
     }
 
-    CodegenModelFactory.typeMapping.put(type, implementation)
+    CodegenModelFactory.typeMapping.put(type, implementation);
   }
 
   public static newInstance(type) {
     const classType =
       CodegenModelFactory.typeMapping.get(type) ||
-      type.getDefaultImplementation()
-    return new classType()
+      type.getDefaultImplementation();
+    return new classType();
   }
 }

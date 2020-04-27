@@ -13,7 +13,7 @@ import {
   utils,
   writePackageJson,
   yarn,
-} from 'ern-core'
+} from 'ern-core';
 import {
   ContainerGenerator,
   ContainerGeneratorConfig,
@@ -21,52 +21,52 @@ import {
   generateContainer,
   generatePluginsMustacheViews,
   populateApiImplMustacheView,
-} from 'ern-container-gen'
+} from 'ern-container-gen';
 
-import fs from 'fs-extra'
-import path from 'path'
-import xcode from 'xcode-ern'
-import _ from 'lodash'
-import readDir from 'fs-readdir-recursive'
-import { Composite } from 'ern-composite-gen'
-import semver from 'semver'
+import fs from 'fs-extra';
+import path from 'path';
+import xcode from 'xcode-ern';
+import _ from 'lodash';
+import readDir from 'fs-readdir-recursive';
+import { Composite } from 'ern-composite-gen';
+import semver from 'semver';
 
-const ROOT_DIR = process.cwd()
-const PATH_TO_HULL_DIR = path.join(__dirname, 'hull')
+const ROOT_DIR = process.cwd();
+const PATH_TO_HULL_DIR = path.join(__dirname, 'hull');
 
 export default class IosGenerator implements ContainerGenerator {
   get name(): string {
-    return 'IosGenerator'
+    return 'IosGenerator';
   }
 
   get platform(): NativePlatform {
-    return 'ios'
+    return 'ios';
   }
 
   public async generate(
-    config: ContainerGeneratorConfig
+    config: ContainerGeneratorConfig,
   ): Promise<ContainerGenResult> {
     return generateContainer(config, {
       fillContainerHull: this.fillContainerHull.bind(this),
       postCopyRnpmAssets: this.addResources.bind(this),
-    })
+    });
   }
 
   public async addResources(config: ContainerGeneratorConfig) {
     const containerProjectPath = path.join(
       config.outDir,
       'ElectrodeContainer.xcodeproj',
-      'project.pbxproj'
-    )
+      'project.pbxproj',
+    );
     const containerIosProject = await this.getIosContainerProject(
-      containerProjectPath
-    )
+      containerProjectPath,
+    );
 
     const containerResourcesPath = path.join(
       config.outDir,
       'ElectrodeContainer',
-      'Resources'
-    )
+      'Resources',
+    );
     // Get all resources files from the 'Resources' directory
     // Some processing is done here to properly handle `.xcassets`
     // files which are directories containing assets.
@@ -98,69 +98,69 @@ export default class IosGenerator implements ContainerGenerator {
     // to be added to the pbxproj, thus the special processing.
     const resourceFiles = _.uniq(
       readDir(containerResourcesPath).map(f =>
-        f.replace(/(\.xcassets)(\/.+)$/, '$1')
-      )
-    )
+        f.replace(/(\.xcassets)(\/.+)$/, '$1'),
+      ),
+    );
     resourceFiles.forEach(resourceFile => {
       containerIosProject.addResourceFile(
         path.join('Resources', resourceFile),
         null,
-        containerIosProject.findPBXGroupKey({ name: 'Resources' })
-      )
-    })
+        containerIosProject.findPBXGroupKey({ name: 'Resources' }),
+      );
+    });
 
-    fs.writeFileSync(containerProjectPath, containerIosProject.writeSync())
+    fs.writeFileSync(containerProjectPath, containerIosProject.writeSync());
   }
 
   public async fillContainerHull(
-    config: ContainerGeneratorConfig
+    config: ContainerGeneratorConfig,
   ): Promise<void> {
     if (process.platform !== 'darwin' && !config?.iosConfig?.skipInstall) {
       throw new Error(
         `Full iOS Container generation with pod installation is only supported on macOS.
 You can set 'iosConfig.skipInstall' in container generator config to skip the installation step.
-Or set --skipInstall if using the create-container command.`
-      )
+Or set --skipInstall if using the create-container command.`,
+      );
     }
 
     if (config?.iosConfig?.skipInstall) {
       log.info(
         `skipInstall option is set. 'yarn install' and 'pod install' won't be run after container generation.
-Make sure to run these commands before building the container.`
-      )
+Make sure to run these commands before building the container.`,
+      );
     }
 
     const pathSpec = {
       outputDir: config.outDir,
       projectHullDir: path.join(PATH_TO_HULL_DIR, '{.*,*}'),
       rootDir: ROOT_DIR,
-    }
+    };
 
     const projectSpec = {
       projectName: 'ElectrodeContainer',
-    }
+    };
 
     const reactNativePlugin = _.find(
       config.plugins,
-      p => p.name === 'react-native'
-    )
+      p => p.name === 'react-native',
+    );
     if (!reactNativePlugin) {
-      throw new Error('react-native was not found in plugins list !')
+      throw new Error('react-native was not found in plugins list !');
     }
     if (!reactNativePlugin.version) {
-      throw new Error('react-native plugin does not have a version !')
+      throw new Error('react-native plugin does not have a version !');
     }
 
-    const mustacheView: any = {}
-    mustacheView.jsMainModuleName = config.jsMainModuleName || 'index'
+    const mustacheView: any = {};
+    mustacheView.jsMainModuleName = config.jsMainModuleName || 'index';
     injectReactNativeVersionKeysInObject(
       mustacheView,
-      reactNativePlugin.version
-    )
+      reactNativePlugin.version,
+    );
 
     await kax
       .task('Preparing Native Dependencies Injection')
-      .run(this.buildiOSPluginsViews(config.plugins, mustacheView))
+      .run(this.buildiOSPluginsViews(config.plugins, mustacheView));
 
     await kax
       .task('Preparing API Implementations Injection')
@@ -169,66 +169,66 @@ Make sure to run these commands before building the container.`
           config.plugins,
           config.composite,
           mustacheView,
-          projectSpec
-        )
-      )
+          projectSpec,
+        ),
+      );
     const { iosProject, projectPath } = await iosUtil.fillProjectHull(
       pathSpec,
       projectSpec,
       config.plugins,
       mustacheView,
-      config.composite
-    )
+      config.composite,
+    );
 
     await kax
       .task('Adding Native Dependencies Hooks')
       .run(
-        this.addiOSPluginHookClasses(iosProject, config.plugins, config.outDir)
-      )
+        this.addiOSPluginHookClasses(iosProject, config.plugins, config.outDir),
+      );
 
-    fs.writeFileSync(projectPath, iosProject.writeSync())
+    fs.writeFileSync(projectPath, iosProject.writeSync());
 
     if (semver.gte(reactNativePlugin.version!, '0.61.0')) {
-      shell.pushd(config.outDir)
+      shell.pushd(config.outDir);
       try {
-        await yarn.init()
+        await yarn.init();
 
         // Add @react-native-community/cli-platform-ios because
         // it contains the scripts needed for native modules pods linking
         // look in composite to match proper version
         const compositeNodeModulesPath = path.join(
           config.composite.path,
-          'node_modules'
-        )
-        const cliPlatformIosPkg = '@react-native-community/cli-platform-ios'
+          'node_modules',
+        );
+        const cliPlatformIosPkg = '@react-native-community/cli-platform-ios';
         const cliPlatformIosPkgVersion = (
           await readPackageJson(
-            path.join(compositeNodeModulesPath, cliPlatformIosPkg)
+            path.join(compositeNodeModulesPath, cliPlatformIosPkg),
           )
-        ).version
+        ).version;
 
         await yarn.add(
           PackagePath.fromString(
-            `${cliPlatformIosPkg}@${cliPlatformIosPkgVersion}`
-          )
-        )
+            `${cliPlatformIosPkg}@${cliPlatformIosPkgVersion}`,
+          ),
+        );
 
         await yarn.add(
-          PackagePath.fromString(`react-native@${reactNativePlugin.version}`)
-        )
+          PackagePath.fromString(`react-native@${reactNativePlugin.version}`),
+        );
 
         //
         // Add all native dependencies to package.json dependencies so that
         // !use_native_modules can detect them to add their pod to the Podfile
-        const dependencies = await config.composite.getNativeDependencies({})
+        const dependencies = await config.composite.getNativeDependencies({});
         const resDependencies = [
           ...dependencies.thirdPartyInManifest,
           ...dependencies.thirdPartyNotInManifest,
-        ]
-        const addDependencies: any = {}
+        ];
+        const addDependencies: any = {};
         resDependencies.forEach(p => {
-          addDependencies[p.name!] = p.version
-        })
+          addDependencies[p.name!] = p.version;
+        });
 
         //
         // Create package.json in container directory root
@@ -238,8 +238,8 @@ Make sure to run these commands before building the container.`
           dependencies: addDependencies,
           name: 'container',
           private: true,
-        }
-        await writePackageJson(config.outDir, pjsonObj)
+        };
+        await writePackageJson(config.outDir, pjsonObj);
 
         //
         // Copy all native dependencies from composite node_modules
@@ -249,17 +249,17 @@ Make sure to run these commands before building the container.`
         if (!config?.iosConfig?.skipInstall) {
           const containerNodeModulesPath = path.join(
             config.outDir,
-            'node_modules'
-          )
-          shell.mkdir('-p', containerNodeModulesPath)
+            'node_modules',
+          );
+          shell.mkdir('-p', containerNodeModulesPath);
           resDependencies.forEach(p => {
-            shell.cp('-rf', p.basePath!, containerNodeModulesPath)
-          })
+            shell.cp('-rf', p.basePath!, containerNodeModulesPath);
+          });
         } else {
-          shell.rm('-rf', 'node_modules')
+          shell.rm('-rf', 'node_modules');
         }
       } finally {
-        shell.popd()
+        shell.popd();
       }
 
       // For full iOS container generation, run 'pod install'
@@ -268,19 +268,19 @@ Make sure to run these commands before building the container.`
       if (!config?.iosConfig?.skipInstall) {
         //
         // Run pod install
-        shell.pushd(config.outDir)
+        shell.pushd(config.outDir);
         try {
           await kax
             .task('Running pod install')
-            .run(childProcess.spawnp('pod', ['install']))
+            .run(childProcess.spawnp('pod', ['install']));
         } finally {
-          shell.popd()
+          shell.popd();
         }
 
         //
         // Clean node_modules by only keeping the directories that are
         // needed for proper container build.
-        shell.pushd(config.outDir)
+        shell.pushd(config.outDir);
         try {
           //
           // Look in the Pods pbxproj for any references to some files
@@ -288,48 +288,48 @@ Make sure to run these commands before building the container.`
           // as well as all native modules)
           const f = fs.readFileSync('Pods/Pods.xcodeproj/project.pbxproj', {
             encoding: 'utf8',
-          })
+          });
 
           //
           // Build an array of these directories
-          const re = RegExp('"../node_modules/([^"]+)"', 'g')
-          const matches = []
-          let match = re.exec(f)
+          const re = RegExp('"../node_modules/([^"]+)"', 'g');
+          const matches = [];
+          let match = re.exec(f);
           while (match !== null) {
-            matches.push(match[1])
-            match = re.exec(f)
+            matches.push(match[1]);
+            match = re.exec(f);
           }
           const res = matches
             .map(r => r.split('/'))
             .filter(x => x[0] !== 'react-native')
             .map(x => x.join('/'))
-            .concat('react-native')
+            .concat('react-native');
 
           //
           // Copy all retained directories from 'node_modules'
           // to a new directory 'node_modules_light'
-          const nodeModulesLightDir = 'node_modules_light'
-          const nodeModulesDir = 'node_modules'
-          shell.mkdir('-p', nodeModulesLightDir)
+          const nodeModulesLightDir = 'node_modules_light';
+          const nodeModulesDir = 'node_modules';
+          shell.mkdir('-p', nodeModulesLightDir);
           for (const b of res) {
-            shell.mkdir('-p', path.join(nodeModulesLightDir, b))
+            shell.mkdir('-p', path.join(nodeModulesLightDir, b));
             shell.cp(
               '-Rf',
               path.join(nodeModulesDir, b, '{.*,*}'),
-              path.join(nodeModulesLightDir, b)
-            )
+              path.join(nodeModulesLightDir, b),
+            );
           }
           //
           // Replace the huge 'node_modules' directory with the skimmed one
-          shell.rm('-rf', nodeModulesDir)
-          shell.mv(nodeModulesLightDir, nodeModulesDir)
+          shell.rm('-rf', nodeModulesDir);
+          shell.mv(nodeModulesLightDir, nodeModulesDir);
           //
           // Finally get rid of all android directories to further reduce
           // overall 'node_modules' directory size, as they are not needed
           // for iOS container builds.
-          shell.rm('-rf', path.join(nodeModulesDir, '**/android'))
+          shell.rm('-rf', path.join(nodeModulesDir, '**/android'));
         } finally {
-          shell.popd()
+          shell.popd();
         }
       }
     }
@@ -338,130 +338,130 @@ Make sure to run these commands before building the container.`
   // Code to keep backward compatibility
   public switchToOldDirectoryStructure(
     pluginSourcePath: string,
-    tail: string
+    tail: string,
   ): boolean {
     // This is to check if the api referenced during container generation is created using the old or new directory structure to help keep the backward compatibility.
     const pathToSwaggersAPIs = path.join(
       'IOS',
       'IOS',
       'Classes',
-      'SwaggersAPIs'
-    )
+      'SwaggersAPIs',
+    );
     if (
       path.dirname(tail) === 'IOS' &&
       fs.pathExistsSync(
-        path.join(pluginSourcePath, path.dirname(pathToSwaggersAPIs))
+        path.join(pluginSourcePath, path.dirname(pathToSwaggersAPIs)),
       )
     ) {
-      return true
+      return true;
     }
-    return false
+    return false;
   }
 
   public async buildiOSPluginsViews(
     plugins: PackagePath[],
-    mustacheView: any
+    mustacheView: any,
   ): Promise<any> {
-    mustacheView.plugins = await generatePluginsMustacheViews(plugins, 'ios')
+    mustacheView.plugins = await generatePluginsMustacheViews(plugins, 'ios');
   }
 
   public async addiOSPluginHookClasses(
     containerIosProject: any,
     plugins: PackagePath[],
-    outDir: string
+    outDir: string,
   ): Promise<any> {
     for (const plugin of plugins) {
       if (plugin.name === 'react-native') {
-        continue
+        continue;
       }
       const pluginConfig:
         | PluginConfig<'ios'>
-        | undefined = await manifest.getPluginConfig(plugin, 'ios')
+        | undefined = await manifest.getPluginConfig(plugin, 'ios');
       if (!pluginConfig) {
         log.warn(
-          `${plugin.name} does not have any injection configuration for ios platform`
-        )
-        continue
+          `${plugin.name} does not have any injection configuration for ios platform`,
+        );
+        continue;
       }
 
-      const { pluginHook } = pluginConfig!
+      const { pluginHook } = pluginConfig!;
 
       if (pluginHook?.name) {
         if (!pluginConfig.path) {
-          throw new Error('No plugin config path was set. Cannot proceed.')
+          throw new Error('No plugin config path was set. Cannot proceed.');
         }
 
-        const pluginConfigPath = pluginConfig.path
-        const pathToCopyPluginHooksTo = path.join(outDir, 'ElectrodeContainer')
+        const pluginConfigPath = pluginConfig.path;
+        const pathToCopyPluginHooksTo = path.join(outDir, 'ElectrodeContainer');
 
-        log.debug(`Adding ${pluginHook.name}.h`)
+        log.debug(`Adding ${pluginHook.name}.h`);
         const pathToPluginHookHeader = path.join(
           pluginConfigPath,
-          `${pluginHook.name}.h`
-        )
-        shell.cp(pathToPluginHookHeader, pathToCopyPluginHooksTo)
+          `${pluginHook.name}.h`,
+        );
+        shell.cp(pathToPluginHookHeader, pathToCopyPluginHooksTo);
         containerIosProject.addHeaderFile(
           `${pluginHook.name}.h`,
           { public: true },
-          containerIosProject.findPBXGroupKey({ name: 'ElectrodeContainer' })
-        )
+          containerIosProject.findPBXGroupKey({ name: 'ElectrodeContainer' }),
+        );
 
-        log.debug(`Adding ${pluginHook.name}.m`)
+        log.debug(`Adding ${pluginHook.name}.m`);
         const pathToPluginHookSource = path.join(
           pluginConfigPath,
-          `${pluginHook.name}.m`
-        )
-        shell.cp(pathToPluginHookSource, pathToCopyPluginHooksTo)
+          `${pluginHook.name}.m`,
+        );
+        shell.cp(pathToPluginHookSource, pathToCopyPluginHooksTo);
         containerIosProject.addSourceFile(
           `${pluginHook.name}.m`,
           null,
-          containerIosProject.findPBXGroupKey({ name: 'ElectrodeContainer' })
-        )
+          containerIosProject.findPBXGroupKey({ name: 'ElectrodeContainer' }),
+        );
       }
     }
   }
 
   public async getIosContainerProject(
-    containerProjectPath: string
+    containerProjectPath: string,
   ): Promise<any> {
-    const containerProject = xcode.project(containerProjectPath)
+    const containerProject = xcode.project(containerProjectPath);
     return new Promise((resolve, reject) => {
       containerProject.parse((err: any) => {
         if (err) {
-          reject(err)
+          reject(err);
         }
-        resolve(containerProject)
-      })
-    })
+        resolve(containerProject);
+      });
+    });
   }
 
   public async buildApiImplPluginViews(
     plugins: PackagePath[],
     composite: Composite,
     mustacheView: any,
-    projectSpec: any
+    projectSpec: any,
   ) {
     for (const plugin of plugins) {
       const pluginConfig = await manifest.getPluginConfig(
         plugin,
         'ios',
-        projectSpec.projectName
-      )
+        projectSpec.projectName,
+      );
       if (!pluginConfig) {
-        continue
+        continue;
       }
 
       if (await utils.isDependencyPathNativeApiImpl(plugin.basePath)) {
-        populateApiImplMustacheView(plugin.basePath, mustacheView, true)
+        populateApiImplMustacheView(plugin.basePath, mustacheView, true);
       }
     }
 
     if (mustacheView.apiImplementations) {
-      mustacheView.hasApiImpl = true
+      mustacheView.hasApiImpl = true;
       for (const api of mustacheView.apiImplementations) {
         if (api.hasConfig) {
-          mustacheView.hasAtleastOneApiImplConfig = true
-          break
+          mustacheView.hasAtleastOneApiImplConfig = true;
+          break;
         }
       }
     }

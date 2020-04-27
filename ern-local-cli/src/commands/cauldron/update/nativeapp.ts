@@ -1,14 +1,14 @@
-import { AppVersionDescriptor, log } from 'ern-core'
-import { getActiveCauldron } from 'ern-cauldron-api'
+import { AppVersionDescriptor, log } from 'ern-core';
+import { getActiveCauldron } from 'ern-cauldron-api';
 import {
   epilog,
   logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
-} from '../../../lib'
-import { Argv } from 'yargs'
+} from '../../../lib';
+import { Argv } from 'yargs';
 
-export const command = 'nativeapp <descriptor> [isReleased]'
-export const desc = 'Update a native application info in cauldron'
+export const command = 'nativeapp <descriptor> [isReleased]';
+export const desc = 'Update a native application info in cauldron';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -23,17 +23,17 @@ export const builder = (argv: Argv) => {
       describe: 'true if version is released, false otherwise',
       type: 'boolean',
     })
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   description,
   descriptor,
   isReleased,
 }: {
-  description?: string
-  descriptor: AppVersionDescriptor
-  isReleased?: boolean
+  description?: string;
+  descriptor: AppVersionDescriptor;
+  isReleased?: boolean;
 }) => {
   await logErrorAndExitIfNotSatisfied({
     napDescriptorExistInCauldron: {
@@ -41,17 +41,17 @@ export const commandHandler = async ({
       extraErrorMessage:
         'You cannot update the release status of a non existing native application version',
     },
-  })
+  });
 
-  const cauldron = await getActiveCauldron()
+  const cauldron = await getActiveCauldron();
   if (isReleased !== undefined) {
-    await cauldron.updateNativeAppIsReleased(descriptor, isReleased)
-    log.info(`Successfully updated release status of ${descriptor}`)
+    await cauldron.updateNativeAppIsReleased(descriptor, isReleased);
+    log.info(`Successfully updated release status of ${descriptor}`);
   }
   if (description) {
-    await cauldron.addOrUpdateDescription(descriptor, description)
-    log.info(`Successfully updated description of ${descriptor}`)
+    await cauldron.addOrUpdateDescription(descriptor, description);
+    log.info(`Successfully updated description of ${descriptor}`);
   }
-}
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

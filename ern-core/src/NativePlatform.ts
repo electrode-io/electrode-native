@@ -1,2 +1,2 @@
-export type NativePlatform = 'android' | 'ios'
-export const supportedNativePlatforms = ['android', 'ios']
+export type NativePlatform = 'android' | 'ios';
+export const supportedNativePlatforms = ['android', 'ios'];

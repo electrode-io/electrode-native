@@ -7,11 +7,11 @@ const CHARS = {
   "'": '&#39;',
   '`': '&#96;',
   '=': '&#61;',
-}
+};
 export default {
   escapeJava(str) {
     if (!str) {
-      return str
+      return str;
     }
     /*
 
@@ -24,9 +24,9 @@ export default {
          char[] EQ = "&#61;".toCharArray();
          */
     const ret = str.replace(/([<>"'`=&](?!amp;))/g, (m, r) => {
-      return CHARS[r]
-    })
-    return ret
+      return CHARS[r];
+    });
+    return ret;
 
     /*                '&lt;')
          .replace(/>/g, '&gt;')
@@ -38,6 +38,6 @@ export default {
          ; */
   },
   unescapeJava(str) {
-    return str
+    return str;
   },
-}
+};

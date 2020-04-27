@@ -1,27 +1,27 @@
-import { assert, expect } from 'chai'
-import factory from '../src/models/factory'
-import * as propTypes from '../src/models/properties'
+import { assert, expect } from 'chai';
+import factory from '../src/models/factory';
+import * as propTypes from '../src/models/properties';
 
 function isClass(clz, compare) {
-  assert(clz instanceof propTypes[compare], `an instance of ${compare}`)
+  assert(clz instanceof propTypes[compare], `an instance of ${compare}`);
 }
 
 describe('properties', function() {
   it('StringProperty', function() {
     const strp = factory({
       type: 'string',
-    })
-    expect(strp instanceof propTypes.StringProperty).to.be.true
-    expect(strp.getType()).to.eql('string')
-  })
+    });
+    expect(strp instanceof propTypes.StringProperty).to.be.true;
+    expect(strp.getType()).to.eql('string');
+  });
   it('DateProperty', function() {
     const strp = factory({
       type: 'string',
       format: 'date',
-    })
-    expect(strp instanceof propTypes.DateProperty).to.be.true
-    expect(strp.getFormat()).to.eql('date')
-  })
+    });
+    expect(strp instanceof propTypes.DateProperty).to.be.true;
+    expect(strp.getFormat()).to.eql('date');
+  });
 
   it('ObjectProperty', function() {
     const strp = factory({
@@ -45,19 +45,19 @@ describe('properties', function() {
         },
       },
       required: ['obj1'],
-    })
+    });
 
-    isClass(strp, 'ObjectProperty')
-    isClass(strp.getProperties().get('num1'), 'NumberProperty')
+    isClass(strp, 'ObjectProperty');
+    isClass(strp.getProperties().get('num1'), 'NumberProperty');
     isClass(
       strp
         .getProperties()
         .get('obj1')
         .getProperties()
         .get('prop1'),
-      'StringProperty'
-    )
-  })
+      'StringProperty',
+    );
+  });
   it('ArrayProperty', function() {
     const strp = factory({
       properties: {
@@ -83,13 +83,13 @@ describe('properties', function() {
           },
         },
       },
-    })
+    });
 
-    isClass(strp, 'ObjectProperty')
-    const history = strp.getProperties().get('history')
-    isClass(history, 'ArrayProperty')
-    const items = history.getItems()
-    isClass(items, 'RefProperty')
-    expect(items.get$ref()).to.eql('#/definitions/Activity')
-  })
-})
+    isClass(strp, 'ObjectProperty');
+    const history = strp.getProperties().get('history');
+    isClass(history, 'ArrayProperty');
+    const items = history.getItems();
+    isClass(items, 'RefProperty');
+    expect(items.get$ref()).to.eql('#/definitions/Activity');
+  });
+});

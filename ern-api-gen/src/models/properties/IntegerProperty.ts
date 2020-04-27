@@ -1,5 +1,5 @@
-import { BaseIntegerProperty } from './BaseIntegerProperty'
+import { BaseIntegerProperty } from './BaseIntegerProperty';
 
 export class IntegerProperty extends BaseIntegerProperty {
-  public static FORMAT = 'integer'
+  public static FORMAT = 'integer';
 }

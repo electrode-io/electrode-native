@@ -1,17 +1,17 @@
-import { AppVersionDescriptor, PackagePath } from 'ern-core'
-import { getActiveCauldron } from 'ern-cauldron-api'
-import { createBranch, createTag } from 'ern-orchestrator'
+import { AppVersionDescriptor, PackagePath } from 'ern-core';
+import { getActiveCauldron } from 'ern-cauldron-api';
+import { createBranch, createTag } from 'ern-orchestrator';
 import {
   askUserToChooseANapDescriptorFromCauldron,
   epilog,
   logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
-} from '../../lib'
-import { Argv } from 'yargs'
-import inquirer from 'inquirer'
+} from '../../lib';
+import { Argv } from 'yargs';
+import inquirer from 'inquirer';
 
-export const command = 'create-ref'
-export const desc = 'Creates a new branch/tag in multiple GitHub repositories'
+export const command = 'create-ref';
+export const desc = 'Creates a new branch/tag in multiple GitHub repositories';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -46,8 +46,8 @@ export const builder = (argv: Argv) => {
       describe: 'Name of the new tag to create',
       type: 'string',
     })
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   branch,
@@ -58,13 +58,13 @@ export const commandHandler = async ({
   miniAppsOnly,
   tag,
 }: {
-  branch?: string
-  descriptor?: AppVersionDescriptor
-  fromBranch?: boolean
-  fromTagOrSha?: boolean
-  jsApiImplsOnly?: boolean
-  miniAppsOnly?: boolean
-  tag?: string
+  branch?: string;
+  descriptor?: AppVersionDescriptor;
+  fromBranch?: boolean;
+  fromTagOrSha?: boolean;
+  jsApiImplsOnly?: boolean;
+  miniAppsOnly?: boolean;
+  tag?: string;
 } = {}) => {
   if (!branch && !tag) {
     const { branchOrTag } = await inquirer.prompt([
@@ -74,18 +74,18 @@ export const commandHandler = async ({
         name: 'branchOrTag',
         type: 'list',
       },
-    ])
+    ]);
     const { branchOrTagName } = await inquirer.prompt([
       <inquirer.Question>{
         message: `Please input the new ${branchOrTag} name`,
         name: 'branchOrTagName',
         type: 'input',
       },
-    ])
+    ]);
     if (branchOrTag === 'branch') {
-      branch = branchOrTagName
+      branch = branchOrTagName;
     } else {
-      tag = branchOrTagName
+      tag = branchOrTagName;
     }
   }
 
@@ -97,11 +97,11 @@ export const commandHandler = async ({
         name: 'fromBranchOrFromTagSha',
         type: 'list',
       },
-    ])
+    ]);
     if (fromBranchOrFromTagSha === 'fromBranch') {
-      fromBranch = true
+      fromBranch = true;
     } else {
-      fromTagOrSha = true
+      fromTagOrSha = true;
     }
   }
 
@@ -109,7 +109,7 @@ export const commandHandler = async ({
     descriptor ||
     (await askUserToChooseANapDescriptorFromCauldron({
       onlyNonReleasedVersions: true,
-    }))
+    }));
 
   await logErrorAndExitIfNotSatisfied({
     isEnvVariableDefined: {
@@ -122,22 +122,22 @@ export const commandHandler = async ({
       extraErrorMessage:
         'This command cannot work on a non existing native application version',
     },
-  })
+  });
 
-  const cauldron = await getActiveCauldron()
+  const cauldron = await getActiveCauldron();
 
   const packages: PackagePath[] = await cauldron.getContainerJsPackages({
     descriptor,
     jsApiImplsOnly,
     miniAppsOnly,
     type: fromBranch ? 'branches' : 'versions',
-  })
+  });
 
   if (branch) {
-    await createBranch({ name: branch, packages })
+    await createBranch({ name: branch, packages });
   } else if (tag) {
-    await createTag({ name: tag, packages })
+    await createTag({ name: tag, packages });
   }
-}
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

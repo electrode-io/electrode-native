@@ -1,11 +1,11 @@
-import * as properties from './properties'
-import { apply, beanify } from '../java/beanUtils'
-import ComposedModel from './ComposedModel'
+import * as properties from './properties';
+import { apply, beanify } from '../java/beanUtils';
+import ComposedModel from './ComposedModel';
 
 const values = obj =>
   Object.keys(obj).map(key => {
-    return obj[key]
-  })
+    return obj[key];
+  });
 
 /**
  * Best guess here. It is possible for json schema to refer
@@ -13,18 +13,18 @@ const values = obj =>
  * @param prop
  * @returns {*}
  */
-let TYPES
-let STR_TYPES
+let TYPES;
+let STR_TYPES;
 export function resolve(prop: any = {}) {
-  TYPES = TYPES || values(properties)
-  STR_TYPES = STR_TYPES || TYPES.filter(t => t && t.TYPE === 'string')
+  TYPES = TYPES || values(properties);
+  STR_TYPES = STR_TYPES || TYPES.filter(t => t && t.TYPE === 'string');
   if (prop == null) {
-    return properties.NullProperty
+    return properties.NullProperty;
   }
   if (prop.format && prop.type === 'string') {
     for (const clz of STR_TYPES) {
       if (prop.format === clz.FORMAT) {
-        return clz
+        return clz;
       }
     }
   }
@@ -33,18 +33,18 @@ export function resolve(prop: any = {}) {
     if (!prop.type) {
       if ('properties' in prop) {
         if (prop.additionalProperties) {
-          return properties.MapProperty
+          return properties.MapProperty;
         }
-        return properties.ObjectProperty
+        return properties.ObjectProperty;
       }
       if ('anyOf' in prop) {
-        return properties.ObjectProperty
+        return properties.ObjectProperty;
       }
       if ('items' in prop) {
-        return properties.ArrayProperty
+        return properties.ArrayProperty;
       }
       if ('$ref' in prop) {
-        return properties.RefProperty
+        return properties.RefProperty;
       }
       if (
         prop.minimum ||
@@ -53,15 +53,15 @@ export function resolve(prop: any = {}) {
         prop.exclusiveMaximum ||
         prop.multipleOf
       ) {
-        return properties.NumberProperty
+        return properties.NumberProperty;
       }
       if (prop.minLength || prop.maxLength || prop.pattern) {
-        return properties.StringProperty
+        return properties.StringProperty;
       }
       if (prop.format) {
         for (const strClz of STR_TYPES) {
           if (strClz.FORMAT === prop.format) {
-            return strClz
+            return strClz;
           }
         }
       }
@@ -69,46 +69,46 @@ export function resolve(prop: any = {}) {
       if (prop.type === 'object') {
         return prop.additionalProperties
           ? properties.MapProperty
-          : properties.ObjectProperty
+          : properties.ObjectProperty;
       }
       if (prop.format) {
         if (clz.FORMAT === prop.format) {
-          return clz
+          return clz;
         }
       } else {
-        return clz
+        return clz;
       }
     }
   }
   if (prop.allOf) {
-    return ComposedModel
+    return ComposedModel;
   }
-  throw new Error(`Could not resolve type ${prop.type} ${prop.format}`)
+  throw new Error(`Could not resolve type ${prop.type} ${prop.format}`);
 }
 
 function setup() {
   for (const { prototype, allowedProps } of values(properties)) {
-    beanify(prototype, allowedProps)
+    beanify(prototype, allowedProps);
   }
 }
 
-let hasSetup = false
+let hasSetup = false;
 export function factory(prop, parent?: any) {
-  const TYPESF = values(properties)
+  const TYPESF = values(properties);
 
   if (!hasSetup) {
-    setup()
-    hasSetup = true
+    setup();
+    hasSetup = true;
   }
   for (const type of TYPESF) {
     if (prop instanceof type) {
-      return prop
+      return prop;
     }
   }
   if (!prop || !Object.keys(prop).length) {
-    let debugAssistText = ''
+    let debugAssistText = '';
     if (parent && parent.getParent && parent.getParent()) {
-      debugAssistText = `{ ${Object.keys(parent.getParent()).join(', ')} } `
+      debugAssistText = `{ ${Object.keys(parent.getParent()).join(', ')} } `;
     }
     throw new Error(
       [
@@ -118,15 +118,15 @@ export function factory(prop, parent?: any) {
           : '',
       ]
         .filter(Boolean)
-        .join('\n')
-    )
+        .join('\n'),
+    );
   }
-  const PropertyClz = resolve(prop)
+  const PropertyClz = resolve(prop);
   if (!PropertyClz) {
-    throw new Error(`Can not resolve property for ${prop}`)
+    throw new Error(`Can not resolve property for ${prop}`);
   }
-  const ret = apply(new PropertyClz(prop, parent), prop)
-  return ret
+  const ret = apply(new PropertyClz(prop, parent), prop);
+  return ret;
 }
 
-export default factory
+export default factory;

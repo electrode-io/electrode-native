@@ -1,52 +1,52 @@
-import fs from 'fs-extra'
-import path from 'path'
-import uuidv4 from 'uuid/v4'
-import semver from 'semver'
-import { log, readPackageJson, writePackageJson } from 'ern-core'
-import { getNodeModuleVersion } from './getNodeModuleVersion'
+import fs from 'fs-extra';
+import path from 'path';
+import uuidv4 from 'uuid/v4';
+import semver from 'semver';
+import { log, readPackageJson, writePackageJson } from 'ern-core';
+import { getNodeModuleVersion } from './getNodeModuleVersion';
 
 export async function createBabelRc({
   cwd,
   extraPaths = [],
 }: {
-  cwd: string
-  extraPaths?: string[]
+  cwd: string;
+  extraPaths?: string[];
 }) {
-  log.debug('Creating top level composite .babelrc')
-  const compositePackageJson = await readPackageJson(cwd)
-  const compositeNodeModulesPath = path.join(cwd, 'node_modules')
+  log.debug('Creating top level composite .babelrc');
+  const compositePackageJson = await readPackageJson(cwd);
+  const compositeNodeModulesPath = path.join(cwd, 'node_modules');
   const compositeReactNativeVersion = await getNodeModuleVersion({
     cwd,
     name: 'react-native',
-  })
+  });
 
   const compositeBabelRc: { plugins: any[]; presets?: string[] } = {
     plugins: [],
-  }
+  };
 
   const paths = [
     ...Object.keys(compositePackageJson.dependencies).map(d =>
-      path.join(compositeNodeModulesPath, d)
+      path.join(compositeNodeModulesPath, d),
     ),
     ...extraPaths,
-  ]
+  ];
 
   // Ugly hacky way of handling module-resolver babel plugin
   // At least it has some guarantees to make it safer but its just a temporary
   // solution until we figure out a more proper way of handling this plugin
   log.debug(
-    'Taking care of potential Babel module-resolver plugins used by MiniApps'
-  )
-  let moduleResolverAliases: { [k: string]: any } = {}
+    'Taking care of potential Babel module-resolver plugins used by MiniApps',
+  );
+  let moduleResolverAliases: { [k: string]: any } = {};
   for (const p of paths) {
-    let miniAppPackageJson
+    let miniAppPackageJson;
     try {
-      miniAppPackageJson = await readPackageJson(p)
+      miniAppPackageJson = await readPackageJson(p);
     } catch (e) {
       // swallow (for test. to be fixed)
-      continue
+      continue;
     }
-    const miniAppName = miniAppPackageJson.name
+    const miniAppName = miniAppPackageJson.name;
     if (miniAppPackageJson.babel) {
       if (miniAppPackageJson.babel.plugins) {
         for (const babelPlugin of miniAppPackageJson.babel.plugins) {
@@ -56,19 +56,19 @@ export async function createBabelRc({
               // it messing with other module-resolver plugin configurations that could
               // be defined in the .babelrc config of individual MiniApps
               // https://babeljs.io/docs/en/options#plugin-preset-merging
-              babelPlugin.push(uuidv4())
+              babelPlugin.push(uuidv4());
               // Copy over module-resolver plugin & config to top level composite .babelrc
               log.debug(
-                `Taking care of module-resolver Babel plugin for ${miniAppName} MiniApp`
-              )
+                `Taking care of module-resolver Babel plugin for ${miniAppName} MiniApp`,
+              );
               if (compositeBabelRc.plugins.length === 0) {
                 // First MiniApp to add module-resolver plugin & config
                 // easy enough, we just copy over the plugin & config
-                compositeBabelRc.plugins.push(<any>babelPlugin)
+                compositeBabelRc.plugins.push(<any>babelPlugin);
                 for (const x of babelPlugin) {
                   if (x instanceof Object && x.alias) {
-                    moduleResolverAliases = x.alias
-                    break
+                    moduleResolverAliases = x.alias;
+                    break;
                   }
                 }
               } else {
@@ -82,9 +82,9 @@ export async function createBabelRc({
                         moduleResolverAliases[aliasKey] &&
                         moduleResolverAliases[aliasKey] !== item.alias[aliasKey]
                       ) {
-                        throw new Error('Babel module-resolver alias conflict')
+                        throw new Error('Babel module-resolver alias conflict');
                       } else if (!moduleResolverAliases[aliasKey]) {
-                        moduleResolverAliases[aliasKey] = item.alias[aliasKey]
+                        moduleResolverAliases[aliasKey] = item.alias[aliasKey];
                       }
                     }
                   }
@@ -92,32 +92,32 @@ export async function createBabelRc({
               }
             } else {
               log.warn(
-                `Unsupported Babel plugin type ${babelPlugin.toString()} in ${miniAppName} MiniApp`
-              )
+                `Unsupported Babel plugin type ${babelPlugin.toString()} in ${miniAppName} MiniApp`,
+              );
             }
           } else {
             log.warn(
-              `Unsupported Babel plugin type ${babelPlugin.toString()} in ${miniAppName} MiniApp`
-            )
+              `Unsupported Babel plugin type ${babelPlugin.toString()} in ${miniAppName} MiniApp`,
+            );
           }
         }
       }
       log.debug(
-        `Removing babel object from ${miniAppName} MiniApp package.json`
-      )
-      delete miniAppPackageJson.babel
-      await writePackageJson(p, miniAppPackageJson)
+        `Removing babel object from ${miniAppName} MiniApp package.json`,
+      );
+      delete miniAppPackageJson.babel;
+      await writePackageJson(p, miniAppPackageJson);
     }
   }
 
   if (semver.gte(compositeReactNativeVersion, '0.57.0')) {
-    compositeBabelRc.presets = ['module:metro-react-native-babel-preset']
+    compositeBabelRc.presets = ['module:metro-react-native-babel-preset'];
   } else {
-    compositeBabelRc.presets = ['react-native']
+    compositeBabelRc.presets = ['react-native'];
   }
 
   return fs.writeFile(
     path.join(cwd, '.babelrc'),
-    JSON.stringify(compositeBabelRc, null, 2)
-  )
+    JSON.stringify(compositeBabelRc, null, 2),
+  );
 }

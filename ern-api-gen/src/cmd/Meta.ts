@@ -1,14 +1,14 @@
 /* tslint:disable:max-classes-per-file */
-import File from '../java/File'
-import Mustache from '../java/Mustache'
-import DefaultGenerator from '../DefaultGenerator'
-import SupportingFile from '../SupportingFile'
-import { log } from 'ern-core'
-import camelCase from 'lodash/camelCase'
-import { newHashMap } from '../java/javaUtil'
-import FileUtils from '../java/FileUtils'
-import { Command } from '../java/cli'
-import { apply } from '../java/beanUtils'
+import File from '../java/File';
+import Mustache from '../java/Mustache';
+import DefaultGenerator from '../DefaultGenerator';
+import SupportingFile from '../SupportingFile';
+import { log } from 'ern-core';
+import camelCase from 'lodash/camelCase';
+import { newHashMap } from '../java/javaUtil';
+import FileUtils from '../java/FileUtils';
+import { Command } from '../java/cli';
+import { apply } from '../java/beanUtils';
 
 export default class Meta {
   public static Usage = new Command(
@@ -49,11 +49,11 @@ export default class Meta {
         property: 'targetPackage',
         title: 'package',
       },
-    ]
-  )
+    ],
+  );
 
-  public static TEMPLATE_DIR_CLASSPATH = 'codegen'
-  public static MUSTACHE_EXTENSION = '.mustache'
+  public static TEMPLATE_DIR_CLASSPATH = 'codegen';
+  public static MUSTACHE_EXTENSION = '.mustache';
 
   /**
    * Converter method to process supporting files: execute with mustache,
@@ -64,7 +64,7 @@ export default class Meta {
    * @return converter object to pass to lambdaj
    */
   public static processFiles(targetDir, data) {
-    return new Writer(targetDir, data)
+    return new Writer(targetDir, data);
   }
 
   /**
@@ -74,7 +74,7 @@ export default class Meta {
    * @return loader for template
    */
   public static loader(generator) {
-    return new Reader(generator)
+    return new Reader(generator);
   }
 
   /**
@@ -84,112 +84,112 @@ export default class Meta {
    * @return relative path
    */
   public static asPath(packageName) {
-    return packageName.split('.').join(File.separator)
+    return packageName.split('.').join(File.separator);
   }
 
-  public outputFolder = ''
-  public name = 'default'
-  public targetPackage = 'io.swagger.codegen'
-  public swaggerVersion
+  public outputFolder = '';
+  public name = 'default';
+  public targetPackage = 'io.swagger.codegen';
+  public swaggerVersion;
 
   constructor(values) {
-    apply(this, values)
+    apply(this, values);
   }
 
   public getImplementationVersion() {
-    return (this.swaggerVersion = '2.1.3')
+    return (this.swaggerVersion = '2.1.3');
   }
 
   public run() {
-    const targetDir = new File(this.outputFolder)
-    log.info(`writing to folder [${targetDir.getAbsolutePath()}]`)
-    const mainClass = camelCase(this.name) + 'Generator'
+    const targetDir = new File(this.outputFolder);
+    log.info(`writing to folder [${targetDir.getAbsolutePath()}]`);
+    const mainClass = camelCase(this.name) + 'Generator';
     const supportingFiles = [
       new SupportingFile('pom.mustache', '', 'pom.xml'),
       new SupportingFile(
         'generatorClass.mustache',
         ['src/main/java', Meta.asPath(this.targetPackage)].join(File.separator),
-        mainClass + '.java'
+        mainClass + '.java',
       ),
       new SupportingFile('README.mustache', '', 'README.md'),
       new SupportingFile(
         'api.template',
         'src/main/resources' + File.separator + this.name,
-        'api.mustache'
+        'api.mustache',
       ),
       new SupportingFile(
         'model.template',
         'src/main/resources' + File.separator + this.name,
-        'model.mustache'
+        'model.mustache',
       ),
       new SupportingFile(
         'services.mustache',
         'src/main/resources/META-INF/services',
-        'io.swagger.codegen.CodegenConfig'
+        'io.swagger.codegen.CodegenConfig',
       ),
-    ]
-    let swaggerVersion = this.getImplementationVersion()
+    ];
+    let swaggerVersion = this.getImplementationVersion();
     if (swaggerVersion == null) {
-      swaggerVersion = '2.1.3'
+      swaggerVersion = '2.1.3';
     }
     const data = newHashMap(
       ['generatorPackage', this.targetPackage],
       ['generatorClass', mainClass],
       ['name', this.name],
       ['fullyQualifiedGeneratorClass', this.targetPackage + '.' + mainClass],
-      ['swaggerCodegenVersion', swaggerVersion]
-    )
-    supportingFiles.forEach(Meta.processFiles(targetDir, data).convert)
+      ['swaggerCodegenVersion', swaggerVersion],
+    );
+    supportingFiles.forEach(Meta.processFiles(targetDir, data).convert);
   }
 }
 
 export class Writer {
-  public targetDir
-  public data
-  public generator
+  public targetDir;
+  public data;
+  public generator;
 
   constructor(targetDir, data) {
-    this.targetDir = targetDir
-    this.data = data
-    this.generator = new DefaultGenerator()
+    this.targetDir = targetDir;
+    this.data = data;
+    this.generator = new DefaultGenerator();
   }
 
   public convert = support => {
     try {
       const destinationFolder = new File(
         new File(this.targetDir.getAbsolutePath()),
-        support.folder
-      )
+        support.folder,
+      );
       const outputFile = new File(
         destinationFolder,
-        support.destinationFilename
-      )
+        support.destinationFilename,
+      );
       const template = this.generator.readTemplate(
-        new File(Meta.TEMPLATE_DIR_CLASSPATH, support.templateFile).getPath()
-      )
-      let formatted = template
+        new File(Meta.TEMPLATE_DIR_CLASSPATH, support.templateFile).getPath(),
+      );
+      let formatted = template;
       if (support.templateFile.endsWith(Meta.MUSTACHE_EXTENSION)) {
-        log.info(`writing file to ${outputFile.getAbsolutePath()}`)
+        log.info(`writing file to ${outputFile.getAbsolutePath()}`);
         formatted = Mustache.compiler()
           .withLoader(Meta.loader(this.generator))
           .defaultValue('')
           .compile(template)
-          .execute(this.data)
+          .execute(this.data);
       } else {
-        log.info(`copying file to ${outputFile.getAbsolutePath()}`)
+        log.info(`copying file to ${outputFile.getAbsolutePath()}`);
       }
-      FileUtils.writeStringToFile(outputFile, formatted)
-      return outputFile
+      FileUtils.writeStringToFile(outputFile, formatted);
+      return outputFile;
     } catch (e) {
-      throw new Error("Can't generate project")
+      throw new Error("Can't generate project");
     }
-  }
+  };
 }
 export class Reader {
-  public generator
+  public generator;
 
   constructor(generator) {
-    this.generator = generator
+    this.generator = generator;
   }
 
   public getTemplate(name) {
@@ -197,7 +197,7 @@ export class Reader {
       Meta.TEMPLATE_DIR_CLASSPATH +
         File.separator +
         name +
-        Meta.MUSTACHE_EXTENSION
-    )
+        Meta.MUSTACHE_EXTENSION,
+    );
   }
 }
