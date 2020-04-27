@@ -5,6 +5,15 @@
 // https://github.com/dempseyatgithub/BuildSettingExtractor
 //
 
+{{#RN_VERSION_GTE_61}}
+#include "Pods/Target Support Files/Pods-ElectrodeContainer/Pods-ElectrodeContainer.release.xcconfig"
+{{/RN_VERSION_GTE_61}}
+
+{{#RN_VERSION_LT_61}}
+HEADER_SEARCH_PATHS =
+OTHER_LDFLAGS = -ObjC -lc++ -lz
+{{/RN_VERSION_LT_61}}
+
 CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES
 CODE_SIGN_IDENTITY =
 DEFINES_MODULE = YES
@@ -12,12 +21,10 @@ DYLIB_COMPATIBILITY_VERSION = 1
 DYLIB_CURRENT_VERSION = 1
 DYLIB_INSTALL_NAME_BASE = @rpath
 FRAMEWORK_SEARCH_PATHS = $(inherited) $(SRCROOT)/ElectrodeContainer/Frameworks
-HEADER_SEARCH_PATHS =
 INFOPLIST_FILE = ElectrodeContainer/Info.plist
 INSTALL_PATH = $(LOCAL_LIBRARY_DIR)/Frameworks
 IPHONEOS_DEPLOYMENT_TARGET = 10.0
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks @loader_path/Frameworks
-OTHER_LDFLAGS = -ObjC -lc++ -lz
 PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ern.ElectrodeContainer
 PRODUCT_NAME = $(TARGET_NAME)
 SKIP_INSTALL = YES

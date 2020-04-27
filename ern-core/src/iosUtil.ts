@@ -5,7 +5,7 @@ import shell from './shell'
 import { manifest, PluginConfig } from './Manifest'
 import handleCopyDirective from './handleCopyDirective'
 import log from './log'
-import { isDependencyJsApiImpl } from './utils'
+import { isDependencyJsApiImpl, extractJsApiImplementations } from './utils'
 import path from 'path'
 import xcode from 'xcode-ern'
 import fs from 'fs-extra'
@@ -40,14 +40,22 @@ export async function fillProjectHull(
 
     if (mustacheView) {
       log.debug(`iOS: reading template files to be rendered for plugins`)
-      const files = readDir(pathSpec.outputDir)
+      const a = path.join(pathSpec.outputDir, 'ElectrodeContainer')
+      const b = path.join(pathSpec.outputDir, 'config')
+      const files = [
+        ...readDir(a).map(x => path.join(a, x)),
+        ...readDir(b).map(x => path.join(b, x)),
+      ]
       for (const file of files) {
-        if (file.endsWith('.h') || file.endsWith('.m')) {
-          const pathToOutputFile = path.join(pathSpec.outputDir, file)
+        if (
+          file.endsWith('.h') ||
+          file.endsWith('.m') ||
+          file.endsWith('.xcconfig')
+        ) {
           await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
-            pathToOutputFile,
+            file,
             mustacheView,
-            pathToOutputFile
+            file
           )
         }
       }
@@ -67,6 +75,10 @@ export async function fillProjectHull(
 
     const injectPluginsTaskMsg = 'Injecting Native Dependencies'
     const injectPluginsKaxTask = kax.task(injectPluginsTaskMsg)
+    const rnVersion = plugins.find(p => p.name === 'react-native')?.version!
+    const additionalPods = []
+    const destPodfilePath = path.join(pathSpec.outputDir, 'Podfile')
+
     for (const plugin of plugins) {
       const pluginSourcePath = composite
         ? plugin.basePath
@@ -109,6 +121,7 @@ export async function fillProjectHull(
               projectName: projectSpec.projectName,
             })
           )
+          pluginConfig!.requiresManualLinking = true
         }
       }
 
@@ -117,251 +130,295 @@ export async function fillProjectHull(
       const {
         applyPatch,
         copy,
-        replaceInFile,
-        setBuildSettings,
+        extraPods,
         pbxproj,
+        podfile,
+        podspec,
+        replaceInFile,
+        requiresManualLinking,
+        setBuildSettings,
       } = pluginConfig!
 
-      if (copy) {
-        for (const c of copy) {
-          if (switchToOldDirectoryStructure(pluginSourcePath, c.source)) {
-            log.debug(
-              `Handling copy directive: Falling back to old directory structure for API(Backward compatibility)`
-            )
-            c.source = path.normalize('IOS/IOS/Classes/SwaggersAPIs')
-          }
-        }
-        handleCopyDirective(pluginSourcePath, pathSpec.outputDir, copy)
-      }
-
-      if (replaceInFile) {
-        for (const r of replaceInFile) {
-          const pathToFile = path.join(pathSpec.outputDir, r.path)
-          const fileContent = await fs.readFile(pathToFile, 'utf8')
-          const patchedFileContent = fileContent.replace(
-            RegExp(r.string, 'g'),
-            r.replaceWith
-          )
-          await fs.writeFile(pathToFile, patchedFileContent, {
-            encoding: 'utf8',
-          })
-        }
-      }
-
-      if (setBuildSettings) {
-        for (const s of setBuildSettings) {
-          const pathToPbxProj = path.join(pathSpec.outputDir, s.path)
-          // Add any missing section in the target pbxproj
-          // This is necessary for proper parsing and modification of
-          // the pbxproj with the xcode-ern library
-          xcode.pbxProjFileUtils().addMissingSectionsToPbxProj(pathToPbxProj)
-          const iosProj = await getIosProject(projectPath)
-          const buildSettings =
-            s.buildSettings instanceof Array
-              ? s.buildSettings
-              : [s.buildSettings]
-          for (const buildSettingsEntry of buildSettings) {
-            for (const buildType of buildSettingsEntry.configurations) {
-              for (const key of Object.keys(buildSettingsEntry.settings)) {
-                iosProj.updateBuildProperty(
-                  key,
-                  buildSettingsEntry.settings[key],
-                  buildType
-                )
-              }
+      if (requiresManualLinking) {
+        if (copy) {
+          for (const c of copy) {
+            if (switchToOldDirectoryStructure(pluginSourcePath, c.source)) {
+              log.debug(
+                `Handling copy directive: Falling back to old directory structure for API(Backward compatibility)`
+              )
+              c.source = path.normalize('IOS/IOS/Classes/SwaggersAPIs')
             }
           }
-          fs.writeFileSync(pathToPbxProj, iosProj.writeSync())
+          handleCopyDirective(pluginSourcePath, pathSpec.outputDir, copy)
         }
-      }
 
-      if (applyPatch) {
-        const { patch, root } = applyPatch
-        if (!patch) {
-          throw new Error('Missing "patch" property in "applyPatch" object')
+        if (replaceInFile) {
+          for (const r of replaceInFile) {
+            const pathToFile = path.join(pathSpec.outputDir, r.path)
+            const fileContent = await fs.readFile(pathToFile, 'utf8')
+            const patchedFileContent = fileContent.replace(
+              RegExp(r.string, 'g'),
+              r.replaceWith
+            )
+            await fs.writeFile(pathToFile, patchedFileContent, {
+              encoding: 'utf8',
+            })
+          }
         }
-        if (!root) {
-          throw new Error('Missing "root" property in "applyPatch" object')
-        }
-        const [patchFile, rootDir] = [
-          path.join(pluginConfig!.path!, patch),
-          path.join(pathSpec.outputDir, root),
-        ]
-        await gitApply({ patchFile, rootDir })
-      }
 
-      if (pbxproj) {
-        const {
-          addEmbeddedFramework,
-          addFile,
-          addFramework,
-          addFrameworkReference,
-          addFrameworkSearchPath,
-          addHeader,
-          addHeaderSearchPath,
-          addProject,
-          addSource,
-          addStaticLibrary,
-        } = pbxproj
-
-        if (addSource) {
-          for (const source of addSource) {
-            // Multiple source files
-            if (source.from) {
-              if (
-                switchToOldDirectoryStructure(pluginSourcePath, source.from)
-              ) {
-                log.debug(
-                  `Source Copy: Falling back to old directory structure for API(Backward compatibility)`
-                )
-                source.from = path.normalize(
-                  'IOS/IOS/Classes/SwaggersAPIs/*.swift'
-                )
+        if (setBuildSettings) {
+          for (const s of setBuildSettings) {
+            const pathToPbxProj = path.join(pathSpec.outputDir, s.path)
+            // Add any missing section in the target pbxproj
+            // This is necessary for proper parsing and modification of
+            // the pbxproj with the xcode-ern library
+            xcode.pbxProjFileUtils().addMissingSectionsToPbxProj(pathToPbxProj)
+            const iosProj = await getIosProject(projectPath)
+            const buildSettings =
+              s.buildSettings instanceof Array
+                ? s.buildSettings
+                : [s.buildSettings]
+            for (const buildSettingsEntry of buildSettings) {
+              for (const buildType of buildSettingsEntry.configurations) {
+                for (const key of Object.keys(buildSettingsEntry.settings)) {
+                  iosProj.updateBuildProperty(
+                    key,
+                    buildSettingsEntry.settings[key],
+                    buildType
+                  )
+                }
               }
-              const relativeSourcePath = path.dirname(source.from)
-              const pathToSourceFiles = path.join(
-                pluginSourcePath,
-                relativeSourcePath
-              )
-              const fileNames = _.filter(
-                await fs.readdir(pathToSourceFiles),
-                f => f.endsWith(path.extname(source.from!))
-              )
-              for (const fileName of fileNames) {
-                const fileNamePath = path.join(source.path, fileName)
+            }
+            fs.writeFileSync(pathToPbxProj, iosProj.writeSync())
+          }
+        }
+
+        if (applyPatch) {
+          const { patch, root, inNodeModules } = applyPatch
+          if (!patch) {
+            throw new Error('Missing "patch" property in "applyPatch" object')
+          }
+          if (!root && !inNodeModules) {
+            throw new Error(
+              'If "inNodeModules" is not set, "root" property must be set in "applyPatch" object'
+            )
+          }
+          const [patchFile, rootDir] = [
+            path.join(pluginConfig!.path!, patch),
+            inNodeModules
+              ? pluginSourcePath
+              : path.join(pathSpec.outputDir, root),
+          ]
+          await gitApply({ patchFile, rootDir })
+        }
+
+        if (pbxproj) {
+          const {
+            addEmbeddedFramework,
+            addFile,
+            addFramework,
+            addFrameworkReference,
+            addFrameworkSearchPath,
+            addHeader,
+            addHeaderSearchPath,
+            addProject,
+            addSource,
+            addStaticLibrary,
+          } = pbxproj
+
+          if (addSource) {
+            for (const source of addSource) {
+              // Multiple source files
+              if (source.from) {
+                if (
+                  switchToOldDirectoryStructure(pluginSourcePath, source.from)
+                ) {
+                  log.debug(
+                    `Source Copy: Falling back to old directory structure for API(Backward compatibility)`
+                  )
+                  source.from = path.normalize(
+                    'IOS/IOS/Classes/SwaggersAPIs/*.swift'
+                  )
+                }
+                const relativeSourcePath = path.dirname(source.from)
+                const pathToSourceFiles = path.join(
+                  pluginSourcePath,
+                  relativeSourcePath
+                )
+                const fileNames = _.filter(
+                  await fs.readdir(pathToSourceFiles),
+                  f => f.endsWith(path.extname(source.from!))
+                )
+                for (const fileName of fileNames) {
+                  const fileNamePath = path.join(source.path, fileName)
+                  iosProject.addSourceFile(
+                    fileNamePath,
+                    null,
+                    iosProject.findPBXGroupKey({ name: source.group })
+                  )
+                }
+              } else {
+                // Single source file
                 iosProject.addSourceFile(
-                  fileNamePath,
+                  source.path,
                   null,
                   iosProject.findPBXGroupKey({ name: source.group })
                 )
               }
-            } else {
-              // Single source file
-              iosProject.addSourceFile(
-                source.path,
-                null,
-                iosProject.findPBXGroupKey({ name: source.group })
-              )
             }
           }
-        }
 
-        if (addHeader) {
-          for (const header of addHeader) {
-            // Multiple header files
-            if (header.from) {
-              if (
-                switchToOldDirectoryStructure(pluginSourcePath, header.from)
-              ) {
-                log.debug(
-                  `Header Copy: Falling back to old directory structure for API(Backward compatibility)`
+          if (addHeader) {
+            for (const header of addHeader) {
+              // Multiple header files
+              if (header.from) {
+                if (
+                  switchToOldDirectoryStructure(pluginSourcePath, header.from)
+                ) {
+                  log.debug(
+                    `Header Copy: Falling back to old directory structure for API(Backward compatibility)`
+                  )
+                  header.from = path.normalize(
+                    'IOS/IOS/Classes/SwaggersAPIs/*.swift'
+                  )
+                }
+                const relativeHeaderPath = path.dirname(header.from)
+                const pathToHeaderFiles = path.join(
+                  pluginSourcePath,
+                  relativeHeaderPath
                 )
-                header.from = path.normalize(
-                  'IOS/IOS/Classes/SwaggersAPIs/*.swift'
+                const fileNames = _.filter(
+                  await fs.readdir(pathToHeaderFiles),
+                  f => f.endsWith(path.extname(header.from!))
                 )
-              }
-              const relativeHeaderPath = path.dirname(header.from)
-              const pathToHeaderFiles = path.join(
-                pluginSourcePath,
-                relativeHeaderPath
-              )
-              const fileNames = _.filter(
-                await fs.readdir(pathToHeaderFiles),
-                f => f.endsWith(path.extname(header.from!))
-              )
-              for (const fileName of fileNames) {
-                const fileNamePath = path.join(header.path, fileName)
+                for (const fileName of fileNames) {
+                  const fileNamePath = path.join(header.path, fileName)
+                  iosProject.addHeaderFile(
+                    fileNamePath,
+                    { public: header.public },
+                    iosProject.findPBXGroupKey({ name: header.group })
+                  )
+                }
+              } else {
+                const headerPath = header.path
                 iosProject.addHeaderFile(
-                  fileNamePath,
+                  headerPath,
                   { public: header.public },
                   iosProject.findPBXGroupKey({ name: header.group })
                 )
               }
-            } else {
-              const headerPath = header.path
-              iosProject.addHeaderFile(
-                headerPath,
-                { public: header.public },
-                iosProject.findPBXGroupKey({ name: header.group })
+            }
+          }
+
+          if (addFile) {
+            for (const file of addFile) {
+              iosProject.addFile(
+                file.path,
+                iosProject.findPBXGroupKey({ name: file.group })
+              )
+              // Add target dep in any case for now, will rework later
+              iosProject.addTargetDependency(target, [
+                `"${path.basename(file.path)}"`,
+              ])
+            }
+          }
+
+          if (addFramework) {
+            for (const framework of addFramework) {
+              iosProject.addFramework(framework, {
+                customFramework: true,
+              })
+            }
+          }
+
+          if (addProject) {
+            for (const project of addProject) {
+              const projectAbsolutePath = path.join(
+                librariesPath,
+                project.path,
+                'project.pbxproj'
+              )
+              const options = {
+                addAsTargetDependency: project.addAsTargetDependency,
+                frameworks: project.frameworks,
+                projectAbsolutePath,
+                staticLibs: project.staticLibs,
+              }
+              iosProject.addProject(
+                project.path,
+                project.group,
+                target,
+                options
               )
             }
           }
-        }
 
-        if (addFile) {
-          for (const file of addFile) {
-            iosProject.addFile(
-              file.path,
-              iosProject.findPBXGroupKey({ name: file.group })
-            )
-            // Add target dep in any case for now, will rework later
-            iosProject.addTargetDependency(target, [
-              `"${path.basename(file.path)}"`,
-            ])
-          }
-        }
-
-        if (addFramework) {
-          for (const framework of addFramework) {
-            iosProject.addFramework(framework, {
-              customFramework: true,
-            })
-          }
-        }
-
-        if (addProject) {
-          for (const project of addProject) {
-            const projectAbsolutePath = path.join(
-              librariesPath,
-              project.path,
-              'project.pbxproj'
-            )
-            const options = {
-              addAsTargetDependency: project.addAsTargetDependency,
-              frameworks: project.frameworks,
-              projectAbsolutePath,
-              staticLibs: project.staticLibs,
+          if (addStaticLibrary) {
+            for (const lib of addStaticLibrary) {
+              iosProject.addStaticLibrary(lib)
             }
-            iosProject.addProject(project.path, project.group, target, options)
           }
-        }
 
-        if (addStaticLibrary) {
-          for (const lib of addStaticLibrary) {
-            iosProject.addStaticLibrary(lib)
+          if (addHeaderSearchPath) {
+            for (const p of addHeaderSearchPath) {
+              iosProject.addToHeaderSearchPaths(p)
+            }
           }
-        }
 
-        if (addHeaderSearchPath) {
-          for (const p of addHeaderSearchPath) {
-            iosProject.addToHeaderSearchPaths(p)
+          if (addFrameworkReference) {
+            for (const frameworkReference of addFrameworkReference) {
+              iosProject.addFramework(frameworkReference, {
+                customFramework: true,
+              })
+            }
           }
-        }
 
-        if (addFrameworkReference) {
-          for (const frameworkReference of addFrameworkReference) {
-            iosProject.addFramework(frameworkReference, {
-              customFramework: true,
-            })
+          if (addEmbeddedFramework) {
+            for (const framework of addEmbeddedFramework) {
+              iosProject.addFramework(framework, {
+                customFramework: true,
+                embed: true,
+              })
+            }
           }
-        }
 
-        if (addEmbeddedFramework) {
-          for (const framework of addEmbeddedFramework) {
-            iosProject.addFramework(framework, {
-              customFramework: true,
-              embed: true,
-            })
-          }
-        }
-
-        if (addFrameworkSearchPath) {
-          for (const p of addFrameworkSearchPath) {
-            iosProject.addToFrameworkSearchPaths(p)
+          if (addFrameworkSearchPath) {
+            for (const p of addFrameworkSearchPath) {
+              iosProject.addToFrameworkSearchPaths(p)
+            }
           }
         }
       }
+
+      if (podfile) {
+        if (plugin.name !== 'react-native') {
+          throw new Error(
+            `ios.podfile directive can only be used for react-native configuration`
+          )
+        }
+        const sourcePodfilePath = path.join(pluginConfig!.path!, podfile)
+        shell.cp(sourcePodfilePath, destPodfilePath)
+      }
+
+      if (podspec) {
+        const sourcePodspecPath = path.join(pluginConfig!.path!, podspec)
+        const destPodspecPath = path.join(pathSpec.outputDir, podspec)
+        shell.cp(sourcePodspecPath, destPodspecPath)
+      }
+
+      if (extraPods) {
+        additionalPods.push(...extraPods)
+      }
     }
+
+    await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
+      destPodfilePath,
+      {
+        extraPods: additionalPods.reduce((acc, cur) => `${acc}\n  ${cur}`, ''),
+      },
+      destPodfilePath
+    )
+
     injectPluginsKaxTask.succeed(injectPluginsTaskMsg)
 
     log.debug(`[=== Completed framework generation ===]`)

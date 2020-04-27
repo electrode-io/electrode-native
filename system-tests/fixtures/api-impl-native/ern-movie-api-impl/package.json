@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
-    "react-native": "0.60.6"
+    "react-native": "0.62.2"
   },
   "dependencies": {
     "react-native-ernmovie-api": "0.0.11"
@@ -37,7 +37,8 @@
               "path": "APIImpls"
             }
           ]
-        }
+        },
+        "requiresManualLinking": true
       }
     }
   },

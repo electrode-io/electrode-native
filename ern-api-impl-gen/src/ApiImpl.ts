@@ -197,6 +197,7 @@ function ernifyPackageJson(
             },
           ],
         },
+        requiresManualLinking: true,
       },
     }
   }

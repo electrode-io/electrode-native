@@ -8,7 +8,12 @@ const miniapps = [
   `${f.movieDetailsMiniAppPkgName}@${f.movieDetailsMiniAppPkgVersion}`,
 ]
 
-const excludeFilter = ['project.pbxproj', 'ElectrodeContainer/Libraries/**']
+const excludeFilter = [
+  'project.pbxproj',
+  'ElectrodeContainer/Libraries/**',
+  'node_modules/**',
+  'Pods/**',
+]
   .map(s => `**/${s}`)
   .join(',')
 

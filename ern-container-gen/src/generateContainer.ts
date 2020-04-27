@@ -15,7 +15,8 @@ type ContainerGeneratorAction = (
 
 type PostBundleAction = (
   config: ContainerGeneratorConfig,
-  bundle: BundlingResult
+  bundle: BundlingResult,
+  reactNativeVersion: string
 ) => Promise<any>
 
 export async function generateContainer(
@@ -78,7 +79,7 @@ export async function generateContainer(
     )
 
   if (postBundle) {
-    await postBundle(config, bundlingResult)
+    await postBundle(config, bundlingResult, reactNativePlugin?.version!)
   }
 
   const compositeMiniApps = await config.composite.getMiniApps()
