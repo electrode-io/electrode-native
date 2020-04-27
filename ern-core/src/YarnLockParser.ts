@@ -54,14 +54,14 @@ export class YarnLockParser {
   public findPackage(pkg: PackagePath): PackagePathWithResolvedVersion[] {
     return pkg.version
       ? Object.keys(this.parsed.object)
-          .filter(k => k === pkg.fullPath)
-          .map(k => ({
+          .filter((k) => k === pkg.fullPath)
+          .map((k) => ({
             pkgPath: PackagePath.fromString(k),
             version: this.parsed.object[k]?.version,
           }))
       : Object.keys(this.parsed.object)
-          .filter(k => k.startsWith(`${pkg.basePath}@`))
-          .map(k => ({
+          .filter((k) => k.startsWith(`${pkg.basePath}@`))
+          .map((k) => ({
             pkgPath: PackagePath.fromString(k),
             version: this.parsed.object[k]?.version,
           }));

@@ -12,7 +12,7 @@ export default class Langs {
   }
 
   public static langs() {
-    return Langs.configs().map(v => v.getName());
+    return Langs.configs().map((v) => v.getName());
   }
 
   public run() {

@@ -511,9 +511,7 @@ export default class DefaultCodegen {
     }
     return this.escapeUnsafeCharacters(
       StringEscapeUtils.unescapeJava(
-        StringEscapeUtils.escapeJava(input)
-          .split('\\/')
-          .join('/'),
+        StringEscapeUtils.escapeJava(input).split('\\/').join('/'),
       )
 
         .replace(new RegExp('[\\t\\n\\r]', 'g'), ' ')
@@ -641,9 +639,7 @@ export default class DefaultCodegen {
     return (
       this.__outputFolder +
       path.sep +
-      this.apiPackage()
-        .split('.')
-        .join(path.sep)
+      this.apiPackage().split('.').join(path.sep)
     );
   }
 
@@ -661,9 +657,7 @@ export default class DefaultCodegen {
     return (
       this.__outputFolder +
       path.sep +
-      this.modelPackage()
-        .split('.')
-        .join(path.sep)
+      this.modelPackage().split('.').join(path.sep)
     );
   }
 
@@ -671,9 +665,7 @@ export default class DefaultCodegen {
     return (
       this.__outputFolder +
       path.sep +
-      this.testPackage()
-        .split('.')
-        .join(path.sep)
+      this.testPackage().split('.').join(path.sep)
     );
   }
 
@@ -681,9 +673,7 @@ export default class DefaultCodegen {
     return (
       this.__outputFolder +
       path.sep +
-      this.testPackage()
-        .split('.')
-        .join(path.sep)
+      this.testPackage().split('.').join(path.sep)
     );
   }
 
@@ -2647,7 +2637,7 @@ Renamed to auto-generated operationId: ${operationId}`,
     let result = StringUtils.join(
       Lists.transform(
         Lists.newArrayList(name.split(nonNameElementPattern)),
-        input => StringUtils.capitalize(input),
+        (input) => StringUtils.capitalize(input),
       ),
       '',
     );
@@ -2812,10 +2802,7 @@ Renamed to auto-generated operationId: ${operationId}`,
   public buildLibraryCliOption(supportedLibraries) {
     const sb = StringBuilder('library template (sub-template) to use:');
     for (const [key, lib] of supportedLibraries) {
-      sb.append('\n')
-        .append(key)
-        .append(' - ')
-        .append(lib);
+      sb.append('\n').append(key).append(' - ').append(lib);
     }
     return new CliOption('library', sb.toString());
   }

@@ -87,14 +87,14 @@ export class YarnCli {
 
       return new Promise((resolve, reject) => {
         const cp = spawn(this.binaryPath, args);
-        cp.stdout.on('data', data => {
+        cp.stdout.on('data', (data) => {
           log.trace(data);
           const jsonLine = JSON.parse(data.toString());
           if (jsonLine.type === 'inspect') {
             resolve(jsonLine.data);
           }
         });
-        cp.stderr.on('data', data => {
+        cp.stderr.on('data', (data) => {
           log.trace(data);
           const jsonLine = JSON.parse(data.toString());
           // 'warning' and 'error' packet types are sent to stderr

@@ -54,10 +54,7 @@ export default class SwiftCodegen extends DefaultCodegen {
 
       let group = matcher.group().substring(1, matcher.group().length - 1);
       group = DefaultCodegen.camelize(group, true);
-      builder
-        .append('{')
-        .append(group)
-        .append('}');
+      builder.append('{').append(group).append('}');
 
       cursor = matcher.end();
       found = matcher.find();
@@ -380,9 +377,7 @@ export default class SwiftCodegen extends DefaultCodegen {
       this.__outputFolder +
       File.separator +
       this.sourceFolder +
-      this.modelPackage()
-        .split('.')
-        .join(File.separatorChar)
+      this.modelPackage().split('.').join(File.separatorChar)
     );
   }
 
@@ -391,9 +386,7 @@ export default class SwiftCodegen extends DefaultCodegen {
       this.__outputFolder +
       File.separator +
       this.sourceFolder +
-      this.apiPackage()
-        .split('.')
-        .join(File.separatorChar)
+      this.apiPackage().split('.').join(File.separatorChar)
     );
   }
 
@@ -658,12 +651,8 @@ export default class SwiftCodegen extends DefaultCodegen {
   }
 
   public escapeUnsafeCharacters(input) {
-    return input
-      .split('*/')
-      .join('*_/')
-      .split('/*')
-      .join('/_*');
+    return input.split('*/').join('*_/').split('/*').join('/_*');
   }
 }
 
-const isHeader = parameter => !(parameter instanceof HeaderParameter);
+const isHeader = (parameter) => !(parameter instanceof HeaderParameter);

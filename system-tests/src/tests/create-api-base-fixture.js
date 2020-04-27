@@ -14,7 +14,7 @@ const excludeFilter = [
   'README.md',
   '.yarn-integrity',
 ]
-  .map(s => `**/${s}`)
+  .map((s) => `**/${s}`)
   .join(',');
 
 run(

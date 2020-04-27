@@ -4,7 +4,7 @@ export function normalizeVersionsToSemver(versions: string[]): string[] {
   const validSemVerRe = /^\d+\.\d+.\d+.*/;
   const versionMissingPatchRe = /^(\d+\.\d+)(.*)/;
   const versionMissingMinorRe = /^(\d+)(.*)/;
-  return _.map(versions, v => {
+  return _.map(versions, (v) => {
     if (validSemVerRe.test(v)) {
       return v;
     } else {

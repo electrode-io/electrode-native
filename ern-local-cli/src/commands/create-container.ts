@@ -35,18 +35,18 @@ export const builder = (argv: Argv) => {
       describe: 'Base Composite',
       type: 'string',
     })
-    .coerce('baseComposite', d => PackagePath.fromString(d))
+    .coerce('baseComposite', (d) => PackagePath.fromString(d))
     .option('compositeDir', {
       describe: 'Directory in which to generate the Composite',
       type: 'string',
     })
-    .coerce('compositeDir', p => untildify(p))
+    .coerce('compositeDir', (p) => untildify(p))
     .option('descriptor', {
       alias: 'd',
       describe: 'Full native application descriptor',
       type: 'string',
     })
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .option('extra', {
       alias: 'e',
       describe:
@@ -71,13 +71,13 @@ export const builder = (argv: Argv) => {
       describe: 'A list of one or more JS API implementation',
       type: 'array',
     })
-    .coerce('jsApiImpls', d => d.map(PackagePath.fromString))
+    .coerce('jsApiImpls', (d) => d.map(PackagePath.fromString))
     .option('miniapps', {
       alias: 'm',
       describe: 'A list of one or more miniapps',
       type: 'array',
     })
-    .coerce('miniapps', d => d.map(PackagePath.fromString))
+    .coerce('miniapps', (d) => d.map(PackagePath.fromString))
     .option('platform', {
       alias: 'p',
       choices: ['android', 'ios', undefined],
@@ -99,13 +99,13 @@ export const builder = (argv: Argv) => {
       describe: 'Path to source map file to generate for this container bundle',
       type: 'string',
     })
-    .coerce('sourceMapOutput', p => untildify(p))
+    .coerce('sourceMapOutput', (p) => untildify(p))
     .option('outDir', {
       alias: 'out',
       describe: 'Directory to output the generated container to',
       type: 'string',
     })
-    .coerce('outDir', p => untildify(p))
+    .coerce('outDir', (p) => untildify(p))
     .epilog(epilog(exports));
 };
 

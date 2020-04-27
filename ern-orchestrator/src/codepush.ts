@@ -125,15 +125,16 @@ export async function performCodePushPromote(
       );
       if (!codePushEntrySource) {
         throw new Error(
-          `No CodePush entry found in Cauldron matching [desc: ${sourceNapDescriptor} dep: ${sourceDeploymentName} label: ${label ||
-            'latest'}`,
+          `No CodePush entry found in Cauldron matching [desc: ${sourceNapDescriptor} dep: ${sourceDeploymentName} label: ${
+            label || 'latest'
+          }`,
         );
       }
 
-      const miniApps = _.map(codePushEntrySource.miniapps, miniapp =>
+      const miniApps = _.map(codePushEntrySource.miniapps, (miniapp) =>
         PackagePath.fromString(miniapp),
       );
-      const jsApiImpls = _.map(codePushEntrySource.jsApiImpls, jsapiimpl =>
+      const jsApiImpls = _.map(codePushEntrySource.jsApiImpls, (jsapiimpl) =>
         PackagePath.fromString(jsapiimpl),
       );
 
@@ -309,13 +310,13 @@ export async function performCodePushOtaUpdate(
     await cauldron.beginTransaction();
     const codePushPlugin = _.find(
       plugins,
-      p => p.name === 'react-native-code-push',
+      (p) => p.name === 'react-native-code-push',
     );
     if (!codePushPlugin) {
       throw new Error('react-native-code-push plugin is not in native app !');
     }
 
-    const reactNative = _.find(plugins, p => p.name === 'react-native');
+    const reactNative = _.find(plugins, (p) => p.name === 'react-native');
     if (!codePushPlugin) {
       throw new Error('react-native is not in native app !');
     }
@@ -377,20 +378,21 @@ export async function performCodePushOtaUpdate(
     const miniAppsToBeCodePushed = _.unionBy(
       miniApps,
       referenceMiniAppsToCodePush,
-      x => x.basePath,
+      (x) => x.basePath,
     );
 
     const jsApiImplsToBeCodePushed = _.unionBy(
       jsApiImpls,
       referenceJsApiImplsToCodePush,
-      x => x.basePath,
+      (x) => x.basePath,
     );
 
-    const pathsToMiniAppsToBeCodePushed = _.map(miniAppsToBeCodePushed, m =>
+    const pathsToMiniAppsToBeCodePushed = _.map(miniAppsToBeCodePushed, (m) =>
       PackagePath.fromString(m.toString()),
     );
-    const pathToJsApiImplsToBeCodePushed = _.map(jsApiImplsToBeCodePushed, j =>
-      PackagePath.fromString(j.toString()),
+    const pathToJsApiImplsToBeCodePushed = _.map(
+      jsApiImplsToBeCodePushed,
+      (j) => PackagePath.fromString(j.toString()),
     );
 
     const codePushConfig = await cauldron.getCodePushConfig(napDescriptor);
@@ -626,7 +628,7 @@ export function applyVersionModifiers({
 }): string {
   const versionModifier = _.find(
     versionModifiers,
-    m => m.deploymentName === deploymentName,
+    (m) => m.deploymentName === deploymentName,
   );
   return versionModifier
     ? targetBinaryVersion.replace(/(.+)/, versionModifier.modifier)

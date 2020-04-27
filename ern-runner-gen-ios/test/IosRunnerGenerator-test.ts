@@ -25,7 +25,7 @@ describe('IosRunnerGenerator', () => {
     targetPlatform: 'ios',
   };
 
-  before(function() {
+  before(function () {
     if (os.platform() !== 'darwin') {
       this.skip();
       return;

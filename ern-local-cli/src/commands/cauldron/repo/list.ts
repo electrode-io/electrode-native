@@ -16,7 +16,7 @@ export const commandHandler = async () => {
     throw new Error('No Cauldron repositories have been added yet');
   }
   log.info('[Cauldron Repositories]');
-  repositories.forEach(repo => log.info(`${repo.alias} -> ${repo.url}`));
+  repositories.forEach((repo) => log.info(`${repo.alias} -> ${repo.url}`));
 };
 
 export const handler = tryCatchWrap(commandHandler);

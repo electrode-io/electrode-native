@@ -3,8 +3,8 @@ import Swagger from '../src/java/Swagger';
 import path from 'path';
 import { assert } from 'chai';
 
-describe('InlineModelResolver', function() {
-  it('should flatten', async function() {
+describe('InlineModelResolver', function () {
+  it('should flatten', async function () {
     const definition = path.join(__dirname, 'fixtures', 'uber.json');
     const swagger = await Swagger.create({
       definition,

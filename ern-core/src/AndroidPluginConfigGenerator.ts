@@ -37,7 +37,7 @@ export class AndroidPluginConfigGenerator {
 
   private constructor(p: string) {
     this.root = p;
-    this.files = readDir(p, x => !this.excludedDirectoriesRe.test(x));
+    this.files = readDir(p, (x) => !this.excludedDirectoriesRe.test(x));
   }
 
   public async generateConfig({
@@ -91,7 +91,7 @@ export class AndroidPluginConfigGenerator {
       parsed.dependencies
         .filter((x: any) => !/testImplementation|testCompile/.test(x.type))
         .filter((x: any) => !this.exclusions.includes(`${x.group}:${x.name}`))
-        .filter((x: any) => !this.exclusions.some(y => x.name.includes(y)))
+        .filter((x: any) => !this.exclusions.some((y) => x.name.includes(y)))
         .map(async (x: any) => {
           if (x.group) {
             return `${x.group}:${x.name}:${x.version}`;
@@ -152,10 +152,10 @@ It might be needed to manually update the plugin config to make it a configurabl
   }
 
   public async findReactPackageImplementationFile(): Promise<string> {
-    let candidates = this.files.filter(x => x.endsWith('Package.java'));
+    let candidates = this.files.filter((x) => x.endsWith('Package.java'));
     let result;
     if (candidates.length === 0) {
-      candidates = this.files.filter(x => x.endsWith('.java'));
+      candidates = this.files.filter((x) => x.endsWith('.java'));
     }
     for (const candidate of candidates) {
       const content = await fs.readFile(path.join(this.root, candidate));
@@ -211,10 +211,10 @@ It might be needed to manually update the plugin config to make it a configurabl
   }
 
   get gradlePaths(): string[] {
-    return this.files.filter(x => x.endsWith('build.gradle'));
+    return this.files.filter((x) => x.endsWith('build.gradle'));
   }
 
   get androidManifestPaths(): string[] {
-    return this.files.filter(x => x.endsWith('AndroidManifest.xml'));
+    return this.files.filter((x) => x.endsWith('AndroidManifest.xml'));
   }
 }

@@ -6,9 +6,7 @@ export default class AuthorizationValue {
   public __keyName;
 
   constructor(keyName, value, type) {
-    this.keyName(keyName)
-      .value(value)
-      .type(type);
+    this.keyName(keyName).value(value).type(type);
   }
 
   public value(value) {

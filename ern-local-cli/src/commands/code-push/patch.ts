@@ -29,7 +29,7 @@ export const builder = (argv: Argv) => {
         'Full native application descriptor from which to promote a release',
       type: 'string',
     })
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .option('disabled', {
       alias: 'x',
       describe:

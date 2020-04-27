@@ -9,7 +9,7 @@ process.env.ERN_ENV = 'development';
 process.env.TS_NODE_PROJECT = path.resolve(workspacePath, 'tsconfig.json');
 
 let tsNodeSourceMapSupportModule;
-Module._load = function(file, parent) {
+Module._load = function (file, parent) {
   if (file === 'source-map-support' && parent.id.includes('ts-node')) {
     tsNodeSourceMapSupportModule = oload(file, parent);
     return tsNodeSourceMapSupportModule;

@@ -4,7 +4,7 @@ const afterAll = require('./afterAll');
 
 //
 // Assert given expression evaluates to true. If not exit
-module.exports = function(expression, message) {
+module.exports = function (expression, message) {
   if (!expression) {
     console.log(`${chalk.bold.red(`Assertion failed: ${message}`)}`);
     afterAll();

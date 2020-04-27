@@ -1164,24 +1164,10 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
   }
 
   public escapeQuotationMark(input) {
-    return (
-      input &&
-      input
-        .split('"')
-        .join('')
-        .split("'")
-        .join('')
-    );
+    return input && input.split('"').join('').split("'").join('');
   }
 
   public escapeUnsafeCharacters(input) {
-    return (
-      input &&
-      input
-        .split('*/')
-        .join('*_/')
-        .split('/*')
-        .join('/_*')
-    );
+    return input && input.split('*/').join('*_/').split('/*').join('/_*');
   }
 }

@@ -23,7 +23,7 @@ export const builder = (argv: Argv) => {
       describe: 'Base Composite',
       type: 'string',
     })
-    .coerce('baseComposite', d => PackagePath.fromString(d))
+    .coerce('baseComposite', (d) => PackagePath.fromString(d))
     .option('bundleId', {
       alias: 'b',
       describe: 'iOS Bundle Identifier',
@@ -33,25 +33,25 @@ export const builder = (argv: Argv) => {
       describe: 'Directory in which to generate the composite',
       type: 'string',
     })
-    .coerce('compositeDir', p => untildify(p))
+    .coerce('compositeDir', (p) => untildify(p))
     .option('descriptor', {
       alias: 'd',
       describe: 'Full native application selector',
       type: 'string',
     })
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .option('extraJsDependencies', {
       alias: 'e',
       describe:
         'Additional JavaScript dependencies to add to the composite JavaScript bundle',
       type: 'array',
     })
-    .coerce('extraJsDependencies', d => d.map(PackagePath.fromString))
+    .coerce('extraJsDependencies', (d) => d.map(PackagePath.fromString))
     .option('jsApiImpls', {
       describe: 'A list of one or more JS API Implementation(s)',
       type: 'array',
     })
-    .coerce('jsApiImpls', d => d.map(PackagePath.fromString))
+    .coerce('jsApiImpls', (d) => d.map(PackagePath.fromString))
     .option('flavor', {
       describe: 'Custom binary flavor',
     })
@@ -72,7 +72,7 @@ export const builder = (argv: Argv) => {
       describe: 'A list of one or more MiniApp(s)',
       type: 'array',
     })
-    .coerce('miniapps', d => d.map(PackagePath.fromString))
+    .coerce('miniapps', (d) => d.map(PackagePath.fromString))
     .option('packageName', {
       alias: 'p',
       describe: 'Android application package name',

@@ -16,8 +16,8 @@ interface ExecOpts {
 
 export function promisifyChildProcess(child: ChildProcess): Promise<void> {
   return new Promise((resolve, reject) => {
-    child.addListener('error', err => reject(err));
-    child.addListener('exit', code => {
+    child.addListener('error', (err) => reject(err));
+    child.addListener('exit', (code) => {
       if (code === 0) {
         resolve();
       } else {
@@ -45,10 +45,10 @@ export async function execp(
       }
     });
     if (cp.stdout) {
-      cp.stdout.on('data', data => loggers.stdout(data.toString()));
+      cp.stdout.on('data', (data) => loggers.stdout(data.toString()));
     }
     if (cp.stderr) {
-      cp.stderr.on('data', data => loggers.stderr(data.toString()));
+      cp.stderr.on('data', (data) => loggers.stderr(data.toString()));
     }
   });
 }
@@ -68,7 +68,7 @@ export async function spawnp(
     )} options: ${JSON.stringify(options)}`,
   );
   const cp = spawn(command, args, options);
-  cp.stdout.on('data', data => loggers.stdout(data.toString()));
-  cp.stderr.on('data', data => loggers.stderr(data.toString()));
+  cp.stdout.on('data', (data) => loggers.stdout(data.toString()));
+  cp.stderr.on('data', (data) => loggers.stderr(data.toString()));
   return promisifyChildProcess(cp);
 }

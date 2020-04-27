@@ -27,7 +27,7 @@ describe('cauldron upgrade scripts', () => {
   }
 
   it('should correctly upgrade Cauldron structure [0.0.0 => 1.0.0]', async () => {
-    const script = scripts.find(s => s.from === '0.0.0' && s.to === '1.0.0');
+    const script = scripts.find((s) => s.from === '0.0.0' && s.to === '1.0.0');
     const fixture = JSON.parse(
       fs
         .readFileSync(path.join(__dirname, 'fixtures/cauldron-0.0.0.json'))
@@ -45,7 +45,7 @@ describe('cauldron upgrade scripts', () => {
   });
 
   it('should correctly upgrade Cauldron structure [1.0.0 => 2.0.0]', async () => {
-    const script = scripts.find(s => s.from === '1.0.0' && s.to === '2.0.0');
+    const script = scripts.find((s) => s.from === '1.0.0' && s.to === '2.0.0');
     const fixture = JSON.parse(
       fs
         .readFileSync(path.join(__dirname, 'fixtures/cauldron-1.0.0.json'))
@@ -63,7 +63,7 @@ describe('cauldron upgrade scripts', () => {
   });
 
   it('should correctly upgrade Cauldron structure [2.0.0 => 3.0.0]', async () => {
-    const script = scripts.find(s => s.from === '2.0.0' && s.to === '3.0.0');
+    const script = scripts.find((s) => s.from === '2.0.0' && s.to === '3.0.0');
     const fixture = JSON.parse(
       fs
         .readFileSync(path.join(__dirname, 'fixtures/cauldron-2.0.0.json'))

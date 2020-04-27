@@ -47,7 +47,7 @@ export default function setup(
     }
   }
 
-  const runBefore = function() {
+  const runBefore = function () {
     if (_dev) {
       if (fs.existsSync(tmpDir)) {
         shell.rm('-rf', tmpDir);
@@ -73,7 +73,7 @@ export default function setup(
     );
   };
 
-  const runAfter = function(done) {
+  const runAfter = function (done) {
     if (!_dev) {
       tmpDir && shell.rm('-rf', tmpDir);
     }
@@ -119,7 +119,7 @@ export default function setup(
                 console.log('ERROR:\n', cmd);
                 const diffOut = e.output
                   .filter(Boolean)
-                  .map(v => v + '')
+                  .map((v) => v + '')
                   .join('\n');
                 assert(
                   false,
@@ -136,7 +136,7 @@ ${diffOut}
         });
     }
   };
-  const exists = file => () =>
+  const exists = (file) => () =>
     assert(fs.existsSync(api.cwd(file)), `Expected "${file}" to exist`);
   const execIn = (cmd, opts) =>
     new Promise((resolve, reject) => {
@@ -174,14 +174,14 @@ ${diffOut}
     }
     return ret;
   };
-  const has = src => result => {
+  const has = (src) => (result) => {
     expect(result).to.contain(src);
     return result;
   };
 
   const ern = (str, options, thens = []) => {
     const f = () => {
-      let p = new Promise(function(resolve, reject) {
+      let p = new Promise(function (resolve, reject) {
         exec(
           `${CLI} ${str}`,
           {
@@ -316,7 +316,7 @@ export function sameDirContent(pathA, pathB, filesToIgnoreContentDiff = []) {
           fs.readFileSync(path.join(diff.path1, diff.name1)).toString(),
           fs.readFileSync(path.join(diff.path2, diff.name2)).toString(),
         );
-        diffLine.forEach(part => {
+        diffLine.forEach((part) => {
           let color = part.added ? 'green' : part.removed ? 'red' : 'grey';
           process.stderr.write(part.value[color]);
         });

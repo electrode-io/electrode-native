@@ -10,6 +10,6 @@ import path from 'path';
 // loaded from UTs (and thus have 0% coverage from UT)
 const commandsDir = path.resolve(__dirname, '../src/commands');
 readDir(commandsDir)
-  .filter(f => path.extname(f) === '.ts')
-  .map(f => path.join(commandsDir, f))
-  .forEach(f => require(f));
+  .filter((f) => path.extname(f) === '.ts')
+  .map((f) => path.join(commandsDir, f))
+  .forEach((f) => require(f));

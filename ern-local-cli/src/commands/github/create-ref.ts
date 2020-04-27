@@ -24,7 +24,7 @@ export const builder = (argv: Argv) => {
         'Native application version containing the packages to create a branch/tag for',
       type: 'string',
     })
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .option('fromBranch', {
       describe:
         'Create the ref from the current tracked branches of the packages',

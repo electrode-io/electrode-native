@@ -9,14 +9,14 @@ const NodeModulesLen = 'node_modules'.length;
 
 export function findDirectoriesContainingNativeCode(rootDir: string): string[] {
   return readDir(rootDir)
-    .filter(a => /.swift$|.pbxproj$|.java$|.framework\//.test(a))
-    .filter(a => !/ElectrodeContainer.framework/.test(a));
+    .filter((a) => /.swift$|.pbxproj$|.java$|.framework\//.test(a))
+    .filter((a) => !/ElectrodeContainer.framework/.test(a));
 }
 
 export function filterDirectories(directories: string[]): string[] {
   return _.filter(
     directories,
-    d => !/sample|demo|example|appium|safari-launcher/i.test(d),
+    (d) => !/sample|demo|example|appium|safari-launcher/i.test(d),
   );
 }
 
@@ -129,7 +129,7 @@ export async function findNativeDependencies(
 export async function getNativeDependencyPath(dir: string, d: PackagePath) {
   const dependencies = await findNativeDependencies(dir);
   const dependency: PackagePath | undefined = dependencies.all.find(
-    x => x.name === d.name,
+    (x) => x.name === d.name,
   );
   return dependency?.basePath;
 }

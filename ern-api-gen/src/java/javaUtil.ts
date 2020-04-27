@@ -126,7 +126,7 @@ function arrThis(k, v) {
   return [k, v];
 }
 
-export const asMap = obj => {
+export const asMap = (obj) => {
   if (obj == null) {
     return newHashMap();
   }
@@ -146,7 +146,7 @@ const EMPTY_LIST = Object.freeze([]);
 const HASH_SET = Object.freeze(newHashSet());
 const HASH_MAP = Object.freeze(newHashMap());
 
-export const isNotEmptySet = set => {
+export const isNotEmptySet = (set) => {
   if (set == null) {
     return false;
   }

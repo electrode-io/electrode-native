@@ -208,9 +208,7 @@ export default class AndroidClientCodegen extends DefaultCodegen {
       path.sep +
       this.sourceFolder +
       path.sep +
-      this.apiPackage()
-        .split('.')
-        .join(File.separator)
+      this.apiPackage().split('.').join(File.separator)
     );
   }
 
@@ -220,9 +218,7 @@ export default class AndroidClientCodegen extends DefaultCodegen {
       path.sep +
       this.sourceFolder +
       path.sep +
-      this.modelPackage()
-        .split('.')
-        .join(File.separator)
+      this.modelPackage().split('.').join(File.separator)
     );
   }
 
@@ -786,10 +782,6 @@ export default class AndroidClientCodegen extends DefaultCodegen {
   }
 
   public escapeUnsafeCharacters(input) {
-    return input
-      .split('*/')
-      .join('*_/')
-      .split('/*')
-      .join('/_*');
+    return input.split('*/').join('*_/').split('/*').join('/_*');
   }
 }

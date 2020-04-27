@@ -6,7 +6,7 @@ const info = chalk.bold.blue;
 
 //
 // Clean up the system test environment
-module.exports = function() {
+module.exports = function () {
   console.log(
     '===========================================================================',
   );

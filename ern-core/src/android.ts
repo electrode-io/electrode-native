@@ -380,10 +380,7 @@ export async function getAndroidAvds() {
   const stdout = await execp(`${androidEmulatorPath()} -list-avds`);
   let avdArr: string[] = [];
   if (stdout) {
-    avdArr = stdout
-      .toString()
-      .trim()
-      .split(/\r?\n/);
+    avdArr = stdout.toString().trim().split(/\r?\n/);
   }
   return avdArr;
 }
@@ -397,10 +394,7 @@ export async function getDevices(): Promise<string[]> {
     * daemon not running. starting it now at tcp:5037 *
     * daemon started successfully *
   */
-  const stdOutArr = stdout
-    .toString()
-    .trim()
-    .split(/\r?\n/);
+  const stdOutArr = stdout.toString().trim().split(/\r?\n/);
   // remove stdout 'List of devices attached' (position 0)
   // and remove stdout related to daemon
   return stdOutArr.filter((entry, i) => i > 0 && !entry.includes('* daemon'));

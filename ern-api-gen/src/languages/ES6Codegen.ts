@@ -9,7 +9,7 @@ export default class ES6Codegen extends JavascriptClientCodegen {
   constructor() {
     super();
     this.__supportingFiles = this.__supportingFiles.filter(
-      v => v.templateFile !== 'mocha.opts',
+      (v) => v.templateFile !== 'mocha.opts',
     );
     this.__supportingFiles.push(
       new SupportingFile('babelrc.mustache', '', '.babelrc'),

@@ -8,7 +8,7 @@ export const desc = 'Remove a mobile application binary from the binary store';
 
 export const builder = (argv: Argv) => {
   return argv
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .option('flavor', {
       describe: 'Custom flavor of this binary',
       type: 'string',

@@ -59,18 +59,14 @@ describe('Core Utils', () => {
       const result = coreUtils.coerceToAppVersionDescriptorArray(
         'test:android:1.0.0',
       );
-      expect(result)
-        .is.an('array')
-        .of.length(1);
+      expect(result).is.an('array').of.length(1);
       expect(result[0]).eql(descriptor);
     });
 
     it('should coerce a AppVersionDescriptor to a AppVersionDescriptor array', () => {
       const descriptor = AppVersionDescriptor.fromString('test:android:1.0.0');
       const result = coreUtils.coerceToAppVersionDescriptorArray(descriptor);
-      expect(result)
-        .is.an('array')
-        .of.length(1);
+      expect(result).is.an('array').of.length(1);
       expect(result[0]).eql(descriptor);
     });
 
@@ -81,9 +77,7 @@ describe('Core Utils', () => {
         'test:android:1.0.0',
         descriptorB,
       ]);
-      expect(result)
-        .is.an('array')
-        .of.length(2);
+      expect(result).is.an('array').of.length(2);
       expect(result[0]).eql(descriptorA);
       expect(result[1]).eql(descriptorB);
     });
@@ -106,18 +100,14 @@ describe('Core Utils', () => {
     it('should coerce a string to a PackagePath array', () => {
       const dep = PackagePath.fromString('dep@1.0.0');
       const result = coreUtils.coerceToPackagePathArray('dep@1.0.0');
-      expect(result)
-        .is.an('array')
-        .of.length(1);
+      expect(result).is.an('array').of.length(1);
       expect(result[0]).eql(dep);
     });
 
     it('should coerce a PackagePath to a PackagePath array', () => {
       const dep = PackagePath.fromString('dep@1.0.0');
       const result = coreUtils.coerceToPackagePathArray(dep);
-      expect(result)
-        .is.an('array')
-        .of.length(1);
+      expect(result).is.an('array').of.length(1);
       expect(result[0]).eql(dep);
     });
 
@@ -125,9 +115,7 @@ describe('Core Utils', () => {
       const depA = PackagePath.fromString('depA@1.0.0');
       const depB = PackagePath.fromString('depB@1.0.0');
       const result = coreUtils.coerceToPackagePathArray(['depA@1.0.0', depB]);
-      expect(result)
-        .is.an('array')
-        .of.length(2);
+      expect(result).is.an('array').of.length(2);
       expect(result[0]).eql(depA);
       expect(result[1]).eql(depB);
     });

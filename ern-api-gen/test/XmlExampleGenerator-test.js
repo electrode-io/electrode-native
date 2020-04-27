@@ -6,8 +6,8 @@ import ModelImpl from '../src/models/ModelImpl';
 import { StringProperty } from '../src/models/properties';
 import { newHashMap } from '../src/java/javaUtil';
 
-describe('XmlExampleGenerator', function() {
-  it('should recursiveModelsTest', function() {
+describe('XmlExampleGenerator', function () {
+  it('should recursiveModelsTest', function () {
     const _JSON = 'application/json';
     const XML = 'application/xml';
 
@@ -82,11 +82,8 @@ describe('XmlExampleGenerator', function() {
     }
     expect(types.size).to.eql(expectedTypes.length);
   });
-  it('should xml', function() {
+  it('should xml', function () {
     const xml = new Xml();
-    xml
-      .namespace('test')
-      .prefix('prefix')
-      .attribute(true);
+    xml.namespace('test').prefix('prefix').attribute(true);
   });
 });

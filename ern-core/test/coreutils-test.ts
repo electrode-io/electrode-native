@@ -595,13 +595,13 @@ describe('utils.js', () => {
   // isValidElectrodeNativeModuleName
   // ==========================================================
   describe('isValidElectrodeNativeModuleName', () => {
-    fixtures.validElectrodeNativeModuleNames.forEach(name => {
+    fixtures.validElectrodeNativeModuleNames.forEach((name) => {
       it('should return true if valid electrode native module name', () => {
         expect(utils.isValidElectrodeNativeModuleName(name)).to.eql(true);
       });
     });
 
-    fixtures.invalidElectrodeNativeModuleNames.forEach(name => {
+    fixtures.invalidElectrodeNativeModuleNames.forEach((name) => {
       it('should return false if valid electrode native module name', () => {
         expect(utils.isValidElectrodeNativeModuleName(name)).to.eql(false);
       });

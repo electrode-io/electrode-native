@@ -59,7 +59,7 @@ export async function patchMetroBabelRcRoots({
     // Just add extra code line to inject babelrcRoots option
 
     const patch = `extraConfig.babelrcRoots = [
-${babelRcRootsRe.map(b => b.toString()).join(',')} ]
+${babelRcRootsRe.map((b) => b.toString()).join(',')} ]
 ${lineToPatch}`;
     const patchedFile = fileToPatch.toString().replace(lineToPatch, patch);
     await fs.writeFile(pathToFileToPatch, patchedFile);

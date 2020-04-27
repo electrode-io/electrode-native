@@ -23,12 +23,12 @@ export async function createZippedBundle({
   zippedbundle.end();
 
   const chunks: any = [];
-  zippedbundle.outputStream.on('data', chunk => {
+  zippedbundle.outputStream.on('data', (chunk) => {
     chunks.push(chunk);
   });
 
   return new Promise<Buffer>((resolve, reject) => {
-    zippedbundle.outputStream.on('error', err => {
+    zippedbundle.outputStream.on('error', (err) => {
       reject(err);
     });
     zippedbundle.outputStream.on('end', () => {

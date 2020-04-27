@@ -204,7 +204,7 @@ export async function runMiniApp(
   );
   const reactNativeDep = _.find(
     compositeNativeDeps.all,
-    p => p.name === 'react-native',
+    (p) => p.name === 'react-native',
   );
 
   const runnerGeneratorConfig: RunnerGeneratorConfig = {

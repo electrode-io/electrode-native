@@ -97,11 +97,11 @@ export default class IosGenerator implements ContainerGenerator {
     // However we just want top level directory Media.xcassets
     // to be added to the pbxproj, thus the special processing.
     const resourceFiles = _.uniq(
-      readDir(containerResourcesPath).map(f =>
+      readDir(containerResourcesPath).map((f) =>
         f.replace(/(\.xcassets)(\/.+)$/, '$1'),
       ),
     );
-    resourceFiles.forEach(resourceFile => {
+    resourceFiles.forEach((resourceFile) => {
       containerIosProject.addResourceFile(
         path.join('Resources', resourceFile),
         null,
@@ -142,7 +142,7 @@ Make sure to run these commands before building the container.`,
 
     const reactNativePlugin = _.find(
       config.plugins,
-      p => p.name === 'react-native',
+      (p) => p.name === 'react-native',
     );
     if (!reactNativePlugin) {
       throw new Error('react-native was not found in plugins list !');
@@ -226,7 +226,7 @@ Make sure to run these commands before building the container.`,
           ...dependencies.thirdPartyNotInManifest,
         ];
         const addDependencies: any = {};
-        resDependencies.forEach(p => {
+        resDependencies.forEach((p) => {
           addDependencies[p.name!] = p.version;
         });
 
@@ -252,7 +252,7 @@ Make sure to run these commands before building the container.`,
             'node_modules',
           );
           shell.mkdir('-p', containerNodeModulesPath);
-          resDependencies.forEach(p => {
+          resDependencies.forEach((p) => {
             shell.cp('-rf', p.basePath!, containerNodeModulesPath);
           });
         } else {
@@ -300,9 +300,9 @@ Make sure to run these commands before building the container.`,
             match = re.exec(f);
           }
           const res = matches
-            .map(r => r.split('/'))
-            .filter(x => x[0] !== 'react-native')
-            .map(x => x.join('/'))
+            .map((r) => r.split('/'))
+            .filter((x) => x[0] !== 'react-native')
+            .map((x) => x.join('/'))
             .concat('react-native');
 
           //

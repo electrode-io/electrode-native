@@ -274,9 +274,7 @@ describe('CauldronApi.js', () => {
       const platforms = await cauldronApi().getPlatforms(
         'test'.toAppDescriptor(),
       );
-      expect(platforms)
-        .to.be.an('array')
-        .of.length(1);
+      expect(platforms).to.be.an('array').of.length(1);
     });
 
     it('should throw if the application name is not found', async () => {
@@ -421,9 +419,7 @@ describe('CauldronApi.js', () => {
         AppVersionDescriptor.fromString('test:android:17.7.0'),
         'Production',
       );
-      expect(entries)
-        .to.be.an('array')
-        .of.length(2);
+      expect(entries).to.be.an('array').of.length(2);
     });
 
     it('should return the code push QA entries', async () => {
@@ -431,9 +427,7 @@ describe('CauldronApi.js', () => {
         AppVersionDescriptor.fromString('test:android:17.7.0'),
         'QA',
       );
-      expect(entries)
-        .to.be.an('array')
-        .of.length(1);
+      expect(entries).to.be.an('array').of.length(1);
     });
 
     it('should throw if native application version is not found', async () => {
@@ -515,9 +509,7 @@ describe('CauldronApi.js', () => {
       const containerMiniApps = await cauldronApi().getContainerMiniApps(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
       );
-      expect(containerMiniApps)
-        .to.be.an('array')
-        .of.length(2);
+      expect(containerMiniApps).to.be.an('array').of.length(2);
     });
 
     it('should throw if native application version does not exist', async () => {
@@ -562,9 +554,7 @@ describe('CauldronApi.js', () => {
       const containerDependencies = await cauldronApi().getNativeDependencies(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
       );
-      expect(containerDependencies)
-        .to.be.an('array')
-        .of.length(4);
+      expect(containerDependencies).to.be.an('array').of.length(4);
     });
 
     it('should throw if native application version does not exist', async () => {
@@ -620,9 +610,7 @@ describe('CauldronApi.js', () => {
       const result = await cauldronApi().getContainerJsApiImpls(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
       );
-      expect(result)
-        .to.be.an('array')
-        .of.length(1);
+      expect(result).to.be.an('array').of.length(1);
       expect(result[0]).eql('react-native-my-api-impl@1.0.0');
     });
   });
@@ -1893,9 +1881,7 @@ describe('CauldronApi.js', () => {
         tmpFixture,
         '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].codePush["QA"]',
       )[0];
-      expect(entries)
-        .to.be.an('array')
-        .of.length(2);
+      expect(entries).to.be.an('array').of.length(2);
     });
 
     it('should add the code push entry to new deployment name', async () => {
@@ -1913,9 +1899,7 @@ describe('CauldronApi.js', () => {
         tmpFixture,
         '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].codePush["STAGING"]',
       )[0];
-      expect(entries)
-        .to.be.an('array')
-        .of.length(1);
+      expect(entries).to.be.an('array').of.length(1);
     });
 
     it('should commit the document store', async () => {

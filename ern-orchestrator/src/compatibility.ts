@@ -249,7 +249,7 @@ export function getCompatibility(
   };
 
   for (const remoteDep of remoteDeps) {
-    const localDep = _.find(localDeps, d =>
+    const localDep = _.find(localDeps, (d) =>
       remoteDep.same(d, { ignoreVersion: true }),
     );
     const localDepVersion = localDep ? localDep.version : undefined;
@@ -303,7 +303,7 @@ export function getCompatibility(
 
   if (uncompatibleIfARemoteDepIsMissing) {
     for (const localDep of localDeps) {
-      const remoteDep = _.find(remoteDeps, d => d.name! === localDep.name!);
+      const remoteDep = _.find(remoteDeps, (d) => d.name! === localDep.name!);
       const remoteDepVersion = remoteDep ? remoteDep.version : undefined;
 
       const entry = {

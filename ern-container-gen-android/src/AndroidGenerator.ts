@@ -80,7 +80,7 @@ export default class AndroidGenerator implements ContainerGenerator {
 
     const reactNativePlugin = _.find(
       config.plugins,
-      p => p.name === 'react-native',
+      (p) => p.name === 'react-native',
     );
 
     if (!reactNativePlugin) {
@@ -103,7 +103,7 @@ export default class AndroidGenerator implements ContainerGenerator {
 
     const electrodeBridgePlugin = _.find(
       config.plugins,
-      p => p.name === 'react-native-electrode-bridge',
+      (p) => p.name === 'react-native-electrode-bridge',
     );
 
     if (electrodeBridgePlugin) {
@@ -277,8 +277,8 @@ export default class AndroidGenerator implements ContainerGenerator {
     const resPath = path.join(config.outDir, 'lib/src/main/res');
     const resSrcDirs = fs
       .readdirSync(resPath)
-      .filter(f => fs.statSync(path.join(resPath, f)).isDirectory())
-      .map(d => `'src/main/res/${d}'`)
+      .filter((f) => fs.statSync(path.join(resPath, f)).isDirectory())
+      .map((d) => `'src/main/res/${d}'`)
       .join(',');
     mustacheView.resSrcDirs = resSrcDirs;
 
@@ -315,7 +315,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     log.debug('Patching hull');
     const files = readDir(
       config.outDir,
-      f => !f.endsWith('.jar') && !f.endsWith('.aar') && !f.endsWith('.git'),
+      (f) => !f.endsWith('.jar') && !f.endsWith('.aar') && !f.endsWith('.git'),
     );
     const pathLibSrcMain = path.normalize('lib/src/main');
     const pathLibSrcMainJniLibs = path.normalize('lib/src/main/jniLibs');
@@ -539,7 +539,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     const result: any[] = [];
 
     // Replace versions of support libraries with set version
-    dependencies.regular = dependencies.regular.map(d =>
+    dependencies.regular = dependencies.regular.map((d) =>
       d.startsWith('com.android.support:')
         ? `${d.slice(0, d.lastIndexOf(':'))}:${
             androidVersions.supportLibraryVersion
@@ -555,23 +555,26 @@ export default class AndroidGenerator implements ContainerGenerator {
 
     // Use highest versions for regular and transitive
     // dependencies with multiple versions
-    const g = _.groupBy(dependencies.regular, x => x.match(/^[^:]+:[^:]+/)![0]);
-    dependencies.regular = Object.keys(g).map(x => this.highestVersion(g[x]));
+    const g = _.groupBy(
+      dependencies.regular,
+      (x) => x.match(/^[^:]+:[^:]+/)![0],
+    );
+    dependencies.regular = Object.keys(g).map((x) => this.highestVersion(g[x]));
     const h = _.groupBy(
       dependencies.transitive,
-      x => x.match(/^[^:]+:[^:]+/)![0],
+      (x) => x.match(/^[^:]+:[^:]+/)![0],
     );
-    dependencies.transitive = Object.keys(h).map(x =>
+    dependencies.transitive = Object.keys(h).map((x) =>
       this.highestVersion(h[x]),
     );
 
     // Add dependencies to result
-    dependencies.regular.forEach(d => result.push(`implementation '${d}'`));
-    dependencies.files.forEach(d => result.push(`implementation ${d}`));
-    dependencies.transitive.forEach(d =>
+    dependencies.regular.forEach((d) => result.push(`implementation '${d}'`));
+    dependencies.files.forEach((d) => result.push(`implementation ${d}`));
+    dependencies.transitive.forEach((d) =>
       result.push(`implementation ('${d}') { transitive = true }`),
     );
-    dependencies.annotationProcessor.forEach(d =>
+    dependencies.annotationProcessor.forEach((d) =>
       result.push(`annotationProcessor '${d}'`),
     );
     return result;
@@ -583,12 +586,12 @@ export default class AndroidGenerator implements ContainerGenerator {
     }
     const name = d[0].match(/^[^:]+:[^:]+/)![0];
     const version = d
-      .map(x => x.match(/^[^:]+:[^:]+:(.+)/)![1])
+      .map((x) => x.match(/^[^:]+:[^:]+:(.+)/)![1])
       // Trick to make highest version lookup as easy
       // as peforming a lexical sort
-      .map(x => x.replace('+', '999999'))
+      .map((x) => x.replace('+', '999999'))
       .sort()
-      .map(x => x.replace('999999', '+'))
+      .map((x) => x.replace('999999', '+'))
       .pop();
     return `${name}:${version}`;
   }
@@ -597,7 +600,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     plugins: PackagePath[],
     outDir: string,
   ): Promise<any> {
-    const rnVersion = plugins.find(p => p.name === 'react-native')?.version!;
+    const rnVersion = plugins.find((p) => p.name === 'react-native')?.version!;
     for (const plugin of plugins) {
       if (plugin.name === 'react-native') {
         continue;
@@ -638,7 +641,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     );
     const reactNativeCodePushPlugin = _.find(
       plugins,
-      p => p.name === 'react-native-code-push',
+      (p) => p.name === 'react-native-code-push',
     );
     if (reactNativeCodePushPlugin) {
       mustacheView.isCodePushPluginIncluded = true;

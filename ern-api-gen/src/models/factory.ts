@@ -2,8 +2,8 @@ import * as properties from './properties';
 import { apply, beanify } from '../java/beanUtils';
 import ComposedModel from './ComposedModel';
 
-const values = obj =>
-  Object.keys(obj).map(key => {
+const values = (obj) =>
+  Object.keys(obj).map((key) => {
     return obj[key];
   });
 
@@ -17,7 +17,7 @@ let TYPES;
 let STR_TYPES;
 export function resolve(prop: any = {}) {
   TYPES = TYPES || values(properties);
-  STR_TYPES = STR_TYPES || TYPES.filter(t => t && t.TYPE === 'string');
+  STR_TYPES = STR_TYPES || TYPES.filter((t) => t && t.TYPE === 'string');
   if (prop == null) {
     return properties.NullProperty;
   }

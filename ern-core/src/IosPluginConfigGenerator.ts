@@ -13,7 +13,7 @@ export class IosPluginConfigGenerator {
 
   private constructor(p: string) {
     this.root = p;
-    this.files = readDir(p, x => !this.excludedDirectoriesRe.test(x));
+    this.files = readDir(p, (x) => !this.excludedDirectoriesRe.test(x));
   }
 
   public async generateConfig({
@@ -72,6 +72,6 @@ export class IosPluginConfigGenerator {
   }
 
   get pbxprojPaths(): string[] {
-    return this.files.filter(x => x.endsWith('.pbxproj'));
+    return this.files.filter((x) => x.endsWith('.pbxproj'));
   }
 }

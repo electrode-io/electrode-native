@@ -20,7 +20,7 @@ export const builder = (argv: Argv) => {
       describe: 'Adds one or more MiniApps to a native application version',
       type: 'array',
     })
-    .coerce('addMiniapps', d => d.map(PackagePath.fromString))
+    .coerce('addMiniapps', (d) => d.map(PackagePath.fromString))
     .option('containerVersion', {
       alias: 'v',
       describe:
@@ -31,14 +31,14 @@ export const builder = (argv: Argv) => {
       describe: 'Remove one or more MiniApps from a native application version',
       type: 'array',
     })
-    .coerce('delMiniapps', d => d.map(PackagePath.fromString))
+    .coerce('delMiniapps', (d) => d.map(PackagePath.fromString))
     .option('descriptor', {
       alias: 'd',
       describe:
         'A complete native application descriptor target of the operation',
       type: 'string',
     })
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .option('updateMiniapps', {
       describe:
         'Update one or more MiniApps versions in a native appplication version',
@@ -49,7 +49,7 @@ export const builder = (argv: Argv) => {
         'Indicates whether to reset the React Native cache prior to bundling',
       type: 'boolean',
     })
-    .coerce('updateMiniapps', d => d.map(PackagePath.fromString))
+    .coerce('updateMiniapps', (d) => d.map(PackagePath.fromString))
     .epilog(epilog(exports));
 };
 

@@ -68,7 +68,7 @@ describe('retainHighestVersion', () => {
     ];
 
     const result = retainHighestVersions(arrA, arrB);
-    const stringifedResult = result.map(p => p.toString());
+    const stringifedResult = result.map((p) => p.toString());
     expect(stringifedResult).length(6);
     expect(stringifedResult).includes('dependencyA@2.0.0');
     expect(stringifedResult).includes('dependencyB@2.0.1');

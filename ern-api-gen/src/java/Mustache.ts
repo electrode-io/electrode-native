@@ -86,7 +86,7 @@ export default {
             return (target[name] = _loader.getTemplate(name));
           },
         };
-        partialProxy = name => {
+        partialProxy = (name) => {
           return _loader.getTemplate(name);
         };
         return cret;

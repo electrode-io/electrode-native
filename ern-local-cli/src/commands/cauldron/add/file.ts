@@ -12,7 +12,7 @@ export const command = 'file <localFilePath> <cauldronFilePath>';
 export const desc = 'Add a file in the Cauldron';
 
 export const builder = (argv: Argv) =>
-  argv.coerce('localFilePath', p => untildify(p)).epilog(epilog(exports));
+  argv.coerce('localFilePath', (p) => untildify(p)).epilog(epilog(exports));
 
 export const commandHandler = async ({
   cauldronFilePath,

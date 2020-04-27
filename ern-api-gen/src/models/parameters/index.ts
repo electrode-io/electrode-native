@@ -42,7 +42,7 @@ const TYPES = [
   RefParameter,
 ];
 
-export default function(val) {
+export default function (val) {
   if (val instanceof Parameter) {
     return val;
   }

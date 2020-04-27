@@ -48,7 +48,7 @@ export default class ErnES6ApiCodegen extends ES6Codegen {
     super.preprocessSwagger(swagger);
     if (!this.classy) {
       this.__supportingFiles = this.__supportingFiles.filter(
-        v => !contains(ERN_REMOVING, v.templateFile),
+        (v) => !contains(ERN_REMOVING, v.templateFile),
       );
     }
   }

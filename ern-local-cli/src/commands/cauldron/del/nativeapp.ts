@@ -12,7 +12,7 @@ export const desc = 'Remove a native application from the cauldron';
 
 export const builder = (argv: Argv) => {
   return argv
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .epilog(epilog(exports));
 };
 

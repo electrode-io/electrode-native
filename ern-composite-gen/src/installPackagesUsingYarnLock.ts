@@ -22,7 +22,7 @@ export async function installPackagesUsingYarnLock({
   try {
     const compositePackageJson: any = {};
 
-    if (_.some(jsPackages, m => !m.version)) {
+    if (_.some(jsPackages, (m) => !m.version)) {
       throw new Error(
         '[generateComposite] When providing a yarn lock you cannot pass MiniApps without an explicit version',
       );

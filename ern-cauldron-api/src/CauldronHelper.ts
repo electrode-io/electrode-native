@@ -262,7 +262,7 @@ export class CauldronHelper {
 
     // Make sure we transform local fs package path to registry paths
     // for native dependencies
-    const deps = dependencies.map(d =>
+    const deps = dependencies.map((d) =>
       PackagePath.fromString(`${d.name}@${d.version}`),
     );
 
@@ -365,7 +365,7 @@ export class CauldronHelper {
     descriptor: AppPlatformDescriptor,
   ): Promise<string[]> {
     const versions = await this.getVersions(descriptor);
-    return _.map(versions, v => v.name);
+    return _.map(versions, (v) => v.name);
   }
 
   public async getNativeDependencies(
@@ -574,7 +574,7 @@ export class CauldronHelper {
     for (const cauldronPackage of cauldronPackages) {
       const pkg = _.find(
         localPackages,
-        p => p.basePath === cauldronPackage.basePath,
+        (p) => p.basePath === cauldronPackage.basePath,
       );
       if (pkg && pkg.version !== cauldronPackage.version) {
         await funcUpdatePackageInContainer(descriptor, pkg);
@@ -716,7 +716,7 @@ export class CauldronHelper {
     descriptor: AppVersionDescriptor,
   ): Promise<PackagePath[]> {
     const jsApiImpls = await this.cauldron.getContainerJsApiImpls(descriptor);
-    return _.map(jsApiImpls, j => PackagePath.fromString(j));
+    return _.map(jsApiImpls, (j) => PackagePath.fromString(j));
   }
 
   public async getContainerJsApiImpl(
@@ -744,7 +744,7 @@ export class CauldronHelper {
       { label },
     );
     if (codePushEntry) {
-      return _.map(codePushEntry.jsApiImpls, e => PackagePath.fromString(e));
+      return _.map(codePushEntry.jsApiImpls, (e) => PackagePath.fromString(e));
     }
   }
 
@@ -777,7 +777,7 @@ export class CauldronHelper {
       { label },
     );
     if (codePushEntry) {
-      return _.map(codePushEntry.miniapps, e => PackagePath.fromString(e));
+      return _.map(codePushEntry.miniapps, (e) => PackagePath.fromString(e));
     }
   }
 
@@ -797,7 +797,7 @@ export class CauldronHelper {
     let result: CauldronCodePushEntry | undefined;
     if (codePushEntries) {
       if (label) {
-        result = _.find(codePushEntries, e => e.metadata.label === label);
+        result = _.find(codePushEntries, (e) => e.metadata.label === label);
         if (!result) {
           throw new Error(
             `No CodePush entry matching label ${label} was found in ${descriptor.toString()}`,
@@ -875,7 +875,7 @@ export class CauldronHelper {
           result,
           'basePath',
         );
-        _.remove(result, m =>
+        _.remove(result, (m) =>
           _.map(miniAppsWithBranches, 'basePath').includes(m.basePath),
         );
         result.push(...miniAppsWithBranches);
@@ -904,9 +904,9 @@ export class CauldronHelper {
     const miniAppsBranches = await this.getContainerMiniAppsBranches(
       descriptor,
     );
-    return _.map(miniApps, m => [
+    return _.map(miniApps, (m) => [
       m,
-      _.find(miniAppsBranches, n => n.basePath === m.basePath),
+      _.find(miniAppsBranches, (n) => n.basePath === m.basePath),
     ]);
   }
 
@@ -916,8 +916,8 @@ export class CauldronHelper {
     miniApps: PackagePath[],
     jsApiImplementations: PackagePath[],
   ): Promise<void> {
-    const miniapps = _.map(miniApps, x => x.toString());
-    const jsApiImpls = _.map(jsApiImplementations, x => x.toString());
+    const miniapps = _.map(miniApps, (x) => x.toString());
+    const jsApiImpls = _.map(jsApiImplementations, (x) => x.toString());
     const codePushConfig = await this.getCodePushConfig();
     let codePushEntries;
     if (
@@ -962,7 +962,7 @@ export class CauldronHelper {
     );
     const entry = _.find(
       codePushEntries,
-      c => c.metadata.label === metadata.label,
+      (c) => c.metadata.label === metadata.label,
     );
     if (entry) {
       if (metadata.description !== undefined) {
@@ -1253,16 +1253,16 @@ export class CauldronHelper {
     const result: PackagePath[] = [];
     const miniAppsBranches = (
       await this.cauldron.getContainerMiniAppsBranches(descriptor)
-    ).map(p => PackagePath.fromString(p));
+    ).map((p) => PackagePath.fromString(p));
     const miniApps = (
       await this.cauldron.getContainerMiniApps(descriptor)
-    ).map(p => PackagePath.fromString(p));
+    ).map((p) => PackagePath.fromString(p));
     for (const miniAppBranch of miniAppsBranches) {
       const latestCommitSha = await coreUtils.getCommitShaOfGitBranchOrTag(
         miniAppBranch,
       );
       const matchingMiniApp = miniApps.find(
-        m => m.basePath === miniAppBranch.basePath,
+        (m) => m.basePath === miniAppBranch.basePath,
       );
       if (matchingMiniApp!.version !== latestCommitSha) {
         const newPackagePath = PackagePath.fromString(
@@ -1280,16 +1280,16 @@ export class CauldronHelper {
     const result: PackagePath[] = [];
     const jsApiImplsBranches = (
       await this.cauldron.getContainerJsApiImplsBranches(descriptor)
-    ).map(p => PackagePath.fromString(p));
+    ).map((p) => PackagePath.fromString(p));
     const jsApiImpls = (
       await this.cauldron.getContainerJsApiImpls(descriptor)
-    ).map(p => PackagePath.fromString(p));
+    ).map((p) => PackagePath.fromString(p));
     for (const jsApiImplBranch of jsApiImplsBranches) {
       const latestCommitSha = await coreUtils.getCommitShaOfGitBranchOrTag(
         jsApiImplBranch,
       );
       const matchingJsApiImpl = jsApiImpls.find(
-        m => m.basePath === jsApiImplBranch.basePath,
+        (m) => m.basePath === jsApiImplBranch.basePath,
       );
       if (matchingJsApiImpl!.version !== latestCommitSha) {
         const newPackagePath = PackagePath.fromString(
@@ -1321,9 +1321,9 @@ export class CauldronHelper {
     const nativeApps = await this.getAllNativeApps();
     return <any>_.filter(
       _.flattenDeep(
-        _.map(nativeApps, nativeApp =>
-          _.map(nativeApp.platforms, p =>
-            _.map(p.versions, version => {
+        _.map(nativeApps, (nativeApp) =>
+          _.map(nativeApp.platforms, (p) =>
+            _.map(p.versions, (version) => {
               if (!platform || platform === p.name) {
                 if (
                   (version.isReleased && !onlyNonReleasedVersions) ||
@@ -1336,7 +1336,7 @@ export class CauldronHelper {
           ),
         ),
       ),
-      elt => elt !== undefined,
+      (elt) => elt !== undefined,
     );
   }
 
@@ -1352,7 +1352,7 @@ export class CauldronHelper {
       (nonSemVer, semVer) => ({ nonSemVer, semVer }),
     );
 
-    const versions = _.filter(zippedVersions, z =>
+    const versions = _.filter(zippedVersions, (z) =>
       semver.satisfies(z.semVer, <string>semVerDescriptor.version),
     );
     for (const version of versions) {

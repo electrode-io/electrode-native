@@ -4,7 +4,7 @@ import { log } from 'ern-core';
 import File from './File';
 import { isEmpty } from './StringUtils';
 
-const tryNewRequire = mod => {
+const tryNewRequire = (mod) => {
   try {
     const Clz = require(mod).default;
     return new Clz();

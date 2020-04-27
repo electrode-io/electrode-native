@@ -7,7 +7,7 @@ import { execSync } from 'child_process';
 import CodegenConfigurator from '../src/config/CodegenConfigurator';
 import Langs from '../src/cmd/Langs';
 
-describe('DefaultGenerator', function() {
+describe('DefaultGenerator', function () {
   this.timeout(50000);
 
   const { compare, runBefore, cwd, runAfter } = ernUtilDev(__dirname, true);
@@ -24,9 +24,9 @@ describe('DefaultGenerator', function() {
     });
   }
 
-  const generateObj = function(config) {
+  const generateObj = function (config) {
     const thens = [];
-    const f = async function() {
+    const f = async function () {
       const outputDir = cwd(config.outputDir);
       const tmpFile = new File(outputDir);
       if (tmpFile.exists()) {
@@ -67,7 +67,7 @@ describe('DefaultGenerator', function() {
   };
 
   function npm(command, dir) {
-    return function() {
+    return function () {
       return execSync(`npm ${command}`, {
         cwd: cwd(dir),
         stdio: [process.stdin, process.stdout, process.stderr],
@@ -153,7 +153,7 @@ describe('DefaultGenerator', function() {
     generate('event.json', 'Swift', 'event/swift'),
   );
 
-  describe('sanity test', function() {
+  describe('sanity test', function () {
     const specs = [
       'cookie.json',
       'petstore-expanded.json',
@@ -165,7 +165,7 @@ describe('DefaultGenerator', function() {
     ];
     const langs = Langs.langs();
     for (const lang of langs) {
-      describe(lang, function() {
+      describe(lang, function () {
         for (const inputSpec of specs) {
           it(
             `sanity check should generate '${inputSpec}' for '${lang}'`,

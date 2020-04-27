@@ -51,7 +51,9 @@ export class BundleStoreEngine {
   }
 
   public async uploadAssets() {
-    const newAssets = await this.sdk.assetsDelta(this.assets.map(a => a.hash));
+    const newAssets = await this.sdk.assetsDelta(
+      this.assets.map((a) => a.hash),
+    );
 
     if (newAssets.length > 0) {
       log.debug(`Uploading ${newAssets.length} new asset(s)`);

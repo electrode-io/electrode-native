@@ -24,7 +24,7 @@ export const builder = (argv: Argv) => {
         'Native application version containing the packages to delete a branch/tag from',
       type: 'string',
     })
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .option('jsApiImplsOnly', {
       describe: 'Delete the ref for JS API Implementations only',
       type: 'boolean',

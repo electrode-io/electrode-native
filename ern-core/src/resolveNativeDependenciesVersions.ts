@@ -7,13 +7,13 @@ export function containsVersionMismatch(
   versions: string[],
   mismatchLevel: 'major' | 'minor' | 'patch',
 ): boolean {
-  const semverVersions = versions.map(v => semver.parse(v)!);
+  const semverVersions = versions.map((v) => semver.parse(v)!);
   const hasMajorDiff = _.uniqBy(semverVersions, 'major').length > 1;
   const hasMinorDiff = _.uniqBy(semverVersions, 'minor').length > 1;
   const hasPatchDiff = _.uniqBy(semverVersions, 'patch').length > 1;
   const hasPreReleaseDiff =
     _.uniqWith(
-      semverVersions.map(v => v.prerelease),
+      semverVersions.map((v) => v.prerelease),
       _.isEqual,
     ).length > 1;
 
@@ -57,7 +57,7 @@ export function resolvePackageVersionsGivenMismatchLevel(
   };
 
   const pluginsByName = _.groupBy(
-    _.unionBy(plugins, p => p.toString()),
+    _.unionBy(plugins, (p) => p.toString()),
     'name',
   );
 
@@ -79,7 +79,7 @@ export function resolvePackageVersionsGivenMismatchLevel(
         result.resolved.push(
           _.find(
             entry,
-            c =>
+            (c) =>
               c.name === name &&
               c.version === semver.maxSatisfying(<string[]>pluginVersions, '*'),
           ),

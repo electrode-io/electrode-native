@@ -16,7 +16,7 @@ export async function getMiniAppsUsingNativeDependency(
     const miniAppNativeDependencies = await miniApp.getNativeDependencies();
     const miniAppNativeDependenciesStrings = _.map(
       miniAppNativeDependencies.all,
-      d => d.name!,
+      (d) => d.name!,
     );
     if (miniAppNativeDependenciesStrings.includes(nativeDependencyString)) {
       result.push(miniApp);

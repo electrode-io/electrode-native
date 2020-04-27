@@ -9,7 +9,7 @@ import Langs from '../src/cmd/Langs';
 import fs from 'fs';
 import { expect } from 'chai';
 
-describe('api schemas', async function() {
+describe('api schemas', async function () {
   this.timeout(50000);
 
   const { compare, runBefore, cwd, runAfter } = ernUtilDev(__dirname, true);
@@ -26,7 +26,7 @@ describe('api schemas', async function() {
     });
   }
 
-  const generateObj = async function(config) {
+  const generateObj = async function (config) {
     const outputDir = cwd(config.outputDir);
     const tmpFile = new File(outputDir);
     if (tmpFile.exists()) {
@@ -46,7 +46,7 @@ describe('api schemas', async function() {
   };
 
   function npm(command, dir) {
-    return function() {
+    return function () {
       return execSync(`npm ${command}`, {
         cwd: cwd(dir),
         stdio: [process.stdin, process.stdout, process.stderr],
@@ -56,13 +56,13 @@ describe('api schemas', async function() {
 
   const specs = fs
     .readdirSync(path.join(__dirname, 'fixtures', 'apis'))
-    .filter(basename => !basename.match(/invalid/));
+    .filter((basename) => !basename.match(/invalid/));
   const invalidSpecsByName = {
     emptyProperty: 'empty-property.json',
   };
   const langs = Langs.langs();
   for (const lang of langs) {
-    describe(lang, function() {
+    describe(lang, function () {
       for (const inputSpec of specs) {
         it(`apis should generate '${inputSpec}' for '${lang}'`, async () => {
           const api = await generateObj({
@@ -83,8 +83,8 @@ describe('api schemas', async function() {
             '_',
           )}/${lang}`,
         })
-          .then(api => expect(api).to.not.exist)
-          .catch(err => {
+          .then((api) => expect(api).to.not.exist)
+          .catch((err) => {
             expect(err.message.match(/Empty/));
             expect(err.message.match(/Try inspecting/));
           }));

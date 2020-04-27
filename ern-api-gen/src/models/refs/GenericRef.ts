@@ -11,7 +11,7 @@ export default class GenericRef {
     return ref;
   };
 
-  public static computeRefFormat = ref => {
+  public static computeRefFormat = (ref) => {
     if (ref.startsWith('http:') || ref.startsWith('https:')) {
       return RefFormat.URL;
     } else if (ref.startsWith('#/')) {

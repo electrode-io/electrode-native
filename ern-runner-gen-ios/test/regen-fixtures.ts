@@ -20,4 +20,4 @@ async function regenIosRunnerFixture() {
   console.log(chalk.green('Done!'));
 }
 
-regenIosRunnerFixture().catch(e => console.error(e));
+regenIosRunnerFixture().catch((e) => console.error(e));

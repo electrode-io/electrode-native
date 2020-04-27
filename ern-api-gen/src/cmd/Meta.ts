@@ -154,7 +154,7 @@ export class Writer {
     this.generator = new DefaultGenerator();
   }
 
-  public convert = support => {
+  public convert = (support) => {
     try {
       const destinationFolder = new File(
         new File(this.targetDir.getAbsolutePath()),

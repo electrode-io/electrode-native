@@ -87,16 +87,11 @@ export default class CliOption {
   public getOptionHelp() {
     const sb = StringBuilder(this.description);
     if (this.__defaultValue != null) {
-      sb.append(' (Default: ')
-        .append(this.__defaultValue)
-        .append(')');
+      sb.append(' (Default: ').append(this.__defaultValue).append(')');
     }
     if (this.enumValues != null) {
       for (const [key, value] of this.enumValues) {
-        sb.append('\n    ')
-          .append(key)
-          .append(' - ')
-          .append(value);
+        sb.append('\n    ').append(key).append(' - ').append(value);
       }
     }
     return sb.toString();

@@ -8,7 +8,7 @@ import getSize from 'get-folder-size';
  * Gets the total size (in bytes) of a given directory
  * @param dirPath path to the directory for which to compute size
  */
-const getSizeAsync: (dirPath: string) => Promise<number> = dirPath =>
+const getSizeAsync: (dirPath: string) => Promise<number> = (dirPath) =>
   new Promise((resolve, reject) => {
     getSize(dirPath, (err, size) => {
       err ? reject(err) : resolve(size);
@@ -123,7 +123,7 @@ export class FsCache<T> {
    */
   public async isInCache(obj: T): Promise<boolean> {
     const manifestObj = await this.getManifestObj();
-    return !!manifestObj.entries.find(e => e.id === this.objectToId(obj));
+    return !!manifestObj.entries.find((e) => e.id === this.objectToId(obj));
   }
 
   /**
@@ -178,7 +178,7 @@ export class FsCache<T> {
   public async getObjectCachePath(obj: T): Promise<string | void> {
     const manifestObj = await this.getManifestObj();
     const cacheEntry = manifestObj.entries.find(
-      e => e.id === this.objectToId(obj),
+      (e) => e.id === this.objectToId(obj),
     );
     if (cacheEntry) {
       cacheEntry.lastAccessed = Date.now();

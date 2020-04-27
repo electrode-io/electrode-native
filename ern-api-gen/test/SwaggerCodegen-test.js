@@ -2,7 +2,7 @@ import SwaggerCodegen from '../src/SwaggerCodegen';
 import ernUtilDev from 'ern-util-dev';
 
 function execTest(out, resolve = () => {}, reject = () => {}) {
-  return async function() {
+  return async function () {
     try {
       const parts = this.test.title.split(' ');
       if (out) parts.push(...out.split(' '));
@@ -13,7 +13,7 @@ function execTest(out, resolve = () => {}, reject = () => {}) {
     }
   };
 }
-describe('SwaggerCodegen', function() {
+describe('SwaggerCodegen', function () {
   const { runBefore, runAfter, cwd } = ernUtilDev(__dirname);
   before(runBefore);
   after(runAfter);

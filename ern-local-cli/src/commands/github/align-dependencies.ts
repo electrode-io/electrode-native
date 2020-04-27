@@ -19,7 +19,7 @@ export const builder = (argv: Argv) => {
       describe: 'Native application version containing the packages to upgrade',
       type: 'string',
     })
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .option('jsApiImplsOnly', {
       describe: 'Only update package.json of JS API Implementations',
       type: 'boolean',

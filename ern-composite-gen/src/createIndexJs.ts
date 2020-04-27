@@ -18,7 +18,7 @@ export async function createIndexJs({
   )) {
     dependencies.push(dependency);
   }
-  dependencies.forEach(d => {
+  dependencies.forEach((d) => {
     entryIndexJsContent += `import '${d}'\n`;
   });
 

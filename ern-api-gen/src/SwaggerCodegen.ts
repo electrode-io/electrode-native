@@ -27,8 +27,8 @@ export default class SwaggerCodegen {
 }
 if (require.main === module) {
   SwaggerCodegen.main(process.argv.slice(2)).then(
-    x => log.info(x),
-    err => {
+    (x) => log.info(x),
+    (err) => {
       log.error(err.message);
       process.exit(1);
     },

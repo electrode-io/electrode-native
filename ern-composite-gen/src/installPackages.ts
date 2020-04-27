@@ -18,7 +18,7 @@ export async function installPackages({
     ? [...miniApps, ...jsApiImplDependencies]
     : miniApps;
 
-  if (pathToYarnLock && _.some(jsPackages, p => p.isFilePath)) {
+  if (pathToYarnLock && _.some(jsPackages, (p) => p.isFilePath)) {
     log.warn(
       'Yarn lock will not be used as some of the MiniApp paths are file based',
     );

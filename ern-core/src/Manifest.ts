@@ -531,13 +531,13 @@ export class Manifest {
           ? overrideManifestData.targetNativeDependencies
           : [],
         masterManifestData ? masterManifestData.targetNativeDependencies : [],
-        d => PackagePath.fromString(<string>d).name,
+        (d) => PackagePath.fromString(<string>d).name,
       );
 
       manifestData.targetJsDependencies = _.unionBy(
         overrideManifestData ? overrideManifestData.targetJsDependencies : [],
         masterManifestData ? masterManifestData.targetJsDependencies : [],
-        d => PackagePath.fromString(<string>d).name,
+        (d) => PackagePath.fromString(<string>d).name,
       );
     } else if (this.overrideManifest && this.manifestOverrideType === 'full') {
       manifestData = await this.overrideManifest.getManifestData({
@@ -562,7 +562,7 @@ export class Manifest {
   } = {}): Promise<PackagePath[]> {
     const m = await this.getManifestData({ manifestId, platformVersion });
     return m
-      ? _.map(m.targetNativeDependencies, d => PackagePath.fromString(d))
+      ? _.map(m.targetNativeDependencies, (d) => PackagePath.fromString(d))
       : [];
   }
 
@@ -575,7 +575,7 @@ export class Manifest {
   } = {}): Promise<PackagePath[]> {
     const m = await this.getManifestData({ manifestId, platformVersion });
     return m
-      ? _.map(m.targetJsDependencies, d => PackagePath.fromString(d))
+      ? _.map(m.targetJsDependencies, (d) => PackagePath.fromString(d))
       : [];
   }
 
@@ -593,7 +593,7 @@ export class Manifest {
       manifestId,
       platformVersion,
     });
-    return _.find(nativeDependencies, d => d.name === dependency.name);
+    return _.find(nativeDependencies, (d) => d.name === dependency.name);
   }
 
   public async getJsDependency(
@@ -610,7 +610,7 @@ export class Manifest {
       manifestId,
       platformVersion,
     });
-    return _.find(jsDependencies, d => d.name === dependency.name);
+    return _.find(jsDependencies, (d) => d.name === dependency.name);
   }
 
   public async getJsAndNativeDependencies({
@@ -624,7 +624,7 @@ export class Manifest {
     const manifestDeps = manifest
       ? _.union(m.targetJsDependencies, m.targetNativeDependencies)
       : [];
-    return _.map(manifestDeps, d => PackagePath.fromString(<string>d));
+    return _.map(manifestDeps, (d) => PackagePath.fromString(<string>d));
   }
 
   public async getPluginConfigPath(

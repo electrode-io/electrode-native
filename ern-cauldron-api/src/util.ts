@@ -9,9 +9,9 @@ import { cauldronApiVersionBySchemaVersion, schemaVersion } from './schemas';
 
 export function exists(collection: any, name: string, version?: string) {
   if (!version) {
-    return _.some(collection, x => x.name === name);
+    return _.some(collection, (x) => x.name === name);
   } else {
-    return _.some(collection, x => x.name === name && x.version === version);
+    return _.some(collection, (x) => x.name === name && x.version === version);
   }
 }
 

@@ -27,7 +27,7 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .epilog(epilog(exports));
 };
 

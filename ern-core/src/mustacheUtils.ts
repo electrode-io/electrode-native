@@ -16,7 +16,7 @@ export async function mustacheRenderUsingTemplateFile(
 ) {
   return fs
     .readFile(filename, 'utf8')
-    .then(template => Mustache.render(template, view, partials));
+    .then((template) => Mustache.render(template, view, partials));
 }
 
 // Mustache render to an output file using a template file
@@ -30,7 +30,7 @@ export async function mustacheRenderToOutputFileUsingTemplateFile(
   partials?: any,
 ) {
   return mustacheRenderUsingTemplateFile(templateFilename, view, partials).then(
-    output => {
+    (output) => {
       return fs.writeFile(outputFile, output);
     },
   );

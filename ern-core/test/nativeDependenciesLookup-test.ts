@@ -33,7 +33,7 @@ describe('nativeDependenciesLookup.ts', () => {
         'pkg-native-c/src/code.swift',
         'pkg-native-d/src/code.java',
         '@scoped-pkgs/nested/node_modules/pkg-native-e/src/code.swift',
-      ].map(p => p.replace(/\//g, path.sep));
+      ].map((p) => p.replace(/\//g, path.sep));
       expect(expectedResult).to.have.members(result);
     });
   });
@@ -49,7 +49,7 @@ describe('nativeDependenciesLookup.ts', () => {
             'pkg-native-d/src/code.java',
             '@scoped-pkgs/nested/node_modules/pkg-native-e/src/code.swift',
             '@scoped-pkgs/nested/node_modules/@scope/pkg-native-e/src/code.swift',
-          ].map(p => p.replace(/\//g, path.sep)),
+          ].map((p) => p.replace(/\//g, path.sep)),
         ),
       );
       const expectedResult = [
@@ -59,7 +59,7 @@ describe('nativeDependenciesLookup.ts', () => {
         'pkg-native-d',
         '@scoped-pkgs/nested/node_modules/pkg-native-e',
         '@scoped-pkgs/nested/node_modules/@scope/pkg-native-e',
-      ].map(p => p.replace(/\//g, path.sep));
+      ].map((p) => p.replace(/\//g, path.sep));
       expect(expectedResult).to.have.members(result);
     });
   });

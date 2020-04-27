@@ -25,13 +25,13 @@ export async function buildIosRunner(pathToIosRunner: string, udid: string) {
       { cwd: pathToIosRunner },
     );
 
-    xcodebuildProc.stdout.on('data', data => {
+    xcodebuildProc.stdout.on('data', (data) => {
       log.debug(data.toString());
     });
-    xcodebuildProc.stderr.on('data', data => {
+    xcodebuildProc.stderr.on('data', (data) => {
       log.debug(data.toString());
     });
-    xcodebuildProc.on('close', code => {
+    xcodebuildProc.on('close', (code) => {
       code === 0
         ? resolve()
         : reject(

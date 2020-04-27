@@ -21,15 +21,15 @@ supportedHttpMethods.push('event');
  *
  */
 supportedHttpMethods.map(function method(name) {
-  this[`get${upperFirst(name)}`] = function() {
+  this[`get${upperFirst(name)}`] = function () {
     return this.getOperation(name);
   };
 }, Path.prototype);
 
-Path.prototype.toJSON = function() {
+Path.prototype.toJSON = function () {
   return this.definition;
 };
-const _asResponse = r => [(r.statusCode || 'default') + '', r];
+const _asResponse = (r) => [(r.statusCode || 'default') + '', r];
 
 function asParameter(p) {
   if (p.definition && '$ref' in p.definition) {
@@ -116,7 +116,7 @@ beanify(
       return (
         this.headers &&
         newHashMap(
-          ...Object.keys(this.headers).map(key => [key, this.headers[key]]),
+          ...Object.keys(this.headers).map((key) => [key, this.headers[key]]),
         )
       );
     },
@@ -185,7 +185,7 @@ Object.assign(SwaggerApi.prototype, {
       if (this.definitions == null) {
         this._definitions = null;
       } else {
-        const defs = Object.keys(this.definitions).map(key => [
+        const defs = Object.keys(this.definitions).map((key) => [
           key,
           toModel(
             factory(
@@ -215,7 +215,7 @@ Object.assign(SwaggerApi.prototype, {
     if (!this._securityDefinitions) {
       const securityDefinitions =
         this.definitionFullyResolved.securityDefinitions || {};
-      const defs = Object.keys(securityDefinitions).map(key => [
+      const defs = Object.keys(securityDefinitions).map((key) => [
         key,
         authFactory(securityDefinitions[key]),
       ]);

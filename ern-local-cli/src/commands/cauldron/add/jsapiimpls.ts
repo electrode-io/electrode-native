@@ -26,8 +26,8 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
-    .coerce('jsapiimpls', d => d.map(PackagePath.fromString))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
+    .coerce('jsapiimpls', (d) => d.map(PackagePath.fromString))
     .option('resetCache', {
       describe:
         'Indicates whether to reset the React Native cache prior to bundling',

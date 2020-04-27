@@ -17,7 +17,7 @@ const excludeFilter = [
   'node_modules',
   'Podfile.lock',
 ]
-  .map(s => `**/${s}`)
+  .map((s) => `**/${s}`)
   .join(',');
 
 run(

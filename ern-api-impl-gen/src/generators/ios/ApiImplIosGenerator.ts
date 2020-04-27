@@ -17,7 +17,7 @@ const API_IMPL_GROUP_NAME = 'APIImpls';
 
 export default class ApiImplIosGenerator implements ApiImplGeneratable {
   public static getMustacheFileNamesMap(resourceDir: string, apiName: string) {
-    const files = readDir(resourceDir, f => f.endsWith('.mustache'));
+    const files = readDir(resourceDir, (f) => f.endsWith('.mustache'));
     const classNames = {
       'RequestHandlerConfig.swift.mustache': 'RequestHandlerConfig.swift',
       'RequestHandlerProvider.swift.mustache': 'RequestHandlerProvider.swift',

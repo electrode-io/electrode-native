@@ -33,6 +33,6 @@ export const PATH = new RefType('#/paths/');
 export const RESPONSE = new RefType('#/responses/');
 
 const ALL = { DEFINITION, PARAMETER, PATH, RESPONSE };
-const ENUMS = Object.freeze(Object.keys(ALL).map(v => ALL[v]));
+const ENUMS = Object.freeze(Object.keys(ALL).map((v) => ALL[v]));
 
 export default { ...ALL, forValue };

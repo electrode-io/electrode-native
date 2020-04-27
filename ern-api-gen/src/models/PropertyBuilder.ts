@@ -40,7 +40,7 @@ export function toModel(property, parent?: any) {
     const child = property.allOf.filter(withOutRef);
 
     model.parent(parent).child(toModel(child.shift(), model));
-    model.setInterfaces(interfaces.map(c => toModel(c, model)));
+    model.setInterfaces(interfaces.map((c) => toModel(c, model)));
     if (child.length) {
       log.warn(
         'An allOf can only have 1 implementation, it can have multiple $ref types',

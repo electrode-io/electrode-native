@@ -44,7 +44,7 @@ const capitalizeFully$inner = (match, index, title) => {
   return match[0].toUpperCase() + match.substr(1);
 };
 
-export const capitalizeFully = str =>
+export const capitalizeFully = (str) =>
   str.replace(/[A-Za-z0-9\u00C0-\u00FF]+[^\s-]*/g, capitalizeFully$inner);
 
 export function getCommonPrefix(...strs) {
@@ -135,7 +135,7 @@ export const compareTo = (value, anotherString) => {
   }
   return len1 - len2;
 };
-export const upperFirst = word => {
+export const upperFirst = (word) => {
   if (isBlank(word)) {
     return word;
   }

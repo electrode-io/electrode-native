@@ -17,7 +17,7 @@ declare global {
   }
 }
 
-String.prototype.toAppDescriptor = function(this: string): AnyAppDescriptor {
+String.prototype.toAppDescriptor = function (this: string): AnyAppDescriptor {
   const arr: string[] = this.split(':');
   if (arr.length > 3) {
     throw new Error(`{this} is not a valid application descriptor`);

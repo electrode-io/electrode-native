@@ -17,14 +17,8 @@ export default class SupportingFile {
 
   public toString() {
     const builder = StringBuilder('SupportingFile:\n');
-    builder
-      .append('\ttemplateFile: ')
-      .append(this.templateFile)
-      .append('\n');
-    builder
-      .append('\tfolder: ')
-      .append(this.folder)
-      .append('\n');
+    builder.append('\ttemplateFile: ').append(this.templateFile).append('\n');
+    builder.append('\tfolder: ').append(this.folder).append('\n');
     builder
       .append('\tdestinationFilename: ')
       .append(this.destinationFilename)

@@ -22,7 +22,7 @@ class CodegenModelType {
   public ordinal = () => ALL.indexOf(this);
 }
 
-const forType = type => new CodegenModelType(type);
+const forType = (type) => new CodegenModelType(type);
 
 export const MODEL = forType(CodegenModel);
 export const OPERATION = forType(CodegenOperation);

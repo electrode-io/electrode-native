@@ -6,7 +6,7 @@ const runErnCommand = require('./runErnCommand');
 //
 // Run the given 'ern' command synchronously
 // using pre transpiled ern binary (in dist)
-module.exports = function(command, { expectedExitCode = 0 } = {}) {
+module.exports = function (command, { expectedExitCode = 0 } = {}) {
   console.log(
     '===========================================================================',
   );

@@ -127,12 +127,12 @@ export class WorkspaceComposite implements Composite {
     // Filter out MiniApps that can be falsy considered as native dependencies
     // if developer(s) forgot to npm ignore the android/ios directory
     const miniAppsPackages = await this.getMiniAppsPackages();
-    const miniAppsPaths = miniAppsPackages.map(p => p.path);
+    const miniAppsPaths = miniAppsPackages.map((p) => p.path);
     nativeDependencies.all = nativeDependencies.all.filter(
-      x => !miniAppsPaths.includes(x.basePath),
+      (x) => !miniAppsPaths.includes(x.basePath),
     );
     nativeDependencies.thirdPartyNotInManifest = nativeDependencies.thirdPartyNotInManifest.filter(
-      x => !miniAppsPaths.includes(x.basePath),
+      (x) => !miniAppsPaths.includes(x.basePath),
     );
     this.cachedNativeDependencies = nativeDependencies;
     return this.cachedNativeDependencies;

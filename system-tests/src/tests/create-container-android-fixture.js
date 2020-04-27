@@ -14,7 +14,7 @@ const excludeFilter = [
   'jniLibs/**',
   'yarn.lock',
 ]
-  .map(s => `**/${s}`)
+  .map((s) => `**/${s}`)
   .join(',');
 
 run(

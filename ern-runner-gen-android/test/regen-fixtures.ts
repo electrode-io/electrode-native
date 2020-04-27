@@ -21,4 +21,4 @@ async function regenAndroidRunnerFixture() {
   console.log(chalk.green('Done!'));
 }
 
-regenAndroidRunnerFixture().catch(e => console.error(e));
+regenAndroidRunnerFixture().catch((e) => console.error(e));

@@ -26,11 +26,9 @@ describe('ErnBinaryStore', () => {
   const testDescriptorFlavoredFile = 'test-android-1.0.0-prod.zip';
 
   describe('hasBinary', () => {
-    it('should build the correct path [flavored]', done => {
-      const n = nock(binaryStoreUrl)
-        .head(/.*/)
-        .reply(200);
-      n.on('request', req => {
+    it('should build the correct path [flavored]', (done) => {
+      const n = nock(binaryStoreUrl).head(/.*/).reply(200);
+      n.on('request', (req) => {
         expect(req.path).equal(`/${testDescriptorFlavoredFile}`);
         done();
       });
@@ -40,11 +38,9 @@ describe('ErnBinaryStore', () => {
       });
     });
 
-    it('should build the correct path [unflavored]', done => {
-      const n = nock(binaryStoreUrl)
-        .head(/.*/)
-        .reply(200);
-      n.on('request', req => {
+    it('should build the correct path [unflavored]', (done) => {
+      const n = nock(binaryStoreUrl).head(/.*/).reply(200);
+      n.on('request', (req) => {
         expect(req.path).equal(`/${testDescriptorFile}`);
         done();
       });
@@ -53,41 +49,31 @@ describe('ErnBinaryStore', () => {
     });
 
     it('should return false if the server returns 404 not found', async () => {
-      nock(binaryStoreUrl)
-        .head(`/${testDescriptorFile}`)
-        .reply(404);
+      nock(binaryStoreUrl).head(`/${testDescriptorFile}`).reply(404);
       const sut = createBinaryStore();
       const res = await sut.hasBinary(testDescriptor);
       expect(res).false;
     });
 
     it('should return true if the server returns 200 ok', async () => {
-      nock(binaryStoreUrl)
-        .head(`/${testDescriptorFile}`)
-        .reply(200);
+      nock(binaryStoreUrl).head(`/${testDescriptorFile}`).reply(200);
       const sut = createBinaryStore();
       const res = await sut.hasBinary(testDescriptor);
       expect(res).true;
     });
 
     it('should throw if the server returns an error status code', async () => {
-      nock(binaryStoreUrl)
-        .head(`/${testDescriptorFile}`)
-        .reply(500);
+      nock(binaryStoreUrl).head(`/${testDescriptorFile}`).reply(500);
       const sut = createBinaryStore();
       assert(await doesThrow(sut.hasBinary, sut, testDescriptor));
     });
   });
 
   describe('removeBinary', () => {
-    it('should build the correct path [flavored]', done => {
-      nock(binaryStoreUrl)
-        .head(`/${testDescriptorFlavoredFile}`)
-        .reply(200);
-      const n = nock(binaryStoreUrl)
-        .delete(/.*/)
-        .reply(200);
-      n.on('request', req => {
+    it('should build the correct path [flavored]', (done) => {
+      nock(binaryStoreUrl).head(`/${testDescriptorFlavoredFile}`).reply(200);
+      const n = nock(binaryStoreUrl).delete(/.*/).reply(200);
+      n.on('request', (req) => {
         expect(req.path).equal(`/${testDescriptorFlavoredFile}`);
         done();
       });
@@ -97,14 +83,10 @@ describe('ErnBinaryStore', () => {
       });
     });
 
-    it('should build the correct path [unflavored]', done => {
-      nock(binaryStoreUrl)
-        .head(`/${testDescriptorFile}`)
-        .reply(200);
-      const n = nock(binaryStoreUrl)
-        .delete(/.*/)
-        .reply(200);
-      n.on('request', req => {
+    it('should build the correct path [unflavored]', (done) => {
+      nock(binaryStoreUrl).head(`/${testDescriptorFile}`).reply(200);
+      const n = nock(binaryStoreUrl).delete(/.*/).reply(200);
+      n.on('request', (req) => {
         expect(req.path).equal(`/${testDescriptorFile}`);
         done();
       });
@@ -113,34 +95,22 @@ describe('ErnBinaryStore', () => {
     });
 
     it('should not throw if the server returns a success status code', async () => {
-      nock(binaryStoreUrl)
-        .head(`/${testDescriptorFile}`)
-        .reply(200);
-      nock(binaryStoreUrl)
-        .delete(`/${testDescriptorFile}`)
-        .reply(200);
+      nock(binaryStoreUrl).head(`/${testDescriptorFile}`).reply(200);
+      nock(binaryStoreUrl).delete(`/${testDescriptorFile}`).reply(200);
       const sut = createBinaryStore();
       await sut.removeBinary(testDescriptor);
     });
 
     it('should throw if the server returns an error status code', async () => {
-      nock(binaryStoreUrl)
-        .head(`/${testDescriptorFile}`)
-        .reply(200);
-      nock(binaryStoreUrl)
-        .delete(`/${testDescriptorFile}`)
-        .reply(500);
+      nock(binaryStoreUrl).head(`/${testDescriptorFile}`).reply(200);
+      nock(binaryStoreUrl).delete(`/${testDescriptorFile}`).reply(500);
       const sut = createBinaryStore();
       assert(await doesThrow(sut.removeBinary, sut, testDescriptor));
     });
 
     it('should throw if the server does not have the specified binary', async () => {
-      nock(binaryStoreUrl)
-        .head(`/${testDescriptorFile}`)
-        .reply(404);
-      nock(binaryStoreUrl)
-        .delete(`/${testDescriptorFile}`)
-        .reply(200);
+      nock(binaryStoreUrl).head(`/${testDescriptorFile}`).reply(404);
+      nock(binaryStoreUrl).delete(`/${testDescriptorFile}`).reply(200);
       const sut = createBinaryStore();
       assert(await doesThrow(sut.removeBinary, sut, testDescriptor));
     });

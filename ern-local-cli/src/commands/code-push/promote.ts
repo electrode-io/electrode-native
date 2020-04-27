@@ -81,7 +81,7 @@ export const builder = (argv: Argv) => {
         'Full native application descriptor from which to promote a release',
       type: 'string',
     })
-    .coerce('sourceDescriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('sourceDescriptor', (d) => AppVersionDescriptor.fromString(d))
     .option('targetBinaryVersion', {
       alias: 't',
       describe:
@@ -97,7 +97,7 @@ export const builder = (argv: Argv) => {
         'One or more native application descriptors matching targeted versions',
       type: 'array',
     })
-    .coerce('targetDescriptors', d =>
+    .coerce('targetDescriptors', (d) =>
       d.map((t: string) => AppVersionDescriptor.fromString(t)),
     )
     .option('targetSemVerDescriptor', {

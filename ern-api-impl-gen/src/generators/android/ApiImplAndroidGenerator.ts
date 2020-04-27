@@ -20,7 +20,7 @@ const API_IMPL_PACKAGE = path.normalize('com/ern/api/impl');
 
 export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
   public static getMustacheFileNamesMap(resourceDir: string, apiName: string) {
-    const files = readDir(resourceDir, f => f.endsWith('.mustache'));
+    const files = readDir(resourceDir, (f) => f.endsWith('.mustache'));
     const classNames: { [k: string]: string } = {
       'RequestHandlerConfig.java.mustache': 'RequestHandlerConfig.java',
       'RequestHandlerProvider.java.mustache': 'RequestHandlerProvider.java',

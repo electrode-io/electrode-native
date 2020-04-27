@@ -18,7 +18,7 @@ export const builder = (argv: Argv) => {
       describe: 'Base Composite',
       type: 'string',
     })
-    .coerce('baseComposite', d => PackagePath.fromString(d))
+    .coerce('baseComposite', (d) => PackagePath.fromString(d))
     .option('extra', {
       alias: 'e',
       describe:
@@ -30,7 +30,7 @@ export const builder = (argv: Argv) => {
       describe: 'Full native application descriptor',
       type: 'string',
     })
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .option('dev', {
       default: true,
       describe: 'Enable or disable React Native dev support',
@@ -55,7 +55,7 @@ export const builder = (argv: Argv) => {
       describe: 'One or more MiniApps to combine in the Runner Container',
       type: 'array',
     })
-    .coerce('miniapps', d => d.map(PackagePath.fromString))
+    .coerce('miniapps', (d) => d.map(PackagePath.fromString))
     .option('port', {
       default: '8081',
       describe: 'Port to use for the local package',

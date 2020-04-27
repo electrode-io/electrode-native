@@ -6,8 +6,8 @@ import { expect } from 'chai';
 import RefFormat from '../src/models/refs/RefFormat';
 import ModelImpl from '../src/models/ModelImpl';
 
-describe('parameters', function() {
-  it('should RefParameter', function() {
+describe('parameters', function () {
+  it('should RefParameter', function () {
     const r = parameters({
       $ref: '#!/definitions/Whatever',
     });
@@ -17,7 +17,7 @@ describe('parameters', function() {
     expect(rp.getRefFormat()).to.eql(RefFormat.INTERNAL);
     expect(rp.getSimpleRef()).to.eql('#/definitions/Whatever');
   });
-  it('should BodyParameter', function() {
+  it('should BodyParameter', function () {
     const r = parameters({
       in: 'body',
       schema: {

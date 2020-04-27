@@ -28,12 +28,12 @@ export const beanify = (prototype, p, prefix = '') => {
     const set = `set${uProp}`;
     const get = `get${uProp}`;
     if (!has(prototype, set)) {
-      prototype[set] = function(value) {
+      prototype[set] = function (value) {
         this[prop] = value;
       };
     }
     if (!has(prototype, get)) {
-      prototype[get] = function() {
+      prototype[get] = function () {
         return has(this, prop)
           ? this[prop]
           : typeof defValue === 'function'

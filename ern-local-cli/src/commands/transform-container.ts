@@ -14,7 +14,7 @@ export const builder = (argv: Argv) => {
       describe: 'Local path to the Container to transform',
       type: 'string',
     })
-    .coerce('untildify', p => untildify(p))
+    .coerce('untildify', (p) => untildify(p))
     .option('extra', {
       alias: 'e',
       describe:

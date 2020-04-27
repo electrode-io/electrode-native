@@ -38,11 +38,11 @@ export async function copyRnConfigAssets({
       for (const assetDir of assets) {
         const absDir = path.join(dir, assetDir);
         readDir(absDir)
-          .filter(p => {
+          .filter((p) => {
             return supportedAssetsExts.includes(path.extname(p));
           })
-          .map(p => path.join(assetDir, p))
-          .forEach(p => {
+          .map((p) => path.join(assetDir, p))
+          .forEach((p) => {
             handleCopyDirective(dir, outDir, [
               { source: p, dest: getAssetsPath(platform, 'fonts') },
             ]);

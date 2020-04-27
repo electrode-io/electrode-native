@@ -28,7 +28,7 @@ export default class AndroidRunnerGenerator implements RunnerGenerator {
     );
     const files = readDir(
       config.outDir,
-      f => !f.endsWith('.jar') && !f.endsWith('.png'),
+      (f) => !f.endsWith('.jar') && !f.endsWith('.png'),
     );
     for (const file of files) {
       await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(

@@ -75,7 +75,7 @@ describe('logErrorAndExitIfNotSatisfied', () => {
     assertNoErrorLoggedAndNoProcessExit();
   });
 
-  fixtures.withGitOrFileSystemPath.forEach(obj => {
+  fixtures.withGitOrFileSystemPath.forEach((obj) => {
     it('[noGitOrFilesystemPath] Should log error and exit process if path is/contains a git or file system scheme', async () => {
       await logErrorAndExitIfNotSatisfied({
         noGitOrFilesystemPath: { obj },
@@ -84,7 +84,7 @@ describe('logErrorAndExitIfNotSatisfied', () => {
     });
   });
 
-  fixtures.withoutGitOrFileSystemPath.forEach(obj => {
+  fixtures.withoutGitOrFileSystemPath.forEach((obj) => {
     it('[noGitOrFilesystemPath] Should not log error not exit process if path is not/ does not contain a git or file system scheme', async () => {
       await logErrorAndExitIfNotSatisfied({
         noGitOrFilesystemPath: { obj },
@@ -93,7 +93,7 @@ describe('logErrorAndExitIfNotSatisfied', () => {
     });
   });
 
-  fixtures.withFileSystemPath.forEach(obj => {
+  fixtures.withFileSystemPath.forEach((obj) => {
     it('[noFileSystemPath] Should log error and exit process if path is/contains a file system scheme', async () => {
       await logErrorAndExitIfNotSatisfied({
         noFileSystemPath: { obj },
@@ -102,7 +102,7 @@ describe('logErrorAndExitIfNotSatisfied', () => {
     });
   });
 
-  fixtures.withoutFileSystemPath.forEach(obj => {
+  fixtures.withoutFileSystemPath.forEach((obj) => {
     it('[noFileSystemPath] Should not log error not exit process if path is not/ does not contain a  file system scheme', async () => {
       await logErrorAndExitIfNotSatisfied({
         noFileSystemPath: { obj },
@@ -127,7 +127,7 @@ describe('logErrorAndExitIfNotSatisfied', () => {
       assertNoErrorLoggedAndNoProcessExit()
     })*/
 
-  fixtures.validNpmPackageNames.forEach(name => {
+  fixtures.validNpmPackageNames.forEach((name) => {
     it('[isValidPackageName] Should not log error nor exit process if package name is valid', async () => {
       await logErrorAndExitIfNotSatisfied({
         isValidNpmPackageName: { name },
@@ -136,7 +136,7 @@ describe('logErrorAndExitIfNotSatisfied', () => {
     });
   });
 
-  fixtures.invalidNpmPackageNames.forEach(name => {
+  fixtures.invalidNpmPackageNames.forEach((name) => {
     it('[isValidPackageName] Should log error and exit process if package name is invalid', async () => {
       await logErrorAndExitIfNotSatisfied({
         isValidNpmPackageName: { name },
@@ -145,7 +145,7 @@ describe('logErrorAndExitIfNotSatisfied', () => {
     });
   });
 
-  fixtures.validElectrodeNativeModuleNames.forEach(name => {
+  fixtures.validElectrodeNativeModuleNames.forEach((name) => {
     it('[isValidElectrodeNativeModuleName] Should not log error nor exit process if module name is valid', async () => {
       await logErrorAndExitIfNotSatisfied({
         isValidElectrodeNativeModuleName: { name },
@@ -154,7 +154,7 @@ describe('logErrorAndExitIfNotSatisfied', () => {
     });
   });
 
-  fixtures.invalidElectrodeNativeModuleNames.forEach(name => {
+  fixtures.invalidElectrodeNativeModuleNames.forEach((name) => {
     it('[isValidElectrodeNativeModuleName] Should log error and exit process if module name is invalid', async () => {
       await logErrorAndExitIfNotSatisfied({
         isValidElectrodeNativeModuleName: { name },

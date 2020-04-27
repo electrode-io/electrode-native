@@ -121,7 +121,7 @@ export class ErnBinaryStore implements BinaryStore {
         .stream(this.urlToBinary(descriptor, { flavor }))
         .pipe(outputFile);
       gotStream.on('close', () => resolve(outputFilePath));
-      gotStream.on('error', err => reject(err));
+      gotStream.on('error', (err) => reject(err));
     });
   }
 
@@ -156,7 +156,7 @@ export class ErnBinaryStore implements BinaryStore {
       const outputZipStream = fs.createWriteStream(pathToZipFile);
       const archive = archiver('zip', { zlib: { level: 9 } });
       outputZipStream.on('close', () => resolve(pathToZipFile));
-      archive.on('error', err => reject(err));
+      archive.on('error', (err) => reject(err));
       archive.pipe(outputZipStream);
       if (descriptor.platform === 'android') {
         archive.file(binaryPath.toString(), {

@@ -4,7 +4,7 @@ import CodegenIgnoreProcessor from '../src/ignore/CodegenIgnoreProcessor';
 import fs from 'fs';
 import File from '../src/java/File';
 
-describe('CodegenIgnoreProcessor', function() {
+describe('CodegenIgnoreProcessor', function () {
   const { compare, runBefore, cwd, runAfter } = ernUtilDev(__dirname);
 
   beforeEach(runBefore);
@@ -14,7 +14,7 @@ describe('CodegenIgnoreProcessor', function() {
     // capture
     let allowed;
     let invalid = false;
-    const f = function() {
+    const f = function () {
       const outputDir = cwd('.');
 
       fs.writeFileSync(
@@ -45,22 +45,22 @@ describe('CodegenIgnoreProcessor', function() {
         }`,
       );
     };
-    f.ignored = function() {
+    f.ignored = function () {
       allowed = false;
       return f;
     };
-    f.allowed = function() {
+    f.allowed = function () {
       allowed = true;
       return f;
     };
-    f.invalid = function() {
+    f.invalid = function () {
       invalid = true;
       return f;
     };
     return f;
   }
 
-  describe('Matching', function() {
+  describe('Matching', function () {
     it(
       'A file when matching should ignore.',
       runTest('build.sh', 'build.sh').ignored(),
@@ -89,7 +89,7 @@ describe('CodegenIgnoreProcessor', function() {
       ).ignored(),
     );
   });
-  describe('Matching spaces in filenames', function() {
+  describe('Matching spaces in filenames', function () {
     it(
       'A file when matching nested files with spaces in the name should ignore.',
       runTest('src/properly escaped.txt', '**/properly escaped.txt').ignored(),
@@ -103,7 +103,7 @@ describe('CodegenIgnoreProcessor', function() {
     );
   });
 
-  describe('Match All', function() {
+  describe('Match All', function () {
     it(
       'A recursive file (0 level) when matching should ignore.',
       runTest('docs/somefile.md', 'docs/**').ignored(),
@@ -118,7 +118,7 @@ describe('CodegenIgnoreProcessor', function() {
     );
   });
 
-  describe('Match Any', function() {
+  describe('Match Any', function () {
     it(
       'A recursive file with match-any extension when matching should ignore.',
       runTest('docs/1/2/3/somefile.md', 'docs/**/somefile.*').ignored(),
@@ -136,7 +136,7 @@ describe('CodegenIgnoreProcessor', function() {
       runTest('docs/1/2/3/4/5/somefile.md', 'docs/**/anyfile.*').allowed(),
     );
   });
-  describe('Directory matches', function() {
+  describe('Directory matches', function () {
     it(
       'A directory rule when matching should be ignored.',
       runTest('docs/1/Users/a', 'docs/**/Users/').ignored(),
@@ -147,13 +147,13 @@ describe('CodegenIgnoreProcessor', function() {
     );
   });
 
-  describe('Negation of excluded recursive files', function() {
+  describe('Negation of excluded recursive files', function () {
     it(
       'A pattern negating a previous ignore FILE rule should be allowed.',
       runTest('docs/UserApi.md', 'docs/**\n!docs/UserApi.md').allowed(),
     );
   });
-  describe('Negation of excluded directories', function() {
+  describe('Negation of excluded directories', function () {
     it(
       'A pattern negating a previous ignore DIRECTORY rule should be ignored.',
       runTest(
@@ -162,7 +162,7 @@ describe('CodegenIgnoreProcessor', function() {
       ).ignored(),
     );
   });
-  describe('Other matches which may not be parsed for correctness, but are free because of PathMatcher', function() {
+  describe('Other matches which may not be parsed for correctness, but are free because of PathMatcher', function () {
     it(
       'A file when matching against simple regex patterns when matching should be ignored.',
       runTest('docs/1/2/3/Some99File.md', '**/*[0-9]*').ignored(),
@@ -189,7 +189,7 @@ describe('CodegenIgnoreProcessor', function() {
       runTest('docs/1/2/3/foo.cc', '**/*.?').allowed(),
     );
   });
-  describe('Invalid', function() {
+  describe('Invalid', function () {
     it('. is invalid', runTest('what', '.').allowed());
     it('! is invalid', runTest('what', '!').allowed());
     it('.. is invalid', runTest('what', '..').allowed());

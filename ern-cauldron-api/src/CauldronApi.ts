@@ -142,7 +142,10 @@ export default class CauldronApi {
     descriptor: AnyAppDescriptor,
   ): Promise<boolean> {
     const cauldron = await this.getCauldron();
-    const result = _.find(cauldron.nativeApps, n => n.name === descriptor.name);
+    const result = _.find(
+      cauldron.nativeApps,
+      (n) => n.name === descriptor.name,
+    );
     return result != null;
   }
 
@@ -153,7 +156,7 @@ export default class CauldronApi {
       return false;
     }
     const platforms = await this.getPlatforms(descriptor);
-    const result = _.find(platforms, p => p.name === descriptor.platform);
+    const result = _.find(platforms, (p) => p.name === descriptor.platform);
     return result != null;
   }
 
@@ -162,7 +165,7 @@ export default class CauldronApi {
       return false;
     }
     const versions = await this.getVersions(descriptor);
-    const result = _.find(versions, v => v.name === descriptor.version);
+    const result = _.find(versions, (v) => v.name === descriptor.version);
     return result != null;
   }
 
@@ -170,7 +173,10 @@ export default class CauldronApi {
     descriptor: AnyAppDescriptor,
   ): Promise<CauldronNativeApp> {
     const cauldron = await this.getCauldron();
-    const result = _.find(cauldron.nativeApps, n => n.name === descriptor.name);
+    const result = _.find(
+      cauldron.nativeApps,
+      (n) => n.name === descriptor.name,
+    );
     if (!result) {
       throw new Error(`Cannot find ${descriptor.toString()} in Cauldron`);
     }
@@ -188,7 +194,7 @@ export default class CauldronApi {
     descriptor: AppPlatformDescriptor | AppVersionDescriptor,
   ): Promise<CauldronNativeAppPlatform> {
     const platforms = await this.getPlatforms(descriptor);
-    const result = _.find(platforms, p => p.name === descriptor.platform);
+    const result = _.find(platforms, (p) => p.name === descriptor.platform);
     if (!result) {
       throw new Error(`Cannot find ${descriptor.toString()} in Cauldron`);
     }
@@ -206,7 +212,7 @@ export default class CauldronApi {
     descriptor: AppVersionDescriptor,
   ): Promise<CauldronNativeAppVersion> {
     const versions = await this.getVersions(descriptor);
-    const result = _.find(versions, v => v.name === descriptor.version);
+    const result = _.find(versions, (v) => v.name === descriptor.version);
     if (!result) {
       throw new Error(`Cannot find ${descriptor.toString()} in Cauldron`);
     }
@@ -266,7 +272,7 @@ export default class CauldronApi {
     const jsApiImpls = await this.getContainerJsApiImpls(descriptor);
     const result = _.find(
       jsApiImpls,
-      x => x === jsApiImplName || x.startsWith(`${jsApiImplName}@`),
+      (x) => x === jsApiImplName || x.startsWith(`${jsApiImplName}@`),
     );
     if (!result) {
       throw new Error(
@@ -281,7 +287,7 @@ export default class CauldronApi {
     miniAppName: string,
   ): Promise<boolean> {
     const miniApps = await this.getContainerMiniApps(descriptor);
-    const result = _.find(miniApps, m => m.startsWith(miniAppName));
+    const result = _.find(miniApps, (m) => m.startsWith(miniAppName));
     if (!result) {
       return false;
     } else {
@@ -294,7 +300,7 @@ export default class CauldronApi {
     miniAppName: string,
   ): Promise<string> {
     const miniApps = await this.getContainerMiniApps(descriptor);
-    const result = _.find(miniApps, m => m.startsWith(miniAppName));
+    const result = _.find(miniApps, (m) => m.startsWith(miniAppName));
     if (!result) {
       throw new Error(
         `Cannot find ${miniAppName} MiniApp in ${descriptor.toString()} Container`,
@@ -317,7 +323,7 @@ export default class CauldronApi {
     const nativeDeps = await this.getNativeDependencies(descriptor);
     const result = _.find(
       nativeDeps,
-      x => x === nativeDepName || x.startsWith(`${nativeDepName}@`),
+      (x) => x === nativeDepName || x.startsWith(`${nativeDepName}@`),
     );
     if (!result) {
       return false;
@@ -333,7 +339,7 @@ export default class CauldronApi {
     const nativeDeps = await this.getNativeDependencies(descriptor);
     const result = _.find(
       nativeDeps,
-      x => x === nativeDepName || x.startsWith(`${nativeDepName}@`),
+      (x) => x === nativeDepName || x.startsWith(`${nativeDepName}@`),
     );
     if (!result) {
       throw new Error(
@@ -359,7 +365,7 @@ export default class CauldronApi {
   public async getConfigStrict(descriptor?: AnyAppDescriptor): Promise<any> {
     const cauldronFilePath = this.getConfigFilePath(descriptor);
     return (await this.hasFile({ cauldronFilePath }))
-      ? this.getFile({ cauldronFilePath }).then(c => JSON.parse(c.toString()))
+      ? this.getFile({ cauldronFilePath }).then((c) => JSON.parse(c.toString()))
       : {};
   }
 
@@ -528,7 +534,7 @@ export default class CauldronApi {
     if (!exists(cauldron.nativeApps, descriptor.name)) {
       throw new Error(`${descriptor.name} was not found in Cauldron`);
     }
-    _.remove(cauldron.nativeApps, x => x.name === descriptor.name);
+    _.remove(cauldron.nativeApps, (x) => x.name === descriptor.name);
     return this.commit(`Remove ${descriptor.toString()}`);
   }
 
@@ -567,7 +573,7 @@ export default class CauldronApi {
         `${platform} platform does not exist for ${descriptor.name} native application`,
       );
     }
-    _.remove(nativeApplication.platforms, x => x.name === platform);
+    _.remove(nativeApplication.platforms, (x) => x.name === platform);
     return this.commit(`Remove ${descriptor.toString()}`);
   }
 
@@ -588,10 +594,10 @@ export default class CauldronApi {
     );
     platform.versions.push(validatedVersion);
     const semverCompliantVersions = platform.versions.filter(
-      v => semver.valid(v.name) !== null,
+      (v) => semver.valid(v.name) !== null,
     );
     const semverNonCompliantVersions = platform.versions.filter(
-      v => semver.valid(v.name) === null,
+      (v) => semver.valid(v.name) === null,
     );
     semverCompliantVersions.sort((a, b) => semver.compare(a.name, b.name));
     semverNonCompliantVersions.sort();
@@ -617,7 +623,7 @@ export default class CauldronApi {
         `${versionName} version does not exist for ${descriptor.toString()}`,
       );
     }
-    _.remove(platform.versions, x => x.name === versionName);
+    _.remove(platform.versions, (x) => x.name === versionName);
     return this.commit(`Remove ${descriptor.toString()}`);
   }
 
@@ -1038,7 +1044,7 @@ export default class CauldronApi {
   ) {
     const container = (await this.getVersion(descriptor)).container;
     return (
-      _.find(container[key] || [], p =>
+      _.find(container[key] || [], (p) =>
         jsPackage.same(PackagePath.fromString(p), { ignoreVersion: true }),
       ) !== undefined
     );
@@ -1051,7 +1057,7 @@ export default class CauldronApi {
   ): Promise<void> {
     this.throwIfNoVersionInPackagePath(pkg);
     const container = (await this.getVersion(descriptor)).container;
-    const existingPkg = _.find(container[key], p =>
+    const existingPkg = _.find(container[key], (p) =>
       pkg.same(PackagePath.fromString(p), { ignoreVersion: true }),
     );
     if (!existingPkg) {
@@ -1059,7 +1065,7 @@ export default class CauldronApi {
         `${pkg.basePath} does not exist in ${descriptor} Container`,
       );
     }
-    container[key] = _.map(container[key], e =>
+    container[key] = _.map(container[key], (e) =>
       e === existingPkg ? pkg.fullPath : e,
     );
     return this.commit(
@@ -1079,7 +1085,7 @@ export default class CauldronApi {
     if (!container[key]) {
       container[key] = [];
     } else if (
-      container[key]!.map(m => PackagePath.fromString(m).basePath).includes(
+      container[key]!.map((m) => PackagePath.fromString(m).basePath).includes(
         pkg.basePath,
       )
     ) {
@@ -1099,7 +1105,7 @@ export default class CauldronApi {
     key: ContainerPackagesArrayKey,
   ): Promise<void> {
     const container = (await this.getVersion(descriptor)).container;
-    const existingPkg = _.find(container[key], p =>
+    const existingPkg = _.find(container[key], (p) =>
       pkg.same(PackagePath.fromString(p), { ignoreVersion: true }),
     );
     if (!existingPkg) {
@@ -1107,7 +1113,7 @@ export default class CauldronApi {
         `${pkg.basePath} does not exist in ${descriptor} Container`,
       );
     }
-    _.remove(container[key]!, p => p === existingPkg);
+    _.remove(container[key]!, (p) => p === existingPkg);
     return this.commit(`Remove ${pkg} branch from ${descriptor} Container`);
   }
 
@@ -1117,7 +1123,7 @@ export default class CauldronApi {
     key: ContainerPackagesArrayKey,
   ): Promise<void> {
     const container = (await this.getVersion(descriptor)).container;
-    container[key]! = pkgs.map(p => p.fullPath).sort();
+    container[key]! = pkgs.map((p) => p.fullPath).sort();
     return this.commit(`Set native dependencies in ${descriptor} Container`);
   }
 }

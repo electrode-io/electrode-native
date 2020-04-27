@@ -27,7 +27,7 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .option('fullRegen', {
       describe: 'Perform complete regeneration',
       type: 'boolean',
@@ -41,7 +41,7 @@ export const builder = (argv: Argv) => {
       describe: 'Path to source map file to generate for this container bundle',
       type: 'string',
     })
-    .coerce('sourceMapOutput', p => untildify(p))
+    .coerce('sourceMapOutput', (p) => untildify(p))
     .epilog(epilog(exports));
 };
 

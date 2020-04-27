@@ -28,7 +28,7 @@ export const commandHandler = async ({
     const napDescriptors = await cauldron.getNapDescriptorStrings();
     json
       ? process.stdout.write(JSON.stringify(napDescriptors))
-      : napDescriptors.forEach(n => log.info(n));
+      : napDescriptors.forEach((n) => log.info(n));
   } else {
     const nativeApp = await cauldron.getDescriptor(descriptor);
     process.stdout.write(

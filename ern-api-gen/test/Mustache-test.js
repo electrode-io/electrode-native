@@ -4,17 +4,15 @@ import { expect } from 'chai';
 const RENDER = 'render:';
 
 function mustache(data, out) {
-  return function() {
+  return function () {
     const { title } = this.test;
     const template = title.substring(title.indexOf(RENDER) + RENDER.length + 1);
-    const str = Mustache.compiler()
-      .compile(template)
-      .execute(data);
+    const str = Mustache.compiler().compile(template).execute(data);
     expect(str, template).to.eql(out);
   };
 }
-describe('Mustache', function() {
-  it('should render 1, 2, 3', function() {
+describe('Mustache', function () {
+  it('should render 1, 2, 3', function () {
     const out = Mustache.compiler()
       .compile(`{{#arr}}{{.}}{{^-last}}, {{/-last}}{{/arr}}`)
       .execute({

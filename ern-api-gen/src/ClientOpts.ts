@@ -44,12 +44,8 @@ export default class ClientOpts {
   public toString() {
     const sb = StringBuilder();
     sb.append('ClientOpts: {\n');
-    sb.append('  uri: ')
-      .append(this.uri)
-      .append(',');
-    sb.append('  auth: ')
-      .append(this.auth)
-      .append(',');
+    sb.append('  uri: ').append(this.uri).append(',');
+    sb.append('  auth: ').append(this.auth).append(',');
     sb.append(this.properties);
     sb.append('}');
     return sb.toString();

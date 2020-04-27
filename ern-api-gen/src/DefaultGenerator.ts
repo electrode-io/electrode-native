@@ -321,8 +321,9 @@ export default class DefaultGenerator extends AbstractGenerator {
               [
                 `Could not process model '${name}'`,
                 'Please make sure that your schema is correct!',
-                `Failed with error message: ${(e && e.message) ||
-                  'unknown error'}`,
+                `Failed with error message: ${
+                  (e && e.message) || 'unknown error'
+                }`,
               ].join('\n'),
               e,
             );

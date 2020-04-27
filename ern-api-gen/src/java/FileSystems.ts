@@ -2,17 +2,17 @@ import File from './File';
 import { Minimatch } from 'minimatch';
 
 const GLOB = 'glob:';
-const glob = str => {
+const glob = (str) => {
   str = str || '**';
   const mm = new Minimatch(str);
-  return to => {
+  return (to) => {
     const ret = mm.match(to);
     return ret;
   };
 };
-const match = str => {
+const match = (str) => {
   const f = new File(str).getAbsolutePath();
-  return to => {
+  return (to) => {
     return new File(to).getAbsolutePath() === f;
   };
 };

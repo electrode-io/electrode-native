@@ -15,7 +15,7 @@ const excludeFilter = [
   '.yarn-integrity',
   'node_modules',
 ]
-  .map(s => `**/${s}`)
+  .map((s) => `**/${s}`)
   .join(',');
 
 run(

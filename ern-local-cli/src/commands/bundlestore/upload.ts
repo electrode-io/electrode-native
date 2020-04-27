@@ -28,19 +28,19 @@ export const builder = (argv: Argv) => {
       describe: 'Base Composite',
       type: 'string',
     })
-    .coerce('baseComposite', d => PackagePath.fromString(d))
+    .coerce('baseComposite', (d) => PackagePath.fromString(d))
     .option('descriptor', {
       alias: 'd',
       describe: 'Full native application descriptor',
       type: 'string',
     })
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .option('extraJsDependencies', {
       alias: 'e',
       describe: 'Additional JS dependency(ies)',
       type: 'array',
     })
-    .coerce('extraJsDependencies', d => d.map(PackagePath.fromString))
+    .coerce('extraJsDependencies', (d) => d.map(PackagePath.fromString))
     .option('fromGitBranches', {
       describe: 'Favor MiniApp(s) branches',
       type: 'boolean',
@@ -53,7 +53,7 @@ export const builder = (argv: Argv) => {
       describe: 'One or more JS API implementation(s)',
       type: 'array',
     })
-    .coerce('jsApiImpls', d => d.map(PackagePath.fromString))
+    .coerce('jsApiImpls', (d) => d.map(PackagePath.fromString))
     .option('miniapps', {
       alias: 'm',
       describe: 'One or more MiniApp(s)',
@@ -75,7 +75,7 @@ export const builder = (argv: Argv) => {
         'Indicates whether to reset the React Native cache prior to bundling',
       type: 'boolean',
     })
-    .coerce('miniapps', d => d.map(PackagePath.fromString))
+    .coerce('miniapps', (d) => d.map(PackagePath.fromString))
     .epilog(epilog(exports));
 };
 

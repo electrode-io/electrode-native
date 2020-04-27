@@ -108,7 +108,7 @@ describe('YarnLockParser', () => {
         },
       ]);
     });
-    ['DepB@^1.1.0', 'DepD@^1.0.0', 'DepZ@1.0.0'].map(d => {
+    ['DepB@^1.1.0', 'DepD@^1.0.0', 'DepZ@1.0.0'].map((d) => {
       it(`should return an empty array if no package has a dependency on a given package version [${d}]`, () => {
         const sut = YarnLockParser.fromContent(yarnLockFixture);
         const res = sut.findPackagesWithDependency(PackagePath.fromString(d));
@@ -142,7 +142,7 @@ describe('YarnLockParser', () => {
         dep: PackagePath.fromString('DepZ'),
         expected: {},
       },
-    ].map(x => {
+    ].map((x) => {
       it(`should build the correct dependency tree for ${x}`, () => {
         const sut = YarnLockParser.fromContent(yarnLockFixture);
         const res = sut.buildDependencyTree(x.dep);

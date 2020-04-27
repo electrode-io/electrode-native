@@ -52,7 +52,8 @@ export class GeneratedComposite implements Composite {
   public async getMiniApps(): Promise<BaseMiniApp[]> {
     const miniAppsPackages = await this.getMiniAppsPackages();
     return miniAppsPackages.map(
-      p => new BaseMiniApp({ miniAppPath: p.path, packagePath: p.packagePath }),
+      (p) =>
+        new BaseMiniApp({ miniAppPath: p.path, packagePath: p.packagePath }),
     );
   }
 
@@ -115,7 +116,7 @@ export class GeneratedComposite implements Composite {
 
       if (
         ppValue.isFilePath ||
-        this.config.miniApps.some(p => p.basePath === ppValue.basePath)
+        this.config.miniApps.some((p) => p.basePath === ppValue.basePath)
       ) {
         result.push({
           name: key,
@@ -123,7 +124,7 @@ export class GeneratedComposite implements Composite {
           path: path.join(this.path, 'node_modules', key),
         });
       } else if (
-        this.config.miniApps.some(p => p.basePath === ppKey.basePath)
+        this.config.miniApps.some((p) => p.basePath === ppKey.basePath)
       ) {
         result.push({
           name: key,
@@ -136,7 +137,7 @@ export class GeneratedComposite implements Composite {
     }
 
     // Also add all local miniapps
-    const localMiniApps = this.config.miniApps.filter(m => m.isFilePath);
+    const localMiniApps = this.config.miniApps.filter((m) => m.isFilePath);
     for (const m of localMiniApps) {
       const pJson = await readPackageJson(m.basePath);
       result.push({
@@ -159,12 +160,12 @@ export class GeneratedComposite implements Composite {
       return Promise.resolve(this.cachedNativeDependencies);
     }
 
-    const localMiniApps = this.config.miniApps.filter(m => m.isFilePath);
+    const localMiniApps = this.config.miniApps.filter((m) => m.isFilePath);
 
     const nativeDependencies = await findNativeDependencies(
       [
         this.path,
-        ...localMiniApps.map(m => path.join(m.basePath, 'node_modules')),
+        ...localMiniApps.map((m) => path.join(m.basePath, 'node_modules')),
       ],
       {
         manifestId,
@@ -174,12 +175,12 @@ export class GeneratedComposite implements Composite {
     // Filter out MiniApps that can be falsy considered as native dependencies
     // if developer(s) forgot to npm ignore the android/ios directory
     const miniAppsPackages = await this.getMiniAppsPackages();
-    const miniAppsPaths = miniAppsPackages.map(p => p.path);
+    const miniAppsPaths = miniAppsPackages.map((p) => p.path);
     nativeDependencies.all = nativeDependencies.all.filter(
-      x => !miniAppsPaths.includes(x.basePath),
+      (x) => !miniAppsPaths.includes(x.basePath),
     );
     nativeDependencies.thirdPartyNotInManifest = nativeDependencies.thirdPartyNotInManifest.filter(
-      x => !miniAppsPaths.includes(x.basePath),
+      (x) => !miniAppsPaths.includes(x.basePath),
     );
     this.cachedNativeDependencies = nativeDependencies;
     return this.cachedNativeDependencies;

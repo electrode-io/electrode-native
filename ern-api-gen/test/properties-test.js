@@ -6,15 +6,15 @@ function isClass(clz, compare) {
   assert(clz instanceof propTypes[compare], `an instance of ${compare}`);
 }
 
-describe('properties', function() {
-  it('StringProperty', function() {
+describe('properties', function () {
+  it('StringProperty', function () {
     const strp = factory({
       type: 'string',
     });
     expect(strp instanceof propTypes.StringProperty).to.be.true;
     expect(strp.getType()).to.eql('string');
   });
-  it('DateProperty', function() {
+  it('DateProperty', function () {
     const strp = factory({
       type: 'string',
       format: 'date',
@@ -23,7 +23,7 @@ describe('properties', function() {
     expect(strp.getFormat()).to.eql('date');
   });
 
-  it('ObjectProperty', function() {
+  it('ObjectProperty', function () {
     const strp = factory({
       type: 'object',
       properties: {
@@ -50,15 +50,11 @@ describe('properties', function() {
     isClass(strp, 'ObjectProperty');
     isClass(strp.getProperties().get('num1'), 'NumberProperty');
     isClass(
-      strp
-        .getProperties()
-        .get('obj1')
-        .getProperties()
-        .get('prop1'),
+      strp.getProperties().get('obj1').getProperties().get('prop1'),
       'StringProperty',
     );
   });
-  it('ArrayProperty', function() {
+  it('ArrayProperty', function () {
     const strp = factory({
       properties: {
         offset: {

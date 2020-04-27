@@ -2,7 +2,7 @@ import gen from '../src/generateProject';
 import ernUtilDev from 'ern-util-dev';
 import normalizeConfig from '../src/normalizeConfig';
 
-describe('generateProject', function() {
+describe('generateProject', function () {
   const { runBefore, runAfter, cwd } = ernUtilDev(__dirname);
   beforeEach(runBefore);
   afterEach(runAfter);

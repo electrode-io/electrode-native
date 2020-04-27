@@ -44,21 +44,21 @@ describe('checkIfModuleNameContainsSuffix', () => {
     expect(result).to.be.false;
   });
 
-  fixtures.miniAppNameWithSuffix.forEach(name => {
+  fixtures.miniAppNameWithSuffix.forEach((name) => {
     it('should return true if module name of mini-app contains suffix', () => {
       const result = checkIfModuleNameContainsSuffix(name, ModuleTypes.MINIAPP);
       expect(result).to.be.true;
     });
   });
 
-  fixtures.apiNameWithSuffix.forEach(name => {
+  fixtures.apiNameWithSuffix.forEach((name) => {
     it('should return true if module name of api contains suffix', () => {
       const result = checkIfModuleNameContainsSuffix(name, ModuleTypes.API);
       expect(result).to.be.true;
     });
   });
 
-  fixtures.apiJsImplNameWithSuffix.forEach(name => {
+  fixtures.apiJsImplNameWithSuffix.forEach((name) => {
     it('should return true if module name of (js) api-impl contains suffix', () => {
       const result = checkIfModuleNameContainsSuffix(
         name,
@@ -68,7 +68,7 @@ describe('checkIfModuleNameContainsSuffix', () => {
     });
   });
 
-  fixtures.apiNativeImplNameWithSuffix.forEach(name => {
+  fixtures.apiNativeImplNameWithSuffix.forEach((name) => {
     it('should return true if module name of (native) api-impl contains suffix', () => {
       const result = checkIfModuleNameContainsSuffix(
         name,

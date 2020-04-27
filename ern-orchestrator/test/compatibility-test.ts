@@ -10,9 +10,7 @@ describe('compatibility', () => {
         /* remote */ [PackagePath.fromString('depA@1.0.0')],
       );
       expect(result).not.undefined;
-      expect(result.compatible)
-        .is.an('array')
-        .of.length(1);
+      expect(result.compatible).is.an('array').of.length(1);
     });
 
     it('should return different dependencies versions as incompatible', () => {
@@ -21,9 +19,7 @@ describe('compatibility', () => {
         /* remote */ [PackagePath.fromString('depA@2.0.0')],
       );
       expect(result).not.undefined;
-      expect(result.incompatible)
-        .is.an('array')
-        .of.length(1);
+      expect(result.incompatible).is.an('array').of.length(1);
     });
 
     it('should return incompatible for bridge if version major differs', () => {
@@ -36,9 +32,7 @@ describe('compatibility', () => {
         ],
       );
       expect(result).not.undefined;
-      expect(result.incompatible)
-        .is.an('array')
-        .of.length(1);
+      expect(result.incompatible).is.an('array').of.length(1);
     });
 
     it('should return compatible non strict for bridge if version differs and local version < remote version ', () => {
@@ -51,9 +45,7 @@ describe('compatibility', () => {
         ],
       );
       expect(result).not.undefined;
-      expect(result.compatibleNonStrict)
-        .is.an('array')
-        .of.length(1);
+      expect(result.compatibleNonStrict).is.an('array').of.length(1);
     });
 
     it('should return incompatible for bridge if version differs and local version > remote version ', () => {
@@ -66,9 +58,7 @@ describe('compatibility', () => {
         ],
       );
       expect(result).not.undefined;
-      expect(result.incompatible)
-        .is.an('array')
-        .of.length(1);
+      expect(result.incompatible).is.an('array').of.length(1);
     });
   });
 
@@ -82,9 +72,7 @@ describe('compatibility', () => {
       ],
     );
     expect(result).not.undefined;
-    expect(result.incompatible)
-      .is.an('array')
-      .of.length(1);
+    expect(result.incompatible).is.an('array').of.length(1);
   });
 
   it('should return compatible non strict for bridge if version differs and local version < remote version ', () => {
@@ -97,9 +85,7 @@ describe('compatibility', () => {
       ],
     );
     expect(result).not.undefined;
-    expect(result.compatibleNonStrict)
-      .is.an('array')
-      .of.length(1);
+    expect(result.compatibleNonStrict).is.an('array').of.length(1);
   });
 
   it('should return incompatible for bridge if version differs and local version > remote version ', () => {
@@ -112,9 +98,7 @@ describe('compatibility', () => {
       ],
     );
     expect(result).not.undefined;
-    expect(result.incompatible)
-      .is.an('array')
-      .of.length(1);
+    expect(result.incompatible).is.an('array').of.length(1);
   });
 
   it('should return incompatible for api if version major differs', () => {
@@ -123,9 +107,7 @@ describe('compatibility', () => {
       /* remote */ [PackagePath.fromString('react-native-my-api@2.0.0')],
     );
     expect(result).not.undefined;
-    expect(result.incompatible)
-      .is.an('array')
-      .of.length(1);
+    expect(result.incompatible).is.an('array').of.length(1);
   });
 
   it('should return compatible non strict for api if version differs and local version < remote version ', () => {
@@ -134,9 +116,7 @@ describe('compatibility', () => {
       /* remote */ [PackagePath.fromString('react-native-my-api@1.1.0')],
     );
     expect(result).not.undefined;
-    expect(result.compatibleNonStrict)
-      .is.an('array')
-      .of.length(1);
+    expect(result.compatibleNonStrict).is.an('array').of.length(1);
   });
 
   it('should return incompatible for api if version differs and local version > remote version ', () => {
@@ -145,9 +125,7 @@ describe('compatibility', () => {
       /* remote */ [PackagePath.fromString('react-native-my-api@1.0.0')],
     );
     expect(result).not.undefined;
-    expect(result.incompatible)
-      .is.an('array')
-      .of.length(1);
+    expect(result.incompatible).is.an('array').of.length(1);
   });
 
   it('should return incompatible for api impl if version major differs', () => {
@@ -156,9 +134,7 @@ describe('compatibility', () => {
       /* remote */ [PackagePath.fromString('react-native-my-api-impl@2.0.0')],
     );
     expect(result).not.undefined;
-    expect(result.incompatible)
-      .is.an('array')
-      .of.length(1);
+    expect(result.incompatible).is.an('array').of.length(1);
   });
 
   it('should return compatible non strict for api impl if version differs and local version < remote version ', () => {
@@ -167,9 +143,7 @@ describe('compatibility', () => {
       /* remote */ [PackagePath.fromString('react-native-my-api-impl@1.1.0')],
     );
     expect(result).not.undefined;
-    expect(result.compatibleNonStrict)
-      .is.an('array')
-      .of.length(1);
+    expect(result.compatibleNonStrict).is.an('array').of.length(1);
   });
 
   it('should return incompatible for api impl if version differs and local version > remote version ', () => {
@@ -178,9 +152,7 @@ describe('compatibility', () => {
       /* remote */ [PackagePath.fromString('react-native-my-api-impl@1.0.0')],
     );
     expect(result).not.undefined;
-    expect(result.incompatible)
-      .is.an('array')
-      .of.length(1);
+    expect(result.incompatible).is.an('array').of.length(1);
   });
 
   it('should return incompatible if remote dep is missing and flag is set', () => {
@@ -190,8 +162,6 @@ describe('compatibility', () => {
       { uncompatibleIfARemoteDepIsMissing: true },
     );
     expect(result).not.undefined;
-    expect(result.incompatible)
-      .is.an('array')
-      .of.length(1);
+    expect(result.incompatible).is.an('array').of.length(1);
   });
 });

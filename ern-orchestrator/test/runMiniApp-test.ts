@@ -100,12 +100,12 @@ describe('runMiniApp', () => {
   } = {}) {
     sandbox
       .stub(fs, 'pathExistsSync')
-      .callsFake(p =>
+      .callsFake((p) =>
         p.toString().endsWith('RunnerConfig.java') ? false : existsSyncReturn,
       );
     sandbox
       .stub(fs, 'pathExists')
-      .callsFake(p =>
+      .callsFake((p) =>
         p.toString().endsWith('RunnerConfig.java')
           ? Promise.resolve(false)
           : Promise.resolve(existsSyncReturn),

@@ -141,7 +141,7 @@ export default class ApiImplGen {
     apis: any[],
   ) {
     const packageJson = readPackageJsonSync(outputDirectoryPath);
-    packageJson.ern.containerGen.apiNames = _.map(apis, api => api.apiName);
+    packageJson.ern.containerGen.apiNames = _.map(apis, (api) => api.apiName);
     writePackageJsonSync(outputDirectoryPath, packageJson);
   }
 }

@@ -52,7 +52,7 @@ export class MustacheWriter extends Mustache.Writer {
       value = value.call(
         context.view,
         originalTemplate.slice(token[3], token[5]),
-        template => super.render(template, context, partials),
+        (template) => super.render(template, context, partials),
       );
 
       if (value != null) {

@@ -44,8 +44,8 @@ export async function fillProjectHull(
       const a = path.join(pathSpec.outputDir, 'ElectrodeContainer');
       const b = path.join(pathSpec.outputDir, 'Config');
       const files = [
-        ...readDir(a).map(x => path.join(a, x)),
-        ...readDir(b).map(x => path.join(b, x)),
+        ...readDir(a).map((x) => path.join(a, x)),
+        ...readDir(b).map((x) => path.join(b, x)),
       ];
       for (const file of files) {
         if (
@@ -76,7 +76,7 @@ export async function fillProjectHull(
 
     const injectPluginsTaskMsg = 'Injecting Native Dependencies';
     const injectPluginsKaxTask = kax.task(injectPluginsTaskMsg);
-    const rnVersion = plugins.find(p => p.name === 'react-native')?.version!;
+    const rnVersion = plugins.find((p) => p.name === 'react-native')?.version!;
     const additionalPods = [];
     const destPodfilePath = path.join(pathSpec.outputDir, 'Podfile');
 
@@ -248,7 +248,7 @@ export async function fillProjectHull(
                 );
                 const fileNames = _.filter(
                   await fs.readdir(pathToSourceFiles),
-                  f => f.endsWith(path.extname(source.from!)),
+                  (f) => f.endsWith(path.extname(source.from!)),
                 );
                 for (const fileName of fileNames) {
                   const fileNamePath = path.join(source.path, fileName);
@@ -290,7 +290,7 @@ export async function fillProjectHull(
                 );
                 const fileNames = _.filter(
                   await fs.readdir(pathToHeaderFiles),
-                  f => f.endsWith(path.extname(header.from!)),
+                  (f) => f.endsWith(path.extname(header.from!)),
                 );
                 for (const fileName of fileNames) {
                   const fileNamePath = path.join(header.path, fileName);

@@ -57,7 +57,7 @@ https://[token]@[repourl]`);
   public list(): CauldronRepository[] {
     const repositories = config.get('cauldronRepositories', {});
     return repositories
-      ? Object.keys(repositories).map(alias => ({
+      ? Object.keys(repositories).map((alias) => ({
           alias,
           url: repositories[alias],
         }))

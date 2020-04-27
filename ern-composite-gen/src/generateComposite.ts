@@ -148,9 +148,9 @@ async function generateFullComposite(
 
   shell.pushd(outDir);
 
-  const remoteMiniapps = miniApps.filter(p => !p.isFilePath);
-  const localMiniApps = miniApps.filter(p => p.isFilePath);
-  const localMiniAppsPaths = localMiniApps.map(m => m.basePath);
+  const remoteMiniapps = miniApps.filter((p) => !p.isFilePath);
+  const localMiniApps = miniApps.filter((p) => p.isFilePath);
+  const localMiniAppsPaths = localMiniApps.map((m) => m.basePath);
   const localMiniAppsPkgNames = [];
   for (const x of localMiniApps) {
     const pJson = await readPackageJson(x.basePath);
@@ -232,7 +232,7 @@ async function generateFullComposite(
       // What we want here, is for extraNodeModules to contain a local path
       // to each native module, and blacklist all other existing paths to
       // the native module to avoid duplication conflicts.
-      const localMiniAppsNodeModulePaths = localMiniAppsPaths.map(p =>
+      const localMiniAppsNodeModulePaths = localMiniAppsPaths.map((p) =>
         path.join(p, 'node_modules'),
       );
       const allNativeDeps: NativeDependencies = await findNativeDependencies([
@@ -253,12 +253,12 @@ Native module(s) versions should be aligned across miniapps.
 You should resolve the following version mismatches prior to retrying.${os.EOL}`;
         for (const pkgName of dedupedNativeModules.pluginsWithMismatchingVersions) {
           const mismatchingPkgs = allNativeDeps.all.filter(
-            x => x.name === pkgName,
+            (x) => x.name === pkgName,
           );
           const table = new Table({
             head: ['path', 'version'],
           });
-          mismatchingPkgs.forEach(pkg =>
+          mismatchingPkgs.forEach((pkg) =>
             table.push([pkg.fullPath, pkg.version]),
           );
           errorMsg += `${table.toString()}${os.EOL}`;
@@ -271,19 +271,19 @@ You should resolve the following version mismatches prior to retrying.${os.EOL}`
         ...allNativeDeps.thirdPartyNotInManifest,
       ];
 
-      dedupedNativeModules.resolved.forEach(m => {
+      dedupedNativeModules.resolved.forEach((m) => {
         extraNodeModules[m.name!] = m.basePath;
       });
 
       blacklistRe = _.difference(
-        allNativeModules.map(d => d.basePath),
-        dedupedNativeModules.resolved.map(d => d.basePath),
+        allNativeModules.map((d) => d.basePath),
+        dedupedNativeModules.resolved.map((d) => d.basePath),
       )
         .concat(
-          ...localMiniAppsPaths.map(p => path.join(p, 'node_modules/react')),
+          ...localMiniAppsPaths.map((p) => path.join(p, 'node_modules/react')),
         )
         .map(
-          l =>
+          (l) =>
             new RegExp(
               os.platform() === 'win32'
                 ? `${l}\\.*`.replace(/\\/g, '\\\\')

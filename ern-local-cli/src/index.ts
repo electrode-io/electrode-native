@@ -89,9 +89,7 @@ function showVersion() {
   let packageInfo;
   try {
     const pkg = path.join(
-      execSync('yarn global dir')
-        .toString()
-        .trim(),
+      execSync('yarn global dir').toString().trim(),
       'node_modules',
       'electrode-native',
       'package.json',

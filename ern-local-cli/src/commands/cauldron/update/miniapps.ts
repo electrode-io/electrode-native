@@ -26,12 +26,12 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .option('fullRegen', {
       describe: 'Perform complete regeneration',
       type: 'boolean',
     })
-    .coerce('miniapps', d => d.map(PackagePath.fromString))
+    .coerce('miniapps', (d) => d.map(PackagePath.fromString))
     .option('resetCache', {
       describe:
         'Indicates whether to reset the React Native cache prior to bundling',
@@ -73,7 +73,7 @@ export const commandHandler = async ({
       throw new Error(`missing --targetVersion option`);
     }
     const x = await cauldron.getContainerMiniApps(descriptor);
-    miniapps = x.map(p =>
+    miniapps = x.map((p) =>
       p.isGitPath
         ? PackagePath.fromString(`${p.basePath}#${targetVersion}`)
         : PackagePath.fromString(`${p.basePath}@${targetVersion}`),
@@ -126,7 +126,7 @@ export const commandHandler = async ({
       const headCommitSha = await utils.getCommitShaOfGitBranchOrTag(miniapp);
       if (
         !containerMiniApps.some(
-          m => m.basePath === miniapp.basePath && m.version === headCommitSha,
+          (m) => m.basePath === miniapp.basePath && m.version === headCommitSha,
         )
       ) {
         updatedMiniApps.push(miniapp);

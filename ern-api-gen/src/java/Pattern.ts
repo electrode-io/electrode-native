@@ -4,9 +4,7 @@ const Pattern = {
   MULTILINE: 'm',
   UNICODE_CHARACTER_CLASS: 'u',
   matches(regex, str) {
-    return Pattern.compile(regex)
-      .matcher(str)
-      .find();
+    return Pattern.compile(regex).matcher(str).find();
   },
   split(regex, str) {
     return Pattern.compile(regex).split(str);

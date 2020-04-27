@@ -28,19 +28,19 @@ export const builder = (argv: Argv) => {
       describe: 'Base Composite',
       type: 'string',
     })
-    .coerce('baseComposite', d => PackagePath.fromString(d))
+    .coerce('baseComposite', (d) => PackagePath.fromString(d))
     .option('descriptor', {
       alias: 'd',
       describe: 'Full native application descriptor',
       type: 'string',
     })
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .option('extraJsDependencies', {
       alias: 'e',
       describe: 'Additional JS dependency(ies)',
       type: 'array',
     })
-    .coerce('extraJsDependencies', d => d.map(PackagePath.fromString))
+    .coerce('extraJsDependencies', (d) => d.map(PackagePath.fromString))
     .option('fromGitBranches', {
       describe: 'Favor MiniApp(s) branches',
       type: 'boolean',
@@ -49,19 +49,19 @@ export const builder = (argv: Argv) => {
       describe: 'One or more JS API implementation(s)',
       type: 'array',
     })
-    .coerce('jsApiImpls', d => d.map(PackagePath.fromString))
+    .coerce('jsApiImpls', (d) => d.map(PackagePath.fromString))
     .option('miniapps', {
       alias: 'm',
       describe: 'One or more MiniApp(s)',
       type: 'array',
     })
-    .coerce('miniapps', d => d.map(PackagePath.fromString))
+    .coerce('miniapps', (d) => d.map(PackagePath.fromString))
     .option('outDir', {
       alias: 'out',
       describe: 'Output directory',
       type: 'string',
     })
-    .coerce('outDir', p => untildify(p))
+    .coerce('outDir', (p) => untildify(p))
     .epilog(epilog(exports));
 };
 

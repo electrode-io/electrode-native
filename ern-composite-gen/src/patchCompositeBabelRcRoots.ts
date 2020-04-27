@@ -25,7 +25,7 @@ export async function patchCompositeBabelRcRoots({
 
   const dependenciesPaths: string[] = [
     ...extraPaths,
-    ...Object.keys(compositePackageJson.dependencies).map(p =>
+    ...Object.keys(compositePackageJson.dependencies).map((p) =>
       path.join(compositeNodeModulesPath, p),
     ),
   ];

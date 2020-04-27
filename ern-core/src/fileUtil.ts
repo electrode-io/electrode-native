@@ -15,8 +15,8 @@ export function chmodr(fileMode: string, filePath: string) {
  * @param filePath Path to the file to check
  */
 export async function isExecutable(filePath: string): Promise<boolean> {
-  return new Promise<boolean>(resolve => {
-    fs.access(filePath, fs.constants.X_OK, err => {
+  return new Promise<boolean>((resolve) => {
+    fs.access(filePath, fs.constants.X_OK, (err) => {
       err ? resolve(false) : resolve(true);
     });
   });

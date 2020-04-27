@@ -308,13 +308,13 @@ module.exports = {
     const nativeDependencies: NativeDependencies = await this.getNativeDependencies();
     const nativeDependenciesNames: string[] = _.map(
       nativeDependencies.all,
-      d => d.name!,
+      (d) => d.name!,
     );
     const nativeAndJsDependencies = this.getPackageJsonDependencies();
 
     return _.filter(
       nativeAndJsDependencies,
-      d => !nativeDependenciesNames.includes(`${d.name!}@${d.version}`),
+      (d) => !nativeDependenciesNames.includes(`${d.name!}@${d.version}`),
     );
   }
 

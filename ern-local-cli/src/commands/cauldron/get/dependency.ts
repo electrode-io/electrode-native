@@ -13,7 +13,7 @@ export const desc =
 
 export const builder = (argv: Argv) => {
   return argv
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .option('json', {
       describe: 'Output dependencies as a single line JSON array',
       type: 'boolean',
@@ -40,7 +40,7 @@ export const commandHandler = async ({
   const dependencies = await cauldron.getNativeDependencies(descriptor);
   json
     ? process.stdout.write(JSON.stringify(dependencies))
-    : dependencies.forEach(d => log.info(d.toString()));
+    : dependencies.forEach((d) => log.info(d.toString()));
 };
 
 export const handler = tryCatchWrap(commandHandler);

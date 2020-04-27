@@ -14,7 +14,7 @@ export const builder = (argv: Argv) => {
       describe: 'Local path to the Container to publish',
       type: 'string',
     })
-    .coerce('containerPath', p => untildify(p))
+    .coerce('containerPath', (p) => untildify(p))
     .option('extra', {
       alias: 'e',
       describe:

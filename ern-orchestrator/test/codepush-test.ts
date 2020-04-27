@@ -110,7 +110,7 @@ describe('codepush', () => {
       );
       const nativeAppVersion = jp.query(cauldronDoc, testAndroid1770Path)[0];
       const codePushEntry = nativeAppVersion.codePush.Production.find(
-        c => c.metadata.label === 'v17',
+        (c) => c.metadata.label === 'v17',
       );
       expect(codePushEntry.metadata.isMandatory).true;
     });
@@ -156,7 +156,7 @@ describe('codepush', () => {
       );
       const nativeAppVersion = jp.query(cauldronDoc, testAndroid1770Path)[0];
       const codePushEntry = nativeAppVersion.codePush.Production.find(
-        c => c.metadata.label === 'v17',
+        (c) => c.metadata.label === 'v17',
       );
       expect(codePushEntry.metadata.isDisabled).true;
     });
@@ -175,7 +175,7 @@ describe('codepush', () => {
       );
       const nativeAppVersion = jp.query(cauldronDoc, testAndroid1770Path)[0];
       const codePushEntry = nativeAppVersion.codePush.Production.find(
-        c => c.metadata.label === 'v17',
+        (c) => c.metadata.label === 'v17',
       );
       expect(codePushEntry.metadata.rollout).eq(50);
     });

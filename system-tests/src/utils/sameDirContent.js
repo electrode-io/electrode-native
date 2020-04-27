@@ -10,7 +10,7 @@ require('colors');
 // directories is similar (same files and same content for each file -minus
 // the files to be ignore-). It will return false otherwise and log all
 // differences to the console.
-module.exports = function(
+module.exports = function (
   pathA,
   pathB,
   {
@@ -30,7 +30,7 @@ module.exports = function(
         fs.readFileSync(path.join(diff.path1, diff.name1)).toString(),
         fs.readFileSync(path.join(diff.path2, diff.name2)).toString(),
       );
-      diffLine.forEach(part => {
+      diffLine.forEach((part) => {
         let color = part.added ? 'green' : part.removed ? 'red' : 'grey';
         process.stderr.write(part.value[color]);
       });

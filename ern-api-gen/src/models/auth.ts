@@ -9,7 +9,7 @@ export const AUTHS = [
   OAuth2Definition,
 ];
 
-const resolve = def => {
+const resolve = (def) => {
   if (def == null || def.type == null) {
     return null;
   }

@@ -17,7 +17,7 @@ export interface IosDevice {
 
 export async function getiPhoneSimulators(): Promise<any> {
   const iosSims = await simctl.getDevices();
-  return _.filter(_.flattenDeep(_.map(iosSims, (val, key) => val)), device =>
+  return _.filter(_.flattenDeep(_.map(iosSims, (val, key) => val)), (device) =>
     device.name.match(/^iPhone|iPad/),
   );
 }
@@ -69,7 +69,7 @@ export async function askUserToSelectAniPhoneSimulator() {
       const deviceUdid = deviceConfig.deviceId;
       // Check if simulator still exists
       let previousDevice;
-      choices.forEach(val => {
+      choices.forEach((val) => {
         if (val && val.value.udid === deviceUdid) {
           previousDevice = val.value;
         }
@@ -135,13 +135,13 @@ export function killAllRunningSimulators() {
 export async function launchSimulator(deviceUdid: string) {
   return new Promise((resolve, reject) => {
     const xcrunProc = spawn('xcrun', ['instruments', '-w', deviceUdid]);
-    xcrunProc.stdout.on('data', data => {
+    xcrunProc.stdout.on('data', (data) => {
       log.debug(data.toString());
     });
-    xcrunProc.stderr.on('data', data => {
+    xcrunProc.stderr.on('data', (data) => {
       log.debug(data.toString());
     });
-    xcrunProc.on('close', code => {
+    xcrunProc.on('close', (code) => {
       code === (0 || 255) /* 255 code because we don't provide -t option */
         ? resolve()
         : reject(
@@ -199,7 +199,7 @@ export async function launchApplication(
   //     set them in the calling environment with a SIMCTL_CHILD_ prefix."
   launchEnvVars
     .split(' ')
-    .map(x => x.split('='))
+    .map((x) => x.split('='))
     .forEach(([k, v]) => {
       process.env[`SIMCTL_CHILD_${k}`] = v;
     });

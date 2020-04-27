@@ -16,7 +16,7 @@ export const builder = (argv: Argv) => {
       describe: 'Description of the native application version',
       type: 'string',
     })
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .option('isReleased', {
       alias: 'r',
       default: undefined,

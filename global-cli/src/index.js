@@ -141,22 +141,22 @@ function firstTimeInstall() {
       }
     }
 
-    installProc.stdout.on('data', function(data) {
+    installProc.stdout.on('data', function (data) {
       isDebug && console.log(data.toString());
     });
 
-    installProc.stderr.on('data', function(data) {
+    installProc.stderr.on('data', function (data) {
       isDebug && console.log(data.toString());
     });
 
-    installProc.on('error', function(err) {
+    installProc.on('error', function (err) {
       console.log(
         `Something went wrong ${err} :( Run the command again with --debug flag for more info.`,
       );
       cleanupAndExitWithFailure();
     });
 
-    installProc.on('close', function(code) {
+    installProc.on('close', function (code) {
       if (code === 0) {
         spinner.succeed(
           `Hurray ! Electrode Native v${initialVersion} was successfully installed.`,

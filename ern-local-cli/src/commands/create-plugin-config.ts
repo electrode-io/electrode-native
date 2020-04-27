@@ -42,16 +42,16 @@ Make sure this command is run from a Manifest directory.`);
   const pluginPath = path.join(tmpDir, 'node_modules', plugin.name!);
   const conf = await PluginConfigGenerator.generateFromPath({
     pluginPath,
-    resolveDependencyVersion: x =>
+    resolveDependencyVersion: (x) =>
       askUserInput({
         message: `Cannot resolve version for ${x}. Enter the version to use`,
       }),
-    resolvePbxProjPath: x =>
+    resolvePbxProjPath: (x) =>
       promptUtils.askUserToChooseAnOption(
         x,
         'Select the .pbxproj associated to this plugin',
       ),
-    revolveBuildGradlePath: x =>
+    revolveBuildGradlePath: (x) =>
       promptUtils.askUserToChooseAnOption(
         x,
         'Select the build.gradle associated to this plugin',

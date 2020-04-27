@@ -69,7 +69,7 @@ export const builder = (argv: Argv) => {
       alias: 'o',
       describe: 'Path to output directory',
     })
-    .coerce('outputDirectory', p => untildify(p))
+    .coerce('outputDirectory', (p) => untildify(p))
     .epilog(epilog(exports));
 };
 

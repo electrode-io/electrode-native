@@ -27,7 +27,7 @@ export const builder = (argv: Argv) => {
       describe: 'Base Composite',
       type: 'string',
     })
-    .coerce('baseComposite', d => PackagePath.fromString(d))
+    .coerce('baseComposite', (d) => PackagePath.fromString(d))
     .option('deploymentName', {
       describe: 'Deployment to release the update to',
       type: 'string',
@@ -43,7 +43,7 @@ export const builder = (argv: Argv) => {
         'Full native application descriptors (target native application versions for the push)',
       type: 'array',
     })
-    .coerce('descriptors', d =>
+    .coerce('descriptors', (d) =>
       d.map((t: string) => AppVersionDescriptor.fromString(t)),
     )
     .option('force', {

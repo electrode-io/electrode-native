@@ -31,7 +31,7 @@ try {
           choices: testsSourceFiles,
         },
       ])
-      .then(answers => {
+      .then((answers) => {
         runTests(answers.userSelectedTests);
       });
   } else if (process.argv.length > 2 && !runAll) {

@@ -120,7 +120,7 @@ export default class Ensure {
   ) {
     const basePathDescriptors = _.map(
       coreUtils.coerceToAppVersionDescriptorArray(descriptors),
-      d => `${d.name}:${d.platform}`,
+      (d) => `${d.name}:${d.platform}`,
     );
     if (_.uniq(basePathDescriptors).length > 1) {
       throw new Error(
@@ -274,10 +274,9 @@ export default class Ensure {
       const cauldronMiniApp = PackagePath.fromString(miniAppFromCauldron);
       if (cauldronMiniApp.version === miniApp.version) {
         throw new Error(
-          `${
-            cauldronMiniApp.basePath
-          } is already at version ${miniApp.version ||
-            ''} in ${napDescriptor}.\n${extraErrorMessage}`,
+          `${cauldronMiniApp.basePath} is already at version ${
+            miniApp.version || ''
+          } in ${napDescriptor}.\n${extraErrorMessage}`,
         );
       }
     }
@@ -307,10 +306,9 @@ export default class Ensure {
         dependencyFromCauldron.version === dependency.version
       ) {
         throw new Error(
-          `${
-            dependency.basePath
-          } is already at version ${dependencyFromCauldron.version ||
-            'undefined'} in ${napDescriptor.toString()}.\n${extraErrorMessage}`,
+          `${dependency.basePath} is already at version ${
+            dependencyFromCauldron.version || 'undefined'
+          } in ${napDescriptor.toString()}.\n${extraErrorMessage}`,
         );
       }
     }
@@ -382,7 +380,7 @@ export default class Ensure {
       if (
         _.isEmpty(tree) ||
         _.isEmpty(
-          Object.keys(tree).filter(k => Object.keys(tree[k]).length > 0),
+          Object.keys(tree).filter((k) => Object.keys(tree[k]).length > 0),
         )
       ) {
         continue;
@@ -409,7 +407,7 @@ export default class Ensure {
     extraErrorMessage: string = '',
   ) {
     return new Promise((resolve, reject) => {
-      fs.exists(p, exists =>
+      fs.exists(p, (exists) =>
         exists
           ? resolve()
           : reject(
@@ -480,7 +478,7 @@ export default class Ensure {
     extraErrorMessage: string = '',
   ) {
     const availablePlatformKeys = () =>
-      constants.availableUserConfigKeys.map(e => e.name);
+      constants.availableUserConfigKeys.map((e) => e.name);
     if (!availablePlatformKeys().includes(key)) {
       const closestKeyName = (k: string) =>
         availablePlatformKeys().reduce((acc, cur) =>

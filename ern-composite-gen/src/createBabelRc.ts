@@ -25,7 +25,7 @@ export async function createBabelRc({
   };
 
   const paths = [
-    ...Object.keys(compositePackageJson.dependencies).map(d =>
+    ...Object.keys(compositePackageJson.dependencies).map((d) =>
       path.join(compositeNodeModulesPath, d),
     ),
     ...extraPaths,

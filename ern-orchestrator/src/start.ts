@@ -95,7 +95,7 @@ export default async function start({
   log.trace(`Temporary composite directory is ${compositeDir}`);
 
   const miniAppsLinksObj = ernConfig.get('miniAppsLinks', {});
-  const linkedMiniAppsPkgNames = Object.keys(miniAppsLinksObj).filter(p =>
+  const linkedMiniAppsPkgNames = Object.keys(miniAppsLinksObj).filter((p) =>
     fs.existsSync(miniAppsLinksObj[p]),
   );
 
@@ -103,14 +103,14 @@ export default async function start({
   // Replace all npm provided miniapps that have a linked directory,
   // with their linked directory
   const npmMiniAppsPkgNames: string[] = miniapps
-    .filter(m => m.isRegistryPath)
-    .map(m => m.name!);
+    .filter((m) => m.isRegistryPath)
+    .map((m) => m.name!);
   const npmMiniAppsLinkedPkgNames = _.intersection(
     linkedMiniAppsPkgNames,
     npmMiniAppsPkgNames,
   );
-  _.remove(miniapps, m => npmMiniAppsLinkedPkgNames.includes(m.name!));
-  npmMiniAppsLinkedPkgNames.forEach(pkgName =>
+  _.remove(miniapps, (m) => npmMiniAppsLinkedPkgNames.includes(m.name!));
+  npmMiniAppsLinkedPkgNames.forEach((pkgName) =>
     miniapps.push(miniAppsLinksObj[pkgName]),
   );
 
@@ -129,18 +129,18 @@ export default async function start({
 
   // Only case we need to account for, is any miniapps passed to
   // start as git remotes which have a local linked directory
-  const gitMiniApps = compositeMiniApps.filter(m => m.packagePath.isGitPath);
-  const gitMiniAppsPkgNames = gitMiniApps.map(r => r.name);
+  const gitMiniApps = compositeMiniApps.filter((m) => m.packagePath.isGitPath);
+  const gitMiniAppsPkgNames = gitMiniApps.map((r) => r.name);
   const gitMiniAppsLinkedPkgNames = _.intersection(
     linkedMiniAppsPkgNames,
     gitMiniAppsPkgNames,
   );
   const activeLinkedPkgPaths = gitMiniAppsLinkedPkgNames.map(
-    m => miniAppsLinksObj[m],
+    (m) => miniAppsLinksObj[m],
   );
   if (gitMiniAppsLinkedPkgNames.length > 0) {
     const linkedMiniAppDeps = await findNativeDependencies(
-      activeLinkedPkgPaths.map(p => path.join(p, 'node_modules')),
+      activeLinkedPkgPaths.map((p) => path.join(p, 'node_modules')),
     );
     const allNativeDeps = await composite.getNativeDependencies();
     // Exclude api/api impls as they are not native modules
@@ -162,14 +162,14 @@ export default async function start({
       allNativeDeps,
     );
     const extraNodeModules: { [pkg: string]: string } = {};
-    dedupedNativeModules.resolved.forEach(m => {
+    dedupedNativeModules.resolved.forEach((m) => {
       extraNodeModules[m.name!] = m.basePath;
     });
     const blacklistRe = _.difference(
-      allNativeModules.map(d => d.basePath),
-      dedupedNativeModules.resolved.map(d => d.basePath),
+      allNativeModules.map((d) => d.basePath),
+      dedupedNativeModules.resolved.map((d) => d.basePath),
     ).map(
-      l =>
+      (l) =>
         new RegExp(
           os.platform() === 'win32'
             ? `${l}\\.*`.replace(/\\/g, '\\\\')
@@ -178,8 +178,8 @@ export default async function start({
     );
 
     const compositeLocalMiniappsPaths = compositeMiniApps
-      .filter(m => m.packagePath.isFilePath)
-      .map(m => m.path);
+      .filter((m) => m.packagePath.isFilePath)
+      .map((m) => m.path);
 
     const allLocalMiniAppsPaths = [
       ...compositeLocalMiniappsPaths,

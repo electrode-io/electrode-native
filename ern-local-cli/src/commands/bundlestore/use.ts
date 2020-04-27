@@ -9,8 +9,8 @@ export const desc = 'Use an existing store given its access key';
 
 export const builder = (argv: Argv) => {
   return argv
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
-    .coerce('pathToBinary', p => untildify(p))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
+    .coerce('pathToBinary', (p) => untildify(p))
     .epilog(epilog(exports));
 };
 

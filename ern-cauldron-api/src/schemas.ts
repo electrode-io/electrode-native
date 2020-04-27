@@ -13,9 +13,7 @@ export const nativeApplicationVersion = Joi.object({
   container: container.default(),
   containerVersion: Joi.string().optional(), // optional for Backward Compat. Required in ERN 0.5.0
   description: Joi.string().optional(),
-  isReleased: Joi.boolean()
-    .optional()
-    .default(false),
+  isReleased: Joi.boolean().optional().default(false),
   name: Joi.string().required(),
   nativeDeps: Joi.array().default([]),
   yarnLocks: Joi.object().default({}),
@@ -27,16 +25,12 @@ export const nativeAplicationVersionPatch = Joi.object({
 
 export const nativeApplicationPlatform = Joi.object({
   name: Joi.string().valid(['android', 'ios']),
-  versions: Joi.array()
-    .items(nativeApplicationVersion)
-    .default([]),
+  versions: Joi.array().items(nativeApplicationVersion).default([]),
 });
 
 export const nativeApplication = Joi.object({
   name: Joi.string().required(),
-  platforms: Joi.array()
-    .items(nativeApplicationPlatform)
-    .default([]),
+  platforms: Joi.array().items(nativeApplicationPlatform).default([]),
 });
 
 export const schemaVersion = '3.0.0';

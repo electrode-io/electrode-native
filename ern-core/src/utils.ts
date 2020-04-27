@@ -48,10 +48,10 @@ export async function isPublishedToNpm(
 export async function httpGet(url: string): Promise<any> {
   return new Promise((resolve, reject) => {
     http
-      .get(url, res => {
+      .get(url, (res) => {
         resolve(res);
       })
-      .on('error', e => {
+      .on('error', (e) => {
         reject(e);
       });
   });
@@ -83,7 +83,7 @@ export function camelize(
  * @returns {string}
  */
 export function splitCamelCaseString(camelCaseString: string): string[] {
-  return camelCaseString.split(/(?=[A-Z])/).map(token => {
+  return camelCaseString.split(/(?=[A-Z])/).map((token) => {
     return token.toLowerCase();
   });
 }
@@ -97,15 +97,17 @@ export function getDefaultPackageNameForCamelCaseString(
     case ModuleType.MINIAPP:
       return _.filter(
         splitArray,
-        token => !['mini', 'app'].includes(token),
+        (token) => !['mini', 'app'].includes(token),
       ).join('-');
     case ModuleType.API:
-      return _.filter(splitArray, token => !['api'].includes(token)).join('-');
+      return _.filter(splitArray, (token) => !['api'].includes(token)).join(
+        '-',
+      );
     case ModuleType.JS_API_IMPL:
     case ModuleType.NATIVE_API_IMPL:
       return _.filter(
         splitArray,
-        token => !['api', 'impl'].includes(token),
+        (token) => !['api', 'impl'].includes(token),
       ).join('-');
     default:
       return splitArray.join('-');
@@ -466,8 +468,8 @@ export async function areSamePackagePathsAndVersions(
   // version then return false
   if (
     _.xorBy(
-      a.filter(p => !p.isGitPath),
-      b.filter(p => !p.isGitPath),
+      a.filter((p) => !p.isGitPath),
+      b.filter((p) => !p.isGitPath),
       'fullPath',
     ).length !== 0
   ) {
@@ -479,10 +481,10 @@ export async function areSamePackagePathsAndVersions(
   // This happens if the version is a git branch/tag or SHA
   // In that case even though the version string is different, it is
   // possible that they point to the same commit SHA
-  const aGit: PackagePath[] = a.filter(p => p.isGitPath);
-  const bGit: PackagePath[] = b.filter(p => p.isGitPath);
+  const aGit: PackagePath[] = a.filter((p) => p.isGitPath);
+  const bGit: PackagePath[] = b.filter((p) => p.isGitPath);
   for (const p of aGit) {
-    const other = bGit.find(x => x.basePath === p.basePath);
+    const other = bGit.find((x) => x.basePath === p.basePath);
     const aSha = await getCommitShaOfGitPackage(p);
     const bSha = await getCommitShaOfGitPackage(other!);
     if (aSha !== bSha) {

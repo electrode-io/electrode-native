@@ -16,7 +16,7 @@ export function copyRnpmAssets(
   const miniAppPaths =
     miniApps.length === 1 && miniApps[0].path
       ? [miniApps[0].path] // Case of local container for runner
-      : miniApps.map(m => m.path);
+      : miniApps.map((m) => m.path);
 
   for (const miniAppPath of miniAppPaths) {
     const packageJson = readPackageJsonSync(miniAppPath);

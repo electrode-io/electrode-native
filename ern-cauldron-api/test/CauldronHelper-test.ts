@@ -689,9 +689,7 @@ describe('CauldronHelper.js', () => {
       const result = await cauldronHelper.getVersions(
         AppPlatformDescriptor.fromString('test:android'),
       );
-      expect(result)
-        .to.be.an('array')
-        .of.length(2);
+      expect(result).to.be.an('array').of.length(2);
     });
   });
 
@@ -704,9 +702,7 @@ describe('CauldronHelper.js', () => {
       const result = await cauldronHelper.getVersionsNames(
         AppPlatformDescriptor.fromString('test:android'),
       );
-      expect(result)
-        .to.be.an('array')
-        .of.length(2);
+      expect(result).to.be.an('array').of.length(2);
       expect(result[0]).eql('17.7.0');
       expect(result[1]).eql('17.8.0');
     });
@@ -755,9 +751,7 @@ describe('CauldronHelper.js', () => {
       const result = await cauldronHelper.getNativeDependencies(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
       );
-      expect(result)
-        .to.be.an('array')
-        .of.length(4);
+      expect(result).to.be.an('array').of.length(4);
     });
   });
 
@@ -1935,9 +1929,7 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       const result = await cauldronHelper.getAllNativeApps();
-      expect(result)
-        .to.be.an('array')
-        .of.length(1);
+      expect(result).to.be.an('array').of.length(1);
     });
   });
 
@@ -1978,9 +1970,7 @@ describe('CauldronHelper.js', () => {
       const result = await cauldronHelper.getContainerJsApiImpls(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
       );
-      expect(result)
-        .to.be.an('array')
-        .of.length(1);
+      expect(result).to.be.an('array').of.length(1);
     });
   });
 
@@ -1997,9 +1987,7 @@ describe('CauldronHelper.js', () => {
       const result = await cauldronHelper.getContainerJsApiImpls(
         AppVersionDescriptor.fromString('test:android:17.8.0'),
       );
-      expect(result)
-        .to.be.an('array')
-        .of.length(1);
+      expect(result).to.be.an('array').of.length(1);
       expect(result[0].version).eql('1.0.1');
     });
 
@@ -2015,9 +2003,7 @@ describe('CauldronHelper.js', () => {
       const result = await cauldronHelper.getContainerJsApiImpls(
         AppVersionDescriptor.fromString('test:android:17.8.0'),
       );
-      expect(result)
-        .to.be.an('array')
-        .of.length(2);
+      expect(result).to.be.an('array').of.length(2);
     });
   });
 
@@ -2292,9 +2278,7 @@ describe('CauldronHelper.js', () => {
         AppVersionDescriptor.fromString('test:android:17.7.0'),
         'Production',
       );
-      expect(result)
-        .to.be.an('array')
-        .of.length(1);
+      expect(result).to.be.an('array').of.length(1);
     });
   });
 
@@ -2440,9 +2424,7 @@ describe('CauldronHelper.js', () => {
         AppVersionDescriptor.fromString('test:android:17.7.0'),
         'Production',
       );
-      expect(result)
-        .to.be.an('array')
-        .of.length(2);
+      expect(result).to.be.an('array').of.length(2);
     });
 
     it('should return the CodePushed MiniApps matching label', async () => {
@@ -2455,9 +2437,7 @@ describe('CauldronHelper.js', () => {
         'Production',
         { label: 'v16' },
       );
-      expect(result)
-        .to.be.an('array')
-        .of.length(3);
+      expect(result).to.be.an('array').of.length(3);
     });
 
     it('should throw if the label does not exist', async () => {
@@ -2514,9 +2494,7 @@ describe('CauldronHelper.js', () => {
       const result = await cauldronHelper.getContainerMiniApps(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
       );
-      expect(result)
-        .to.be.an('array')
-        .of.length(2);
+      expect(result).to.be.an('array').of.length(2);
     });
 
     it('should return the container MiniApps not favoring git branches by default', async () => {
@@ -2527,9 +2505,7 @@ describe('CauldronHelper.js', () => {
       const result = await cauldronHelper.getContainerMiniApps(
         AppVersionDescriptor.fromString('test:android:17.8.0'),
       );
-      expect(result)
-        .to.be.an('array')
-        .of.length(4);
+      expect(result).to.be.an('array').of.length(4);
     });
 
     it('should not favor container MiniApps git branches by default', async () => {
@@ -2540,10 +2516,8 @@ describe('CauldronHelper.js', () => {
       const result = await cauldronHelper.getContainerMiniApps(
         AppVersionDescriptor.fromString('test:android:17.8.0'),
       );
-      expect(result)
-        .to.be.an('array')
-        .of.length(4);
-      expect(result.map(m => m.toString())).contains(
+      expect(result).to.be.an('array').of.length(4);
+      expect(result.map((m) => m.toString())).contains(
         'https://github.com/foo/foo.git#6319d9ef0c237907c784a8c472b000d5ff83b49a',
       );
     });
@@ -2557,10 +2531,8 @@ describe('CauldronHelper.js', () => {
         AppVersionDescriptor.fromString('test:android:17.8.0'),
         { favorGitBranches: true },
       );
-      expect(result)
-        .to.be.an('array')
-        .of.length(4);
-      expect(result.map(m => m.toString())).contains(
+      expect(result).to.be.an('array').of.length(4);
+      expect(result.map((m) => m.toString())).contains(
         'https://github.com/foo/foo.git#master',
       );
     });
@@ -2656,17 +2628,13 @@ describe('CauldronHelper.js', () => {
         fixture,
         `${testAndroid1770Path}.codePush.Production`,
       )[0];
-      expect(codePushEntries)
-        .to.be.an('array')
-        .of.length(2);
+      expect(codePushEntries).to.be.an('array').of.length(2);
       const updatedEntry = jp.query(
         codePushEntries,
         `$[?(@.metadata.label=="v17")]`,
       )[0];
 
-      expect(updatedEntry.metadata)
-        .to.have.property('isDisabled')
-        .eql(true);
+      expect(updatedEntry.metadata).to.have.property('isDisabled').eql(true);
     });
 
     it('should update the code push entry isMandatory property', async () => {
@@ -2686,17 +2654,13 @@ describe('CauldronHelper.js', () => {
         fixture,
         `${testAndroid1770Path}.codePush.Production`,
       )[0];
-      expect(codePushEntries)
-        .to.be.an('array')
-        .of.length(2);
+      expect(codePushEntries).to.be.an('array').of.length(2);
       const updatedEntry = jp.query(
         codePushEntries,
         `$[?(@.metadata.label=="v17")]`,
       )[0];
 
-      expect(updatedEntry.metadata)
-        .to.have.property('isMandatory')
-        .eql(true);
+      expect(updatedEntry.metadata).to.have.property('isMandatory').eql(true);
     });
 
     it('should update the code push entry rollout property', async () => {
@@ -2716,17 +2680,13 @@ describe('CauldronHelper.js', () => {
         fixture,
         `${testAndroid1770Path}.codePush.Production`,
       )[0];
-      expect(codePushEntries)
-        .to.be.an('array')
-        .of.length(2);
+      expect(codePushEntries).to.be.an('array').of.length(2);
       const updatedEntry = jp.query(
         codePushEntries,
         `$[?(@.metadata.label=="v17")]`,
       )[0];
 
-      expect(updatedEntry.metadata)
-        .to.have.property('rollout')
-        .eql(10);
+      expect(updatedEntry.metadata).to.have.property('rollout').eql(10);
     });
   });
 
@@ -3318,9 +3278,7 @@ describe('CauldronHelper.js', () => {
       const result = await cauldronHelper.getDescriptorsMatchingSemVerDescriptor(
         descriptor,
       );
-      expect(result)
-        .to.be.an('array')
-        .of.length(2);
+      expect(result).to.be.an('array').of.length(2);
     });
 
     it('should return the right matched versions [2]', async () => {
@@ -3332,9 +3290,7 @@ describe('CauldronHelper.js', () => {
       const result = await cauldronHelper.getDescriptorsMatchingSemVerDescriptor(
         descriptor,
       );
-      expect(result)
-        .to.be.an('array')
-        .of.length(1);
+      expect(result).to.be.an('array').of.length(1);
     });
   });
 

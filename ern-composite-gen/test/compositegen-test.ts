@@ -56,10 +56,7 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('MiniAppFive@1.0.0'),
       ];
       const result = getMiniAppsDeltas(miniApps, sampleYarnLock);
-      expect(result)
-        .to.have.property('new')
-        .that.is.a('array')
-        .lengthOf(2);
+      expect(result).to.have.property('new').that.is.a('array').lengthOf(2);
     });
 
     it('should compute same deltas', () => {
@@ -68,10 +65,7 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('MiniAppTwo@3.0.0'),
       ];
       const result = getMiniAppsDeltas(miniApps, sampleYarnLock);
-      expect(result)
-        .to.have.property('same')
-        .that.is.a('array')
-        .lengthOf(2);
+      expect(result).to.have.property('same').that.is.a('array').lengthOf(2);
     });
 
     it('should compute upgraded deltas', () => {
@@ -93,14 +87,8 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('MiniAppFour@1.0.0'),
       ];
       const result = getMiniAppsDeltas(miniApps, sampleYarnLock);
-      expect(result)
-        .to.have.property('new')
-        .that.is.a('array')
-        .lengthOf(1);
-      expect(result)
-        .to.have.property('same')
-        .that.is.a('array')
-        .lengthOf(1);
+      expect(result).to.have.property('new').that.is.a('array').lengthOf(1);
+      expect(result).to.have.property('same').that.is.a('array').lengthOf(1);
       expect(result)
         .to.have.property('upgraded')
         .that.is.a('array')

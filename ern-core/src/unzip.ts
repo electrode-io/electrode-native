@@ -14,7 +14,7 @@ export async function unzip(zippedData: Buffer, destPath: string) {
       } else {
         zipfile.readEntry();
         zipfile.on('end', () => resolve());
-        zipfile.on('entry', entry => {
+        zipfile.on('entry', (entry) => {
           if (/\$/.test(entry.fileName)) {
             // Current entry is an empty directory
             shell.mkdir('-p', path.join(destPath, entry.fileName));

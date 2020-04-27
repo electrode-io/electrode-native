@@ -27,7 +27,7 @@ describe('Ensure.js', () => {
   // noGitOrFilesystemPath
   // ==========================================================
   describe('noGitOrFilesystemPath', () => {
-    fixtures.withoutGitOrFileSystemPath.forEach(obj => {
+    fixtures.withoutGitOrFileSystemPath.forEach((obj) => {
       it('shoud not throw if no git or file system path', () => {
         expect(
           () => Ensure.noGitOrFilesystemPath(obj),
@@ -36,7 +36,7 @@ describe('Ensure.js', () => {
       });
     });
 
-    fixtures.withGitOrFileSystemPath.forEach(obj => {
+    fixtures.withGitOrFileSystemPath.forEach((obj) => {
       it('should throw if git or file system path', () => {
         expect(
           () => Ensure.noGitOrFilesystemPath(obj),
@@ -50,7 +50,7 @@ describe('Ensure.js', () => {
   // noFileSystemPath
   // ==========================================================
   describe('noFileSystemPath', () => {
-    fixtures.withoutFileSystemPath.forEach(obj => {
+    fixtures.withoutFileSystemPath.forEach((obj) => {
       it('shoud not throw if no file system path', () => {
         expect(
           () => Ensure.noFileSystemPath(obj),
@@ -59,7 +59,7 @@ describe('Ensure.js', () => {
       });
     });
 
-    fixtures.withFileSystemPath.forEach(obj => {
+    fixtures.withFileSystemPath.forEach((obj) => {
       it('should throw if file system path', () => {
         expect(
           () => Ensure.noFileSystemPath(obj),
@@ -493,7 +493,7 @@ describe('Ensure.js', () => {
   // isValidNpmPackageName
   // ==========================================================
   describe('isValidNpmPackageName', () => {
-    fixtures.validNpmPackageNames.forEach(name => {
+    fixtures.validNpmPackageNames.forEach((name) => {
       it('shoud not throw if name is valid', () => {
         expect(
           () => Ensure.isValidNpmPackageName(name),
@@ -502,7 +502,7 @@ describe('Ensure.js', () => {
       });
     });
 
-    fixtures.invalidNpmPackageNames.forEach(name => {
+    fixtures.invalidNpmPackageNames.forEach((name) => {
       it('should throw if name is invalid', () => {
         expect(
           () => Ensure.isValidNpmPackageName(name),
@@ -516,7 +516,7 @@ describe('Ensure.js', () => {
   // isValidElectrodeNativeModuleName
   // ==========================================================
   describe('isValidElectrodeNativeModuleName', () => {
-    fixtures.validElectrodeNativeModuleNames.forEach(name => {
+    fixtures.validElectrodeNativeModuleNames.forEach((name) => {
       it('should not throw if name is valid', () => {
         expect(
           () => Ensure.isValidElectrodeNativeModuleName(name),
@@ -525,7 +525,7 @@ describe('Ensure.js', () => {
       });
     });
 
-    fixtures.invalidElectrodeNativeModuleNames.forEach(name => {
+    fixtures.invalidElectrodeNativeModuleNames.forEach((name) => {
       it('should throw if name is invalid', () => {
         expect(
           () => Ensure.isValidElectrodeNativeModuleName(name),
@@ -664,7 +664,7 @@ describe('Ensure.js', () => {
   // isSupportedMiniAppOrJsApiImplVersion
   // ==========================================================
   describe('isSupportedMiniAppOrJsApiImplVersion', () => {
-    fixtures.supportedCauldronMiniAppsVersions.forEach(pkg => {
+    fixtures.supportedCauldronMiniAppsVersions.forEach((pkg) => {
       it(`shoud not throw if suported version (pkg: ${pkg})`, () => {
         expect(
           () => Ensure.isSupportedMiniAppOrJsApiImplVersion(pkg),
@@ -673,7 +673,7 @@ describe('Ensure.js', () => {
       });
     });
 
-    fixtures.unSupportedCauldronMiniAppsVersions.forEach(pkg => {
+    fixtures.unSupportedCauldronMiniAppsVersions.forEach((pkg) => {
       it(`should throw if version is not supported (pkg: ${pkg})`, () => {
         expect(
           () => Ensure.isSupportedMiniAppOrJsApiImplVersion(pkg),

@@ -9,12 +9,12 @@ export const desc = 'Add a mobile application binary to the binary store';
 
 export const builder = (argv: Argv) => {
   return argv
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .option('flavor', {
       describe: 'Custom flavor of this binary',
       type: 'string',
     })
-    .coerce('pathToBinary', p => untildify(p))
+    .coerce('pathToBinary', (p) => untildify(p))
     .epilog(epilog(exports));
 };
 

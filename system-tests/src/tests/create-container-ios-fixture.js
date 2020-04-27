@@ -16,7 +16,7 @@ const excludeFilter = [
   'Podfile.lock',
   'yarn.lock',
 ]
-  .map(s => `**/${s}`)
+  .map((s) => `**/${s}`)
   .join(',');
 
 const command = `create-container --miniapps ${miniapps.join(

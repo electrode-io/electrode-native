@@ -8,6 +8,6 @@ const pathToIndexProd = path.resolve(
 
 const ern = `node ${pathToIndexProd}`;
 
-module.exports = function(command) {
+module.exports = function (command) {
   return shell.exec(`${ern} ${command}`);
 };

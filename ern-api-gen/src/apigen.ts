@@ -209,7 +209,7 @@ function _constructTargetNativeDependenciesMap(
   targetDependencies: PackagePath[],
 ) {
   return new Map(
-    targetDependencies.map(curVal => {
+    targetDependencies.map((curVal) => {
       const dependencyString = curVal.toString();
       const idx = dependencyString.lastIndexOf('@'); // logic for scoped dependency
       return <any>[

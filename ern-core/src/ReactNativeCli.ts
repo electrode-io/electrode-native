@@ -253,7 +253,7 @@ ${this.binaryPath} start ${args.join(' ')}
 
   public async isPackagerRunning(host: string, port: string) {
     return fetch(`http://${host}:${port}/status`).then(
-      res => res.text().then(body => body === 'packager-status:running'),
+      (res) => res.text().then((body) => body === 'packager-status:running'),
       () => false,
     );
   }

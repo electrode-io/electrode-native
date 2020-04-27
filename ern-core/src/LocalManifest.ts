@@ -37,7 +37,7 @@ export class LocalManifest {
 
     return Array.isArray(manifest)
       ? // Old manifest format [to be deprecated]
-        _.find(manifest, m =>
+        _.find(manifest, (m) =>
           semver.satisfies(platformVersion, m.platformVersion),
         )
       : // New manifest format
@@ -74,11 +74,11 @@ export class LocalManifest {
     return fs.existsSync(pathToPluginsDirectory)
       ? _(fs.readdirSync(pathToPluginsDirectory))
           .filter(
-            d =>
+            (d) =>
               ERN_VERSION_DIRECTORY_RE.test(d) &&
               semver.lte(ERN_VERSION_DIRECTORY_RE.exec(d)![1], maxVersion),
           )
-          .map(d => path.join(pathToPluginsDirectory, d))
+          .map((d) => path.join(pathToPluginsDirectory, d))
           .value()
       : [];
   }
@@ -164,18 +164,19 @@ export class LocalManifest {
 
       const pluginConfigDirectories = fs
         .readdirSync(basePluginPath)
-        .filter(f => {
+        .filter((f) => {
           const p = packageNameRe.exec(f);
           return p ? p![1] === pluginName : false;
         });
 
       const pluginVersions = _.map(
         pluginConfigDirectories,
-        s => versionRe.exec(s)![1],
+        (s) => versionRe.exec(s)![1],
       );
 
-      const matchingVersion = _.find(pluginVersions.sort(semver.rcompare), d =>
-        semver.gte(plugin.version!, d),
+      const matchingVersion = _.find(
+        pluginVersions.sort(semver.rcompare),
+        (d) => semver.gte(plugin.version!, d),
       );
       if (matchingVersion) {
         let pluginConfigurationPath = '';
@@ -222,12 +223,13 @@ export class LocalManifest {
       const pluginVersions = _.map(
         fs
           .readdirSync(pluginsConfigurationDirectory)
-          .filter(f => f.startsWith(pluginScopeAndName)),
-        s => versionRe.exec(s)![1],
+          .filter((f) => f.startsWith(pluginScopeAndName)),
+        (s) => versionRe.exec(s)![1],
       );
 
-      const matchingVersion = _.find(pluginVersions.sort(semver.rcompare), d =>
-        semver.gte(plugin.version!, d),
+      const matchingVersion = _.find(
+        pluginVersions.sort(semver.rcompare),
+        (d) => semver.gte(plugin.version!, d),
       );
       if (matchingVersion) {
         const pluginConfigurationPath = path.join(
