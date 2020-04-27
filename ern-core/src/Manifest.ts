@@ -434,9 +434,10 @@ export interface IosPluginStaticLib {
   target: string
 }
 
-export interface ManifestOverrideConfig {
+export interface OverrideManifestConfig {
   url: string
   type: 'partial' | 'full'
+  source: 'cauldron' | '.ernrc'
 }
 
 const pluginConfigFileName = 'config.json'
@@ -445,7 +446,7 @@ const npmScopeModuleRe = /@(.*)\/(.*)/
 const ERN_MANIFEST_MASTER_GIT_REPO = `https://github.com/electrode-io/electrode-native-manifest.git`
 
 export class Manifest {
-  public static getOverrideManifestConfig: () => Promise<ManifestOverrideConfig | void>
+  public static getOverrideManifestConfig: () => Promise<OverrideManifestConfig | void>
 
   public readonly masterManifest: LocalManifest | GitManifest
   private manifestOverrideType: 'partial' | 'full'
