@@ -96,6 +96,7 @@
               "ernPlatformVersion": "1000.0.0",
               "isReleased": false,
               "binary": null,
+              "yarnLocks": {},
               "container": {
                 "nativeDeps": [
                   "react-native-electrode-bridge@1.4.9",
