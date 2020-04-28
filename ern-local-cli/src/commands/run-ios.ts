@@ -90,7 +90,7 @@ export const commandHandler = async ({
   usePreviousDevice?: boolean
 }) => {
   if (process.platform !== 'darwin') {
-    return log.error('This command can only be used on Mac OS X')
+    return log.error('This command is only supported on macOS')
   }
   deviceConfig.updateDeviceConfig('ios', usePreviousDevice)
 
