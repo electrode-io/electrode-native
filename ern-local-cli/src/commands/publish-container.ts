@@ -59,6 +59,7 @@ const publisherPackagePrefix = 'ern-container-publisher-'
 export const commandHandler = async ({
   containerPath,
   extra,
+  inPlace,
   platform,
   publisher,
   url,
@@ -66,6 +67,7 @@ export const commandHandler = async ({
 }: {
   containerPath?: string
   extra?: string
+  inPlace?: boolean
   platform: NativePlatform
   publisher: PackagePath
   url: string
@@ -98,6 +100,7 @@ export const commandHandler = async ({
     containerPath,
     containerVersion: version,
     extra: extraObj,
+    inPlace,
     platform,
     publisher,
     url,
