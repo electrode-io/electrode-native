@@ -87,20 +87,20 @@ export async function performCodePushPromote(
     force = false,
     label,
     mandatory,
-    rollout,
     reuseReleaseBinaryVersion,
-    targetBinaryVersion,
+    rollout,
     skipNativeDependenciesVersionAlignedCheck = false,
+    targetBinaryVersion,
   }: {
     description?: string
     disableDuplicateReleaseError?: boolean
     force?: boolean
     label?: string
     mandatory?: boolean
-    rollout?: number
     reuseReleaseBinaryVersion?: boolean
-    targetBinaryVersion?: string
+    rollout?: number
     skipNativeDependenciesVersionAlignedCheck?: boolean
+    targetBinaryVersion?: string
   } = {}
 ) {
   let cauldron
