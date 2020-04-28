@@ -297,6 +297,47 @@ describe('codepush', () => {
       )
     })
 
+    it('should skip native dependencies compatiblity check if source and target version promoted are same', async () => {
+      prepareStubs({
+        compatibility_areCompatible: false,
+      })
+
+      assert(
+        await doesNotThrow(
+          sut.performCodePushPromote,
+          sut,
+          testAndroid1770Descriptor,
+          [testAndroid1770Descriptor],
+          'QA',
+          'Production',
+          {
+            label: 'v18',
+          }
+        )
+      )
+    })
+
+    it('should skip native dependencies compatiblity check if skipNativeDependenciesVersionAlignedCheck is set to true', async () => {
+      prepareStubs({
+        compatibility_areCompatible: false,
+      })
+
+      assert(
+        await doesNotThrow(
+          sut.performCodePushPromote,
+          sut,
+          testAndroid1770Descriptor,
+          [testAndroid1780Descriptor],
+          'QA',
+          'Production',
+          {
+            label: 'v18',
+            skipNativeDependenciesVersionAlignedCheck: true,
+          }
+        )
+      )
+    })
+
     it('should throw if some MiniApps include imcompatible native dependencies with target native application version and force flag is false', async () => {
       prepareStubs({
         compatibility_areCompatible: false,
@@ -307,7 +348,7 @@ describe('codepush', () => {
           sut.performCodePushPromote,
           sut,
           testAndroid1770Descriptor,
-          [testAndroid1770Descriptor],
+          [testAndroid1780Descriptor],
           'QA',
           'Production',
           {
@@ -327,7 +368,7 @@ describe('codepush', () => {
           sut.performCodePushPromote,
           sut,
           testAndroid1770Descriptor,
-          [testAndroid1770Descriptor],
+          [testAndroid1780Descriptor],
           'QA',
           'Production',
           {

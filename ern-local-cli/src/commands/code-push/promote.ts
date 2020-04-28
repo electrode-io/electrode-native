@@ -66,6 +66,12 @@ export const builder = (argv: Argv) => {
       describe: 'Skip confirmation prompts',
       type: 'boolean',
     })
+    .option('skipNativeDependenciesVersionAlignedCheck', {
+      alias: 'n',
+      describe:
+        'Skip the check to compare native dependencies version alignment',
+      type: 'boolean',
+    })
     .option('sourceDeploymentName', {
       describe:
         'Name of the deployment environment to promote the release from',
@@ -117,6 +123,7 @@ export const commandHandler = async ({
   targetSemVerDescriptor,
   rollout,
   skipConfirmation,
+  skipNativeDependenciesVersionAlignedCheck,
 }: {
   description?: string
   disableDuplicateReleaseError?: boolean
@@ -132,6 +139,7 @@ export const commandHandler = async ({
   targetSemVerDescriptor?: string
   rollout?: number
   skipConfirmation?: boolean
+  skipNativeDependenciesVersionAlignedCheck?: boolean
 }) => {
   await logErrorAndExitIfNotSatisfied({
     checkIfCodePushOptionsAreValid: {
@@ -238,6 +246,7 @@ export const commandHandler = async ({
       mandatory,
       reuseReleaseBinaryVersion,
       rollout,
+      skipNativeDependenciesVersionAlignedCheck,
       targetBinaryVersion,
     }
   )

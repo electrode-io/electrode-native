@@ -87,8 +87,9 @@ export async function performCodePushPromote(
     force = false,
     label,
     mandatory,
-    rollout,
     reuseReleaseBinaryVersion,
+    rollout,
+    skipNativeDependenciesVersionAlignedCheck = false,
     targetBinaryVersion,
   }: {
     description?: string
@@ -96,8 +97,9 @@ export async function performCodePushPromote(
     force?: boolean
     label?: string
     mandatory?: boolean
-    rollout?: number
     reuseReleaseBinaryVersion?: boolean
+    rollout?: number
+    skipNativeDependenciesVersionAlignedCheck?: boolean
     targetBinaryVersion?: string
   } = {}
 ) {
@@ -140,19 +142,30 @@ export async function performCodePushPromote(
         PackagePath.fromString(jsapiimpl)
       )
 
-      const nativeDependenciesVersionAligned = await compatibility.areCompatible(
-        miniApps,
-        targetNapDescriptor
-      )
+      // If sourceNapDescriptor.version === targetNapDescriptor.version skip the compatibility check
+      // As the compatibility check would have already happened as part of the code-push release
+      // If skipNativeDependenciesVersionAlignedCheck is set to true
+      // and sourceNapDescriptor and targetNapDescriptor versions are different, explicity skip the check
+      // would be required for patch version promotion
+      if (
+        sourceNapDescriptor &&
+        sourceNapDescriptor.version !== targetNapDescriptor.version &&
+        !skipNativeDependenciesVersionAlignedCheck
+      ) {
+        const nativeDependenciesVersionAligned = await compatibility.areCompatible(
+          miniApps,
+          targetNapDescriptor
+        )
 
-      if (!nativeDependenciesVersionAligned && force) {
-        log.warn(
-          'Native dependencies versions are not aligned but ignoring due to the use of force flag'
-        )
-      } else if (!nativeDependenciesVersionAligned && !force) {
-        throw new Error(
-          'Native dependencies versions of MiniApps are not aligned. Relaunch the operation with the force flag if you wish to ignore.'
-        )
+        if (!nativeDependenciesVersionAligned && force) {
+          log.warn(
+            'Native dependencies versions are not aligned but ignoring due to the use of force flag'
+          )
+        } else if (!nativeDependenciesVersionAligned && !force) {
+          throw new Error(
+            'Native dependencies versions of MiniApps are not aligned. Relaunch the operation with the force flag if you wish to ignore.'
+          )
+        }
       }
 
       const appName = await getCodePushAppName(sourceNapDescriptor)
@@ -567,7 +580,7 @@ export async function performCodePushOtaUpdate(
     if (cauldron) {
       await cauldron.discardTransaction()
     }
-    log.error(`performCodePushOtaUpdate {e}`)
+    log.error(`performCodePushOtaUpdate ${e}`)
 
     throw e
   }
