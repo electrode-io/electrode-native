@@ -1,19 +1,15 @@
 import sinon from 'sinon'
 import * as coreUtils from '../src/utils'
 import log from '../src/log'
-import {
-  AppVersionDescriptor,
-  AppPlatformDescriptor,
-  AppNameDescriptor,
-} from '../src/descriptors'
+import { AppVersionDescriptor } from '../src/descriptors'
 import { PackagePath } from '../src/PackagePath'
 const sandbox = sinon.createSandbox()
 import { expect, assert } from 'chai'
 import { doesThrow } from 'ern-util-dev'
 import * as git from '../src/gitCli'
 
-let processExitStub
-let logStub
+let processExitStub: any
+let logStub: any
 
 describe('Core Utils', () => {
   beforeEach(() => {

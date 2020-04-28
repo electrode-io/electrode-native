@@ -127,7 +127,7 @@ describe('resolveNativeDependenciesVersions', () => {
     const result = resolveNativeDependenciesVersions(fixture)
     expect(result.resolved).length(3)
     expect(result.pluginsWithMismatchingVersions).empty
-    const resolvedDepsAsStrings = result.resolved.map(r => r.toString())
+    const resolvedDepsAsStrings = result.resolved.map((r: any) => r.toString())
     expect(resolvedDepsAsStrings).includes('apiOne@1.0.1')
   })
 
@@ -153,7 +153,7 @@ describe('resolveNativeDependenciesVersions', () => {
     const result = resolveNativeDependenciesVersions(fixture)
     expect(result.resolved).length(3)
     expect(result.pluginsWithMismatchingVersions).empty
-    const resolvedDepsAsStrings = result.resolved.map(r => r.toString())
+    const resolvedDepsAsStrings = result.resolved.map((r: any) => r.toString())
     expect(resolvedDepsAsStrings).includes('apiOne@1.1.0')
   })
 
@@ -227,7 +227,7 @@ describe('resolveNativeDependenciesVersions', () => {
     const result = resolveNativeDependenciesVersions(fixture)
     expect(result.resolved).length(3)
     expect(result.pluginsWithMismatchingVersions).length(0)
-    const resolvedDepsAsStrings = result.resolved.map(r => r.toString())
+    const resolvedDepsAsStrings = result.resolved.map((r: any) => r.toString())
     expect(resolvedDepsAsStrings).includes('nativeModuleOne@1.0.0')
   })
 

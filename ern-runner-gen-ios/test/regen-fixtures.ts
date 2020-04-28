@@ -24,7 +24,7 @@ getRunnerGeneratorForPlatform('ios')
     console.log(chalk.green('Done!'))
   })
 
-function logHeader(message) {
+function logHeader(message: string) {
   console.log('======================================================')
   console.log(message)
   console.log('======================================================')

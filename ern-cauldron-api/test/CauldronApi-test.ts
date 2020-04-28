@@ -2,16 +2,23 @@ import { assert, expect } from 'chai'
 import sinon from 'sinon'
 import { PackagePath, utils } from 'ern-core'
 import { doesThrow, doesNotThrow, fixtures } from 'ern-util-dev'
-import { CauldronCodePushEntry } from '../src/types'
+import {
+  CauldronCodePushEntry,
+  ICauldronDocumentStore,
+  ICauldronFileStore,
+} from '../src/types'
 import CauldronApi from '../src/CauldronApi'
 import EphemeralFileStore from '../src/EphemeralFileStore'
 import InMemoryDocumentStore from '../src/InMemoryDocumentStore'
 import jp from 'jsonpath'
 import fs from 'fs'
-import path, { dirname } from 'path'
-import { AppPlatformDescriptor } from 'ern-core'
-import { AppVersionDescriptor } from 'ern-core'
-import { AppNameDescriptor } from 'ern-core'
+import path from 'path'
+import {
+  AppNameDescriptor,
+  AppPlatformDescriptor,
+  AppVersionDescriptor,
+} from 'ern-core'
+
 const sandbox = sinon.createSandbox()
 
 const codePushNewEntryFixture: CauldronCodePushEntry = {
@@ -29,8 +36,8 @@ const codePushNewEntryFixture: CauldronCodePushEntry = {
   miniapps: ['@test/react-native-foo@4.0.4', 'react-native-bar@2.0.2'],
 }
 
-let documentStore
-let fileStore
+let documentStore: ICauldronDocumentStore
+let fileStore: ICauldronFileStore
 
 const fixtureFileStorePath = path.join(__dirname, 'fixtures/filestore')
 

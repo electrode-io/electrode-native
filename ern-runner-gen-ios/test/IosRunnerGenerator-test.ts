@@ -1,4 +1,3 @@
-import IosRunnerGenerator from '../src/IosRunnerGenerator'
 import path from 'path'
 import shell from 'shelljs'
 import { assert } from 'chai'

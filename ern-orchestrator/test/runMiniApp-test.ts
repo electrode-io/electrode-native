@@ -14,14 +14,14 @@ import { doesThrow, fixtures } from 'ern-util-dev'
 import * as gen from '../src/generateContainerForRunner'
 import { AndroidRunnerGenerator } from 'ern-runner-gen-android'
 import { runMiniApp } from '../src/runMiniApp'
-import { assert, expect } from 'chai'
+import { assert } from 'chai'
 import sinon from 'sinon'
 import fs from 'fs-extra'
 import path from 'path'
 
 const sandbox = sinon.createSandbox()
 
-function cloneFixture(fixture) {
+function cloneFixture(fixture: any) {
   return JSON.parse(JSON.stringify(fixture))
 }
 

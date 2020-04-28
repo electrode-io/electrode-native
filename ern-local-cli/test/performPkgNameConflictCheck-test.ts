@@ -8,10 +8,9 @@ import * as fixtures from './fixtures/common'
 describe('performPkgNameConflictCheck', () => {
   const sandbox = sinon.createSandbox()
   const npmPackageExists = require('./fixtures/npmPkgExistsResponse.json')
-  const npmPackageDoesNotExists = ''
 
-  let yarnInfoStub
-  let inquirerPromptStub
+  let yarnInfoStub: any
+  let inquirerPromptStub: any
 
   beforeEach(() => {
     yarnInfoStub = sandbox.stub(yarn, 'info')

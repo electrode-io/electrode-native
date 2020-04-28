@@ -1,6 +1,5 @@
-import { doesThrow } from 'ern-util-dev'
 import { inferContainerPlatform } from '../src/inferContainerPlatform'
-import { assert, expect } from 'chai'
+import { expect } from 'chai'
 import path from 'path'
 
 describe('inferContainerPlatform', () => {

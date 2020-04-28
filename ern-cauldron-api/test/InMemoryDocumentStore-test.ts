@@ -1,7 +1,5 @@
-import { assert, expect } from 'chai'
+import { expect } from 'chai'
 import { fixtures } from 'ern-util-dev'
-import fs from 'fs'
-import path from 'path'
 import InMemoryDocumentStore from '../src/InMemoryDocumentStore'
 import { Cauldron } from '../src/types'
 import sinon from 'sinon'

@@ -7,9 +7,9 @@ import sinon from 'sinon'
 const sandbox = sinon.createSandbox()
 
 describe('launchRunner', () => {
-  let runAndroidProjectStub
-  let launchOnDeviceStub
-  let launchOnSimulatorStub
+  let runAndroidProjectStub: any
+  let launchOnDeviceStub: any
+  let launchOnSimulatorStub: any
 
   beforeEach(() => {
     runAndroidProjectStub = sandbox.stub(core.android, 'runAndroidProject')
@@ -44,12 +44,16 @@ describe('launchRunner', () => {
     ]
     sandbox.stub(core.ios, 'getiPhoneRealDevices').returns(iosDevices)
     await launchRunner({ platform: 'ios', pathToRunner: '/Users/foo/test' })
-    sandbox.assert.calledWith(launchOnDeviceStub, '/Users/foo/test', iosDevices)
+    sandbox.assert.calledWith(
+      launchOnDeviceStub as any,
+      '/Users/foo/test',
+      iosDevices
+    )
   })
 
   it('should call launchOnSimulator if there are no iOS device connected [iOS]', async () => {
     sandbox.stub(core.ios, 'getiPhoneRealDevices').returns([])
     await launchRunner({ platform: 'ios', pathToRunner: '/Users/foo/test' })
-    sandbox.assert.calledWith(launchOnSimulatorStub, '/Users/foo/test')
+    sandbox.assert.calledWith(launchOnSimulatorStub as any, '/Users/foo/test')
   })
 })

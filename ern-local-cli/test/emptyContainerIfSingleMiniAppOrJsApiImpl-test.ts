@@ -85,18 +85,18 @@ const singleJsApiImplCauldron = {
 const testAndroid100Path =
   '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="1.0.0")]'
 
-function cloneFixture(fixture) {
+function cloneFixture(fixture: any) {
   return JSON.parse(JSON.stringify(fixture))
 }
 
-function createCauldronApi(cauldronDocument) {
+function createCauldronApi(cauldronDocument: any) {
   return new CauldronApi(
     new InMemoryDocumentStore(cauldronDocument),
     new EphemeralFileStore()
   )
 }
 
-function createCauldronHelper(cauldronDocument) {
+function createCauldronHelper(cauldronDocument: any) {
   return new CauldronHelper(createCauldronApi(cauldronDocument))
 }
 

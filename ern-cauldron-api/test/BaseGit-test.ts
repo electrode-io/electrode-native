@@ -11,8 +11,8 @@ import git from 'simple-git/promise'
 const sandbox = sinon.createSandbox()
 
 describe('BaseGit', () => {
-  let gitCliStub
-  let gitStub
+  let gitCliStub: any
+  let gitStub: any
 
   beforeEach(() => {
     gitStub = sandbox.stub(git())

@@ -9,7 +9,7 @@ import sinon from 'sinon'
 const sandbox = sinon.createSandbox()
 
 describe('getContainerPlatform', () => {
-  let inferContainerPlatformStub
+  let inferContainerPlatformStub: any
 
   const containerFixturePath = path.join(
     __dirname,

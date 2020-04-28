@@ -1,7 +1,7 @@
 import path from 'path'
 import sinon from 'sinon'
 import shell from 'shelljs'
-import fs from 'fs'
+import fs from 'fs-extra'
 import { assert, expect } from 'chai'
 import { ModuleFactory } from '../src/ModuleFactory'
 import { doesThrow } from 'ern-util-dev'
@@ -16,9 +16,9 @@ describe('ModuleFactory', () => {
   const sandbox = sinon.createSandbox()
 
   // Spies
-  let yarnAddStub
-  let yarnUpgradeStub
-  let instantiateModuleStub
+  let yarnAddStub: any
+  let yarnUpgradeStub: any
+  let instantiateModuleStub: any
 
   const removeTestPackageCacheDirectory = () =>
     shell.rm('-rf', PACKAGE_CACHE_PATH)
@@ -91,7 +91,8 @@ describe('ModuleFactory', () => {
       // Ensure directory has not already been created
       removeTestPackageCacheDirectory()
       sandbox.stub(YarnCli.prototype, 'init').callsFake(() => {
-        fs.writeFileSync('package.json', '{}')
+        fs.writeFile('package.json', '{}')
+        return Promise.resolve('')
       })
       const sut = new ModuleFactory(PACKAGE_CACHE_PATH, {
         packagePrefix: PACKAGE_PREFIX,
@@ -104,6 +105,7 @@ describe('ModuleFactory', () => {
       removeTestPackageCacheDirectory()
       sandbox.stub(YarnCli.prototype, 'init').callsFake(() => {
         fs.writeFileSync('package.json', '{}')
+        return Promise.resolve('')
       })
       const sut = new ModuleFactory(PACKAGE_CACHE_PATH, {
         packagePrefix: PACKAGE_PREFIX,
@@ -117,6 +119,7 @@ describe('ModuleFactory', () => {
       removeTestPackageCacheDirectory()
       sandbox.stub(YarnCli.prototype, 'init').callsFake(() => {
         fs.writeFileSync('package.json', '{}')
+        return Promise.resolve('')
       })
       const sut = new ModuleFactory(PACKAGE_CACHE_PATH, {
         packagePrefix: PACKAGE_PREFIX,
@@ -132,6 +135,7 @@ describe('ModuleFactory', () => {
       removeTestPackageCacheDirectory()
       sandbox.stub(YarnCli.prototype, 'init').callsFake(() => {
         fs.writeFileSync('package.json', '{}')
+        return Promise.resolve('')
       })
       const sut = new ModuleFactory(PACKAGE_CACHE_PATH, {
         packagePrefix: PACKAGE_PREFIX,
@@ -150,6 +154,7 @@ describe('ModuleFactory', () => {
           'package.json',
           '{ "dependencies": { "package-prefix-foo-package" : "1.0.0" } }'
         )
+        return Promise.resolve('')
       })
       const sut = new ModuleFactory(PACKAGE_CACHE_PATH, {
         packagePrefix: PACKAGE_PREFIX,
@@ -167,6 +172,7 @@ describe('ModuleFactory', () => {
       removeTestPackageCacheDirectory()
       sandbox.stub(YarnCli.prototype, 'init').callsFake(() => {
         fs.writeFileSync('package.json', '{}')
+        return Promise.resolve('')
       })
       const sut = new ModuleFactory(PACKAGE_CACHE_PATH, {
         packagePrefix: PACKAGE_PREFIX,

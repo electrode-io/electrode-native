@@ -40,44 +40,6 @@ describe('ios utils', () => {
     sandbox.restore()
   })
 
-  /*describe('getiPhoneSimulators', () => {
-    it('should return empty list with no matching iphone', async () => {
-      resolveGetDevices(iPhoneSimulatorsWithNoIphone)
-      expect(await ios.getiPhoneSimulators()).to.be.empty
-    })
-
-    it('should return list with matching iphone', async () => {
-      resolveGetDevices(iPhoneSimulators)
-      expect(await ios.getiPhoneSimulators()).to.be.length(11)
-    })
-  })
-
-  describe('getiPhoneRealDevices', () => {
-    it('should return empty list for no real iPhone device', async () => {
-      const instruments = await readFile(
-        path.resolve(__dirname, './fixtures/instruments.txt')
-      )
-      getKnownDevicesStub.returns(instruments.toString())
-      getComputerNameStub.returns(computerName.toString())
-      expect(ios.getiPhoneRealDevices()).to.be.empty
-    })
-
-    it('should return real iPhone device', async () => {
-      const instruments = await readFile(
-        path.resolve(__dirname, './fixtures/instruments-with-device.txt')
-      )
-      getKnownDevicesStub.returns(instruments.toString())
-      getComputerNameStub.returns(computerName.toString())
-      expect(ios.getiPhoneRealDevices()).to.deep.equal([
-        {
-          name: 'Hilarious Phone Name',
-          udid: '695c329443f455c75b5454aacb72ace87b66351e',
-          version: '11.1',
-        },
-      ])
-    })
-  })*/
-
   describe('askUserToSelectAniPhoneDevice', () => {
     it('prompt user to select iPhone Device', async () => {
       const deviceList = [

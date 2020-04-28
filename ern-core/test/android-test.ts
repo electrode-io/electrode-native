@@ -1,4 +1,4 @@
-import { assert, expect } from 'chai'
+import { expect } from 'chai'
 import { beforeTest, afterTest } from 'ern-util-dev'
 import fs from 'fs'
 import path from 'path'
@@ -13,8 +13,8 @@ import util from 'util'
 const readFile = util.promisify(fs.readFile)
 const sandbox = sinon.createSandbox()
 
-let ernConfigGetStub
-let execpStub
+let ernConfigGetStub: any
+let execpStub: any
 
 describe('android.js', () => {
   beforeEach(() => {
