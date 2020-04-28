@@ -41,7 +41,7 @@ export async function fillProjectHull(
     if (mustacheView) {
       log.debug(`iOS: reading template files to be rendered for plugins`)
       const a = path.join(pathSpec.outputDir, 'ElectrodeContainer')
-      const b = path.join(pathSpec.outputDir, 'config')
+      const b = path.join(pathSpec.outputDir, 'Config')
       const files = [
         ...readDir(a).map(x => path.join(a, x)),
         ...readDir(b).map(x => path.join(b, x)),
