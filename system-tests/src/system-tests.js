@@ -6,14 +6,19 @@ const run = require('./utils/run')
 const cauldronRepoBeforeRun = require('./utils/getCurrentCauldron')()
 
 const runAll = process.argv.includes('--all')
+const interactiveSelection = process.argv.includes('-i') || process.argv.includes('--interactive')
 
 const pathToSystemTests = path.join(__dirname, 'tests')
 const testsSourceFiles = fs.readdirSync(pathToSystemTests)
 
+if (runAll) {
+  console.log('--all is deprecated and has no effect\n' +
+    'Use -i/--interactive for interactive selection, or pass the names of ' +
+    'individual tests to run.')
+}
+
 try {
-  if (runAll) {
-    runAllTests()
-  } else {
+  if (interactiveSelection) {
     inquirer
       .prompt([
         {
@@ -24,10 +29,12 @@ try {
         },
       ])
       .then(answers => {
-        for (const userSelectedTestSourceFile of answers.userSelectedTests) {
-          runTest(userSelectedTestSourceFile)
-        }
+        runTests(answers.userSelectedTests)
       })
+  } else if (process.argv.length > 2 && !runAll) {
+    runTests(process.argv.slice(2))
+  } else {
+    runTests(testsSourceFiles)
   }
 } finally {
   if (cauldronRepoBeforeRun) {
@@ -35,9 +42,9 @@ try {
   }
 }
 
-function runAllTests() {
-  for (const testSourceFile of testsSourceFiles) {
-    runTest(testSourceFile)
+function runTests(files) {
+  for (const file of files) {
+    runTest(file)
   }
 }
 
