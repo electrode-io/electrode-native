@@ -11,8 +11,7 @@ process.argv.push(
   '--include',
   'ern-*/dist/**/*.{ts,js}',
   'node',
-  'system-tests/src/system-tests',
-  '--all'
+  'system-tests/src/system-tests'
 )
 
 require('nyc/bin/nyc')
