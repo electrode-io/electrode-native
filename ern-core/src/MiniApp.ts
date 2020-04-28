@@ -389,8 +389,8 @@ module.exports = {
               if (manifestDep) {
                 if (dep.version !== manifestDep.version) {
                   throw new Error(
-                    `[Transitive Dependency] ${dep.name} was not added to the MiniApp`
-                  )
+                    `Version of transitive dependency ${dep.name}@${dep.version}
+does not match version declared in manifest: ${manifestDep.version}`)
                 }
               }
             }
