@@ -28,6 +28,20 @@ Initialization of a Container should ideally take place during startup of your m
 
 Initialization of Container is performed through the static method `startWithConfigurations:` of `ElectrodeReactNative`.  
 
+```swift
+	import ElectrodeContainer
+```
+
+```swift
+    let containerConfig = ElectrodeContainerConfig()
+    containerConfig.debugEnabled = RnDevSupportEnabled
+    ElectrodeReactNative.start(withConfigurations: containerConfig)
+```
+
+```objectivec
+	#import <ElectrodeContainer/ElectrodeContainer.h>
+```
+
 ```objectivec
     ElectrodeContainerConfig *containerConfig = [[ElectrodeContainerConfig alloc] init];
     containerConfig.debugEnabled = RnDevSupportEnabled;
