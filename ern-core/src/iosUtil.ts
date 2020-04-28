@@ -16,6 +16,7 @@ import { isDependencyPathNativeApiImpl } from './utils'
 import { readPackageJson } from './packageJsonFileUtils'
 import { getNativeDependencyPath } from './nativeDependenciesLookup'
 import { gitApply } from './gitApply'
+import semver from 'semver'
 
 export async function fillProjectHull(
   pathSpec: {
@@ -76,8 +77,6 @@ export async function fillProjectHull(
     const injectPluginsTaskMsg = 'Injecting Native Dependencies'
     const injectPluginsKaxTask = kax.task(injectPluginsTaskMsg)
     const rnVersion = plugins.find(p => p.name === 'react-native')?.version!
-    const additionalPods = []
-    const destPodfilePath = path.join(pathSpec.outputDir, 'Podfile')
 
     for (const plugin of plugins) {
       const pluginSourcePath = composite
@@ -139,7 +138,7 @@ export async function fillProjectHull(
         setBuildSettings,
       } = pluginConfig!
 
-      if (requiresManualLinking) {
+      if (semver.lt(rnVersion, '0.61.0') || requiresManualLinking) {
         if (copy) {
           for (const c of copy) {
             if (switchToOldDirectoryStructure(pluginSourcePath, c.source)) {
@@ -390,34 +389,42 @@ export async function fillProjectHull(
         }
       }
 
-      if (podfile) {
-        if (plugin.name !== 'react-native') {
-          throw new Error(
-            `ios.podfile directive can only be used for react-native configuration`
-          )
+      if (semver.gte(rnVersion, '0.61.0')) {
+        const additionalPods = []
+        const destPodfilePath = path.join(pathSpec.outputDir, 'Podfile')
+
+        if (podfile) {
+          if (plugin.name !== 'react-native') {
+            throw new Error(
+              `ios.podfile directive can only be used for react-native configuration`
+            )
+          }
+          const sourcePodfilePath = path.join(pluginConfig!.path!, podfile)
+          shell.cp(sourcePodfilePath, destPodfilePath)
         }
-        const sourcePodfilePath = path.join(pluginConfig!.path!, podfile)
-        shell.cp(sourcePodfilePath, destPodfilePath)
-      }
 
-      if (podspec) {
-        const sourcePodspecPath = path.join(pluginConfig!.path!, podspec)
-        const destPodspecPath = path.join(pathSpec.outputDir, podspec)
-        shell.cp(sourcePodspecPath, destPodspecPath)
-      }
+        if (podspec) {
+          const sourcePodspecPath = path.join(pluginConfig!.path!, podspec)
+          const destPodspecPath = path.join(pathSpec.outputDir, podspec)
+          shell.cp(sourcePodspecPath, destPodspecPath)
+        }
 
-      if (extraPods) {
-        additionalPods.push(...extraPods)
+        if (extraPods) {
+          additionalPods.push(...extraPods)
+        }
+
+        await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
+          destPodfilePath,
+          {
+            extraPods: additionalPods.reduce(
+              (acc, cur) => `${acc}\n  ${cur}`,
+              ''
+            ),
+          },
+          destPodfilePath
+        )
       }
     }
-
-    await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
-      destPodfilePath,
-      {
-        extraPods: additionalPods.reduce((acc, cur) => `${acc}\n  ${cur}`, ''),
-      },
-      destPodfilePath
-    )
 
     injectPluginsKaxTask.succeed(injectPluginsTaskMsg)
 
