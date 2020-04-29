@@ -152,7 +152,7 @@ static NSString *enableBundleStore = @"enableBundleStore";
     });
 }
 
-+ (void)startWithConfigurations:(id<ElectrodePluginConfig>)reactContainerConfig ernDelegate:(id<ERNDelegate>)ernDelegate
++ (void)startWithConfigurations:(id<ElectrodePluginConfig>)reactContainerConfig ernDelegate:(id<ERNDelegate> _Nullable)ernDelegate
                 {{#plugins}}
                 {{#configurable}}
                 {{{lcname}}}: (id<ElectrodePluginConfig>) {{{lcname}}}
