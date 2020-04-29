@@ -248,7 +248,7 @@ Please switch to a version of Node satisfying the version requirement`)
     await showInfo()
   }
 
-  if (process.argv.slice(1).includes('--version')) {
+  if (process.argv[2] === '--version') {
     return showVersion()
   }
 
