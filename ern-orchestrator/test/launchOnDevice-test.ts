@@ -10,8 +10,8 @@ const sandbox = sinon.createSandbox()
 
 describe('launchOnDevice', () => {
   const devices = ['iPhone X']
-  let askUserDeviceStub
-  let spawnStub
+  let askUserDeviceStub: any
+  let spawnStub: any
 
   beforeEach(() => {
     askUserDeviceStub = sandbox

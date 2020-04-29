@@ -1,7 +1,7 @@
 import sinon from 'sinon'
 import { assert, expect } from 'chai'
 import { CauldronHelper } from '../src/CauldronHelper'
-import { CauldronConfigLevel } from '../src/types'
+import { CauldronConfigLevel, ICauldronFileStore } from '../src/types'
 import {
   createTmpDir,
   PackagePath,
@@ -40,8 +40,8 @@ const miniAppsFixtureOne = [
 ]
 
 let documentStore
-let fileStore
-let fileStoreTmpDir
+let fileStore: ICauldronFileStore
+let fileStoreTmpDir: string
 
 const fixturesPath = path.join(__dirname, 'fixtures')
 const fixtureFileStorePath = path.join(fixturesPath, 'filestore')
@@ -73,7 +73,7 @@ function createCauldronHelper({
   return new CauldronHelper(createCauldronApi({ cauldronDocument, storePath }))
 }
 
-function cloneFixture(fixture) {
+function cloneFixture(fixture: any) {
   return JSON.parse(JSON.stringify(fixture))
 }
 

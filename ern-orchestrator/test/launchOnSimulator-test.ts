@@ -1,20 +1,18 @@
 import * as core from 'ern-core'
 import * as build from '../src/buildIosRunner'
-import { doesThrow } from 'ern-util-dev'
 import { launchOnSimulator } from '../src/launchOnSimulator'
-import { assert } from 'chai'
 import sinon from 'sinon'
 
 const sandbox = sinon.createSandbox()
 
 describe('launchOnSimulator', () => {
   const devices = ['iPhone X']
-  let askUserDeviceStub
-  let killAllRunningSimulatorsStub
-  let launchSimulatorStub
-  let installApplicationOnSimulatorStub
-  let launchApplicationStub
-  let buildIosRunnerStub
+  let askUserDeviceStub: any
+  let killAllRunningSimulatorsStub: any
+  let launchSimulatorStub: any
+  let installApplicationOnSimulatorStub: any
+  let launchApplicationStub: any
+  let buildIosRunnerStub: any
 
   beforeEach(() => {
     askUserDeviceStub = sandbox

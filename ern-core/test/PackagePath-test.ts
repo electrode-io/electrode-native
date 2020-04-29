@@ -1,6 +1,5 @@
 import { expect } from 'chai'
 import { PackagePath } from '../src/PackagePath'
-import os from 'os'
 import path from 'path'
 
 describe('PackagePath', () => {

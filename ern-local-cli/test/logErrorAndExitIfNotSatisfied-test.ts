@@ -9,9 +9,9 @@ import fs from 'fs'
 describe('logErrorAndExitIfNotSatisfied', () => {
   const topLevelContainerVersion = '1.2.3'
 
-  let processExitStub
-  let cauldronHelperStub
-  let yarnInfoStub
+  let processExitStub: any
+  let cauldronHelperStub: any
+  let yarnInfoStub: any
 
   function assertLoggedErrorAndExitedProcess() {
     sinon.assert.calledOnce(processExitStub)

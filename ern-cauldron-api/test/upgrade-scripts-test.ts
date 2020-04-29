@@ -19,7 +19,7 @@ describe('cauldron upgrade scripts', () => {
     sandbox.restore()
   })
 
-  function createCauldronApi(cauldronDocument) {
+  function createCauldronApi(cauldronDocument: any) {
     return new CauldronApi(
       new InMemoryDocumentStore(cauldronDocument),
       new EphemeralFileStore()

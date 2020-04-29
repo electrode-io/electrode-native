@@ -8,7 +8,7 @@ import { promptUserToUseSuffixModuleName } from '../src/lib/promptUserToUseSuffi
 describe('promptUserToUseSuffixModuleName', () => {
   const sandbox = sinon.createSandbox()
 
-  let inquirerPromptStub
+  let inquirerPromptStub: any
 
   beforeEach(() => {
     inquirerPromptStub = sandbox.stub(inquirer, 'prompt')

@@ -13,10 +13,10 @@ import sinon from 'sinon'
 const sandbox = sinon.createSandbox()
 
 describe('Platform', () => {
-  let ernHomePath
+  let ernHomePath: string
   const processEnvErnHomeBackup = process.env.ern_home
   const platformVersions = '["1.0.0", "2.0.0", "3.0.0", "1.0.1"]'
-  let execSyncStub
+  let execSyncStub: any
   let isYarnInstalledReturn = true
   let throwOnExecSync = false
 

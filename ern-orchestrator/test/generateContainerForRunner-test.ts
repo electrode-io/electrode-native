@@ -8,8 +8,8 @@ import { AppVersionDescriptor } from 'ern-core'
 const sandbox = sinon.createSandbox()
 
 describe('generateContainerForRunner', () => {
-  let containerStub
-  let compositeStub
+  let containerStub: any
+  let compositeStub: any
 
   beforeEach(() => {
     containerStub = sandbox.stub(container)

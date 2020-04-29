@@ -1,4 +1,4 @@
-import { expect, assert } from 'chai'
+import { expect } from 'chai'
 import {
   findDirectoriesContainingNativeCode,
   resolvePackagePaths,
@@ -18,7 +18,7 @@ const pathToFixture = path.join(
 
 describe('nativeDependenciesLookup.ts', () => {
   beforeEach(() => {
-    sandbox.stub(manifest, 'getNativeDependency').resolves(true)
+    sandbox.stub(manifest, 'getNativeDependency').resolves()
   })
 
   afterEach(() => {

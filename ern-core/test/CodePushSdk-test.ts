@@ -1,12 +1,11 @@
 import CodePushSdk from '../src/CodePushSdk'
 import CodePush from 'code-push'
 import sinon from 'sinon'
-import { assert, expect } from 'chai'
 
 const sandbox = sinon.createSandbox()
 
 describe('CodePushSdk', () => {
-  let codePushStub
+  let codePushStub: any
 
   beforeEach(() => {
     codePushStub = sandbox.stub(CodePush.prototype)

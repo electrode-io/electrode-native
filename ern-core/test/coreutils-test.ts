@@ -1,14 +1,9 @@
-import { assert, expect } from 'chai'
+import { expect } from 'chai'
 import { yarn } from '../src/clients'
 import sinon from 'sinon'
 import * as utils from '../src/utils'
-import {
-  isDependencyApiImpl,
-  isDependencyApi,
-  isDependencyApiOrApiImpl,
-} from '../src/utils'
 import { PackagePath } from '../src/PackagePath'
-import { beforeTest, afterTest, doesThrow } from 'ern-util-dev'
+import { beforeTest, afterTest } from 'ern-util-dev'
 import * as fixtures from './fixtures/common'
 import * as ModuleTypes from '../src/ModuleTypes'
 import path from 'path'
@@ -27,7 +22,7 @@ const yarnInfoErnJsApiImpl = require('./fixtures/yarn_info_ern_js_api_impl.json'
 const yarnInfoError = require('./fixtures/yarn_info_error.json')
 
 // stub
-let pathStub
+let pathStub: any
 
 describe('utils.js', () => {
   beforeEach(() => {
