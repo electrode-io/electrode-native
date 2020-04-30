@@ -17,6 +17,19 @@ const iPhoneSimulators = require('./fixtures/ios_iphone_simulators.json')
 
 const sandbox = sinon.createSandbox()
 
+const deviceList = [
+  {
+    name: 'iPhone 5s',
+    sdk: '11.1',
+    udid: 'CEF8F618-82F3-4BE5-A2B6-92A96F83687A',
+  },
+  {
+    name: 'iPhone 8',
+    sdk: '13.4.1',
+    udid: '17043F85-C66D-405F-8D13-38460DEF27B6',
+  },
+]
+
 let getDevicesStub
 let getKnownDevicesStub
 let getComputerNameStub
@@ -42,32 +55,12 @@ describe('ios utils', () => {
 
   describe('askUserToSelectAniPhoneDevice', () => {
     it('prompt user to select iPhone Device', async () => {
-      const deviceList = [
-        {
-          name: 'iPhone 5s',
-          udid: 'CEF8F618-82F3-4BE5-A2B6-92A96F83687A',
-          version: '11.1',
-        },
-        {
-          name: 'iPhone 5s',
-          udid: 'CEF8F618-82F3-4BE5-A2B6-92A96F83687A',
-          version: '11.1',
-        },
-      ]
       const inquirerIosStub = sinon.stub(inquirer, 'prompt').resolves({
-        selectedDevice: {
-          name: 'iPhone 5s',
-          udid: 'CEF8F618-82F3-4BE5-A2B6-92A96F83687A',
-          version: '11.1',
-        },
+        selectedDevice: deviceList[0],
       })
       const result = await ios.askUserToSelectAniPhoneDevice(deviceList)
       inquirerIosStub.restore()
-      expect(result).to.deep.equal({
-        name: 'iPhone 5s',
-        udid: 'CEF8F618-82F3-4BE5-A2B6-92A96F83687A',
-        version: '11.1',
-      })
+      expect(result).to.deep.equal(deviceList[0])
     })
   })
 
@@ -80,19 +73,11 @@ describe('ios utils', () => {
       }
       ernConfigGetStub.returns(config)
       const inquirerIosStub = sinon.stub(inquirer, 'prompt').resolves({
-        selectedSimulator: {
-          name: 'iPhone 5s',
-          udid: 'CEF8F618-82F3-4BE5-A2B6-92A96F83687A',
-          version: '11.1',
-        },
+        selectedSimulator: deviceList[1],
       })
       const result = await ios.askUserToSelectAniPhoneSimulator()
       inquirerIosStub.restore()
-      expect(result).to.deep.equal({
-        name: 'iPhone 5s',
-        udid: 'CEF8F618-82F3-4BE5-A2B6-92A96F83687A',
-        version: '11.1',
-      })
+      expect(result).to.deep.equal(deviceList[1])
     })
 
     it('prompt user if simulator is missing and previous emulator flag is true ', async () => {
@@ -103,19 +88,11 @@ describe('ios utils', () => {
       }
       ernConfigGetStub.returns(config)
       const inquirerIosStub = sinon.stub(inquirer, 'prompt').resolves({
-        selectedSimulator: {
-          name: 'iPhone 5s',
-          udid: 'CEF8F618-82F3-4BE5-A2B6-92A96F83687A',
-          version: '11.1',
-        },
+        selectedSimulator: deviceList[0],
       })
       const result = await ios.askUserToSelectAniPhoneSimulator()
       inquirerIosStub.restore()
-      expect(result).to.deep.equal({
-        name: 'iPhone 5s',
-        udid: 'CEF8F618-82F3-4BE5-A2B6-92A96F83687A',
-        version: '11.1',
-      })
+      expect(result).to.deep.equal(deviceList[0])
     })
 
     it('do not prompt user to select iPhone Simulator if usePreviousEmulator is true', async () => {
@@ -147,8 +124,8 @@ describe('ios utils', () => {
       ).to.deep.equal([
         {
           name: 'Hilarious Phone Name',
+          sdk: '11.1',
           udid: '695c329443f455c75b5454aacb72ace87b66351e',
-          version: '11.1',
         },
       ])
     })

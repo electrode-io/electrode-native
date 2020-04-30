@@ -11,8 +11,8 @@ import kax from './kax'
 
 export interface IosDevice {
   name: string
+  sdk: string
   udid: string
-  version: string
 }
 
 export async function getiPhoneSimulators(): Promise<any> {
@@ -38,7 +38,7 @@ export function getiPhoneRealDevices() {
 
 export async function askUserToSelectAniPhoneDevice(devices: IosDevice[]) {
   const choices = _.map(devices, (val, key) => ({
-    name: `${val.name} udid: ${val.udid} version: ${val.version}`,
+    name: `${val.name} (${val.sdk}) [${val.udid}]`,
     value: val,
   }))
 
@@ -55,9 +55,9 @@ export async function askUserToSelectAniPhoneDevice(devices: IosDevice[]) {
 }
 
 export async function askUserToSelectAniPhoneSimulator() {
-  const iPhoneDevices = await getiPhoneSimulators()
-  const choices = _.map(iPhoneDevices, (val, key) => ({
-    name: `${val.name} (UDID ${val.udid})`,
+  const simulators = await getiPhoneSimulators()
+  const choices = _.map(simulators, (val, key) => ({
+    name: `${val.name} (${val.sdk}) [${val.udid}]`,
     value: val,
   }))
 
@@ -115,8 +115,8 @@ export function parseIOSDevicesList(
     ) {
       list.push({
         name: device[1],
+        sdk: device[2],
         udid: device[3],
-        version: device[2],
       })
     }
 
