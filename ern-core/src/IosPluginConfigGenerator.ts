@@ -35,7 +35,7 @@ export class IosPluginConfigGenerator {
     config.copy = [
       {
         dest: `{{{projectName}}}/Libraries/${projName}`,
-        source: `${rootXcodeProjPath}/**`,
+        source: `${rootXcodeProjPath}/*`,
       },
     ]
 
