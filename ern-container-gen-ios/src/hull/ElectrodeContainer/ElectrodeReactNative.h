@@ -105,7 +105,7 @@ NS_ASSUME_NONNULL_BEGIN
                         {{/hasAtleastOneApiImplConfig}}
                         __attribute((deprecated("use -startWithConfigurations:ernDelegate instead")));
 
-+ (void)startWithConfigurations:(id<ElectrodePluginConfig>)reactContainerConfig ernDelegate:(id<ERNDelegate>)ernDelegate
++ (void)startWithConfigurations:(id<ElectrodePluginConfig>)reactContainerConfig ernDelegate:(id<ERNDelegate> _Nullable)ernDelegate
                         {{#plugins}}
                         {{#configurable}}
                         {{{lcname}}}: (id<ElectrodePluginConfig>) {{{lcname}}}
