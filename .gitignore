@@ -46,6 +46,7 @@ tmp/
 # Test fixtures
 #
 system-tests/fixtures/**/Libraries/
+system-tests/fixtures/**/Podfile.lock
 system-tests/fixtures/**/index.android.bundle*
 system-tests/fixtures/**/jniLibs/
 system-tests/fixtures/**/project.pbxproj

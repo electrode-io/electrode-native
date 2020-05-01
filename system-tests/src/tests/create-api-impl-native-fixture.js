@@ -15,6 +15,7 @@ const excludeFilter = [
   '.yarn-integrity',
   'ElectrodeApiImpl/Libraries',
   'node_modules',
+  'Podfile.lock',
 ]
   .map(s => `**/${s}`)
   .join(',')
