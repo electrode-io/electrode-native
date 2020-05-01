@@ -82,6 +82,10 @@ export default class IosGenerator implements ContainerGenerator {
   public async fillContainerHull(
     config: ContainerGeneratorConfig
   ): Promise<void> {
+    if (process.platform !== 'darwin') {
+      throw new Error('iOS Container generation is only supported on macOS.')
+    }
+
     const pathSpec = {
       outputDir: config.outDir,
       projectHullDir: path.join(PATH_TO_HULL_DIR, '{.*,*}'),

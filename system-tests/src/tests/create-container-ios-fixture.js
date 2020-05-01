@@ -18,12 +18,18 @@ const excludeFilter = [
   .map(s => `**/${s}`)
   .join(',')
 
-run(
-  `create-container --miniapps ${miniapps.join(
-    ' '
-  )} -p ios --out ${process.cwd()}`
-)
-assert(
-  sameDirContent(f.pathToIosContainerFixture, process.cwd(), { excludeFilter }),
-  'Generated IOS Container differ from reference fixture !'
-)
+const command = `create-container --miniapps ${miniapps.join(
+  ' '
+)} -p ios --out ${process.cwd()}`
+
+if (process.platform === 'darwin') {
+  run(command)
+  assert(
+    sameDirContent(f.pathToIosContainerFixture, process.cwd(), {
+      excludeFilter,
+    }),
+    'Generated IOS Container differ from reference fixture !'
+  )
+} else {
+  run(command, { expectedExitCode: 1 })
+}

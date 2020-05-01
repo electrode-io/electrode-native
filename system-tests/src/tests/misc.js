@@ -92,7 +92,8 @@ run(
 )
 run(`cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
 run(
-  `cauldron add miniapps ${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion} -d ${iosNativeApplicationDescriptor}`
+  `cauldron add miniapps ${f.movieListMiniAppPgkName}@${f.movieListMiniAppPkgVersion} -d ${iosNativeApplicationDescriptor}`,
+  { expectedExitCode: process.platform === 'darwin' ? 0 : 1 }
 )
 run(`cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
 run(
@@ -100,7 +101,8 @@ run(
 )
 run(`cauldron get nativeapp ${androidNativeApplicationDescriptor}`)
 run(
-  `cauldron add miniapps ${f.movieDetailsMiniAppPkgName}@${f.movieDetailsMiniAppPkgVersion} -d ${iosNativeApplicationDescriptor}`
+  `cauldron add miniapps ${f.movieDetailsMiniAppPkgName}@${f.movieDetailsMiniAppPkgVersion} -d ${iosNativeApplicationDescriptor}`,
+  { expectedExitCode: process.platform === 'darwin' ? 0 : 1 }
 )
 run(`cauldron get nativeapp ${iosNativeApplicationDescriptor}`)
 run(
@@ -115,7 +117,8 @@ run(
   `cauldron add jsapiimpls ${f.movieApiImplJsPkgName}@${f.movieApiImplJsPkgVersion} -d ${androidNativeApplicationDescriptor}`
 )
 run(
-  `cauldron add jsapiimpls ${f.movieApiImplJsPkgName}@${f.movieApiImplJsPkgVersion} -d ${iosNativeApplicationDescriptor}`
+  `cauldron add jsapiimpls ${f.movieApiImplJsPkgName}@${f.movieApiImplJsPkgVersion} -d ${iosNativeApplicationDescriptor}`,
+  { expectedExitCode: process.platform === 'darwin' ? 0 : 1 }
 )
 run(`cauldron get nativeapp`)
 
@@ -132,9 +135,9 @@ run(
 
 // Container gen should be successful for the two following commands
 run(`create-container --miniapps file:${miniAppPath} -p android`)
-run(`create-container --miniapps file:${miniAppPath} -p ios`)
+run(`create-container --miniapps file:${miniAppPath} -p ios`, { expectedExitCode: process.platform === 'darwin' ? 0 : 1 })
 
-// transform-container / publish-coontainer should be successful
+// transform-container / publish-container should be successful
 run(
   `transform-container --containerPath ${defaultAndroidContainerGenPath} --platform android --transformer dummy`
 )
