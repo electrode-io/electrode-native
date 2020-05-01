@@ -5,7 +5,6 @@ import ernConfig from './config'
 import * as deviceConfigUtil from './deviceConfig'
 import log from './log'
 import { execp, spawnp } from './childProcess'
-import os from 'os'
 import kax from './kax'
 import semver from 'semver'
 
@@ -359,7 +358,7 @@ export async function getAndroidAvds() {
   return stdout
     .toString()
     .trim()
-    .split(os.EOL)
+    .split(/\r?\n/)
 }
 
 // Utility method to query what device instances are connected to the adb server
@@ -374,7 +373,7 @@ export async function getDevices(): Promise<string[]> {
   const stdOutArr = stdout
     .toString()
     .trim()
-    .split(os.EOL)
+    .split(/\r?\n/)
   // remove stdout 'List of devices attached' (position 0)
   // and remove stdout related to daemon
   return stdOutArr.filter((entry, i) => i > 0 && !entry.includes('* daemon'))
