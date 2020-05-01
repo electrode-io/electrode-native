@@ -1,4 +1,3 @@
-import os from 'os'
 import fs from 'fs'
 import path from 'path'
 import { log } from 'ern-core'
@@ -26,7 +25,7 @@ export default {
       }
 
       try {
-        lines.push(...fs.readFileSync(meta.getPath(), 'utf8').split(os.EOL))
+        lines.push(...fs.readFileSync(meta.getPath(), 'utf8').split(/\r?\n/))
       } catch (e) {
         log.warn(`Error loading ${className}. error: ${e}`)
         return ret
