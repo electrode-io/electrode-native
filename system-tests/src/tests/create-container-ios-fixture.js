@@ -13,6 +13,7 @@ const excludeFilter = [
   'ElectrodeContainer/Libraries/**',
   'node_modules/**',
   'Pods/**',
+  'Podfile.lock',
 ]
   .map(s => `**/${s}`)
   .join(',')
