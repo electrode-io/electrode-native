@@ -17,11 +17,13 @@ export default async function getActiveCauldron({
   ignoreSchemaVersionMismatch,
   localRepoPath,
   throwIfNoActiveCauldron = true,
+  silent = false,
 }: {
   ignoreRequiredErnVersionMismatch?: boolean
   ignoreSchemaVersionMismatch?: boolean
   localRepoPath?: string
   throwIfNoActiveCauldron?: boolean
+  silent?: boolean
 } = {}): Promise<CauldronHelper> {
   const repoInUse = config.get('cauldronRepoInUse')
   ignoreRequiredErnVersionMismatch =
@@ -33,7 +35,7 @@ export default async function getActiveCauldron({
   }
 
   if (repoInUse && repoInUse !== currentCauldronRepoInUse) {
-    const kaxTask = kax.task(`Connecting to the Cauldron`)
+    const kaxTask = !silent ? kax.task(`Connecting to the Cauldron`) : undefined
     try {
       const cauldronRepositories = config.get('cauldronRepositories')
       const cauldronRepoUrl = cauldronRepositories[repoInUse]
@@ -96,10 +98,14 @@ export default async function getActiveCauldron({
       }
       currentCauldronRepoInUse = repoInUse
     } catch (e) {
-      kaxTask.fail()
-      utils.logErrorAndExitProcess(e, 1)
+      if (kaxTask) {
+        kaxTask.fail()
+      }
+      throw e
     }
-    kaxTask.succeed()
+    if (kaxTask) {
+      kaxTask.succeed()
+    }
   }
 
   return Promise.resolve(currentCauldronHelperInstance)

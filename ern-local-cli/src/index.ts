@@ -58,14 +58,16 @@ async function showInfo() {
   )
   if (ERN_RC_GLOBAL_FILE_PATH !== ernRcFilePath) {
     // Log .ernrc configuration file path only if it differs from default
-    console.log(chalk.cyan(`Config: ${ernRcFilePath}`))
+    console.log(chalk.cyan(`${chalk.bold('Config:')} ${ernRcFilePath}`))
   }
   const overrideManifest = await Manifest.getOverrideManifestConfig()
   if (overrideManifest) {
     // Log override manifest only if set
     console.log(
       chalk.cyan(
-        `Override manifest: ${overrideManifest.url} (set in ${overrideManifest.source})`
+        `${chalk.bold('Manifest [override]:')} ${
+          overrideManifest.url
+        } ${chalk.italic(`(from ${overrideManifest.source}`)})`
       )
     )
   }
@@ -74,7 +76,9 @@ async function showInfo() {
     //  Log master manifest only if set
     console.log(
       chalk.cyan(
-        `Master manifest: ${manifestErnRcConf.master.url} (set in .ernrc)`
+        `${chalk.bold('Manifest [master]:')} ${
+          manifestErnRcConf.master.url
+        } ${chalk.italic('(from .ernrc)')}`
       )
     )
   }
@@ -126,28 +130,37 @@ function isNodeVersionCompatible(version: string) {
 }
 
 Manifest.getOverrideManifestConfig = async (): Promise<OverrideManifestConfig | void> => {
+  // Try to find override manifest config in .ernrc config first
   let manifestConfig = config.get('manifest', undefined)
-  let source: '.ernrc' | 'cauldron' = '.ernrc' as const
-  if (!manifestConfig) {
-    const cauldronInstance = await getActiveCauldron({
-      throwIfNoActiveCauldron: false,
-    })
-    manifestConfig =
-      cauldronInstance && (await cauldronInstance.getManifestConfig())
-    if (manifestConfig) {
-      source = 'cauldron' as const
-    }
-  }
   if (
     manifestConfig &&
     manifestConfig.override &&
     manifestConfig.override.url
   ) {
     return {
-      source,
+      source: '.ernrc',
       type: manifestConfig.override.type || 'partial',
       url: manifestConfig.override.url,
     }
+  }
+
+  // If not found in .ernrc, look in cauldron config
+  try {
+    const cauldronInstance = await getActiveCauldron({
+      silent: true,
+      throwIfNoActiveCauldron: false,
+    })
+    manifestConfig =
+      cauldronInstance && (await cauldronInstance.getManifestConfig())
+    if (manifestConfig) {
+      return {
+        source: 'cauldron',
+        type: manifestConfig.override.type || 'partial',
+        url: manifestConfig.override.url,
+      }
+    }
+  } catch (e) {
+    log.warn('Cannot reach Cauldron')
   }
 }
 
