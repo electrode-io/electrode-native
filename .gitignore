@@ -48,4 +48,5 @@ tmp/
 system-tests/fixtures/**/Libraries/
 system-tests/fixtures/**/index.android.bundle*
 system-tests/fixtures/**/jniLibs/
+system-tests/fixtures/**/project.pbxproj
 system-tests/fixtures/**/yarn.lock
