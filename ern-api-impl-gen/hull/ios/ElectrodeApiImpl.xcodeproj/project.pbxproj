@@ -391,6 +391,7 @@
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
+					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 					"-lz",
@@ -545,6 +546,7 @@
 					"$(SRCROOT)/ElectrodeApiImpl/Libraries/CodePush/**",
 				);
 				OTHER_LDFLAGS = (
+					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 					"-lz",
@@ -582,6 +584,7 @@
 					"$(SRCROOT)/ElectrodeApiImpl/Libraries/CodePush/**",
 				);
 				OTHER_LDFLAGS = (
+					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 					"-lz",
@@ -615,7 +618,7 @@
 				DEVELOPMENT_TEAM = DXZ5VF8836;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/ElectrodeApiImpl/Libraries/CodePush\"",
+					"$(SRCROOT)/ElectrodeApiImpl/Libraries/CodePush/**",
 				);
 				INFOPLIST_FILE = ElectrodeApiImplTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";

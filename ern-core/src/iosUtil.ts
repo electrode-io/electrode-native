@@ -26,6 +26,7 @@ export async function fillProjectHull(
   },
   projectSpec: {
     projectName: string
+    nodeModulesRelativePath?: string
   },
   plugins: PackagePath[],
   mustacheView?: any,
@@ -77,6 +78,8 @@ export async function fillProjectHull(
     const injectPluginsTaskMsg = 'Injecting Native Dependencies'
     const injectPluginsKaxTask = kax.task(injectPluginsTaskMsg)
     const rnVersion = plugins.find(p => p.name === 'react-native')?.version!
+    const additionalPods = []
+    const destPodfilePath = path.join(pathSpec.outputDir, 'Podfile')
 
     for (const plugin of plugins) {
       const pluginSourcePath = composite
@@ -390,9 +393,6 @@ export async function fillProjectHull(
       }
 
       if (semver.gte(rnVersion, '0.61.0')) {
-        const additionalPods = []
-        const destPodfilePath = path.join(pathSpec.outputDir, 'Podfile')
-
         if (podfile) {
           if (plugin.name !== 'react-native') {
             throw new Error(
@@ -412,18 +412,23 @@ export async function fillProjectHull(
         if (extraPods) {
           additionalPods.push(...extraPods)
         }
-
-        await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
-          destPodfilePath,
-          {
-            extraPods: additionalPods.reduce(
-              (acc, cur) => `${acc}\n  ${cur}`,
-              ''
-            ),
-          },
-          destPodfilePath
-        )
       }
+    }
+
+    if (semver.gte(rnVersion, '0.61.0')) {
+      await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
+        destPodfilePath,
+        {
+          extraPods: additionalPods.reduce(
+            (acc, cur) => `${acc}\n  ${cur}`,
+            ''
+          ),
+          nodeModulesRelativePath:
+            projectSpec.nodeModulesRelativePath || './node_modules',
+          projectName: projectSpec.projectName,
+        },
+        destPodfilePath
+      )
     }
 
     injectPluginsKaxTask.succeed(injectPluginsTaskMsg)

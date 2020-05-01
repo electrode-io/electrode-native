@@ -58,6 +58,7 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
       }
 
       const projectSpec = {
+        nodeModulesRelativePath: '../node_modules',
         projectName: 'ElectrodeApiImpl',
       }
 
