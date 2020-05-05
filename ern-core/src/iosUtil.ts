@@ -175,7 +175,7 @@ export async function fillProjectHull(
             // This is necessary for proper parsing and modification of
             // the pbxproj with the xcode-ern library
             xcode.pbxProjFileUtils().addMissingSectionsToPbxProj(pathToPbxProj)
-            const iosProj = await getIosProject(projectPath)
+            const iosProj = await getIosProject(pathToPbxProj)
             const buildSettings =
               s.buildSettings instanceof Array
                 ? s.buildSettings
