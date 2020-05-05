@@ -6,4 +6,4 @@
 
 #### Syntax
 
-`ern platform config list`  
+`ern platform config list`

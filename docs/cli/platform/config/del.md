@@ -29,4 +29,4 @@
 - `retain-tmp-dir` 
 - `showBanner`  
 - `sourceMapStoreProxy`
-- `tmp-dir` 
+- `tmp-dir`

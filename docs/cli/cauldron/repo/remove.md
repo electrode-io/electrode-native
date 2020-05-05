@@ -16,4 +16,4 @@
 
 #### Remarks
 
-* This command will fail if the `alias` does not exist in the local collection of Cauldron repositories.  
+* This command will fail if the `alias` does not exist in the local collection of Cauldron repositories.
