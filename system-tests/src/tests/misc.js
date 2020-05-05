@@ -50,7 +50,7 @@ run('compat-check', { expectedExitCode: 1 })
 
 // Miniapp commands
 run(
-  `create-miniapp ${f.systemTestMiniAppName} --packageName ${f.systemTestMiniAppPkgName} --language JavaScript --packageManager yarn --skipNpmCheck`
+  `create-miniapp ${f.systemTestMiniAppName} --packageName ${f.systemTestMiniAppPkgName} --packageManager yarn --skipNpmCheck`
 )
 const miniAppPath = path.join(process.cwd(), f.systemTestMiniAppName)
 console.log(info(`Entering ${miniAppPath}`))

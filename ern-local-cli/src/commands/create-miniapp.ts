@@ -25,6 +25,7 @@ export const builder = (argv: Argv) => {
   return argv
     .option('language', {
       choices: ['JavaScript', 'TypeScript', undefined],
+      deprecated: 'use --template directly',
       describe: 'Language to use for this MiniApp',
       type: 'string',
     })
@@ -90,6 +91,10 @@ export const commandHandler = async ({
     },
   })
 
+  if (language) {
+    log.warn('Deprecated: --language. Use --template, or omit to use default.')
+  }
+
   if (manifestId) {
     await logErrorAndExitIfNotSatisfied({
       manifestIdExists: {
@@ -111,18 +116,6 @@ export const commandHandler = async ({
       ModuleTypes.MINIAPP
     )
     packageName = await askUserToInputPackageName({ defaultPackageName })
-  }
-
-  if (!language && !template) {
-    const { userSelectedLanguage } = await inquirer.prompt([
-      <inquirer.Question>{
-        choices: ['JavaScript', 'TypeScript'],
-        message: 'Choose the language to use for this MiniApp',
-        name: 'userSelectedLanguage',
-        type: 'list',
-      },
-    ])
-    language = userSelectedLanguage
   }
 
   if (!packageManager) {
