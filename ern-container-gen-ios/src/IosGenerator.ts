@@ -67,7 +67,40 @@ export default class IosGenerator implements ContainerGenerator {
       'ElectrodeContainer',
       'Resources'
     )
-    const resourceFiles = readDir(containerResourcesPath)
+    // Get all resources files from the 'Resources' directory
+    // Some processing is done here to properly handle `.xcassets`
+    // files which are directories containing assets.
+    // But we don't want to add independent files from this directory
+    // to the pbxproj, but only the top level `.xcassets` directory.
+    //
+    // For example, an  `xcassets` directory might look like this
+    //
+    // Media.xcassets
+    // ├── Contents.json
+    // ├── Face-ID.imageset
+    // │   ├── Contents.json
+    // │   └── faceid.pdf
+    // ├── IconUser.imageset
+    // │   ├── Contents.json
+    // │   └── IconUser.pdf
+    //
+    // Which will result in recursive readir call returning the
+    // following paths
+    //
+    // Media.xcassets/Contents.json
+    // Media.xcassets/Face-ID.imageset/Contents.json
+    // Media.xcassets/Face-ID.imageset/faceid.pdf
+    // ...
+    //
+    // Each of these individual files would then wrongly be
+    // added to the pbxproj as resources.
+    // However we just want top level directory Media.xcassets
+    // to be added to the pbxproj, thus the special processing.
+    const resourceFiles = _.uniq(
+      readDir(containerResourcesPath).map(f =>
+        f.replace(/(\.xcassets)(\/.+)$/, '$1')
+      )
+    )
     resourceFiles.forEach(resourceFile => {
       containerIosProject.addResourceFile(
         path.join('Resources', resourceFile),

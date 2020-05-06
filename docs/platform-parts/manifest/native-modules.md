@@ -314,6 +314,30 @@ For example setting `ENABLE_BITCODE` to `NO` for `Debug` and `Release` configura
 ]
 ```
 
+- iOS Resources
+
+If the native module is containing resources that needs to be added to the container xcode project, you can use the `copy` directive to copy the resources to the container. For example, assuming the following `ios/foo/resources` directory structure (relative to the root of the native module package)
+
+```
+ios/foo/resources
+├── Localizable.strings
+├── Login.storyboard
+└── Media.xcassets
+```
+
+You can add them all to the container, using the `copy` directive as illustrated below
+
+```json
+"copy": [
+  {
+    "source": "ios/foo/resources/*",
+    "dest": "{{{projectName}}}/Resources"
+  }
+]
+```
+
+The `dest` should always be set to `{{{projectName}}}/Resources`. During container generation, ern will add any resources present in this directory, to the container xcode project.
+
 **The following directives are only available when using React Native >= 0.61.0**
 
 - `podFile`
