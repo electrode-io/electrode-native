@@ -8,6 +8,7 @@ import {
   findNativeDependencies,
   nativeDepenciesVersionResolution,
   yarn,
+  NativeDependencies,
 } from 'ern-core'
 import { cleanupCompositeDir } from './cleanupCompositeDir'
 import fs from 'fs-extra'
@@ -32,6 +33,8 @@ import { installPackages } from './installPackages'
 import { installPackagesWithoutYarnLock } from './installPackagesWithoutYarnLock'
 import { installExtraPackages } from './installExtraPackages'
 import { createWatchmanConfig } from './createWatchmanConfig'
+import Table from 'cli-table'
+import os from 'os'
 
 export async function generateComposite(config: CompositeGeneratorConfig) {
   log.debug(`generateComposite config : ${JSON.stringify(config, null, 2)}`)
@@ -219,7 +222,7 @@ async function generateFullComposite(
       const localMiniAppsNodeModulePaths = localMiniAppsPaths.map(p =>
         path.join(p, 'node_modules')
       )
-      const allNativeDeps = await findNativeDependencies([
+      const allNativeDeps: NativeDependencies = await findNativeDependencies([
         path.join(outDir, 'node_modules'),
         ...localMiniAppsNodeModulePaths,
       ])
@@ -230,6 +233,25 @@ async function generateFullComposite(
       const dedupedNativeModules = nativeDepenciesVersionResolution.resolveNativeDependenciesVersionsEx(
         allNativeDeps
       )
+
+      if (dedupedNativeModules.pluginsWithMismatchingVersions.length > 0) {
+        let errorMsg = `Mismatching native module versions detected.
+Native module(s) versions should be aligned across miniapps.
+You should resolve the following version mismatches prior to retrying.${os.EOL}`
+        for (const pkgName of dedupedNativeModules.pluginsWithMismatchingVersions) {
+          const mismatchingPkgs = allNativeDeps.all.filter(
+            x => x.name === pkgName
+          )
+          const table = new Table({
+            head: ['path', 'version'],
+          })
+          mismatchingPkgs.forEach(pkg =>
+            table.push([pkg.fullPath, pkg.version])
+          )
+          errorMsg += `${table.toString()}${os.EOL}`
+        }
+        throw new Error(errorMsg)
+      }
 
       const allNativeModules = [
         ...allNativeDeps.thirdPartyInManifest,
