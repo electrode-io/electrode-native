@@ -1,0 +1,1 @@
+All generated resources (from react-native bundle) will be stored in this folder
