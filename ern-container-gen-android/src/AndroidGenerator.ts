@@ -274,6 +274,14 @@ export default class AndroidGenerator implements ContainerGenerator {
       }
     }
 
+    const resPath = path.join(config.outDir, 'lib/src/main/res')
+    const resSrcDirs = fs
+      .readdirSync(resPath)
+      .filter(f => fs.statSync(path.join(resPath, f)).isDirectory())
+      .map(d => `'src/main/res/${d}'`)
+      .join(',')
+    mustacheView.resSrcDirs = resSrcDirs
+
     // Dedupe repositories and permissions
     mustacheView.customRepos = _.uniq(mustacheView.customRepos)
     mustacheView.customPermissions = _.uniq(mustacheView.customPermissions)
