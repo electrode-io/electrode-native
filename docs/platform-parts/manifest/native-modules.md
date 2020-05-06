@@ -191,6 +191,31 @@ An array of one or more [Android hardware or software features](https://develope
 <uses-feature android:name="android.hardware.bluetooth" />
 ```
 
+- Android Resources
+
+If the native module is containing android resources (typically in `src/main/res`) you can use the `copy` directive to copy the resources directories to the container. For example, assuming the android resources directory is located in `android/src/main/res` (relative to the root of the native module package), and the package name of the native module is `react-native-foo`, then you should add the following directive to properly copy the native modules resources to the container :
+
+```json
+"copy": [
+  {
+    "source": "android/src/main/res/*",
+    "dest": "lib/src/main/res/react-native-foo"
+  }
+]
+```
+
+Also, because resources are accessed via the `R` generated class, you'll have to make sure to update all imports of this class in the source files importing this class, to use the container namespace rather than the native module one. You can do so using `replaceInFile` directive, as illustrated:
+
+```json
+"replaceInFile": [
+  { 
+    "path": "lib/src/main/java/com/example/SourceFile.java",
+    "string": "com.example.R",
+    "replaceWith": "com.walmartlabs.ern.container.R"
+  }
+]
+``` 
+
 #### iOS
 
 The following directives can only be used inside an `ios` configuration object.

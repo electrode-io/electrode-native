@@ -21,13 +21,11 @@ export async function reactNativeBundleAndroid({
   const libSrcMainPath = path.join(outDir, 'lib', 'src', 'main')
   bundleOutput =
     bundleOutput ?? path.join(libSrcMainPath, 'assets', 'index.android.bundle')
-  const assetsDest = path.join(libSrcMainPath, 'res')
-  // Cleanup everything from 'res' directory but 'devassist'
+  const assetsDest = path.join(libSrcMainPath, 'res', 'bundle')
+
+  // Cleanup everything from 'res' bundle directory
   if (fs.existsSync(assetsDest)) {
-    fs.readdirSync(assetsDest)
-      .filter(p => p !== 'devassist')
-      .map(p => path.join(assetsDest, p))
-      .forEach(p => shell.rm('-rf', p))
+    shell.rm('-rf', assetsDest)
   }
 
   shell.pushd(cwd)
