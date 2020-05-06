@@ -16,7 +16,10 @@ const os = require('os')
 // ....
 // |_ .ernrc
 
-const PLATFORM_VERSION = '1000.0.0'
+const pJsonPath = path.resolve(__dirname, '..', 'package.json')
+const pJson = JSON.parse(fs.readFileSync(pJsonPath, { encoding: 'utf8' }))
+
+const PLATFORM_VERSION = pJson.version
 // Path to ern platform root directory
 const ERN_PATH = process.env['ERN_HOME'] || path.join(os.homedir(), '.ern')
 // Path to ern global configuration file
