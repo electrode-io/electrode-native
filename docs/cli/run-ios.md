@@ -2,7 +2,7 @@
 
 #### Description
 
-* Runs a MiniApp on an iOS emulator or connected device  
+* Runs a MiniApp on an iOS simulator or connected device
 
 #### Syntax
 
@@ -11,7 +11,7 @@
 **Options**  
 
 `--baseComposite <compositePath>`
-* Git or File System path, to the custom Composite repository (refer to the [custom  Composite] documentation for more information).
+* Git or File System path, to the custom Composite repository (refer to the [custom Composite] documentation for more information).
 
 `--descriptor, -d`
 * complete native application descriptor
@@ -24,11 +24,11 @@
 * By default it will use the IP address that is returned by the `ipconfig getifaddr en0` command, and fallback to `localhost` in the case the command fails.
 
  `--launchArgs` 
-* Arguments to pass to the application when launching it (correspond to the `Arguments Passed On Launch` in application scheme run config in XCode as can be seen on screenshot below).
+* Arguments to pass to the application when launching it (correspond to the `Arguments Passed On Launch` in application scheme run config in Xcode as can be seen on screenshot below).
 * Make sure to use `=` on the command line to provide this option, and keep the string in quotes. For example `--launchArgs="-ArgA -ArgB"`
 
 `--launchEnvVars`
-* Environment variables to pass to the application when launching it (correspond to the `Environment Variables` in application scheme run config in XCode as can be seen on screenshot below).
+* Environment variables to pass to the application when launching it (correspond to the `Environment Variables` in application scheme run config in Xcode as can be seen on screenshot below).
 * Make sure to use `=` on the command line to provide this option, and keep the string in quotes. The string should contain `key=value` pairs delimited by spaces. For example `--launchEnvVars="aKey=aValue anotherKey=anotherValue"`
 
 ![xcode scheme run](../images/xcode-scheme-run.png)

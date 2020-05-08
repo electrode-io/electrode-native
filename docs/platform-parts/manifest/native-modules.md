@@ -40,7 +40,7 @@ The plugin configuration file is located within these sub-directories.
 #### Configuration example  
 
 The following example shows the configuration files for the `react-native-code-push` plugin.  
-The directory is view-able [here](https://github.com/electrode-io/electrode-native-manifest/tree/master/plugins/ern_v0.13.0%2B/react-native-code-push_v1.17.0%2B)
+The directory is located [here](https://github.com/electrode-io/electrode-native-manifest/tree/master/plugins/ern_v0.13.0%2B/react-native-code-push_v1.17.0%2B)
 
 
 ```
@@ -125,13 +125,13 @@ The value of this property should be a single object containing the following tw
 
 ```json
 {
-  "patch": "foo.patch",
-  "root": "{{{projectName}}}/Libraries/BarNativeModule"
+  "patch": "example.patch",
+  "root": "{{{projectName}}}/Libraries/ExampleNativeModule"
 }
 
 ```
 
-This example applies the `foo.patch` patch file, by running `git apply` command from the `{{{projectName}}}/Libraries/BarNativeModule` directory.  
+This example applies the `example.patch` patch file, by running `git apply` command from the `{{{projectName}}}/Libraries/ExampleNativeModule` directory.  
 
 #### Platform-specific directives
 
@@ -193,13 +193,13 @@ An array of one or more [Android hardware or software features](https://develope
 
 - Android Resources
 
-If the native module is containing android resources (typically in `src/main/res`) you can use the `copy` directive to copy the resources directories to the container. For example, assuming the android resources directory is located in `android/src/main/res` (relative to the root of the native module package), and the package name of the native module is `react-native-foo`, then you should add the following directive to properly copy the native modules resources to the container :
+If the native module is containing android resources (typically in `src/main/res`) you can use the `copy` directive to copy the resources directories to the container. For example, assuming the android resources directory is located in `android/src/main/res` (relative to the root of the native module package), and the package name of the native module is `react-native-example`, then you should add the following directive to properly copy the native modules resources to the container :
 
 ```json
 "copy": [
   {
     "source": "android/src/main/res/*",
-    "dest": "lib/src/main/res/react-native-foo"
+    "dest": "lib/src/main/res/react-native-example"
   }
 ]
 ```
@@ -300,12 +300,12 @@ Adds a source file from the plugin project to the container list of sources.
 - `setBuildSettings`
 
 Set one or more build setting(s) in one or more pbxproj(s) associated to the plugin.
-For example setting `ENABLE_BITCODE` to `NO` for `Debug` and `Release` configurations of `Foo` plugin project :
+For example setting `ENABLE_BITCODE` to `NO` for `Debug` and `Release` configurations of `Example` plugin project :
 
 ```json
 "setBuildSettings": [
   { 
-    "path": "{{{projectName}}}/Libraries/Foo/Foo.xcodeproj/project.pbxproj",
+    "path": "{{{projectName}}}/Libraries/Example/Example.xcodeproj/project.pbxproj",
     "buildSettings": {
       "configurations": ["Debug", "Release"],
       "settings": { "ENABLE_BITCODE": "NO" }
@@ -316,10 +316,10 @@ For example setting `ENABLE_BITCODE` to `NO` for `Debug` and `Release` configura
 
 - iOS Resources
 
-If the native module is containing resources that needs to be added to the container xcode project, you can use the `copy` directive to copy the resources to the container. For example, assuming the following `ios/foo/resources` directory structure (relative to the root of the native module package)
+If the native module is containing resources that needs to be added to the container xcode project, you can use the `copy` directive to copy the resources to the container. For example, assuming the following `ios/example/resources` directory structure (relative to the root of the native module package)
 
 ```
-ios/foo/resources
+ios/example/resources
 ├── Localizable.strings
 ├── Login.storyboard
 └── Media.xcassets
@@ -330,7 +330,7 @@ You can add them all to the container, using the `copy` directive as illustrated
 ```json
 "copy": [
   {
-    "source": "ios/foo/resources/*",
+    "source": "ios/example/resources/*",
     "dest": "{{{projectName}}}/Resources"
   }
 ]

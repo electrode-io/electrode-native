@@ -31,12 +31,12 @@
 * Generate an implementation skeleton project for a JavaScript implementation of the API
   
 `--packageName/-p`
-* Specify the NPM package name to use for the API implementation.
+* Specify the npm package name to use for the API implementation.
 * Add the package name automatically in the `package.json` of the generated API implementation.
 * **Default** The command will prompt for the package name to use.
 
 `--scope/-s`
-* Specify the NPM package scope to use for the API implementation.
+* Specify the npm package scope to use for the API implementation.
 * Add the package scope automatically in the `package.json` of the generated API implementation.
 * **Default** Package will be unscoped.
 
@@ -50,7 +50,7 @@
 * This option will be stored and reused during container generation to enforce config initialization
 
 `--skipNpmCheck`
-* Skip the check ensuring package does not already exists in NPM registry
+* Skip the check ensuring package does not already exists in npm registry
 * **Default** The value defaults to false. 
 
 `--force/-f`

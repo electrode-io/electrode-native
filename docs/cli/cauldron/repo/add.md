@@ -31,14 +31,14 @@
 
 **Example**  
 
-`ern cauldron repo add my-cauldron git@github.com:User/Cauldron.git`  
-Add a new Cauldron repository, with alias `my-cauldron`, and url `git@github.com:User/Cauldron.git`, to the local collection of Cauldron repositories. The branch that will be used for this Cauldron will be `master` as no branch was explicitly specified.
+`ern cauldron repo add my-cauldron git@github.com:username/my-cauldron.git`  
+Add a new Cauldron repository, with alias `my-cauldron`, and url `git@github.com:username/my-cauldron.git`, to the local collection of Cauldron repositories. The branch that will be used for this Cauldron will be `master` as no branch was explicitly specified.
 
 `ern cauldron repo add my-local-cauldron ~/path/to/local/cauldron`  
 Add a new Cauldron repository with alias `my-local-cauldron` and url pointing to local directory `~/path/to/local/cauldron` to the location collection of Cauldron repositories.
 
-`ern cauldron repo add my-other-cauldron git@github.com:User/OtherCauldron#development --current`  
-Add a new Cauldron repository, with alias `my-other-cauldron`, and url `git@github.com:User/OtherCauldron`, to the local collection of Cauldron repositories and set it at the current activated Cauldron. The branch that will be used for this Cauldron will be `development` as it was explicitly specified in the Cauldron url.
+`ern cauldron repo add my-other-cauldron git@github.com:username/other-cauldron#development --current`  
+Add a new Cauldron repository, with alias `my-other-cauldron`, and url `git@github.com:username/other-cauldron`, to the local collection of Cauldron repositories and set it at the current activated Cauldron. The branch that will be used for this Cauldron will be `development` as it was explicitly specified in the Cauldron url.
 
 #### Remarks
 

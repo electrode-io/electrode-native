@@ -38,10 +38,10 @@
 3) [addMiniapps]
 
 * The following types of MiniApp paths are not supported by `--addMiniapps` and `--updateMiniApps` :
-  - File path (ex `file://Users/foo/MiniApp`)
-  - Git path missing branch/tag or commit sha (ex: `https://github.com/foo/MiniApp.git`)
-  - Registry path missing version (ex: `MiniApp`)
-  - Registry path using a version range (ex: `MiniApp@^1.0.0`)
+  - File path (ex `file://etc/example-miniapp`)
+  - Git path missing branch/tag or commit sha (ex: `https://github.com/username/example-miniapp.git`)
+  - Registry path missing version (ex: `example-miniapp`)
+  - Registry path using a version range (ex: `example-miniapp@^1.0.0`)
 
 [delMiniapps]: del/miniapps.md
 [updateMiniapps]: update/miniapps.md

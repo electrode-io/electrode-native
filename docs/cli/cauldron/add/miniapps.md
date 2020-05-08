@@ -17,14 +17,14 @@
 * One or more package path to MiniApps (delimited by spaces) to add to a target native application version in the Cauldron.
 * Any MiniApp path (but file path) will be added to the Container in the Cauldron, as such, with the exception of a git path including a branch. In that case, the MiniApp path that will be added to the Container in the Cauldron will contain the commit SHA of the HEAD of the branch, rather than the branch itself.
 * The following types of MiniApp paths are not supported by this command :
-  - File path (ex `file://Users/foo/MiniApp`)
-  - Git path missing branch/tag or commit sha (ex: `https://github.com/foo/MiniApp.git`)
-  - Registry path missing version (ex: `MiniApp`)
-  - Registry path using a version range (ex: `MiniApp@^1.0.0`)
+  - File path (ex `file://etc/example-miniapp`)
+  - Git path missing branch/tag or commit sha (ex: `https://github.com/username/example-miniapp.git`)
+  - Registry path missing version (ex: `example-miniapp`)
+  - Registry path using a version range (ex: `example-miniapp@^1.0.0`)
 
 **Example**  
 
-`ern cauldron add miniapps MyFirstMiniApp@1.0.0 MySecondMiniApp@2.0.0`
+`ern cauldron add miniapps first-miniapp@1.0.0 second-miniapp@2.0.0`
 
 **Options**  
 

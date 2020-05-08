@@ -67,7 +67,7 @@ dependencies {
 }
 ```
 
-If you are explicitely publishing a container through the use of [publish-container] command, the Maven artifact id will be `local-ern-container`. The group id will remain the same though `com.walmartlabs.ern`. You can pass options to the command to change the artifact id and group id at your convenience. Please see [publish-container] documentation for more details.  
+If you are explicitly publishing a container through the use of [publish-container] command, the Maven artifact id will be `local-ern-container`. The group id will remain the same though `com.walmartlabs.ern`. You can pass options to the command to change the artifact id and group id at your convenience. Please see [publish-container] documentation for more details.  
 Also, if you use or plan to use a locally published Electrode Native container (to your maven local repository), make sure to declare `mavenLocal` in the list of repositories. This is located in the top-level project `build.gradle`.
 
 ```groovy
@@ -209,14 +209,14 @@ To add a container using Carthage:
 2) Add the following line to your Cartfile.
 
     ```bash
-    git "git@github.com:user/myweatherapp-ios-container.git" "v1.0.0"
+    git "git@github.com:username/myweatherapp-ios-container.git" "v1.0.0"
     ```
 
 3) Create a `Cartfile.resolved` file if you don't have one or open your existing `Cartfile.resolved` file.  
 4) Add the following line to your `Cartfile.resolved` file:
 
     ```bash
-    git "git@github.com:user/myweatherapp-ios-container.git" "v1.0.0"
+    git "git@github.com:username/myweatherapp-ios-container.git" "v1.0.0"
     ```
 
 5) Install your dependencies using the following command:
@@ -232,7 +232,7 @@ To manually add a container:
 1. Clone the container to `<Your-WorkSpace>`.
 
     ```bash
-    git@github.com:user/myweatherapp-ios-container.git
+    git@github.com:username/myweatherapp-ios-container.git
     ```
 2. Open your mobile application project file in Xcode.
 3. Right click your `<your project name>` in the project navigator. Select **Add Files** to `<your project name>`. Look for `ElectrodeContainer.xcodeproj` in the file directory where you cloned the repo above.

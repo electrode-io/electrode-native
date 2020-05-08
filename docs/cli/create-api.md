@@ -25,7 +25,7 @@
 
 `--packageName/-p <name>`
 
-* Specify the NPM package name to use for the API.
+* Specify the npm package name to use for the API.
 * Add the package name automatically in the `package.json` of the generated API.
 * **Default** The command will prompt for the package name to use.
 
@@ -46,7 +46,7 @@
 
 `--skipNpmCheck`
 
-* Skip the check ensuring package does not already exists in NPM registry
+* Skip the check ensuring package does not already exists in npm registry
 * **Default** The value defaults to false. 
 
 `--manifestId <manifestId>`

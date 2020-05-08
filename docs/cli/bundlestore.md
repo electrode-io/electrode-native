@@ -4,7 +4,7 @@
 
 Electrode Native bundle store provide features that are close to the ones offered by CodePush but more fitted to development/qa purposes. 
 
-Similarly to CodePush, ern Bundle Store offers React Native development teams, the ability to push JS bundles that can then be dynamically retrieved and loaded by the native application.
+Similar to CodePush, ern Bundle Store offers React Native development teams, the ability to push JS bundles that can then be dynamically retrieved and loaded by the native application.
 
 Once a bundle store server is available, any development team or individual developer can easily create (or use existing) store(s) and push JS bundles to the server, using `ern bundlestore` commands. Then, from the native application, anyone can load any bundle from any store, through the `Electrode Native Settings` menu. 
 
@@ -50,13 +50,11 @@ Once the bundle(s) (and source map(s)) have been uploaded to the server, the com
 
 ### Loading bundles in the native application
 
-Bundles uploaded to a bundle store can be accessed and launched in the native application via the `Electrode Native Settings` menu (accessible through React Native developper menu).
+Bundles uploaded to a bundle store can be accessed and launched in the native application via the `Electrode Native Settings` menu (accessible through React Native developer menu).
 
 By default, the bundle store is disabled and the bundle store server host and port is set to `localhost:3000`.
 
-<p align="center">
-  <img src="../images/bundlestore.png" width="400" title="Github Logo">
-</p>
+![Bundlestore](../images/bundlestore.png)
 
 Server host and port can be set manually, but a better way is to set it directly in the native application when initializing the Container (as seen below for Android). This way, the server host/port will ,by default, point to the server the native application is using, and it will not be needed to set it manually each time the app is installed.
 

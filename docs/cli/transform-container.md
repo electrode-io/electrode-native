@@ -41,7 +41,7 @@ Can be used to apply one or more sequential git patches to the Container.
 * Can also include a specific version or a version range (for ex `build-config@1.0.0` or `build-config@^1.0.0`)
 * If no version is specified, the latest available version of the publisher will be used at the time of publication (this is a bit risky given that new major publisher versions will contain breaking changes. We **recommend** that you use a specific version or version range allowing minor and patch updates only)
 * It is also possible to pass a local file system path to a Container transformer package (only used for transformers development).
-* This option is required, there is no default (unles `--descriptor` is used)
+* This option is required, there is no default (unless `--descriptor` is used)
 
 `--extra/-e`
 

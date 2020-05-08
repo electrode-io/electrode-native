@@ -17,25 +17,25 @@ This is a `Personal Access Token`, generated from GitHub, having read/write acce
 
 ### Usage
 
-The `github` commands can be used to automate some advanced custom development/release workflows when working with MiniApps / JS API Implementations that are handled as GitHub urls in the Cauldron rather than NPM published versions.
+The `github` commands can be used to automate some advanced custom development/release workflows when working with MiniApps / JS API Implementations that are handled as GitHub urls in the Cauldron rather than npm published versions.
 
-For example, in an hypothetical development workflow for `MyAwesomeApp Android` you might use dummy version `1000.0.0` in your Cauldron, with all MiniApps tracking the `development` branch. Then to regenerate a new development Container, you would just invoke [ern cauldron regen-container] container, which would pull the latest from the `development` branches, generate and publish a new Container and update the `SHAs` in the Cauldron.
+For example, in a hypothetical development workflow for `MyAwesomeApp Android` you might use dummy version `1000.0.0` in your Cauldron, with all MiniApps tracking the `master` branch. Then to regenerate a new development Container, you would invoke [ern cauldron regen-container] container, which would pull the latest from the `master` branches, generate and publish a new Container and update the `SHAs` in the Cauldron.
 
-Let's assume there are three tracked MiniApps fro version `1000.0.0`, this would result in the following entry in the Cauldron (excluding some data):
+Let's assume there are three tracked MiniApps from version `1000.0.0`, this would result in the following entry in the Cauldron (excluding some data):
 
 ```json
 {
   "name": "1000.0.0",
   "container": {
     "miniApps": [
-      "git+ssh://git@github.com/foo/MiniAppA.git#346f8f185f4bfc5de0c694918e131eec1847dab0",
-      "git+ssh://git@github.com/foo/MiniAppB.git#d4ced142494b7f02c9038c805ca13229d2e32415",
-      "git+ssh://git@github.com/foo/MiniAppC.git#ec1a90be810e1dc6668f5a7c2ec25e3302799cdd"
+      "git+ssh://git@github.com/username/example1-miniapp.git#346f8f185f4bfc5de0c694918e131eec1847dab0",
+      "git+ssh://git@github.com/username/example2-miniapp.git#d4ced142494b7f02c9038c805ca13229d2e32415",
+      "git+ssh://git@github.com/username/example3-miniapp.git#ec1a90be810e1dc6668f5a7c2ec25e3302799cdd"
     ],
     "miniAppsBranches": [
-      "git+ssh://git@github.com/foo/MiniAppA.git#development",
-      "git+ssh://git@github.com/foo/MiniAppB.git#development",
-      "git+ssh://git@github.com/foo/MiniAppC.git#development"
+      "git+ssh://git@github.com/username/example1-miniapp.git#master",
+      "git+ssh://git@github.com/username/example2-miniapp.git#master",
+      "git+ssh://git@github.com/username/example3-miniapp.git#master"
     ]
   }
 }
@@ -45,8 +45,8 @@ Your mobile application release workflow might include a `code-freeze`, where re
 For example, assuming you are preparing release of version `1.0.0` of your mobile application, what could be done is the following :
 
 - Create new application version `MyAwesomeApp:android:1.0.0` in Cauldron using [ern cauldron add nativeapp] command, copying data over from `1000.0.0` version.
-- Create new `Release/1.0.0` branches in all MiniApps repositories, using the [ern github create-ref] command.
-- Update `MyAwesomeApp:android:1.0.0` MiniApps in the Cauldron, to track this new `Release/1.0.0` branch rather than `development`, using the [ern cauldron update miniapps] command.
+- Create new `release-1.0.0` branches in all MiniApps repositories, using the [ern github create-ref] command.
+- Update `MyAwesomeApp:android:1.0.0` MiniApps in the Cauldron, to track this new `release-1.0.0` branch rather than `master`, using the [ern cauldron update miniapps] command.
 
 This would result in the following entry in Cauldron:
 
@@ -55,33 +55,33 @@ This would result in the following entry in Cauldron:
   "name": "1.0.0",
   "container": {
     "miniApps": [
-      "git+ssh://git@github.com/foo/MiniAppA.git#346f8f185f4bfc5de0c694918e131eec1847dab0",
-      "git+ssh://git@github.com/foo/MiniAppB.git#d4ced142494b7f02c9038c805ca13229d2e32415",
-      "git+ssh://git@github.com/foo/MiniAppC.git#ec1a90be810e1dc6668f5a7c2ec25e3302799cdd"
+      "git+ssh://git@github.com/username/example1-miniapp.git#346f8f185f4bfc5de0c694918e131eec1847dab0",
+      "git+ssh://git@github.com/username/example2-miniapp.git#d4ced142494b7f02c9038c805ca13229d2e32415",
+      "git+ssh://git@github.com/username/example3-miniapp.git#ec1a90be810e1dc6668f5a7c2ec25e3302799cdd"
     ],
     "miniAppsBranches": [
-      "git+ssh://git@github.com/foo/MiniAppA.git#Release/1.0.0",
-      "git+ssh://git@github.com/foo/MiniAppB.git#Release/1.0.0",
-      "git+ssh://git@github.com/foo/MiniAppC.git#Release/1.0.0"
+      "git+ssh://git@github.com/username/example1-miniapp.git#release-1.0.0",
+      "git+ssh://git@github.com/username/example2-miniapp.git#release-1.0.0",
+      "git+ssh://git@github.com/username/example3-miniapp.git#release-1.0.0"
     ]
   }
 }
 ```
 
-Then it's possible to regenerate post freeze Containers for `1.0.0`, by just using [ern cauldron regen-container] command for `1.0.0`. As long as MiniApp developers are pushing post code freeze bug fixes to the `Release/1.0.0` of the MiniApps branches. Developers can continue pushing changes to their `development` branch to continue generating `development` Containers for the next release.
+Then it's possible to regenerate post freeze Containers for `1.0.0`, by just using [ern cauldron regen-container] command for `1.0.0`. As long as MiniApp developers are pushing post code freeze bug fixes to the `release-1.0.0` of the MiniApps branches. Developers can continue pushing changes to their main branch to continue generating development Containers for the next release.
 
 At release time (when `1.0.0` is released to the store) you might want to create tags in the MiniApps repositories, to exactly know what was shipped for each MiniApps.
 
-One way to do that is to just use the [ern github create-ref] command, this time to create tags (`RELEASE_1.0.0` for example), from the current SHAs stored for the MiniApps, and then use [ern cauldron update miniapps] command to update the Cauldron. This would result in the following entry in Cauldron:
+One way to do that is to just use the [ern github create-ref] command, this time to create tags (`v1.0.0` for example), from the current SHAs stored for the MiniApps, and then use [ern cauldron update miniapps] command to update the Cauldron. This would result in the following entry in Cauldron:
 
 ```json
 {
   "name": "1.0.0",
   "container": {
     "miniApps": [
-      "git+ssh://git@github.com/foo/MiniAppA.git#RELEASE_1.0.0",
-      "git+ssh://git@github.com/foo/MiniAppB.git#RELEASE_1.0.0",
-      "git+ssh://git@github.com/foo/MiniAppC.git#RELEASE_1.0.0"
+      "git+ssh://git@github.com/username/example1-miniapp.git#v1.0.0",
+      "git+ssh://git@github.com/username/example2-miniapp.git#v1.0.0",
+      "git+ssh://git@github.com/username/example3-miniapp.git#v1.0.0"
     ],
     "miniAppsBranches": [
     ]

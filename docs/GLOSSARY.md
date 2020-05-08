@@ -17,7 +17,7 @@ The Electrode Native module name applies to modules created with Electrode Nativ
 - Module names should be alphanumeric and cannot start with a digit or underscore
 - `create-miniapp`, `create-api` and `create-api-impl` commands allow passing Electrode Native module name as its arguments.
 
-For example, `ern create-miniapp Mymovie`, `ern create-api ReactNativeMymovie` will create `MymovieMiniApp` and `react-native-mymovie-api` respectively.
+For example, `ern create-miniapp mymovie-miniapp`, `ern create-api mymovie-api` will create `mymovie-miniapp` and `react-native-mymovie-api` respectively.
 
 ## package path
 
@@ -25,22 +25,22 @@ A package path is a string representing the path (local or remote) to a Node Pac
 
 Package in remote git repository:
 
-- `git+ssh://git@github.com:electrode-io/MovieListMiniApp.git`
-- `git+ssh://git@github.com:electrode-io/MovieListMiniApp.git#0.0.9`
-- `https://github.com/electrode-io/MovieListMiniApp.git`
-- `https://github.com/electrode-io/MovieListMiniApp.git#0.0.9`
+- `git+ssh://git@github.com:electrode-io/movielist-miniapp.git`
+- `git+ssh://git@github.com:electrode-io/movielist-miniapp.git#0.0.9`
+- `https://github.com/electrode-io/movielist-miniapp.git`
+- `https://github.com/electrode-io/movielist-miniapp.git#0.0.9`
 
 For GitHub SSH urls it is also possible to use the default GitHub format:
 
-- `git@github.com/electrode-io/MovieListMiniApp.git`
-- `git@github.com/electrode-io/MovieListMiniApp.git#0.0.9`
+- `git@github.com/electrode-io/movielist-miniapp.git`
+- `git@github.com/electrode-io/movielist-miniapp.git#0.0.9`
 
 The string following the optional `#` denotes a branch/tag or specific commit SHA.
 
 Package on local file system :
 
-- `file:/Users/blemair/Code/MovieListMiniApp`
-- `/Users/blemair/Code/MovieListMiniApp`
+- `file:/etc/movielist-miniapp`
+- `/etc/movielist-miniapp`
 
 Package on npm registry:
 

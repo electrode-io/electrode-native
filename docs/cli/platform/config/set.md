@@ -79,8 +79,9 @@ Should be the full url to the proxy, including the port. For example `http://10.
 **default** : no proxy
 
 - `manifest` [object]\
-Master and/or overide manifest paths to be used locally.\
-**If this object in defined in local configuration, it will take precedence over any cauldron manifest configuration**\
+Master and/or override manifest paths to be used locally.\
+**If this object is defined in the local configuration, it will take precedence over any cauldron manifest configuration**
+
 For example :
 ```json
 {

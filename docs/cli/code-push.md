@@ -115,7 +115,7 @@ For illustration, here is how we would store the two deployments we created for 
 
 Some native applications are using version name modifiers to distinguish between different environments. For example for our `MyAwesomeApp` on Android, we might use the version suffix `-qa-debug` to denote a debug version built for `QA` and `dev-debug` to denote a `Development` debug version. In this case, for any given version number (for example `1.0.0`) we can have three `variants` of the version : `1.0.0` (Production), `1.0.0-dev-debug` (Dev) and `1.0.0-qa-debug` (QA).
 
-The problem in that scenario, is that, when doing a release targeting a specific native application version, `CodePush` will only install it for versions matching the targetted version string. i.e if we are doing a CodePush release targeting `1.0.0`, then, users running the `1.0.0-dev-debug` version won't get the release.
+The problem in that scenario, is that, when doing a release targeting a specific native application version, `CodePush` will only install it for versions matching the targeted version string. i.e if we are doing a CodePush release targeting `1.0.0`, then, users running the `1.0.0-dev-debug` version won't get the release.
 
 If you are using version modifiers for your native application, then you should create an appropriate `codePush` configuration entry in your Cauldron.
 

@@ -11,7 +11,7 @@
 **Options** 
 
 `--skipVersion/-s`
-* Skip the step to update api version and publish to NPM.
+* Skip the step to update api version and publish to npm.
 
 `--bridgeVersion/-b`
 * Specify version of the [Electrode Native Bridge] to use.

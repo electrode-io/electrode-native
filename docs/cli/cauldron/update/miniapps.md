@@ -16,10 +16,10 @@
 
 * One or more package path to MiniApp(s) (delimited by spaces) to update in a target native application version in the Cauldron.
 * The following types of MiniApp paths are not supported by this command :
-  - File path (ex `file://Users/foo/MiniApp`)
-  - Git path missing branch/tag or commit sha (ex: `https://github.com/foo/MiniApp.git`)
-  - Registry path missing version (ex: `MiniApp`)
-  - Registry path using a version range (ex: `MiniApp@^1.0.0`)
+  - File path (ex `file://etc/example-miniapp`)
+  - Git path missing branch/tag or commit sha (ex: `https://github.com/username/example-miniapp.git`)
+  - Registry path missing version (ex: `example-miniapp`)
+  - Registry path using a version range (ex: `example-miniapp@^1.0.0`)
 
 * Can also be set to **all** . In this case, all MiniApps will be updated to a single specific version specified by the `--targetVersion` option.
 

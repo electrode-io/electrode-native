@@ -10,7 +10,7 @@
 
 **Note**
 
-If you do not pass an argument to this command, you are prompted to select a native application version from the Cauldron. The command uses whatever MiniApp versions are curently declared in this native application version container to launch the command.  
+If you do not pass an argument to this command, you are prompted to select a native application version from the Cauldron. The command uses whatever MiniApp versions are currently declared in this native application version container to launch the command.  
 
 **Options**  
 
@@ -22,7 +22,7 @@ If you do not pass an argument to this command, you are prompted to select a nat
 
 * Directory in which to generate the composite
 * The directory should either not exist (will be created) or be empty
-* By default the composite will be generated in a temorary directory
+* By default the composite will be generated in a temporary directory
 
 `--descriptor/-d <descriptor>`
 
@@ -77,11 +77,11 @@ If you do not pass an argument to this command, you are prompted to select a nat
 * iOS Bundle Identifier unique to your app.
 
 `--launchArgs` 
-* Arguments to pass to the application when launching it (correspond to the `Arguments Passed On Launch` in application scheme run config in XCode as can be seen on screenshot below).
+* Arguments to pass to the application when launching it (correspond to the `Arguments Passed On Launch` in application scheme run config in Xcode as can be seen on screenshot below).
 * Make sure to use `=` on the command line to provide this option, and keep the string in quotes. For example `--launchArgs="-ArgA -ArgB"`
 
 `--launchEnvVars`
-* Environment variables to pass to the application when launching it (correspond to the `Environment Variables` in application scheme run config in XCode as can be seen on screenshot below).
+* Environment variables to pass to the application when launching it (correspond to the `Environment Variables` in application scheme run config in Xcode as can be seen on screenshot below).
 * Make sure to use `=` on the command line to provide this option, and keep the string in quotes. The string should contain `key=value` pairs delimited by spaces. For example `--launchEnvVars="aKey=aValue anotherKey=anotherValue"`
 
 * **Default** false

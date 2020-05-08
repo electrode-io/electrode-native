@@ -1,12 +1,12 @@
 ## What is Electrode Native
 
-Electrode Native is a platform based on React Native, that simplifies development and reduces the friction of integrating React Native components into existing mobile applications. Electrode Native requires minimal changes to the existing mobile code base and infrastructure.
+Electrode Native is a platform based on React Native that simplifies development and reduces the friction of integrating React Native components into existing mobile applications. Electrode Native requires minimal changes to the existing mobile code base and infrastructure.
 
-Electrode Native is built on top of [React Native](https://github.com/facebook/react-native) and other tools such as [Yarn](https://github.com/yarnpkg/yarn) and [CodePush](https://github.com/Microsoft/react-native-code-push). Electrode Native does not contain any code modifications to these tools and frameworks.
+Electrode Native is built on top of [React Native](https://github.com/facebook/react-native) and other tools such as [Yarn](https://github.com/yarnpkg/yarn) and [CodePush](https://github.com/microsoft/react-native-code-push). Electrode Native does not modify these tools and frameworks in any way.
 
-The core of the Electrode Native is written in TypeScript and ES6. Some parts also contain native code: Java and Swift--mostly in the form of [Mustache](https://mustache.github.io/) templates used for native code generation. Some modules of Electrode Native are pure native projects--for example our [Electrode Native Bridge] is a native Android/iOS library/framework project.
+The core of Electrode Native is written in TypeScript and ES6. Some parts also contain native code: Java and Swift--mostly in the form of [Mustache](https://mustache.github.io/) templates used for native code generation. Some modules of Electrode Native are pure native projects--for example our [Electrode Native Bridge] is a native Android/iOS library/framework project.
 
-When it comes to the platform code percentage of JavaScript code versus Native code, a good approximation would be 70% JavaScript and 30% native code.
+When it comes to the platform code percentage of JavaScript code versus native code, a good approximation would be 70% JavaScript and 30% native code.
 
 Electrode Native is composed of several modules that can be accessed using the Electrode Native CLI. Electrode Native runs on Node.js 10 or newer. Windows support should be considered experimental.
 
@@ -14,13 +14,13 @@ Electrode Native modules and features are briefly described below. You can find 
 
 ### Electrode Native CLI
 
-The Electrode Native CLI is the command line tool that contains the commands and sub-commands that developers will use to work with the Electrode Native platform. The commands are very similar to React Native commands. For example, instead of using the `react-native start` command, you'll use the `ern start` command. For information about using the Electrode Native CLI commands, refer to the Electrode Native CLI documentation.
+The Electrode Native CLI is the command line tool that contains the commands and sub-commands that developers will use to work with the Electrode Native platform. The commands are similar to React Native commands. For example, instead of using the `react-native start` command, you'll use the `ern start` command. For information about using the Electrode Native CLI commands, refer to the Electrode Native CLI documentation.
 
 [Learn More about the CLI](../platform-parts/cli/index.md)
 
 ### Electrode Native Bridge
 
-The Electrode Native bridge is a cross-platform, low-level bi-directional communication library used to simplify communication between the JavaScript and the native mobile application. It is not part of the Electrode Native platform itself. The [Electrode Native bridge] is actually a React Native native module and as with most native modules, it contains some JavaScript code as well as iOS and Android platform code. In term of code sizing, most of the Electrode Native bridge code is native (95% native/5% JavaScript).
+The Electrode Native bridge is a cross-platform, low-level bi-directional communication library used to simplify communication between JavaScript and the native mobile application code. It is not part of the Electrode Native platform itself. The [Electrode Native bridge] is actually a React Native native module and as with most native modules, it contains some JavaScript code as well as Android and iOS platform code. In term of code sizing, most of the Electrode Native bridge code is native (95% native/5% JavaScript).
 
 Even though the Electrode Native bridge is a standalone native module that can be used in your React Native projects (even without Electrode Native), if you are using Electrode Native, you'll mostly not directly interact with the Electrode Native bridge in your MiniApps or in your mobile applications. Instead, you'll use Electrode Native APIs. The Electrode Native APIs are generated from a Swagger schema.
 
@@ -50,7 +50,7 @@ Each mobile application has its own custom Electrode Native container.
 
 A Cauldron is a centralized document database that is used to store information about mobile application versions, native dependencies, and information about MiniApps. There is one Cauldron per mobile application. With appropriate permissions, you can use the Electrode Native CLI commands to access and modify the data stored in a Cauldron.
 
-Setting up a cauldron is basically the same process as creating a Git repository and storing the data in the repository. To host your cauldron, you can use any provider offering Git repository storage. GitHub and BitBucket are probably two of the most popular providers. Within our documentation, we mention GitHub but you are free to use the provider of your choice.
+Setting up a cauldron is basically the same process as creating a Git repository and storing the data in the repository. To host your cauldron, you can use any provider offering Git repository storage. GitHub and Bitbucket are probably two of the most popular providers. Within our documentation, we mention GitHub but you are free to use the provider of your choice.
 
 [Learn More about the Cauldron](../platform-parts/cauldron/index.md)
 

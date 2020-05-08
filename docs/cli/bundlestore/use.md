@@ -3,6 +3,7 @@
 **This command can only be used with access to an [Electrode Native bundle store server]**
 
 **To use this command, the `bundleStore` config must be set in cauldron**
+
 ### Description
 
 Set a store as the current target to upload bundles to
