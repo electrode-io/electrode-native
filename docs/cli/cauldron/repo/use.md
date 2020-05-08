@@ -2,18 +2,18 @@
 
 #### Description
 
-* Set the Cauldron repository associated to the given alias as the active Cauldron  
+- Set the Cauldron repository associated to the given alias as the active Cauldron
 
 #### Syntax
 
-`ern cauldron repo use <alias>`  
+`ern cauldron repo use <alias>`
 
 **Arguments**
 
 `<alias>`
 
-* Alias of the Cauldron repository to activate.
+- Alias of the Cauldron repository to activate.
 
 #### Remarks
 
-* This command will fail if the `alias` does not exist in the local collection of Cauldron repositories.  
+- This command will fail if the `alias` does not exist in the local collection of Cauldron repositories.

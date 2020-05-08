@@ -25,16 +25,16 @@ Indeed, while we will do our best to retain backward compatibility, some new ver
 
 When you upgrade to a newer version of Electrode Native, previous installed versions of Electrode Native remain on your system; an upgrade does not overwrite the older versions.
 
-Before you upgrade to a newer version of Electrode Native, read through the following upgrade guidelines: 
+Before you upgrade to a newer version of Electrode Native, read through the following upgrade guidelines:
 
-* Be sure to read the Release Notes for the new version.  
-* An upgrade is usually backward compatible although backwards compatibility with every release is not guaranteed. Check to see if upgrading will impact your current workflow.
-* Electrode Native contains a built-in platform version management system--similar to what [nvm](https://github.com/creationix/nvm) uses for `Node.js`--which allows you to keep multiple versions of the platform installed on your local system. The system allows you to easy rollback to a previous platform version or to actually switch back to an older version for some use cases.  
-* Only one version of the platform can be active at any given time.   
+- Be sure to read the Release Notes for the new version.
+- An upgrade is usually backward compatible although backwards compatibility with every release is not guaranteed. Check to see if upgrading will impact your current workflow.
+- Electrode Native contains a built-in platform version management system--similar to what [nvm](https://github.com/creationix/nvm) uses for `Node.js`--which allows you to keep multiple versions of the platform installed on your local system. The system allows you to easy rollback to a previous platform version or to actually switch back to an older version for some use cases.
+- Only one version of the platform can be active at any given time.
 
 #### To install and switch to a specific version of Electrode Native
 
-* Use the `ern platform use` command to install and switch to a specific version.
+- Use the `ern platform use` command to install and switch to a specific version.
 
 ###Related commands
 `ern platform install` | Used to install a specific version

@@ -1,38 +1,43 @@
 ## `command name`
-#### Description
-* {Action} ....
 
-* {Action}....
-=======
-* Action....  
-* Action....  
+#### Description
+
+- {Action} ....
+
+- # {Action}....
+- Action....
+- Action....
 
 #### Syntax
-`command syntax`  
+
+`command syntax`
 
 **Example**  
-`example syntax`  
+`example syntax`
 
-**Options**  
-
-`--option name`
-
-* description  
-* **Default**  default description  
-Example: example if available
+**Options**
 
 `--option name`
 
-* description  
-* description  
-* **Default**  default description
+- description
+- **Default** default description  
+  Example: example if available
+
+`--option name`
+
+- description
+- description
+- **Default** default description
 
 #### Remarks
-* remark 1  
-* remark 2  
+
+- remark 1
+- remark 2
 
 #### Related commands
- `command name` | description
+
+`command name` | description
 
 #### Examples
+
 (Add example code text here if applicable)

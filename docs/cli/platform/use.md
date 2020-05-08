@@ -2,7 +2,7 @@
 
 #### Description
 
-* Switch to (or activate) a specified platform version  
+- Switch to (or activate) a specified platform version
 
 #### Syntax
 
@@ -12,12 +12,12 @@
 
 `<version>`
 
-* The Electrode Native platform version to activate.
-* Sample values : `v0.18.0` / `0.18.0` / `latest`
-* Using `latest` will switch to the latest version of Electrode Native
+- The Electrode Native platform version to activate.
+- Sample values : `v0.18.0` / `0.18.0` / `latest`
+- Using `latest` will switch to the latest version of Electrode Native
 
 #### Remarks
 
-* If the target platform version is not installed locally, the `ern platform use <version>` command runs the [ern platform install] command, which installs the version—before switching to the specified version.
+- If the target platform version is not installed locally, the `ern platform use <version>` command runs the [ern platform install] command, which installs the version—before switching to the specified version.
 
 [ern platform install]: ./install.md

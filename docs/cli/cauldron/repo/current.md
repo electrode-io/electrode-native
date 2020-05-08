@@ -2,7 +2,7 @@
 
 #### Description
 
-* Display the alias and the repository URL of the active Cauldron   
+- Display the alias and the repository URL of the active Cauldron
 
 #### Syntax
 

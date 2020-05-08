@@ -2,8 +2,8 @@
 
 ### Prerequisites
 
-- `ERN_GITHUB_TOKEN` environment variable must be set.   
-This is a `Personal Access Token`, generated from GitHub, having read/write access to the different repositories.
+- `ERN_GITHUB_TOKEN` environment variable must be set.  
+  This is a `Personal Access Token`, generated from GitHub, having read/write access to the different repositories.
 
 - If you are not using `github.com` but your own GitHub enterprise server, the API url should be set in cauldron `github` configuration as `baseUrl`. If your repositories are in `github.com`, nothing needs to be done.
 
@@ -83,8 +83,7 @@ One way to do that is to just use the [ern github create-ref] command, this time
       "git+ssh://git@github.com/username/example2-miniapp.git#v1.0.0",
       "git+ssh://git@github.com/username/example3-miniapp.git#v1.0.0"
     ],
-    "miniAppsBranches": [
-    ]
+    "miniAppsBranches": []
   }
 }
 ```

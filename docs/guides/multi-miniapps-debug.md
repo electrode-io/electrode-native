@@ -76,19 +76,19 @@ Manually add a `sourceMapPathOverrides` section to configure [sourcemaps][12]:
 
 ```json
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Attach to packager",
-            "cwd": "${workspaceFolder}",
-            "type": "reactnative",
-            "request": "attach",
-            "sourceMapPathOverrides": {
-                "../../composite/node_modules/details-miniapp/*": "${workspaceFolder}/details-miniapp/*",
-                "../../composite/node_modules/list-miniapp/*": "${workspaceFolder}/list-miniapp/*"
-            }
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach to packager",
+      "cwd": "${workspaceFolder}",
+      "type": "reactnative",
+      "request": "attach",
+      "sourceMapPathOverrides": {
+        "../../composite/node_modules/details-miniapp/*": "${workspaceFolder}/details-miniapp/*",
+        "../../composite/node_modules/list-miniapp/*": "${workspaceFolder}/list-miniapp/*"
+      }
+    }
+  ]
 }
 ```
 
@@ -159,7 +159,7 @@ Now you may set breakpoints in the JavaScript code of the MiniApps.
 
 ### Step 3: Attach the debugger
 
-To attach VS Code to the React Native debugger, run the *Attach to packager*
+To attach VS Code to the React Native debugger, run the _Attach to packager_
 debug configuration. Make sure the `ern start` command has completed and is
 still running in the background. You will notice an indicator that will keep
 spinning until the next step is completed.
@@ -167,7 +167,7 @@ spinning until the next step is completed.
 ### Step 4: Enable JS Debugging in the app
 
 In the native application, bring up the [React Native developer menu][10], and
-turn on JS Debugging by tapping *Debug* (Android) or *Debug JS Remotely* (iOS).
+turn on JS Debugging by tapping _Debug_ (Android) or _Debug JS Remotely_ (iOS).
 This will result in attaching to the Visual Studio Code debugger. If debugging
 was already turned on in the native app, disable it first, then re-enable it.
 In VS Code you should now see that the debugger was attached. Check if the

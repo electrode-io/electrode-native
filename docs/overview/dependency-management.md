@@ -1,6 +1,6 @@
 ## Native dependencies management
 
-The term "native" as used throughout the Electrode Native documentation, means any code that is compiled and executed inside the mobile application itself--not in the JavaScript virtual machine. This is a departure from the common meaning of "native" meaning C/C++ code to most mobile developers.  
+The term "native" as used throughout the Electrode Native documentation, means any code that is compiled and executed inside the mobile application itself--not in the JavaScript virtual machine. This is a departure from the common meaning of "native" meaning C/C++ code to most mobile developers.
 
 This means that native app encapsulates code written in C/C++/Java/Kotlin on Android, and C/C++/ObjectiveC/Swift on iOS. This helps us easily distinguish between the JavaScript code itself and the mobile native code.
 
@@ -29,7 +29,7 @@ The `manifest.json` file contains a list of native dependencies along with their
 
 Electrode Native also queries the manifest repository when you use the `ern create-miniapp` command to know which version of React Native to use.
 
-Thus any MiniApp developed using a specific Electrode Native version will be properly aligned to the same native dependencies versions.  
+Thus any MiniApp developed using a specific Electrode Native version will be properly aligned to the same native dependencies versions.
 
 If you are a MiniApp developer intending to release open source MiniApps, then you'll want to make sure that you use the `ern add` command instead of the `yarn add` or `npm install` command--and that you upgrade the native dependency versions of your MiniApp to any new release of the platform. Use the `ern upgrade-miniapp` command to easily upgrade the native dependency versions to a new platform release.
 
@@ -45,8 +45,9 @@ The cauldron is a simple document database, which doesn't come with the downside
 
 For each mobile application version, there will be a corresponding entry in the cauldron database. For example, `Walmart iOS 17.14` or `Walmart Android 17.10.0`.  
 The cauldron stores specific information pertaining to each version of your mobile application:
-* A list of all the MiniApps (and their versions) that are part of any given version of your mobile application(s))
-* A list of all native dependencies (and their versions) used by these MiniApps  
+
+- A list of all the MiniApps (and their versions) that are part of any given version of your mobile application(s))
+- A list of all native dependencies (and their versions) used by these MiniApps
 
 This is mostly all what's needed to generate a container library.
 

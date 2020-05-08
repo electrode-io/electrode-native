@@ -16,7 +16,7 @@ ElectrodeReactContainer.initialize(
 ```
 
 The first parameter to this method is the `Application` instance. In the sample call above, we use `this` as the call is made from an `Application` extending class.  
-The second parameter is the configuration of the container and React Native. In the sample above, we enable React Native developer support. In the sample we make use of `BuildConfig.DEBUG` to enable developer mode for debug builds only. You can adapt it for your application needs.  
+The second parameter is the configuration of the container and React Native. In the sample above, we enable React Native developer support. In the sample we make use of `BuildConfig.DEBUG` to enable developer mode for debug builds only. You can adapt it for your application needs.
 
 The `initialize` method might also contain additional parameters. Respectively, one parameter per plugin configuration. Not all plugins (APIs or third-party native modules) are configurable, so most of them (>90%) won't add an extra parameter to the initialize method. One configurable plugin is `react-native-code-push` for example, as you need to pass a `deployment key` to initialize this plugin, and it also has a debug mode that you can enable or disable.
 
@@ -26,7 +26,7 @@ Before accessing MiniApps stored within an Electrode Native container, you need 
 
 Initialization of a Container should ideally take place during startup of your mobile application. Ideally it should take place in your `AppDelegate.m` in `didFinishLaunchingWithOptions:` method. Otherwise, you should call the container initialization wherever appropriate. It's best to have it initialized as soon as possible.
 
-Initialization of Container is performed through the static method `startWithConfigurations:` of `ElectrodeReactNative`.  
+Initialization of Container is performed through the static method `startWithConfigurations:` of `ElectrodeReactNative`.
 
 ```swift
 	import ElectrodeContainer
@@ -54,4 +54,3 @@ The `startWithConfigurations:` method might also take additional parameters such
 **Note** Not all plugins (APIs or third party native modules) are configurable, so most of them (>90%) won't add an extra parameter to the `initialize` method. One configurable plugin is `react-native-code-push` for example, as you need to pass a deployment key to initialize this plugin, and it also has a debug mode that you can enable or disable.
 
 To learn more about configurable plugins, see [url](url)
-

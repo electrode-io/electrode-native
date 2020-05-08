@@ -2,7 +2,7 @@
 
 #### Description
 
-* Get the local platform configuration values stored in the `~/.ern/.ernrc` file  
+- Get the local platform configuration values stored in the `~/.ern/.ernrc` file
 
 #### Syntax
 
@@ -12,7 +12,7 @@
 
 `<key>`
 
-* The key of the configuration element to get
+- The key of the configuration element to get
 
 **Whitelisted properties**
 
@@ -22,11 +22,11 @@
 - `codePushCustomHeaders`
 - `codePushCustomServerUrl`
 - `codePushProxy`
-- `logLevel` 
+- `logLevel`
 - `manifest`
 - `max-package-cache-size`
 - `package-cache-enabled`
-- `retain-tmp-dir` 
-- `showBanner`  
+- `retain-tmp-dir`
+- `showBanner`
 - `sourceMapStoreProxy`
-- `tmp-dir`  
+- `tmp-dir`

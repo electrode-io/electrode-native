@@ -2,7 +2,7 @@
 
 #### Description
 
-* Lists the native dependencies of an Electrode Native module
+- Lists the native dependencies of an Electrode Native module
 
 #### Syntax
 
@@ -12,17 +12,17 @@
 
 `--json`
 
-* Output dependencies as a single line JSON record.
+- Output dependencies as a single line JSON record.
 
 `--manifestId <manifestId>`
 
-* Id of the override Manifest entry to retrieve dependencies versions from (see [override Manifest] for more info)
+- Id of the override Manifest entry to retrieve dependencies versions from (see [override Manifest] for more info)
 
 **Arguments**
 
 `[module]`
 
-* The path to the module for which to list native dependencies. Can be any package descriptor supported by `yarn add`. If not specified, the command will assume that it is being run from withing the module folder.
+- The path to the module for which to list native dependencies. Can be any package descriptor supported by `yarn add`. If not specified, the command will assume that it is being run from withing the module folder.
 
 #### Example
 
@@ -42,6 +42,6 @@ react-native-electrode-bridge@1.5.9
 
 #### Remarks
 
-* This command will only list native dependencies.
+- This command will only list native dependencies.
 
-[override Manifest]: ../../platform-parts/manifest/override.md
+[override manifest]: ../../platform-parts/manifest/override.md

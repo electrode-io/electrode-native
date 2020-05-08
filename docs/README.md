@@ -29,7 +29,7 @@ Please see the [CONTRIBUTING guide]
 
 ## Support and Acknowledgment
 
-We'd like to thank our employer, WalmartLabs because we can work on the development of Electrode Native platform as Open Sourced Software for the needs of our internal teams and projects. 
+We'd like to thank our employer, WalmartLabs because we can work on the development of Electrode Native platform as Open Sourced Software for the needs of our internal teams and projects.
 We love the public community and the support we get, and we address your requests as much as we can.  
 We are always excited to get feedback, bug reports, and pull requests.  
 Thank you.
@@ -40,16 +40,10 @@ Copyright 2017 WalmartLabs
 
 Licensed under the [Apache License, Version 2.0].
 
-[Announcement Blog Post]: https://medium.com/walmartlabs/electrode-native-the-platform-for-integrating-react-native-into-your-apps-129cbabda7b8
-
-[CONTRIBUTING guide]: ./overview/contributing.md
-
+[announcement blog post]: https://medium.com/walmartlabs/electrode-native-the-platform-for-integrating-react-native-into-your-apps-129cbabda7b8
+[contributing guide]: ./overview/contributing.md
 [requirements]: ./overview/requirements.md
-
 [apache license, version 2.0]: https://www.apache.org/licenses/LICENSE-2.0
-
 [gitbook]: https://www.gitbook.com/
-
-[What is Electrode Native]: ./overview/what-is-ern.md
-
-[Electrode Native Case Study]: https://www.walmartlabs.com/case-studies/electrode-native
+[what is electrode native]: ./overview/what-is-ern.md
+[electrode native case study]: https://www.walmartlabs.com/case-studies/electrode-native

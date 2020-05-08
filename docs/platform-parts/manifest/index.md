@@ -24,14 +24,16 @@ By default, Electrode Native uses the master manifest. For more advanced use cas
 In order to update the manifest at any time, it is stored in a Git repository. This allows for adding new supported dependencies for an Electrode Native version at any time, without having to wait for the next Electrode Native main version to be released.
 
 For any Electrode Native version defined in the master manifest:
-* We can add new native dependencies support.  
-* We cannot change or remove existing native dependencies versions (except for bridge and APIs as the following a versioning allowing for more flexibility)
+
+- We can add new native dependencies support.
+- We cannot change or remove existing native dependencies versions (except for bridge and APIs as the following a versioning allowing for more flexibility)
 
 If you change version of or remove native dependencies, the version alignment guarantees offered by the manifest will be lost.
 
-The Electrode Native manifest repository contains:  
-* The Electrode Native manifest file: `manifest.json`  
-* Configurations for all supported third-party native modules (The configurations are used by the container generator to inject the native dependencies in the container during generation.)
+The Electrode Native manifest repository contains:
+
+- The Electrode Native manifest file: `manifest.json`
+- Configurations for all supported third-party native modules (The configurations are used by the container generator to inject the native dependencies in the container during generation.)
 
 Open source MiniApp developers should always use the master manifest. This is the default operating mode of the platform.
 

@@ -2,7 +2,7 @@
 
 #### Description
 
-* Create a new MiniApp in a new directory named after the MiniApp.
+- Create a new MiniApp in a new directory named after the MiniApp.
 
 The generated MiniApp is a starter "Hello World" app that can be launched as a standalone app on the Android or iOS platforms using our Runner (`ern run-android` and `ern run-ios`).
 
@@ -18,57 +18,57 @@ The `android` and `ios` directories are not created by this command. They will b
 
 `<appName>`
 
-* The name to use for the MiniApp. The MiniApp name must follow Electrode Native module name rules.
-* We recommend suffixing the name of MiniApp with suffix `App`
+- The name to use for the MiniApp. The MiniApp name must follow Electrode Native module name rules.
+- We recommend suffixing the name of MiniApp with suffix `App`
 
 ##### Options
 
 `--language <TypeScript | JavaScript>`
 
-* **Deprecated:** Use `--template` to use custom templates, for example
-`--template react-native-template-typescript`
-* Language to use for this MiniApp (either `TypeScript` or `JavaScript`)
-* **Default** `JavaScript`.
+- **Deprecated:** Use `--template` to use custom templates, for example
+  `--template react-native-template-typescript`
+- Language to use for this MiniApp (either `TypeScript` or `JavaScript`)
+- **Default** `JavaScript`.
 
 `--scope/-s <scope>`
 
-* Specify the npm package scope to use for the MiniApp.
-* Add the package scope automatically in the `package.json` of the generated MiniApp.
-* **Default** Package will be unscoped.
+- Specify the npm package scope to use for the MiniApp.
+- Add the package scope automatically in the `package.json` of the generated MiniApp.
+- **Default** Package will be unscoped.
 
 `--packageManager <npm | yarn>`
 
-* The package manager to be used with this MiniApp (`npm` or `yarn`)
-* This will set `ern.packageManager` in the MiniApp `package.json`.
-* This setting will only be used for `ern add` and `ern upgrade-miniapp` commands. It won't apply for creating the MiniApp. Electrode Native is internally running `react-native init` command which uses Yarn by default, if available on the machine, when creating an app. React Native does not offer this to be configured as of now. If you wish to use npm, you will have to manually remove `yarn.lock` and `node_modules/` in the MiniApp directory after creation, and run `npm install`.
-* **Default** The command will prompt for the package manager to use.
+- The package manager to be used with this MiniApp (`npm` or `yarn`)
+- This will set `ern.packageManager` in the MiniApp `package.json`.
+- This setting will only be used for `ern add` and `ern upgrade-miniapp` commands. It won't apply for creating the MiniApp. Electrode Native is internally running `react-native init` command which uses Yarn by default, if available on the machine, when creating an app. React Native does not offer this to be configured as of now. If you wish to use npm, you will have to manually remove `yarn.lock` and `node_modules/` in the MiniApp directory after creation, and run `npm install`.
+- **Default** The command will prompt for the package manager to use.
 
 `--packageName/-p <name>`
 
-* Specify the npm package name to use for the MiniApp.
-* Add the package name automatically in the `package.json` of the generated MiniApp.
-* **Default** The command will prompt for the package name to use.
+- Specify the npm package name to use for the MiniApp.
+- Add the package name automatically in the `package.json` of the generated MiniApp.
+- **Default** The command will prompt for the package name to use.
 
 `--platformVersion/-v <version>`
 
-* Specify a platform version if different from the currently activated version.
-* This option is rarely used.
-* **Default** Will use the currently activated platform version.
+- Specify a platform version if different from the currently activated version.
+- This option is rarely used.
+- **Default** Will use the currently activated platform version.
 
 `--skipNpmCheck`
 
-* Skip the check ensuring package does not already exists in npm registry.
-* **Default** The value defaults to false.
+- Skip the check ensuring package does not already exists in npm registry.
+- **Default** The value defaults to false.
 
 `--manifestId <manifestId>`
 
-* Id of the override Manifest entry to retrieve dependencies versions from (see [override Manifest][1] for more info)
+- Id of the override Manifest entry to retrieve dependencies versions from (see [override Manifest][1] for more info)
 
 `--template <template>`
 
-* The React Native project template to use.
-* Internally, Electrode Native will forward this template to 'react-native init' command.
-* Electrode Native will perform same post processing as it does on non templated MiniApps, once MiniApp is created (add 'ern' object to the package.json of the MiniApp and remove `android` and `ios` directories).
+- The React Native project template to use.
+- Internally, Electrode Native will forward this template to 'react-native init' command.
+- Electrode Native will perform same post processing as it does on non templated MiniApps, once MiniApp is created (add 'ern' object to the package.json of the MiniApp and remove `android` and `ios` directories).
 
 #### Examples
 
@@ -86,8 +86,8 @@ The `android` and `ios` directories are not created by this command. They will b
 
 #### Remarks
 
-* MiniApp names must be alphanumeric, cannot contain special characters, and cannot start with a digit.
-* Package name should be a valid npm package name.
-* This command is the `ern` equivalent of the `react-native init` command.
+- MiniApp names must be alphanumeric, cannot contain special characters, and cannot start with a digit.
+- Package name should be a valid npm package name.
+- This command is the `ern` equivalent of the `react-native init` command.
 
 [1]: ../platform-parts/manifest/override.md

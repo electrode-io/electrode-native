@@ -25,7 +25,7 @@ Once a given store is in use :
 
 - Whenever running an `ern` command, the name of the store currently in use will be displayed in the logs next to the current Cauldron name.
 
-- The [bundlestore upload] command will upload bundles to this store. 
+- The [bundlestore upload] command will upload bundles to this store.
 
 #### Example
 
@@ -33,7 +33,8 @@ Once a given store is in use :
 
 Use the store associated to access key `d49fd6a7-4957-42df-953b-8ac3a98e7cf8`
 
-*Output:*
+_Output:_
+
 ```
 ℹ Now using store mystore
 ```
@@ -41,11 +42,11 @@ Use the store associated to access key `d49fd6a7-4957-42df-953b-8ac3a98e7cf8`
 #### Related commands
 
 [bundlestore create] | Create a store  
-[bundlestore delete] | Delete a store    
+[bundlestore delete] | Delete a store  
 [bundlestore upload] | Upload a bundle to the current store
 
 [bundlestore create]: ./create.md
 [bundlestore delete]: ./delete.md
 [bundlestore upload]: ./upload.md
 [platform config set]: ../platform/config/set.md
-[Electrode Native bundle store server]: https://github.com/electrode-io/ern-bundle-store
+[electrode native bundle store server]: https://github.com/electrode-io/ern-bundle-store
