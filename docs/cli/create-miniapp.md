@@ -32,7 +32,7 @@ The `android` and `ios` directories are not created by this command. They will b
 
 `--scope/-s <scope>`
 
-* Specify the NPM package scope to use for the MiniApp.
+* Specify the npm package scope to use for the MiniApp.
 * Add the package scope automatically in the `package.json` of the generated MiniApp.
 * **Default** Package will be unscoped.
 
@@ -40,12 +40,12 @@ The `android` and `ios` directories are not created by this command. They will b
 
 * The package manager to be used with this MiniApp (`npm` or `yarn`)
 * This will set `ern.packageManager` in the MiniApp `package.json`.
-* This setting will only be used for `ern add` and `ern upgrade-miniapp` commands. It won't apply for creating the MiniApp. Electrode Native is internally running `react-native init` command which uses Yarn by default, if available on the machine, when creating an app. React Native does not offer this to be configured as of now. If you wish to use NPM, you will have to manually remove `yarn.lock` and `node_modules/` in the MiniApp directory after creation, and run `npm install`.
+* This setting will only be used for `ern add` and `ern upgrade-miniapp` commands. It won't apply for creating the MiniApp. Electrode Native is internally running `react-native init` command which uses Yarn by default, if available on the machine, when creating an app. React Native does not offer this to be configured as of now. If you wish to use npm, you will have to manually remove `yarn.lock` and `node_modules/` in the MiniApp directory after creation, and run `npm install`.
 * **Default** The command will prompt for the package manager to use.
 
 `--packageName/-p <name>`
 
-* Specify the NPM package name to use for the MiniApp.
+* Specify the npm package name to use for the MiniApp.
 * Add the package name automatically in the `package.json` of the generated MiniApp.
 * **Default** The command will prompt for the package name to use.
 
@@ -57,7 +57,7 @@ The `android` and `ios` directories are not created by this command. They will b
 
 `--skipNpmCheck`
 
-* Skip the check ensuring package does not already exists in NPM registry.
+* Skip the check ensuring package does not already exists in npm registry.
 * **Default** The value defaults to false.
 
 `--manifestId <manifestId>`
@@ -78,16 +78,16 @@ The `android` and `ios` directories are not created by this command. They will b
 
 - `ern create-miniapp MyAwesomeApp --scope MyCompany`
 
-  Creates a MiniApp named `MyAwesomeApp` and use `MyCompany` as the scope of the MiniApp NPM package.
+  Creates a MiniApp named `MyAwesomeApp` and use `MyCompany` as the scope of the MiniApp npm package.
 
 - `ern create-miniapp MyAwesomeApp --packageName my-awesome-app`
 
-  Creates a MiniApp named `MyAwesomeApp` and use `my-awesome-app` as the name of the MiniApp NPM package.
+  Creates a MiniApp named `MyAwesomeApp` and use `my-awesome-app` as the name of the MiniApp npm package.
 
 #### Remarks
 
 * MiniApp names must be alphanumeric, cannot contain special characters, and cannot start with a digit.
-* Package name should be a valid NPM package name.
+* Package name should be a valid npm package name.
 * This command is the `ern` equivalent of the `react-native init` command.
 
 [1]: ../platform-parts/manifest/override.md
