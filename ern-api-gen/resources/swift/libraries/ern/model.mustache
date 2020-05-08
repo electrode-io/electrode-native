@@ -29,10 +29,10 @@
 
     public override init() {
 {{#requiredVars}}
-        {{name}} = {{datatype}}()
+        self.{{name}} = {{datatype}}()
 {{/requiredVars}}
 {{#optionalVars}}
-        {{name}} = nil
+        self.{{name}} = nil
 {{/optionalVars}}
         super.init()
     }
@@ -42,7 +42,7 @@
 {{#isNotContainer}}
 {{^isPrimitiveType}}
         if let {{name}}Dict = dictionary["{{name}}"] as? [AnyHashable: Any] {
-            {{name}} = {{datatype}}(dictionary: {{name}}Dict)
+            self.{{name}} = {{datatype}}(dictionary: {{name}}Dict)
         } else {
             assertionFailure("\({{classname}}.tag) missing one or more required properties [{{name}}]")
             {{name}} = dictionary["{{name}}"] as! {{datatype}}
@@ -53,17 +53,17 @@
             self.{{name}} = {{name}}
         } else {
             assertionFailure("\({{classname}}.tag) missing one or more required properties [{{name}}]")
-            {{name}} = dictionary["{{name}}"] as! {{datatype}}
+            self.{{name}} = dictionary["{{name}}"] as! {{datatype}}
         }
 {{/isPrimitiveType}}
 {{/isNotContainer}}
 {{^isNotContainer}}
         if let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: Array<Any>.self, itemType: {{complexType}}.self),
              let {{baseName}}List = valid{{nameInCamelCase}} as? {{datatype}}  {
-                 {{name}} = {{baseName}}List
+                 self.{{name}} = {{baseName}}List
              } else {
                  assertionFailure("\({{classname}}.tag) missing one or more required properties[{{name}}]")
-                 {{name}} = dictionary["{{name}}"] as! {{datatype}}
+                 self.{{name}} = dictionary["{{name}}"] as! {{datatype}}
              }
 {{/isNotContainer}}
 {{/requiredVars}}
@@ -71,17 +71,17 @@
 {{#optionalVars}}
 {{#isNotContainer}}
         if let {{name}}{{^isPrimitiveType}}Dict{{/isPrimitiveType}} = dictionary["{{name}}"] as? {{#isPrimitiveType}}{{datatype}}{{/isPrimitiveType}}{{^isPrimitiveType}}[AnyHashable: Any]{{/isPrimitiveType}} {
-            {{name}} = {{^isPrimitiveType}}{{datatype}}(dictionary: {{name}}Dict){{/isPrimitiveType}}{{#isPrimitiveType}}{{name}}{{/isPrimitiveType}}
+            self.{{name}} = {{^isPrimitiveType}}{{datatype}}(dictionary: {{name}}Dict){{/isPrimitiveType}}{{#isPrimitiveType}}{{name}}{{/isPrimitiveType}}
         } else {
-            {{name}} = nil
+            self.{{name}} = nil
         }
 {{/isNotContainer}}
 {{^isNotContainer}}
         if let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: [Any].self, itemType: {{complexType}}.self),
             let {{baseName}}List = valid{{nameInCamelCase}} as? {{datatype}} {
-            {{name}} = {{baseName}}List
+            self.{{name}} = {{baseName}}List
         } else {
-            {{name}} = nil
+            self.{{name}} = nil
         }
 {{/isNotContainer}}
 {{/optionalVars}}
@@ -93,11 +93,11 @@
         var dict = [:] as [AnyHashable: Any]
 
 {{#requiredVars}}
-        dict["{{name}}"] = {{name}}{{^isPrimitiveType}}{{#isNotContainer}}.toDictionary(){{/isNotContainer}}{{^isNotContainer}}.map { $0.toDictionary() }{{/isNotContainer}}{{/isPrimitiveType}}
+        dict["{{name}}"] = self.{{name}}{{^isPrimitiveType}}{{#isNotContainer}}.toDictionary(){{/isNotContainer}}{{^isNotContainer}}.map { $0.toDictionary() }{{/isNotContainer}}{{/isPrimitiveType}}
 {{/requiredVars}}
 
 {{#optionalVars}}
-        if let nonNull{{nameInCamelCase}} = {{name}} {
+        if let nonNull{{nameInCamelCase}} = self.{{name}} {
             dict["{{name}}"] = nonNull{{nameInCamelCase}}{{^isPrimitiveType}}{{#isNotContainer}}.toDictionary(){{/isNotContainer}}{{^isNotContainer}}.map { $0.toDictionary() }{{/isNotContainer}}{{/isPrimitiveType}}
         }
 {{/optionalVars}}
@@ -139,10 +139,10 @@ public class {{classname}}: ElectrodeObject, Bridgeable {
 
     public override init() {
 {{#requiredVars}}
-        {{name}} = {{datatype}}()
+        self.{{name}} = {{datatype}}()
 {{/requiredVars}}
 {{#optionalVars}}
-        {{name}} = nil
+        self.{{name}} = nil
 {{/optionalVars}}
         super.init()
     }
@@ -152,10 +152,10 @@ public class {{classname}}: ElectrodeObject, Bridgeable {
 {{#isNotContainer}}
 {{^isPrimitiveType}}
         if let {{name}}Dict = dictionary["{{name}}"] as? [AnyHashable: Any] {
-            {{name}} = {{datatype}}(dictionary: {{name}}Dict)
+            self.{{name}} = {{datatype}}(dictionary: {{name}}Dict)
         } else {
             assertionFailure("\({{classname}}.tag) missing one or more required properties [{{name}}]")
-            {{name}} = dictionary["{{name}}"] as! {{datatype}}
+            self.{{name}} = dictionary["{{name}}"] as! {{datatype}}
         }
 {{/isPrimitiveType}}
 {{#isPrimitiveType}}
@@ -163,17 +163,17 @@ public class {{classname}}: ElectrodeObject, Bridgeable {
             self.{{name}} = {{name}}
         } else {
             assertionFailure("\({{classname}}.tag) missing one or more required properties [{{name}}]")
-            {{name}} = dictionary["{{name}}"] as! {{datatype}}
+            self.{{name}} = dictionary["{{name}}"] as! {{datatype}}
         }
 {{/isPrimitiveType}}
 {{/isNotContainer}}
 {{^isNotContainer}}
         if let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: [Any].self, itemType: {{complexType}}.self),
              let {{baseName}}List = valid{{nameInCamelCase}} as? {{datatype}}  {
-                 {{name}} = {{baseName}}List
+                 self.{{name}} = {{baseName}}List
              } else {
-             assertionFailure("\({{classname}}.tag) missing one or more required properties[{{name}}]")
-             {{name}} = dictionary["{{name}}"] as! {{datatype}}
+                 assertionFailure("\({{classname}}.tag) missing one or more required properties[{{name}}]")
+                 self.{{name}} = dictionary["{{name}}"] as! {{datatype}}
              }
 {{/isNotContainer}}
 {{/requiredVars}}
@@ -181,17 +181,17 @@ public class {{classname}}: ElectrodeObject, Bridgeable {
 {{#optionalVars}}
 {{#isNotContainer}}
         if let {{name}}{{^isPrimitiveType}}Dict{{/isPrimitiveType}} = dictionary["{{name}}"] as? {{#isPrimitiveType}}{{datatype}}{{/isPrimitiveType}}{{^isPrimitiveType}}[AnyHashable: Any]{{/isPrimitiveType}} {
-            {{name}} = {{^isPrimitiveType}}{{datatype}}(dictionary: {{name}}Dict){{/isPrimitiveType}}{{#isPrimitiveType}}{{name}}{{/isPrimitiveType}}
+            self.{{name}} = {{^isPrimitiveType}}{{datatype}}(dictionary: {{name}}Dict){{/isPrimitiveType}}{{#isPrimitiveType}}{{name}}{{/isPrimitiveType}}
         } else {
-            {{name}} = nil
+            self.{{name}} = nil
         }
 {{/isNotContainer}}
 {{^isNotContainer}}
         if let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: [Any].self, itemType: {{complexType}}.self),
             let {{baseName}}List = valid{{nameInCamelCase}} as? {{datatype}} {
-            {{name}} = {{baseName}}List
+            self.{{name}} = {{baseName}}List
         } else {
-            {{name}} = nil
+            self.{{name}} = nil
         }
 {{/isNotContainer}}
 {{/optionalVars}}
@@ -203,11 +203,11 @@ public class {{classname}}: ElectrodeObject, Bridgeable {
         var dict = [:] as [AnyHashable: Any]
 
 {{#requiredVars}}
-        dict["{{name}}"] = {{name}}{{^isPrimitiveType}}{{#isNotContainer}}.toDictionary(){{/isNotContainer}}{{^isNotContainer}}.map { $0.toDictionary() }{{/isNotContainer}}{{/isPrimitiveType}}
+        dict["{{name}}"] = self.{{name}}{{^isPrimitiveType}}{{#isNotContainer}}.toDictionary(){{/isNotContainer}}{{^isNotContainer}}.map { $0.toDictionary() }{{/isNotContainer}}{{/isPrimitiveType}}
 {{/requiredVars}}
 
 {{#optionalVars}}
-        if let nonNull{{nameInCamelCase}} = {{name}} {
+        if let nonNull{{nameInCamelCase}} = self.{{name}} {
             dict["{{name}}"] = nonNull{{nameInCamelCase}}{{^isPrimitiveType}}{{#isNotContainer}}.toDictionary(){{/isNotContainer}}{{^isNotContainer}}.map { $0.toDictionary() }{{/isNotContainer}}{{/isPrimitiveType}}
         }
 {{/optionalVars}}
