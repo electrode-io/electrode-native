@@ -82,7 +82,11 @@ export default async function start({
     const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
       descriptor
     )
-    baseComposite = baseComposite || compositeGenConfig?.baseComposite
+    baseComposite =
+      baseComposite ??
+      (compositeGenConfig?.baseComposite &&
+        PackagePath.fromString(compositeGenConfig.baseComposite))
+
     resolutions = compositeGenConfig?.resolutions
   }
 
