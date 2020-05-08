@@ -12,8 +12,8 @@
     }
 
     public override init() {
-        key1 = String()
-        key2 = Int()
+        self.key1 = String()
+        self.key2 = Int()
         super.init()
     }
 
@@ -36,8 +36,8 @@
 
     public func toDictionary() -> NSDictionary {
         var dict = [
-            "key1": key1,
-            "key2": key2,
+            "key1": self.key1,
+            "key2": self.key2,
         ] as [AnyHashable: Any]
 
         return dict as NSDictionary
@@ -59,8 +59,8 @@ public class TestMultiArgsData: ElectrodeObject, Bridgeable {
     }
 
     public override init() {
-        key1 = String()
-        key2 = Int()
+        self.key1 = String()
+        self.key2 = Int()
         super.init()
     }
 
@@ -73,8 +73,8 @@ public class TestMultiArgsData: ElectrodeObject, Bridgeable {
             self.key2 = key2
         } else {
             assertionFailure("\(TestMultiArgsData.tag) missing one or more required properties[key1,key2]")
-            key1 = dictionary["key1"] as! String
-            key2 = dictionary["key2"] as! Int
+            self.key1 = dictionary["key1"] as! String
+            self.key2 = dictionary["key2"] as! Int
         }
 
 
@@ -83,8 +83,8 @@ public class TestMultiArgsData: ElectrodeObject, Bridgeable {
 
     public func toDictionary() -> NSDictionary {
         var dict = [
-            "key1": key1,
-            "key2": key2,
+            "key1": self.key1,
+            "key2": self.key2,
         ] as [AnyHashable: Any]
 
         return dict as NSDictionary

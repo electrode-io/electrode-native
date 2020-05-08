@@ -23,9 +23,9 @@
     }
 
     public override init() {
-        name = String()
-        identifier = String()
-        showIcon = nil
+        self.name = String()
+        self.identifier = String()
+        self.showIcon = nil
         super.init()
     }
 
@@ -34,19 +34,19 @@
             self.name = name
         } else {
             assertionFailure("\(NavBarButton.tag) missing one or more required properties [name]")
-            name = dictionary["name"] as! String
+            self.name = dictionary["name"] as! String
         }
         if let identifier = dictionary["identifier"] as? String {
             self.identifier = identifier
         } else {
             assertionFailure("\(NavBarButton.tag) missing one or more required properties [identifier]")
-            identifier = dictionary["identifier"] as! String
+            self.identifier = dictionary["identifier"] as! String
         }
 
         if let showIcon = dictionary["showIcon"] as? Bool {
-            showIcon = showIcon
+            self.showIcon = showIcon
         } else {
-            showIcon = nil
+            self.showIcon = nil
         }
 
         super.init(dictionary: dictionary)
@@ -55,10 +55,10 @@
     public func toDictionary() -> NSDictionary {
         var dict = [:] as [AnyHashable: Any]
 
-        dict["name"] = name
-        dict["identifier"] = identifier
+        dict["name"] = self.name
+        dict["identifier"] = self.identifier
 
-        if let nonNullShowIcon = showIcon {
+        if let nonNullShowIcon = self.showIcon {
             dict["showIcon"] = nonNullShowIcon
         }
         return dict as NSDictionary
@@ -91,9 +91,9 @@ public class NavBarButton: ElectrodeObject, Bridgeable {
     }
 
     public override init() {
-        name = String()
-        identifier = String()
-        showIcon = nil
+        self.name = String()
+        self.identifier = String()
+        self.showIcon = nil
         super.init()
     }
 
@@ -102,19 +102,19 @@ public class NavBarButton: ElectrodeObject, Bridgeable {
             self.name = name
         } else {
             assertionFailure("\(NavBarButton.tag) missing one or more required properties [name]")
-            name = dictionary["name"] as! String
+            self.name = dictionary["name"] as! String
         }
         if let identifier = dictionary["identifier"] as? String {
             self.identifier = identifier
         } else {
             assertionFailure("\(NavBarButton.tag) missing one or more required properties [identifier]")
-            identifier = dictionary["identifier"] as! String
+            self.identifier = dictionary["identifier"] as! String
         }
 
         if let showIcon = dictionary["showIcon"] as? Bool {
-            showIcon = showIcon
+            self.showIcon = showIcon
         } else {
-            showIcon = nil
+            self.showIcon = nil
         }
 
         super.init(dictionary: dictionary)
@@ -123,10 +123,10 @@ public class NavBarButton: ElectrodeObject, Bridgeable {
     public func toDictionary() -> NSDictionary {
         var dict = [:] as [AnyHashable: Any]
 
-        dict["name"] = name
-        dict["identifier"] = identifier
+        dict["name"] = self.name
+        dict["identifier"] = self.identifier
 
-        if let nonNullShowIcon = showIcon {
+        if let nonNullShowIcon = self.showIcon {
             dict["showIcon"] = nonNullShowIcon
         }
         return dict as NSDictionary
