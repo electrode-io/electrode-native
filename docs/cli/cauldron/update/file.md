@@ -24,8 +24,8 @@
 
 #### Examples
 
-- `ern cauldron update file /Users/username/bar.json foo/bar.json`  
-Overwrite file `bar.json` in the Cauldron directory `foo`, with the file `bar.json` located in local path `/Users/username`
+- `ern cauldron update file /etc/example.json data/example.json`  
+Overwrite file `example.json` in the Cauldron directory `data`, with the file `example.json` located in local path `/etc`
 
 #### Related commands
 

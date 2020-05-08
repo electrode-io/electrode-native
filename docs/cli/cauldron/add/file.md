@@ -25,11 +25,11 @@
 
 #### Examples
 
-- `ern cauldron add file /Users/username/bar.json foo/bar.json`  
-Add the file `bar.json` from local directory `/Users/username` to the `foo` directory of the Cauldron.
+- `ern cauldron add file /etc/example.json data/example.json`  
+Add the file `example.json` from local directory `/etc` to the `data` directory of the Cauldron.
 
-- `ern cauldron add file /Users/username/bar.json foo/new.json`  
-Add the file `bar.json` from local directory `/Users/username` to the `foo` directory of the Cauldron. Rename the file to `new.json` in the Cauldron.
+- `ern cauldron add file /etc/example.json data/new.json`  
+Add the file `example.json` from local directory `/etc` to the `data` directory of the Cauldron. Rename the file to `new.json` in the Cauldron.
 
 #### Related commands
 

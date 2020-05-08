@@ -19,8 +19,8 @@
 
 #### Examples
 
-- `ern cauldron del file foo/bar.json`  
-Remove the file `bar.json` from directory `foo` of the Cauldron, 
+- `ern cauldron del file data/example.json`  
+Remove the file `example.json` from directory `data` of the Cauldron
 
 #### Related commands
 

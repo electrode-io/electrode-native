@@ -47,11 +47,11 @@ The following illustrate such a configuration:
     "pipeline":[
       {
          "name":"ern-container-publisher-git",
-         "url":"git@github.com:user/myweatherapp-android-container.git"
+         "url":"git@github.com:username/myweatherapp-android-container.git"
       },
       {
          "name":"ern-container-publisher-maven",
-         "url":"http://user.nexus.repo.com:8081/nexus/content/repositories"
+         "url": "http://repository.example.com:8081/nexus/content/repositories"
       },
       {
          "name":"ern-container-publisher-jcenter"

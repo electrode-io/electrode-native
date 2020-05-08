@@ -16,13 +16,13 @@
 
 #### Examples
 
-`ern create-plugin-config react-native-foo-plugin`
+`ern create-plugin-config react-native-example-plugin`
 
-Creates a plugin configuration for `react-native-foo-plugin` latest version
+Creates a plugin configuration for `react-native-example-plugin` latest version
 
-`ern create-plugin-config react-native-foo-plugin@1.2.0`
+`ern create-plugin-config react-native-example-plugin@1.2.0`
 
-Creates a plugin configuration for `react-native-foo-plugin` version `1.2.0`
+Creates a plugin configuration for `react-native-example-plugin` version `1.2.0`
 
 #### Remarks
 

@@ -47,7 +47,7 @@
   - **As a json string**  
   For example `--config '{"configKey": "configValue"}'`  
   - **As a file path**  
-  For example `--config /Users/username/config.json`  
+  For example `--config /etc/config.json`  
   In that case, the configuration will be read from the file
   - **As a Cauldron file path**  
   For example `--extra cauldron://config/myapp-android.json`  

@@ -209,14 +209,14 @@ To add a container using Carthage:
 2) Add the following line to your Cartfile.
 
     ```bash
-    git "git@github.com:user/myweatherapp-ios-container.git" "v1.0.0"
+    git "git@github.com:username/myweatherapp-ios-container.git" "v1.0.0"
     ```
 
 3) Create a `Cartfile.resolved` file if you don't have one or open your existing `Cartfile.resolved` file.  
 4) Add the following line to your `Cartfile.resolved` file:
 
     ```bash
-    git "git@github.com:user/myweatherapp-ios-container.git" "v1.0.0"
+    git "git@github.com:username/myweatherapp-ios-container.git" "v1.0.0"
     ```
 
 5) Install your dependencies using the following command:
@@ -232,7 +232,7 @@ To manually add a container:
 1. Clone the container to `<Your-WorkSpace>`.
 
     ```bash
-    git@github.com:user/myweatherapp-ios-container.git
+    git@github.com:username/myweatherapp-ios-container.git
     ```
 2. Open your mobile application project file in Xcode.
 3. Right click your `<your project name>` in the project navigator. Select **Add Files** to `<your project name>`. Look for `ElectrodeContainer.xcodeproj` in the file directory where you cloned the repo above.

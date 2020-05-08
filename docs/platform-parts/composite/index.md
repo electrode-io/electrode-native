@@ -106,13 +106,13 @@ Once the custom Composite project is created, and published to a git repository,
 
 #### Through Cauldron
 
-If you want to use a custom Composite repository `foo` stored in GitHub under user `user`, your `compositeGenerator` configuration should be as follow :
+If you want to use a custom Composite repository `custom-composite` stored in GitHub under user `username`, your `compositeGenerator` configuration should be as follow :
 
 ```json
 "config": {
   ...
   "compositeGenerator": {
-    "baseComposite": "git+ssh://github.com/user/foo.git"
+    "baseComposite": "git+ssh://github.com/username/custom-composite.git"
   }
 }
 ```
@@ -123,7 +123,7 @@ It is also possible to specify a specific branch/tag or SHA. For example, using 
 "config": {
   ...
   "compositeGenerator": {
-    "baseComposite": "git+ssh://github.com/user/foo.git#mybranch"
+    "baseComposite": "git+ssh://github.com/username/custom-composite.git#mybranch"
   }
 }
 ```
@@ -154,7 +154,7 @@ Electrode Native contains a few commands that are generating a Composite as part
 These commands are exposing a `baseComposite` option being either a valid git repository path or a local path on the workstation to a custom composite project. Please note that using this option will take precedence over any `baseComposite` configuration stored in Cauldron.  
 If you are using a Cauldron, there is very limited use to explicitly providing the `baseComposite` to these command.
 
-This option can however be very useful for experimentation or to test a custom Composite project before committing it to git / using it in Cauldron. For example, if your custom Composite project is stored in `/Users/foo/custom-composite` you can easily try it out with some of the commands above, before committing it to git / setting it up in Cauldron.
+This option can however be very useful for experimentation or to test a custom Composite project before committing it to git / using it in Cauldron. For example, if your custom Composite project is stored in `/etc/custom-composite` you can easily try it out with some of the commands above, before committing it to git / setting it up in Cauldron.
 
 ## Electrode Native internal flow with custom Composite
 

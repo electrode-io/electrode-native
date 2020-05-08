@@ -6,7 +6,7 @@ Triggers the regeneration of a Container from the Cauldron.
 
 #### Use Cases
 
-* In case one or more MiniApps in the Container of a native application version are tracking a specific git branch (for example https://github.com/electrode-io/MovieListMiniApp#master), using the `regen-container` command will trigger a new Container generation that will include the latest commits of the branch(es), if any.
+* In case one or more MiniApps in the Container of a native application version are tracking a specific git branch (for example https://github.com/electrode-io/movielist-miniapp#master), using the `regen-container` command will trigger a new Container generation that will include the latest commits of the branch(es), if any.
 * In case there was a problem with one of the plugin configuration stored in the Manifest, or if you are using a different version of Electrode Native with an updated native Container template, the only way to propagate these native changes to the Container would be to use this command (just make sure to use the `--fullRegen` flag in that case, to force a native Container project regeneration even though there was no changes to the list of native dependencies to be included in the Container).
 
 #### Syntax
