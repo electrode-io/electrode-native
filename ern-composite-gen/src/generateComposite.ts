@@ -179,6 +179,10 @@ async function generateFullComposite(
           `react-native@${pJson.dependencies['react-native']}`
         )
       )
+      // Also add latest version of the bridge
+      extraJsDependencies.push(
+        PackagePath.fromString(`react-native-electrode-bridge`)
+      )
       // We also need to have react added as an extra node module in metro config
       extraNodeModules.react = path.join(
         localMiniAppsPaths[0],
