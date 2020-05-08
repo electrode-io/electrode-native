@@ -218,11 +218,19 @@ describe('Platform', () => {
       expect(() => Platform.installPlatform('6.0.0')).to.throw
     })
 
-    it('should create complete directory hierarchy', () => {
+    it('should use yarn init to create a package.json', () => {
       Platform.installPlatform('3.0.0')
-      expect(
-        fs.existsSync(path.join(ernHomePath, 'versions/3.0.0/node_modules'))
-      ).true
+      sandbox.assert.calledWith(
+        execSyncStub,
+        'yarn init --yes',
+        sinon.match.any
+      )
+    })
+
+    it('should use npm init to create a package.json', () => {
+      isYarnInstalledReturn = false
+      Platform.installPlatform('3.0.0')
+      sandbox.assert.calledWith(execSyncStub, 'npm init --yes', sinon.match.any)
     })
 
     it('should use yarn add to install platform if yarn is installed', () => {

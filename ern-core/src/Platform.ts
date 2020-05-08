@@ -110,10 +110,11 @@ export default class Platform {
     const pathToVersion = this.getRootPlatformVersionPath(version)
 
     try {
-      shell.mkdir('-p', path.join(pathToVersion, 'node_modules'))
+      shell.mkdir(pathToVersion)
       shell.pushd(pathToVersion)
       if (this.isYarnInstalled()) {
         // Favor yarn if it is installed as it will greatly speed up install
+        execSync(`yarn init --yes`, { cwd: pathToVersion })
         execSync(
           `yarn add ${ERN_LOCAL_CLI_PACKAGE}@${version} --exact --ignore-engines`,
           {
@@ -121,6 +122,7 @@ export default class Platform {
           }
         )
       } else {
+        execSync(`npm init --yes`, { cwd: pathToVersion })
         execSync(`npm install ${ERN_LOCAL_CLI_PACKAGE}@${version} --exact`, {
           cwd: pathToVersion,
         })
