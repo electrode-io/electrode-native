@@ -67,9 +67,10 @@ export function resolvePackageVersionsGivenMismatchLevel(
     if (pluginVersions.length > 1) {
       // If there are multiple versions of the dependency
       if (
+        (name !== 'react-native-electrode-bridge' &&
+          containsVersionMismatch(<string[]>pluginVersions, mismatchLevel)) ||
         (name === 'react-native-electrode-bridge' &&
-          containsVersionMismatch(<string[]>pluginVersions, 'major')) ||
-        containsVersionMismatch(<string[]>pluginVersions, mismatchLevel)
+          containsVersionMismatch(<string[]>pluginVersions, 'major'))
       ) {
         // If at least one of the versions major digit differs, deem incompatibility
         result.pluginsWithMismatchingVersions.push(name)
