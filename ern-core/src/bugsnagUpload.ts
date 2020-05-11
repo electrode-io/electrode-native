@@ -1,7 +1,7 @@
 import { createProxyAgentFromErnConfig } from './createProxyAgent'
 import log from './log'
 import kax from './kax'
-import * as bugsnag from 'ern-bugsnag-sourcemaps'
+import * as bugsnag from 'bugsnag-sourcemaps'
 
 export async function bugsnagUpload({
   apiKey,
@@ -11,7 +11,6 @@ export async function bugsnagUpload({
   sourceMap,
   uploadNodeModules,
   uploadSources,
-  uploadSourcesGlob,
 }: {
   apiKey: string
   minifiedFile: string
@@ -20,7 +19,6 @@ export async function bugsnagUpload({
   sourceMap: string
   uploadNodeModules?: boolean
   uploadSources: boolean
-  uploadSourcesGlob?: string[]
 }) {
   const agent = createProxyAgentFromErnConfig('bugsnagProxy', { https: true })
   const codeBundleId = process.env.ERN_BUGSNAG_CODE_BUNDLE_ID
@@ -35,7 +33,6 @@ export async function bugsnagUpload({
     sourceMap,
     uploadNodeModules,
     uploadSources,
-    uploadSourcesGlob,
   }
   log.trace(
     `[bugsnagUpload] options: ${JSON.stringify(bugsnagOptions, null, 2)}`
