@@ -18,10 +18,10 @@
 
     public override init() {
 {{#requiredParams}}
-        {{baseName}} = {{dataType}}()
+        self.{{baseName}} = {{dataType}}()
 {{/requiredParams}}
 {{#optionalParams}}
-        {{baseName}} = nil
+        self.{{baseName}} = nil
 {{/optionalParams}}
         super.init()
     }
@@ -38,10 +38,10 @@
 {{/isPrimitiveType}}
 {{^isPrimitiveType}}
 {{^isListContainer}}
-            {{baseName}} = {{dataType}}(dictionary: {{baseName}}Dict)
+            self.{{baseName}} = {{dataType}}(dictionary: {{baseName}}Dict)
 {{/isListContainer}}
 {{#isListContainer}}
-            {{baseName}} = {{baseName}}Dict.map({ obj in
+            self.{{baseName}} = {{baseName}}Dict.map({ obj in
 {{complexType}}(dictionary: obj as! [AnyHashable: Any])
             })
 {{/isListContainer}}
@@ -61,9 +61,9 @@
 {{^isPrimitiveType}}
 
         if let {{baseName}}Dict = dictionary["{{baseName}}"] as? [AnyHashable: Any] {
-            {{baseName}} = {{dataType}}(dictionary: {{baseName}}Dict)
+            self.{{baseName}} = {{dataType}}(dictionary: {{baseName}}Dict)
         } else {
-            {{baseName}} = nil
+            self.{{baseName}} = nil
         }
 {{/isPrimitiveType}}
 {{/optionalParams}}
@@ -74,12 +74,12 @@
     public func toDictionary() -> NSDictionary {
         var dict = [
 {{#requiredParams}}
-            "{{baseName}}": {{baseName}}{{^isPrimitiveType}}.toDictionary(){{/isPrimitiveType}},
+            "{{baseName}}": self.{{baseName}}{{^isPrimitiveType}}.toDictionary(){{/isPrimitiveType}},
 {{/requiredParams}}
         ] as [AnyHashable: Any]
 
 {{#optionalParams}}
-        if let nonNull{{baseName}} = {{baseName}} {
+        if let nonNull{{baseName}} = self.{{baseName}} {
             dict["{{baseName}}"] = nonNull{{baseName}}{{^isPrimitiveType}}.toDictionary(){{/isPrimitiveType}}
         }
 {{/optionalParams}}
@@ -108,10 +108,10 @@ public class {{requestDataType}}: ElectrodeObject, Bridgeable {
 
     public override init() {
 {{#requiredParams}}
-        {{baseName}} = {{dataType}}()
+        self.{{baseName}} = {{dataType}}()
 {{/requiredParams}}
 {{#optionalParams}}
-        {{baseName}} = nil
+        self.{{baseName}} = nil
 {{/optionalParams}}
         super.init()
     }
@@ -128,10 +128,10 @@ public class {{requestDataType}}: ElectrodeObject, Bridgeable {
 {{/isPrimitiveType}}
 {{^isPrimitiveType}}
 {{^isListContainer}}
-            {{baseName}} = {{dataType}}(dictionary: {{baseName}}Dict)
+            self.{{baseName}} = {{dataType}}(dictionary: {{baseName}}Dict)
 {{/isListContainer}}
 {{#isListContainer}}
-            {{baseName}} = {{baseName}}Dict.map({ obj in
+            self.{{baseName}} = {{baseName}}Dict.map({ obj in
 {{complexType}}(dictionary: obj as! [AnyHashable: Any])
             })
 {{/isListContainer}}
@@ -140,20 +140,20 @@ public class {{requestDataType}}: ElectrodeObject, Bridgeable {
         } else {
             assertionFailure("\({{requestDataType}}.tag) missing one or more required properties[{{#requiredParams}}{{baseName}}{{^last}},{{/last}}{{/requiredParams}}]")
 {{#requiredParams}}
-            {{baseName}} = dictionary["{{baseName}}"] as! {{dataType}}
+            self.{{baseName}} = dictionary["{{baseName}}"] as! {{dataType}}
 {{/requiredParams}}
         }
 
 {{#optionalParams}}
 {{#isPrimitiveType}}
-        {{baseName}} = dictionary["{{baseName}}"] as? {{dataType}}
+        self.{{baseName}} = dictionary["{{baseName}}"] as? {{dataType}}
 {{/isPrimitiveType}}
 {{^isPrimitiveType}}
 
         if let {{baseName}}Dict = dictionary["{{baseName}}"] as? [AnyHashable: Any] {
-            {{baseName}} = {{dataType}}(dictionary: {{baseName}}Dict)
+            self.{{baseName}} = {{dataType}}(dictionary: {{baseName}}Dict)
         } else {
-            {{baseName}} = nil
+            self.{{baseName}} = nil
         }
 {{/isPrimitiveType}}
 {{/optionalParams}}
@@ -164,12 +164,12 @@ public class {{requestDataType}}: ElectrodeObject, Bridgeable {
     public func toDictionary() -> NSDictionary {
         var dict = [
 {{#requiredParams}}
-            "{{baseName}}": {{baseName}}{{^isPrimitiveType}}.toDictionary(){{/isPrimitiveType}},
+            "{{baseName}}": self.{{baseName}}{{^isPrimitiveType}}.toDictionary(){{/isPrimitiveType}},
 {{/requiredParams}}
         ] as [AnyHashable: Any]
 
 {{#optionalParams}}
-        if let nonNull{{baseName}} = {{baseName}} {
+        if let nonNull{{baseName}} = self.{{baseName}} {
             dict["{{baseName}}"] = nonNull{{baseName}}{{^isPrimitiveType}}.toDictionary(){{/isPrimitiveType}}
         }
 {{/optionalParams}}

@@ -39,17 +39,17 @@
     }
 
     public override init() {
-        name = String()
-        version = Double()
-        value = nil
-        domain = nil
-        path = nil
-        uri = nil
-        expiry = nil
-        leftButton = nil
-        rightButtons = nil
-        isGuestUser = nil
-        mergeType = nil
+        self.name = String()
+        self.version = Double()
+        self.value = nil
+        self.domain = nil
+        self.path = nil
+        self.uri = nil
+        self.expiry = nil
+        self.leftButton = nil
+        self.rightButtons = nil
+        self.isGuestUser = nil
+        self.mergeType = nil
         super.init()
     }
 
@@ -58,60 +58,60 @@
             self.name = name
         } else {
             assertionFailure("\(ErnObject.tag) missing one or more required properties [name]")
-            name = dictionary["name"] as! String
+            self.name = dictionary["name"] as! String
         }
         if let version = dictionary["version"] as? Double {
             self.version = version
         } else {
             assertionFailure("\(ErnObject.tag) missing one or more required properties [version]")
-            version = dictionary["version"] as! Double
+            self.version = dictionary["version"] as! Double
         }
 
         if let value = dictionary["value"] as? String {
-            value = value
+            self.value = value
         } else {
-            value = nil
+            self.value = nil
         }
         if let domain = dictionary["domain"] as? String {
-            domain = domain
+            self.domain = domain
         } else {
-            domain = nil
+            self.domain = nil
         }
         if let path = dictionary["path"] as? String {
-            path = path
+            self.path = path
         } else {
-            path = nil
+            self.path = nil
         }
         if let uri = dictionary["uri"] as? String {
-            uri = uri
+            self.uri = uri
         } else {
-            uri = nil
+            self.uri = nil
         }
         if let expiry = dictionary["expiry"] as? Int64 {
-            expiry = expiry
+            self.expiry = expiry
         } else {
-            expiry = nil
+            self.expiry = nil
         }
         if let leftButtonDict = dictionary["leftButton"] as? [AnyHashable: Any] {
-            leftButton = NavBarButton(dictionary: leftButtonDict)
+            self.leftButton = NavBarButton(dictionary: leftButtonDict)
         } else {
-            leftButton = nil
+            self.leftButton = nil
         }
         if let validRightButtons = try? NSObject.generateObject(data: dictionary["rightButtons"], classType: [Any].self, itemType: NavBarButton.self),
             let rightButtonsList = validRightButtons as? [NavBarButton] {
-            rightButtons = rightButtonsList
+            self.rightButtons = rightButtonsList
         } else {
-            rightButtons = nil
+            self.rightButtons = nil
         }
         if let isGuestUser = dictionary["isGuestUser"] as? Bool {
-            isGuestUser = isGuestUser
+            self.isGuestUser = isGuestUser
         } else {
-            isGuestUser = nil
+            self.isGuestUser = nil
         }
         if let mergeType = dictionary["mergeType"] as? Int {
-            mergeType = mergeType
+            self.mergeType = mergeType
         } else {
-            mergeType = nil
+            self.mergeType = nil
         }
 
         super.init(dictionary: dictionary)
@@ -120,34 +120,34 @@
     public func toDictionary() -> NSDictionary {
         var dict = [:] as [AnyHashable: Any]
 
-        dict["name"] = name
-        dict["version"] = version
+        dict["name"] = self.name
+        dict["version"] = self.version
 
-        if let nonNullValue = value {
+        if let nonNullValue = self.value {
             dict["value"] = nonNullValue
         }
-        if let nonNullDomain = domain {
+        if let nonNullDomain = self.domain {
             dict["domain"] = nonNullDomain
         }
-        if let nonNullPath = path {
+        if let nonNullPath = self.path {
             dict["path"] = nonNullPath
         }
-        if let nonNullUri = uri {
+        if let nonNullUri = self.uri {
             dict["uri"] = nonNullUri
         }
-        if let nonNullExpiry = expiry {
+        if let nonNullExpiry = self.expiry {
             dict["expiry"] = nonNullExpiry
         }
-        if let nonNullLeftButton = leftButton {
+        if let nonNullLeftButton = self.leftButton {
             dict["leftButton"] = nonNullLeftButton.toDictionary()
         }
-        if let nonNullRightButtons = rightButtons {
+        if let nonNullRightButtons = self.rightButtons {
             dict["rightButtons"] = nonNullRightButtons.map { $0.toDictionary() }
         }
-        if let nonNullIsGuestUser = isGuestUser {
+        if let nonNullIsGuestUser = self.isGuestUser {
             dict["isGuestUser"] = nonNullIsGuestUser
         }
-        if let nonNullMergeType = mergeType {
+        if let nonNullMergeType = self.mergeType {
             dict["mergeType"] = nonNullMergeType
         }
         return dict as NSDictionary
@@ -196,17 +196,17 @@ public class ErnObject: ElectrodeObject, Bridgeable {
     }
 
     public override init() {
-        name = String()
-        version = Double()
-        value = nil
-        domain = nil
-        path = nil
-        uri = nil
-        expiry = nil
-        leftButton = nil
-        rightButtons = nil
-        isGuestUser = nil
-        mergeType = nil
+        self.name = String()
+        self.version = Double()
+        self.value = nil
+        self.domain = nil
+        self.path = nil
+        self.uri = nil
+        self.expiry = nil
+        self.leftButton = nil
+        self.rightButtons = nil
+        self.isGuestUser = nil
+        self.mergeType = nil
         super.init()
     }
 
@@ -215,60 +215,60 @@ public class ErnObject: ElectrodeObject, Bridgeable {
             self.name = name
         } else {
             assertionFailure("\(ErnObject.tag) missing one or more required properties [name]")
-            name = dictionary["name"] as! String
+            self.name = dictionary["name"] as! String
         }
         if let version = dictionary["version"] as? Double {
             self.version = version
         } else {
             assertionFailure("\(ErnObject.tag) missing one or more required properties [version]")
-            version = dictionary["version"] as! Double
+            self.version = dictionary["version"] as! Double
         }
 
         if let value = dictionary["value"] as? String {
-            value = value
+            self.value = value
         } else {
-            value = nil
+            self.value = nil
         }
         if let domain = dictionary["domain"] as? String {
-            domain = domain
+            self.domain = domain
         } else {
-            domain = nil
+            self.domain = nil
         }
         if let path = dictionary["path"] as? String {
-            path = path
+            self.path = path
         } else {
-            path = nil
+            self.path = nil
         }
         if let uri = dictionary["uri"] as? String {
-            uri = uri
+            self.uri = uri
         } else {
-            uri = nil
+            self.uri = nil
         }
         if let expiry = dictionary["expiry"] as? Int64 {
-            expiry = expiry
+            self.expiry = expiry
         } else {
-            expiry = nil
+            self.expiry = nil
         }
         if let leftButtonDict = dictionary["leftButton"] as? [AnyHashable: Any] {
-            leftButton = NavBarButton(dictionary: leftButtonDict)
+            self.leftButton = NavBarButton(dictionary: leftButtonDict)
         } else {
-            leftButton = nil
+            self.leftButton = nil
         }
         if let validRightButtons = try? NSObject.generateObject(data: dictionary["rightButtons"], classType: [Any].self, itemType: NavBarButton.self),
             let rightButtonsList = validRightButtons as? [NavBarButton] {
-            rightButtons = rightButtonsList
+            self.rightButtons = rightButtonsList
         } else {
-            rightButtons = nil
+            self.rightButtons = nil
         }
         if let isGuestUser = dictionary["isGuestUser"] as? Bool {
-            isGuestUser = isGuestUser
+            self.isGuestUser = isGuestUser
         } else {
-            isGuestUser = nil
+            self.isGuestUser = nil
         }
         if let mergeType = dictionary["mergeType"] as? Int {
-            mergeType = mergeType
+            self.mergeType = mergeType
         } else {
-            mergeType = nil
+            self.mergeType = nil
         }
 
         super.init(dictionary: dictionary)
@@ -277,34 +277,34 @@ public class ErnObject: ElectrodeObject, Bridgeable {
     public func toDictionary() -> NSDictionary {
         var dict = [:] as [AnyHashable: Any]
 
-        dict["name"] = name
-        dict["version"] = version
+        dict["name"] = self.name
+        dict["version"] = self.version
 
-        if let nonNullValue = value {
+        if let nonNullValue = self.value {
             dict["value"] = nonNullValue
         }
-        if let nonNullDomain = domain {
+        if let nonNullDomain = self.domain {
             dict["domain"] = nonNullDomain
         }
-        if let nonNullPath = path {
+        if let nonNullPath = self.path {
             dict["path"] = nonNullPath
         }
-        if let nonNullUri = uri {
+        if let nonNullUri = self.uri {
             dict["uri"] = nonNullUri
         }
-        if let nonNullExpiry = expiry {
+        if let nonNullExpiry = self.expiry {
             dict["expiry"] = nonNullExpiry
         }
-        if let nonNullLeftButton = leftButton {
+        if let nonNullLeftButton = self.leftButton {
             dict["leftButton"] = nonNullLeftButton.toDictionary()
         }
-        if let nonNullRightButtons = rightButtons {
+        if let nonNullRightButtons = self.rightButtons {
             dict["rightButtons"] = nonNullRightButtons.map { $0.toDictionary() }
         }
-        if let nonNullIsGuestUser = isGuestUser {
+        if let nonNullIsGuestUser = self.isGuestUser {
             dict["isGuestUser"] = nonNullIsGuestUser
         }
-        if let nonNullMergeType = mergeType {
+        if let nonNullMergeType = self.mergeType {
             dict["mergeType"] = nonNullMergeType
         }
         return dict as NSDictionary
