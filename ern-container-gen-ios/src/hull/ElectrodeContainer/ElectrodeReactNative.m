@@ -285,6 +285,7 @@ static NSString *enableBundleStore = @"enableBundleStore";
                 CFStringRef errorDescription = CFErrorCopyDescription(error);
                 NSLog(@"Failed to load font: %@", errorDescription);
                 CFRelease(errorDescription);
+                CFRelease(error);
             }
             CFRelease(font);
             CFRelease(provider);
