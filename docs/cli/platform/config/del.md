@@ -2,7 +2,7 @@
 
 #### Description
 
-* Delete the local platform configuration value stored in the `~/.ern/.ernrc` file for whitelisted properties.  
+- Delete the local platform configuration value stored in the `~/.ern/.ernrc` file for whitelisted properties.
 
 #### Syntax
 
@@ -12,7 +12,7 @@
 
 `<key>`
 
-* The key of the configuration element to delete
+- The key of the configuration element to delete
 
 **Whitelisted properties**
 
@@ -22,11 +22,11 @@
 - `codePushCustomHeaders`
 - `codePushCustomServerUrl`
 - `codePushProxy`
-- `logLevel` 
+- `logLevel`
 - `manifest`
 - `max-package-cache-size`
 - `package-cache-enabled`
-- `retain-tmp-dir` 
-- `showBanner`  
+- `retain-tmp-dir`
+- `showBanner`
 - `sourceMapStoreProxy`
 - `tmp-dir`

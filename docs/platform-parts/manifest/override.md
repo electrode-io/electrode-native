@@ -22,10 +22,10 @@ The following example shows a configuration that includes a partial manifest ove
 }
 ```
 
-The configuration object should be **manually added to your cauldron** at the same level as the `nativeApps` array.  
+The configuration object should be **manually added to your cauldron** at the same level as the `nativeApps` array.
 
-* The `override url` is the url of the GitHub repository containing your own Manifest  
-* The `override type` value can be either partial or full. For most use cases you'll use the partial; full can be useful in rare cases.
+- The `override url` is the url of the GitHub repository containing your own Manifest
+- The `override type` value can be either partial or full. For most use cases you'll use the partial; full can be useful in rare cases.
 
 #### Partial override
 
@@ -35,7 +35,7 @@ For plugins (native modules) configurations using the partial override type, Ele
 
 #### Full override
 
-For dependencies or plugin configurations, a full override means that Electrode Native only queries the override manifest. The master manifest is never used. A full override  completely masks the master manifest.
+For dependencies or plugin configurations, a full override means that Electrode Native only queries the override manifest. The master manifest is never used. A full override completely masks the master manifest.
 
 #### manifest.json document
 
@@ -51,21 +51,17 @@ The new `manifest.json` document associate a `manifest id` (manifest object key)
     "targetNativeDependencies": [
       "react-native@0.59.4",
       "react-native-electrode-bridge@1.5.17",
-      "react-native-maps@0.23.0",
+      "react-native-maps@0.23.0"
     ],
-    "targetJsDependencies": [
-      "react@16.8.3"
-    ]
+    "targetJsDependencies": ["react@16.8.3"]
   },
   "next": {
-     "targetNativeDependencies": [
+    "targetNativeDependencies": [
       "react-native@0.60.0",
       "react-native-electrode-bridge@1.5.18",
-      "react-native-maps@0.24.0",
+      "react-native-maps@0.24.0"
     ],
-    "targetJsDependencies": [
-      "react@17.0.0"
-    ]
+    "targetJsDependencies": ["react@17.0.0"]
   }
 }
 ```

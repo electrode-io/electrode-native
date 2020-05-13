@@ -25,7 +25,8 @@ This is the key that was obtained when initially running the [bundlestore create
 
 Delete the store associated to access key `d49fd6a7-4957-42df-953b-8ac3a98e7cf8`
 
-*Output:*
+_Output:_
+
 ```
 ℹ Deleted store mystore
 ```
@@ -33,11 +34,11 @@ Delete the store associated to access key `d49fd6a7-4957-42df-953b-8ac3a98e7cf8`
 #### Related commands
 
 [bundlestore create] | Create a store  
-[bundlestore use] | Use a store     
+[bundlestore use] | Use a store  
 [bundlestore upload] | Upload a bundle to the current store
 
 [bundlestore create]: ./create.md
 [bundlestore use]: ./use.md
 [bundlestore upload]: ./upload.md
 [platform config set]: ../platform/config/set.md
-[Electrode Native bundle store server]: https://github.com/electrode-io/ern-bundle-store
+[electrode native bundle store server]: https://github.com/electrode-io/ern-bundle-store

@@ -16,7 +16,7 @@ Create a new store in the bundle store server
 
 `<storeName>`
 
-The name of the store to create. 
+The name of the store to create.
 This name is also used as a unique identifier for the store, therefore the command will fail in case a store with a similar name already exist in the bundle store server.
 
 #### Remarks
@@ -33,7 +33,8 @@ Upon successful completion of this command :
 
 Creates a new store with name `mystore`
 
-*Output:*
+_Output:_
+
 ```
 ℹ Store mystore was successfuly created
 ℹ AccessKey : d49fd6a7-4957-42df-953b-8ac3a98e7cf8
@@ -49,4 +50,4 @@ Creates a new store with name `mystore`
 [bundlestore delete]: ./delete.md
 [bundlestore upload]: ./upload.md
 [platform config set]: ../platform/config/set.md
-[Electrode Native bundle store server]: https://github.com/electrode-io/ern-bundle-store
+[electrode native bundle store server]: https://github.com/electrode-io/ern-bundle-store

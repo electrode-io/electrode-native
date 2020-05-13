@@ -2,47 +2,45 @@
 
 #### Description
 
-* Combine multiple Cauldron operations in a single command  
+- Combine multiple Cauldron operations in a single command
 
 #### Syntax
 
-`ern cauldron batch`  
+`ern cauldron batch`
 
-**Options**  
+**Options**
 
 `--addMiniapps <miniapps..>`
 
-* Add one or more MiniApp versions to a target native application version Container
-
+- Add one or more MiniApp versions to a target native application version Container
 
 `--updateMiniapps <miniapps..>`
 
-* Update the version of one or more MiniApps in a target native application version Container
-
+- Update the version of one or more MiniApps in a target native application version Container
 
 `--delMiniapps <miniapps..>`
 
-* Remove one or more MiniApps from a target native application version Container  
+- Remove one or more MiniApps from a target native application version Container
 
 `--resetCache`\
 
-* Indicates whether to reset the React Native cache prior to bundling
-* **Default** false
+- Indicates whether to reset the React Native cache prior to bundling
+- **Default** false
 
 #### Remarks
 
-* The `ern cauldron batch [--option <value..>]` command performs operations in the following order:  
+- The `ern cauldron batch [--option <value..>]` command performs operations in the following order:
 
-1) [delMiniapps]  
-2) [updateMiniapps]  
-3) [addMiniapps]
+1. [delMiniapps]
+2. [updateMiniapps]
+3. [addMiniapps]
 
-* The following types of MiniApp paths are not supported by `--addMiniapps` and `--updateMiniApps` :
+- The following types of MiniApp paths are not supported by `--addMiniapps` and `--updateMiniApps` :
   - File path (ex `file://etc/example-miniapp`)
   - Git path missing branch/tag or commit sha (ex: `https://github.com/username/example-miniapp.git`)
   - Registry path missing version (ex: `example-miniapp`)
   - Registry path using a version range (ex: `example-miniapp@^1.0.0`)
 
-[delMiniapps]: del/miniapps.md
-[updateMiniapps]: update/miniapps.md
-[addMiniapps]: add/miniapps.md
+[delminiapps]: del/miniapps.md
+[updateminiapps]: update/miniapps.md
+[addminiapps]: add/miniapps.md

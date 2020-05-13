@@ -2,7 +2,7 @@
 
 #### Description
 
-* Update one or more properties of a native application version. 
+- Update one or more properties of a native application version.
 
 #### Syntax
 
@@ -12,23 +12,23 @@
 
 `<descriptor>`
 
-* A complete native application descriptor representing the native application version to update.
+- A complete native application descriptor representing the native application version to update.
 
-**Options**  
+**Options**
 
 `--isReleased`
 
-* Release status of the native application version.  
+- Release status of the native application version.
 
-`--description`  
+`--description`
 
-* Description of the native application version.
+- Description of the native application version.
 
 #### Remarks
 
-* The `descriptor` value should be a *complete native application descriptor*.  
-* The `ern cauldron update nativeapp <descriptor>` command works only on a specified native application version.  
-* Switching a native application version from `non released` status to `released` status changes the behavior of some commands.  
+- The `descriptor` value should be a _complete native application descriptor_.
+- The `ern cauldron update nativeapp <descriptor>` command works only on a specified native application version.
+- Switching a native application version from `non released` status to `released` status changes the behavior of some commands.
 
 #### Related commands
 

@@ -13,4 +13,4 @@ When an Event message is sent from any side, the Electrode Native bridge looks f
 
 Payloads for Requests, Responses, or Events can be primitive types, but the Electrode Native bridge also supports complex object payloads (full-fledged model classes).
 
-[Electrode Native Bridge]:https://github.com/electrode-io/react-native-electrode-bridge
+[electrode native bridge]: https://github.com/electrode-io/react-native-electrode-bridge

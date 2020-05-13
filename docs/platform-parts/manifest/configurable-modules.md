@@ -1,6 +1,6 @@
 At runtime, some native modules require additional configuration settings. For example, the `react-native-code-push` native module requires a deployment key upon initialization.
 
-Configurable plugins have some source code associated to them in the manifest plugin configuration file  in addition to the `config.json` file.
+Configurable plugins have some source code associated to them in the manifest plugin configuration file in addition to the `config.json` file.
 
 For each configurable plugin added to a container, an extra parameter must be added to the container initialization method that is called by the mobile application. This extra parameter allows the client code to pass the configuration of the plugin--at the time the container is initialized.
 

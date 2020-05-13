@@ -51,17 +51,21 @@ You should specify the custom application name in the `codePush` config object o
 
 ```json
 {
-  "nativeApps": [{
-    "name": "MyAwesomeApp",
-    "platforms": [{
-      "name": "android",
-      "config": {
-        "codePush": {
-          "appName": "MyAwesomeAppForAndroid"
+  "nativeApps": [
+    {
+      "name": "MyAwesomeApp",
+      "platforms": [
+        {
+          "name": "android",
+          "config": {
+            "codePush": {
+              "appName": "MyAwesomeAppForAndroid"
+            }
+          }
         }
-      }
-    }]
-  }]
+      ]
+    }
+  ]
 }
 ```
 
@@ -99,7 +103,8 @@ For illustration, here is how we would store the two deployments we created for 
   "name": "android",
   "config": {
     "codePush": {
-      "deployments": [{
+      "deployments": [
+        {
           "name": "Production"
         },
         {
@@ -126,12 +131,9 @@ For example, for your Android application, if `-dev-debug` versions are associat
   "name": "android",
   "config": {
     "codePush": {
-      "deployments": [
-        "Staging",
-        "QA",
-        "Production"
-      ],
-      "versionModifiers": [{
+      "deployments": ["Staging", "QA", "Production"],
+      "versionModifiers": [
+        {
           "deploymentName": "Staging",
           "modifier": "$1-qa-debug"
         },
@@ -177,7 +179,7 @@ ern add react-native-code-push
 Then in your MiniApp, decorate your MiniApp `Component` class with `codePush`, as illustrated by the following sample :
 
 ```js
-import codePush from "react-native-code-push";
+import codePush from 'react-native-code-push'
 
 // [...]
 
@@ -188,8 +190,8 @@ class App extends Component {
 App = codePush({
   checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
   installMode: codePush.InstallMode.ON_NEXT_RESUME,
-  minimumBackgroundDuration: 60 * 2
-})(App);
+  minimumBackgroundDuration: 60 * 2,
+})(App)
 ```
 
 You can use different values for `checkFrequency` or `installMode` based on your use case.

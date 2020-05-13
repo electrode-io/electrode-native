@@ -17,4 +17,4 @@ The Electrode Native runner supports containers that include multiple MiniApps. 
 ### Related commands
 
 - `ern run-ios` and `ern run-android`
-Launches one or more MiniApps in the Electrode Native runner application.
+  Launches one or more MiniApps in the Electrode Native runner application.

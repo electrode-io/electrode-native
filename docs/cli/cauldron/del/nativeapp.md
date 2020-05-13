@@ -2,19 +2,19 @@
 
 #### Description
 
-* Remove a native application entry from a Cauldron
+- Remove a native application entry from a Cauldron
 
 #### Syntax
 
-`ern cauldron del nativeapp <descriptor>` 
+`ern cauldron del nativeapp <descriptor>`
 
 **Arguments**
 
-`<descriptor>` 
+`<descriptor>`
 
-* A partial native application descriptor or a complete native application descriptor representing the native application entry to be removed from the Cauldron.
+- A partial native application descriptor or a complete native application descriptor representing the native application entry to be removed from the Cauldron.
 
-**Example**  
+**Example**
 
 `ern cauldron del nativeapp TestApp`  
 Remove the native application named `TestApp` from the cauldron.  
@@ -30,4 +30,4 @@ All other versions of `TestApp` `android` will remain untouched.
 
 #### Remarks
 
-* The `ern cauldron del nativeapp <descriptor>` command is rarely used for Cauldrons in production environments.  
+- The `ern cauldron del nativeapp <descriptor>` command is rarely used for Cauldrons in production environments.

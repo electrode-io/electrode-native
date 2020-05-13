@@ -2,65 +2,70 @@
 
 #### Description
 
-* Create an implementation skeleton project for a specified API  
-**Note** This command does not require that you are the author of the API that you are planning to implement, but it requires that the API has been created first.  
+- Create an implementation skeleton project for a specified API  
+  **Note** This command does not require that you are the author of the API that you are planning to implement, but it requires that the API has been created first.
 
 #### Syntax
 
-`ern create-api-impl <apiName> [apiImplName]`  
+`ern create-api-impl <apiName> [apiImplName]`
 
 **Arguments**
 
 `<apiName>`
 
-* The package descriptor of the API for which to create an API implementation project
-* We recommend suffixing the name of API implementation with suffix `Impl`
+- The package descriptor of the API for which to create an API implementation project
+- We recommend suffixing the name of API implementation with suffix `Impl`
 
 `[apiImplName]`
-* The name of the API implementation project.  The API implementation name must follow Electrode Native module name rules.
-* If name of the apiImpl is missing the apiName is converted to came case notation and numbers are removed if any.
 
-**Options**  
+- The name of the API implementation project. The API implementation name must follow Electrode Native module name rules.
+- If name of the apiImpl is missing the apiName is converted to came case notation and numbers are removed if any.
+
+**Options**
 
 `--nativeOnly/-n`
 
-* Generate an implementation skeleton project for a native implementation of the API  
+- Generate an implementation skeleton project for a native implementation of the API
 
 `--jsOnly/-j`
 
-* Generate an implementation skeleton project for a JavaScript implementation of the API
-  
+- Generate an implementation skeleton project for a JavaScript implementation of the API
+
 `--packageName/-p`
-* Specify the npm package name to use for the API implementation.
-* Add the package name automatically in the `package.json` of the generated API implementation.
-* **Default** The command will prompt for the package name to use.
+
+- Specify the npm package name to use for the API implementation.
+- Add the package name automatically in the `package.json` of the generated API implementation.
+- **Default** The command will prompt for the package name to use.
 
 `--scope/-s`
-* Specify the npm package scope to use for the API implementation.
-* Add the package scope automatically in the `package.json` of the generated API implementation.
-* **Default** Package will be unscoped.
+
+- Specify the npm package scope to use for the API implementation.
+- Add the package scope automatically in the `package.json` of the generated API implementation.
+- **Default** Package will be unscoped.
 
 `--outputDirectory/-o <directory>`
 
-* Generate the project in a specified output directory  
-* **Default**  The project is generated in a new directory named as the API implementation project. The new directory is created in the current working directory.  
+- Generate the project in a specified output directory
+- **Default** The project is generated in a new directory named as the API implementation project. The new directory is created in the current working directory.
 
 `--hasConfig`
-* Indicates if this api implementation requires some config during initialization.
-* This option will be stored and reused during container generation to enforce config initialization
+
+- Indicates if this api implementation requires some config during initialization.
+- This option will be stored and reused during container generation to enforce config initialization
 
 `--skipNpmCheck`
-* Skip the check ensuring package does not already exists in npm registry
-* **Default** The value defaults to false. 
+
+- Skip the check ensuring package does not already exists in npm registry
+- **Default** The value defaults to false.
 
 `--force/-f`
 
-* Force the creation of an API implementation project  
-* **Caution**  If there is already an implementation project in the target directory, the new project will overwrite the existing project completely. Use this option only if you are sure that you can overwrite any existing project.  
+- Force the creation of an API implementation project
+- **Caution** If there is already an implementation project in the target directory, the new project will overwrite the existing project completely. Use this option only if you are sure that you can overwrite any existing project.
 
 `--manifestId <manifestId>`
 
-* Id of the override Manifest entry to retrieve dependencies versions from (see [override Manifest] for more info)
+- Id of the override Manifest entry to retrieve dependencies versions from (see [override Manifest] for more info)
 
 #### Examples
 
@@ -84,12 +89,12 @@ The package name for this project is `@org/my-weather-api-impl`.
 
 #### Remarks
 
-* If name of the apiImpl is missing the apiName is converted to came case notation and numbers are removed if any.  
-* If you do not specify a platform (for example, native v.s JavaScript), you are prompted to select a platform.    
+- If name of the apiImpl is missing the apiName is converted to came case notation and numbers are removed if any.
+- If you do not specify a platform (for example, native v.s JavaScript), you are prompted to select a platform.
 
 #### Related commands
 
 [ern create-api] | Create an API
 
 [ern create-api]: ./create-api.md
-[override Manifest]: ../platform-parts/manifest/override.md
+[override manifest]: ../platform-parts/manifest/override.md
