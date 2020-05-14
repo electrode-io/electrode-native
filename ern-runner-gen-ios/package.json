@@ -41,7 +41,7 @@
     "ern-runner-gen": "1000.0.0",
     "fs-extra": "^8.1.0",
     "fs-readdir-recursive": "^1.1.0",
-    "mustache": "^2.3.1"
+    "mustache": "^4.0.1"
   },
   "devDependencies": {
     "copyfiles": "^2.0.0",
