@@ -174,11 +174,21 @@ async function generateFullComposite(
       // To know the version to install, we will just have a peak to one of
       // the miniapps, given that react native version is aligned across all.
       const pJson = await readPackageJson(localMiniAppsPaths[0])
+      const miniAppRnVersion = pJson.dependencies['react-native']
       extraJsDependencies.push(
-        PackagePath.fromString(
-          `react-native@${pJson.dependencies['react-native']}`
-        )
+        PackagePath.fromString(`react-native@${miniAppRnVersion}`)
       )
+      // If the version of RN < 0.60.0 we also need to add react dependency
+      // to the composite as it needs to be local to the bundler root for
+      // some reason (probably haste related).
+      // Otherwise bundling will fail to locate some react modules and throw
+      // 'Unable to resolve module ...' errors.
+      if (semver.lte(miniAppRnVersion, '0.60.0')) {
+        extraJsDependencies.push(
+          PackagePath.fromString(`react@${pJson.dependencies.react}`)
+        )
+      }
+
       // Also add latest version of the bridge
       extraJsDependencies.push(
         PackagePath.fromString(`react-native-electrode-bridge`)
