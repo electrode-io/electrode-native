@@ -2,6 +2,7 @@ import Mustache from 'mustache'
 import { isIterable } from './isIterable'
 
 export class MustacheWriter extends Mustache.Writer {
+  // @ts-ignore
   public renderSection(token, context, partials, originalTemplate) {
     let buffer = ''
     let value = context.lookup(token[1])

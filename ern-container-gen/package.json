@@ -42,7 +42,7 @@
     "ern-core": "1000.0.0",
     "fs-extra": "^8.1.0",
     "fs-readdir-recursive": "^1.1.0",
-    "mustache": "^2.3.1",
+    "mustache": "^4.0.1",
     "semver": "^5.5.0",
     "xcode-ern": "^1.0.12"
   },

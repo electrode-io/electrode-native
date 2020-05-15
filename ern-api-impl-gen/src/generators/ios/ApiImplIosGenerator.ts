@@ -123,15 +123,6 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
       )
 
       for (const file of files) {
-        if (!(classNames as { [k: string]: string })[file]) {
-          log.warn(
-            `Skipping mustaching of ${file}. No resulting file mapping found, consider adding one. \nThis might cause issues in generated implementation project.`
-          )
-          throw new Error(
-            `Class name mapping is missing for ${file}, unable to generate implementation class file.`
-          )
-        }
-
         if (file === 'requestHandlerProvider.mustache') {
           const reqHandlerProviderClassFile = path.join(
             outputDir,
@@ -147,19 +138,30 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
           }
         }
 
-        await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
-          path.join(resourceDir, file),
-          api,
-          path.join(outputDir, (classNames as { [k: string]: string })[file])
-        )
-        iosProject.addSourceFile(
-          path.join(
-            API_IMPL_GROUP_NAME,
-            (classNames as { [k: string]: string })[file]
-          ),
-          null,
-          iosProject.findPBXGroupKey({ name: API_IMPL_GROUP_NAME })
-        )
+        if ((classNames as { [k: string]: string })[file]) {
+          const partialProxy = (name: string) => {
+            return fs.readFileSync(
+              path.join(resourceDir, `${name}.mustache`),
+              'utf8'
+            )
+          }
+          await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
+            path.join(resourceDir, file),
+            api,
+            path.join(outputDir, (classNames as { [k: string]: string })[file]),
+            partialProxy
+          )
+          iosProject.addSourceFile(
+            path.join(
+              API_IMPL_GROUP_NAME,
+              (classNames as { [k: string]: string })[file]
+            ),
+            null,
+            iosProject.findPBXGroupKey({ name: API_IMPL_GROUP_NAME })
+          )
+        } else {
+          log.info(`No mapping for for ${file}. Mustaching skipped.`)
+        }
       }
 
       log.debug(

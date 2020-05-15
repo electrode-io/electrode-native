@@ -57,7 +57,7 @@
     "@types/jsonpath": "^0.2.0",
     "@types/lodash": "^4.14.150",
     "@types/mocha": "^5.2.7",
-    "@types/mustache": "^0.8.32",
+    "@types/mustache": "^4.0.1",
     "@types/node-fetch": "^2.5.7",
     "@types/semver": "^6.2.1",
     "@types/shelljs": "^0.8.7",

@@ -44,7 +44,7 @@
     "lodash": "^4.17.14",
     "minimatch": "^3.0.4",
     "mkdirp": "^0.5.1",
-    "mustache": "^2.3.1",
+    "mustache": "^4.0.1",
     "semver": "^5.5.0",
     "shelljs": "^0.8.2",
     "swagger-methods": "^1.0.4",
