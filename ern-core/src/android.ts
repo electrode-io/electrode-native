@@ -187,6 +187,12 @@ export async function runAndroid({
 
 export async function askUserToSelectAvdEmulator(): Promise<string> {
   const avdImageNames = await getAndroidAvds()
+  if (Array.isArray(avdImageNames) && avdImageNames.length === 0) {
+    throw new Error(`No Emulator or device found.
+    Install the Android Emulator or connect the device to proceed.
+    https://developer.android.com/studio/run/emulator-commandline
+    https://developer.android.com/studio/run/emulator`)
+  }
   const deviceConfig = ernConfig.get(deviceConfigUtil.ANDROID_DEVICE_CONFIG)
   // Check if user has set the usePreviousEmulator flag to true
   if (avdImageNames && deviceConfig) {
