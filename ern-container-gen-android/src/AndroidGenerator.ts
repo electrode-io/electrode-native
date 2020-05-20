@@ -75,7 +75,7 @@ export default class AndroidGenerator implements ContainerGenerator {
 
     shell.cp('-R', copyFromPath, config.outDir)
 
-    // https://github.com/npm/npm/issues/1862 : Npm renames .gitigonre to .npmignore causing the generated contaier to emit the .gitnore file. This solution below helps to bypass it.
+    // https://github.com/npm/npm/issues/1862 npm renames .gitignore to .npmignore causing the generated container to emit the .gitignore file. This solution below helps to bypass it.
     shell.mv(`${config.outDir}/gitignore`, `${config.outDir}/.gitignore`)
 
     const reactNativePlugin = _.find(
@@ -137,6 +137,10 @@ export default class AndroidGenerator implements ContainerGenerator {
     }
 
     for (const plugin of config.plugins) {
+      if (plugin.name === 'react-native') {
+        continue
+      }
+
       let pluginConfig:
         | PluginConfig<'android'>
         | undefined = await manifest.getPluginConfig(plugin, 'android')
@@ -144,10 +148,6 @@ export default class AndroidGenerator implements ContainerGenerator {
         log.warn(
           `Skipping ${plugin.name} as it does not have an Android configuration`
         )
-        continue
-      }
-
-      if (plugin.name === 'react-native') {
         continue
       }
 
@@ -305,6 +305,13 @@ export default class AndroidGenerator implements ContainerGenerator {
 
     injectPluginsKaxTask.succeed(injectPluginsTaskMsg)
 
+    const partialProxy = (name: string) => {
+      return fs.readFileSync(
+        path.join(PATH_TO_TEMPLATES_DIR, `${name}.mustache`),
+        'utf8'
+      )
+    }
+
     log.debug('Patching hull')
     const files = readDir(
       config.outDir,
@@ -328,7 +335,6 @@ export default class AndroidGenerator implements ContainerGenerator {
         // We don't want to Mustache process library files. It can lead to bad things
         // We also don't want to process assets files ...
         // We just want to process container specific code (which contains mustache templates)
-        log.debug(`Skipping mustaching of ${file}`)
         continue
       }
       log.debug(`Mustaching ${file}`)
@@ -336,7 +342,8 @@ export default class AndroidGenerator implements ContainerGenerator {
       await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
         pathToFile,
         mustacheView,
-        pathToFile
+        pathToFile,
+        partialProxy
       )
     }
 
@@ -359,7 +366,8 @@ export default class AndroidGenerator implements ContainerGenerator {
       await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
         pathToMiniAppActivityMustacheTemplate,
         miniApp,
-        pathToOutputActivityFile
+        pathToOutputActivityFile,
+        partialProxy
       )
     }
 
