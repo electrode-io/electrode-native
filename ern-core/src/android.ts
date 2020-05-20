@@ -24,6 +24,9 @@ export const DEFAULT_SUPPORT_LIBRARY_VERSION = '28.0.0'
 export const DEFAULT_TARGET_SDK_VERSION = '28'
 export const DEFAULT_SOURCE_COMPATIBILITY = 'VERSION_1_8'
 export const DEFAULT_TARGET_COMPATIBILITY = 'VERSION_1_8'
+const ANDROID_DEVICE_INFO = `
+https://developer.android.com/studio/run/emulator-commandline
+https://developer.android.com/studio/run/emulator`
 
 export interface AndroidResolvedVersions {
   androidGradlePlugin: string
@@ -71,12 +74,24 @@ export function resolveAndroidVersions({
 // Misc utilities
 // ==============================================================================
 
-//
 // Returns a promise that will get resolved after a given delay (in ms)
 async function delay(ms: number) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve()
+    }, ms)
+  })
+}
+
+// Returns a promise that will get rejected after a given timeout (in ms)
+async function failAfterTimeOut(ms: number) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      reject(
+        new Error(
+          `Failed to collect the device/emulator state.${ANDROID_DEVICE_INFO}`
+        )
+      )
     }, ms)
   })
 }
@@ -188,10 +203,9 @@ export async function runAndroid({
 export async function askUserToSelectAvdEmulator(): Promise<string> {
   const avdImageNames = await getAndroidAvds()
   if (Array.isArray(avdImageNames) && avdImageNames.length === 0) {
-    throw new Error(`No Emulator or device found.
-    Install the Android Emulator or connect the device to proceed.
-    https://developer.android.com/studio/run/emulator-commandline
-    https://developer.android.com/studio/run/emulator`)
+    throw new Error(
+      `No Emulator or device found. Launch an emulator manually or connect a device.${ANDROID_DEVICE_INFO}`
+    )
   }
   const deviceConfig = ernConfig.get(deviceConfigUtil.ANDROID_DEVICE_CONFIG)
   // Check if user has set the usePreviousEmulator flag to true
@@ -248,8 +262,11 @@ export async function runAndroidUsingAvdImage({
 }) {
   // https://issuetracker.google.com/issues/37137213
   spawnp(androidEmulatorPath(), ['-avd', avdImageName], { detached: true })
-
-  await kax.task('Waiting for device to start').run(waitForAndroidDevice())
+  await kax
+    .task('Waiting for device to start')
+    .run(
+      Promise.race([waitForAndroidDevice(), failAfterTimeOut(3 * 60 * 1000)])
+    )
   await installAndLaunchApp({
     activityName,
     apkPath,
@@ -361,10 +378,14 @@ export function launchAndroidActivityDetached(
 // Utility method to list all available android avd images (emulator images)
 export async function getAndroidAvds() {
   const stdout = await execp(`${androidEmulatorPath()} -list-avds`)
-  return stdout
-    .toString()
-    .trim()
-    .split(/\r?\n/)
+  let avdArr: string[] = []
+  if (stdout) {
+    avdArr = stdout
+      .toString()
+      .trim()
+      .split(/\r?\n/)
+  }
+  return avdArr
 }
 
 // Utility method to query what device instances are connected to the adb server
