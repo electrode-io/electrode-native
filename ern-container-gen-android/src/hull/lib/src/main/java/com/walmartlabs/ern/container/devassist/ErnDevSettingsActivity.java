@@ -170,8 +170,8 @@ public class ErnDevSettingsActivity extends PreferenceActivity {
                             mPrefStoreId.setEnabled(false);
                             mPrefHost.setEnabled(false);
                             mPrefStoreEnabled.setTitle("Enable");
-                            ElectrodeReactContainer
-                                    .getReactInstanceManager().recreateReactContextInBackground();
+                            ElectrodeReactContainer.getReactInstanceManager()
+                                    .recreateReactContextInBackground();
                         }
                         return true;
                     }
@@ -188,9 +188,7 @@ public class ErnDevSettingsActivity extends PreferenceActivity {
     public void reloadStoreList() {
         mPrefStoreId.setEnabled(false);
         mPrefBundleId.setEnabled(false);
-        Request request = new Request.Builder()
-                .url(getStoreListUrl())
-                .build();
+        Request request = new Request.Builder().url(getStoreListUrl()).build();
 
         OkHttpClient client = OkHttpClientProvider.getOkHttpClient();
 
@@ -265,9 +263,7 @@ public class ErnDevSettingsActivity extends PreferenceActivity {
 
     public void reloadBundleList(final boolean shouldSetLatest) {
         mPrefBundleId.setEnabled(false);
-        Request request = new Request.Builder()
-                .url(getBundleListUrl())
-                .build();
+        Request request = new Request.Builder().url(getBundleListUrl()).build();
 
         OkHttpClient client = OkHttpClientProvider.getOkHttpClient();
 
@@ -337,10 +333,10 @@ public class ErnDevSettingsActivity extends PreferenceActivity {
                                                 getDebugHttpHostUrl()).commit();
                                         if (mAutoReload) {
                                             ElectrodeReactContainer
-                                                .getReactInstanceManager()
-                                                .getDevSupportManager().handleReloadJS();
+                                                    .getReactInstanceManager()
+                                                    .getDevSupportManager().handleReloadJS();
                                         }
-                                    }  
+                                    }
                                 }
                             });
                         }
@@ -375,11 +371,12 @@ public class ErnDevSettingsActivity extends PreferenceActivity {
     }
 
     public void showErrorToast(@NonNull final String msg) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(ErnDevSettingsActivity.this, msg, Toast.LENGTH_SHORT).show();
-            }
-        });
+        runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(ErnDevSettingsActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

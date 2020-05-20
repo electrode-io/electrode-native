@@ -1,32 +1,34 @@
-/*
- * Copyright 2017 WalmartLabs
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+{{>licenseInfo}}
 
 package com.walmartlabs.ern.container;
+
+{{#hasElectrodeBridgePlugin}}
+import com.walmartlabs.electrode.reactnative.bridge.helpers.Logger;
+{{/hasElectrodeBridgePlugin}}
+import com.walmartlabs.ern.container.devassist.ErnDevSettingsActivity;
+{{#plugins}}
+import com.walmartlabs.ern.container.plugins.{{name}};
+{{/plugins}}
 
 import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
-import android.os.Build;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+{{#apiImplementations}}
+import com.ern.api.impl.{{apiName}}ApiController;
+{{#hasConfig}}
+import com.ern.api.impl.{{apiName}}ApiRequestHandlerProvider;
+{{/hasConfig}}
+{{/apiImplementations}}
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.SafeActivityStarter;
+import com.facebook.react.devsupport.interfaces.DevOptionHandler;
 {{#RN_VERSION_GTE_54}}
 import com.facebook.react.modules.network.OkHttpClientFactory;
 {{/RN_VERSION_GTE_54}}
@@ -35,25 +37,10 @@ import com.facebook.react.shell.MainReactPackage;
 {{#RN_VERSION_GTE_60_1}}
 import com.facebook.soloader.SoLoader;
 {{/RN_VERSION_GTE_60_1}}
-{{#plugins}}
-import com.walmartlabs.ern.container.plugins.{{name}};
-{{/plugins}}
-{{#apiImplementations}}
-import com.ern.api.impl.{{apiName}}ApiController;
-{{#hasConfig}}
-import com.ern.api.impl.{{apiName}}ApiRequestHandlerProvider;
-{{/hasConfig}}
-{{/apiImplementations}}
 {{#isCodePushPluginIncluded}}
 import com.microsoft.codepush.react.CodePush;
 import com.microsoft.codepush.react.ReactInstanceHolder;
 {{/isCodePushPluginIncluded}}
-{{#hasElectrodeBridgePlugin}}
-import com.walmartlabs.electrode.reactnative.bridge.helpers.Logger;
-{{/hasElectrodeBridgePlugin}}
-
-import com.facebook.react.devsupport.interfaces.DevOptionHandler;
-import com.walmartlabs.ern.container.devassist.ErnDevSettingsActivity;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -64,10 +51,10 @@ import java.util.List;
 import okhttp3.OkHttpClient;
 
 public class ElectrodeReactContainer {
-    private static String TAG = ElectrodeReactContainer.class.getSimpleName();
+    private static final String TAG = "ElectrodeReactContainer";
 
-    @Deprecated
     private static final ElectrodeReactContainer sInstance = new ElectrodeReactContainer();
+
     private static boolean sIsReactNativeReady;
     private static List<ReactPackage> sReactPackages = new ArrayList<>();
     private static ElectrodeReactNativeHost sElectrodeReactNativeHost;
@@ -78,17 +65,17 @@ public class ElectrodeReactContainer {
     private static List<ReactNativeReadyListener> reactNativeReadyListeners = new ArrayList<>();
 
     private ElectrodeReactContainer() {
-
     }
 
-    public synchronized static ReactInstanceManager getReactInstanceManager() {
+    public static synchronized ReactInstanceManager getReactInstanceManager() {
         throwIfNotInitialized();
         return sElectrodeReactNativeHost.getReactInstanceManager();
     }
 
     /**
-     * @deprecated This method is deprecated. This class is converted to hold only util methods that allows you to initialize Electrode container and ReactNativeHost.
-     * Start referring to all the static util methods that are exposed.
+     * @deprecated This method is deprecated. This class is converted to hold only util methods that
+     * allows you to initialize Electrode container and ReactNativeHost. Start referring to all
+     * the static util methods that are exposed.
      */
     @SuppressWarnings("unused")
     @Deprecated
@@ -97,15 +84,16 @@ public class ElectrodeReactContainer {
         return sInstance;
     }
 
-
     @SuppressWarnings("unused")
     public static boolean startActivitySafely(@NonNull Intent intent) {
         throwIfNotInitialized();
-        if (null != getReactInstanceManager() && null != getReactInstanceManager().getCurrentReactContext()) {
-            new SafeActivityStarter(getReactInstanceManager().getCurrentReactContext(), intent).startActivity();
+        if (null != getReactInstanceManager()
+                && null != getReactInstanceManager().getCurrentReactContext()) {
+            new SafeActivityStarter(getReactInstanceManager().getCurrentReactContext(), intent)
+                    .startActivity();
             return true;
         } else {
-            Log.w(TAG, "startActivitySafely: Unable to start activity, react context or instance manager is null");
+            Log.w(TAG, "startActivitySafely: Unable to start activity");
             return false;
         }
     }
@@ -114,7 +102,8 @@ public class ElectrodeReactContainer {
     @Nullable
     public static Activity getCurrentActivity() {
         throwIfNotInitialized();
-        if (null != getReactInstanceManager() && null != getReactInstanceManager().getCurrentReactContext()) {
+        if (null != getReactInstanceManager()
+                && null != getReactInstanceManager().getCurrentReactContext()) {
             return getReactInstanceManager().getCurrentReactContext().getCurrentActivity();
         }
         return null;
@@ -136,81 +125,94 @@ public class ElectrodeReactContainer {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public synchronized static void initialize(@NonNull final Application application, @NonNull final Config reactContainerConfig
-            {{#plugins}}
-            {{#configurable}}
+    public static synchronized void initialize(
+            @NonNull final Application application, @NonNull Config reactContainerConfig
+{{#plugins}}
+{{#configurable}}
             , @NonNull final {{name}}.Config {{lcname}}Config
-            {{/configurable}}
-            {{/plugins}}
-            {{#apiImplementations}}
-            {{#hasConfig}}
+{{/configurable}}
+{{/plugins}}
+{{#apiImplementations}}
+{{#hasConfig}}
             , @NonNull final {{apiName}}ApiRequestHandlerProvider.{{apiName}}ApiConfig {{apiVariableName}}ApiConfig
-            {{/hasConfig}}
-            {{/apiImplementations}}
-     ) {
+{{/hasConfig}}
+{{/apiImplementations}}
+    ) {
         if (sElectrodeReactNativeHost == null) {
             sConfig = reactContainerConfig;
-            
-            {{#RN_VERSION_GTE_60_1}}
+
+{{#RN_VERSION_GTE_60_1}}
             SoLoader.init(application, /* native exopackage */ false);
-            {{/RN_VERSION_GTE_60_1}}
+{{/RN_VERSION_GTE_60_1}}
 
             // ReactNative general config
 
             isReactNativeDeveloperSupport = reactContainerConfig.isReactNativeDeveloperSupport;
-            {{#hasElectrodeBridgePlugin}}
+{{#hasElectrodeBridgePlugin}}
             // Set the default log level to DEBUG for dev mode
             if (isReactNativeDeveloperSupport) {
                 Logger.overrideLogLevel(Logger.LogLevel.DEBUG);
             }
-            {{/hasElectrodeBridgePlugin}}
+{{/hasElectrodeBridgePlugin}}
 
             // Replace OkHttpClient with client provided instance, if any
             if (reactContainerConfig.okHttpClient != null) {
-                {{#RN_VERSION_LT_54}}
+{{#RN_VERSION_LT_54}}
                 OkHttpClientProvider.replaceOkHttpClient(reactContainerConfig.okHttpClient);
-                {{/RN_VERSION_LT_54}}
-                {{#RN_VERSION_GTE_54}}
-                OkHttpClientProvider.setOkHttpClientFactory(new OkHttpClientFactoryImpl(reactContainerConfig.okHttpClient));
-                {{/RN_VERSION_GTE_54}}
+{{/RN_VERSION_LT_54}}
+{{#RN_VERSION_GTE_54}}
+                OkHttpClientProvider.setOkHttpClientFactory(
+                        new OkHttpClientFactoryImpl(reactContainerConfig.okHttpClient));
+{{/RN_VERSION_GTE_54}}
             }
 
             sElectrodeReactNativeHost = new ElectrodeReactNativeHost(application);
-            {{#isCodePushPluginIncluded}}
+{{#isCodePushPluginIncluded}}
             CodePush.setReactInstanceHolder(sElectrodeReactNativeHost);
-            {{/isCodePushPluginIncluded}}
+{{/isCodePushPluginIncluded}}
 
             sReactPackages.add(new MainReactPackage());
-            {{#plugins}}
-            {{#configurable}}
+{{#plugins}}
+{{#configurable}}
             sReactPackages.add(new {{name}}().hook(application, {{lcname}}Config));
-            {{/configurable}}
-            {{^configurable}}
+{{/configurable}}
+{{^configurable}}
             sReactPackages.add(new {{name}}().hook(application, null));
-            {{/configurable}}
-            {{/plugins}}
-            sReactPackages.removeAll(Collections.singleton((ReactPackage)null));
+{{/configurable}}
+{{/plugins}}
+            sReactPackages.removeAll(Collections.singleton((ReactPackage) null));
 
             // Add Electrode Native Settings item to React Native dev menu
-            getReactInstanceManager().getDevSupportManager().addCustomDevOption("Electrode Native Settings", new DevOptionHandler() {
-                @Override
-                public void onOptionSelected() {
-                    Intent intent = new Intent(application, ErnDevSettingsActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    application.startActivity(intent);
-                }
-            });
+            getReactInstanceManager()
+                    .getDevSupportManager()
+                    .addCustomDevOption(
+                            "Electrode Native Settings",
+                            new DevOptionHandler() {
+                                @Override
+                                public void onOptionSelected() {
+                                    Intent intent =
+                                            new Intent(application, ErnDevSettingsActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    application.startActivity(intent);
+                                }
+                            });
 
             // Load bundle now (engine might offer lazy loading later down the road)
             getReactInstanceManager().createReactContextInBackground();
 
-            {{#apiImplementations}}
+{{#apiImplementations}}
             {{apiName}}ApiController.register({{#hasConfig}}{{apiVariableName}}ApiConfig{{/hasConfig}}{{^hasConfig}}null{{/hasConfig}});
-            {{/apiImplementations}}
+{{/apiImplementations}}
 
-            Log.d(TAG, "ELECTRODE REACT-NATIVE ENGINE INITIALIZED\n" + reactContainerConfig.toString());
+            Log.d(
+                    TAG,
+                    "ELECTRODE REACT-NATIVE ENGINE INITIALIZED\n"
+                            + reactContainerConfig.toString());
         } else {
-            Log.i(TAG, "Ignoring duplicate initialize call, electrode container is already initialized or is being initialized");
+            Log.i(
+                    TAG,
+                    "Ignoring duplicate initialize call, electrode container is already"
+                            + " initialized or is being initialized");
         }
     }
 
@@ -237,6 +239,40 @@ public class ElectrodeReactContainer {
         return sElectrodeReactNativeHost != null && getReactInstanceManager() != null;
     }
 
+    @SuppressWarnings("unused")
+    public static void registerReactNativeReadyListener(ReactNativeReadyListener listener) {
+        // If react native initialization is already completed, just call listener immediately,
+        // otherwise it will get invoked whenever react native initialization is done
+        if (sIsReactNativeReady) {
+            listener.onReactNativeReady();
+        } else {
+            reactNativeReadyListeners.add(listener);
+        }
+    }
+
+    private static void notifyReactNativeReadyListeners() {
+        for (ReactNativeReadyListener listener : reactNativeReadyListeners) {
+            listener.onReactNativeReady();
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void resetReactNativeReadyListeners() {
+        reactNativeReadyListeners.clear();
+    }
+
+    private static void throwIfNotInitialized() {
+        if (sElectrodeReactNativeHost == null) {
+            throw new IllegalStateException(
+                    "ElectrodeReactContainer not initialized. Call"
+                            + " ElectrodeReactContainer.initialize() before using this class");
+        }
+    }
+
+    public interface ReactNativeReadyListener {
+        void onReactNativeReady();
+    }
+
     public static class Config {
         private boolean isReactNativeDeveloperSupport;
         private OkHttpClient okHttpClient;
@@ -261,54 +297,21 @@ public class ElectrodeReactContainer {
 
         @SuppressWarnings("unused")
         public String getBundleStoreHostPort() {
-          return bundleStoreHostPort;
+            return bundleStoreHostPort;
         }
 
         @Override
         public String toString() {
-            return "Config{" +
-                    "isReactNativeDeveloperSupport=" + isReactNativeDeveloperSupport +
-                    "bundleStoreHostPort=" + bundleStoreHostPort +
-                    '}';
+            return "Config{"
+                    + "isReactNativeDeveloperSupport="
+                    + isReactNativeDeveloperSupport
+                    + "bundleStoreHostPort="
+                    + bundleStoreHostPort
+                    + '}';
         }
     }
 
-    @SuppressWarnings("unused")
-    public static void registerReactNativeReadyListener(ReactNativeReadyListener listener) {
-        // If react native initialization is already completed, just call listener
-        // immediately
-        if (sIsReactNativeReady) {
-            listener.onReactNativeReady();
-        }
-        // Else it will get invoked whenever react native initialization is done
-        else {
-            reactNativeReadyListeners.add(listener);
-        }
-    }
-
-    private static void notifyReactNativeReadyListeners() {
-        for (ReactNativeReadyListener listener : reactNativeReadyListeners) {
-            listener.onReactNativeReady();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public static void resetReactNativeReadyListeners() {
-        reactNativeReadyListeners.clear();
-    }
-
-    public interface ReactNativeReadyListener {
-        void onReactNativeReady();
-    }
-
-    private static void throwIfNotInitialized() {
-        if (sElectrodeReactNativeHost == null) {
-            throw new IllegalStateException("ElectrodeReactContainer not initialized. ElectrodeReactContainer.initialize() method needs to be called before you can get a ReactNativeHost instance");
-        }
-    }
-
-    private static class ElectrodeReactNativeHost extends ReactNativeHost {{#isCodePushPluginIncluded}}implements ReactInstanceHolder{{/isCodePushPluginIncluded}}{
-
+    private static class ElectrodeReactNativeHost extends ReactNativeHost{{#isCodePushPluginIncluded}} implements ReactInstanceHolder{{/isCodePushPluginIncluded}} {
         private ElectrodeReactNativeHost(Application application) {
             super(application);
         }
@@ -323,7 +326,7 @@ public class ElectrodeReactContainer {
             return sReactPackages;
         }
 
-        @javax.annotation.Nullable
+        @Nullable
         @Override
         protected String getBundleAssetName() {
             return "index.android.bundle";
@@ -337,46 +340,57 @@ public class ElectrodeReactContainer {
         @Override
         protected ReactInstanceManager createReactInstanceManager() {
             ReactInstanceManager reactInstanceManager = super.createReactInstanceManager();
-            reactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
-                @Override
-                public void onReactContextInitialized(ReactContext context) {
-                    sIsReactNativeReady = true;
-                    notifyReactNativeReadyListeners();
-                    for (ReactPackage instance : getPackages()) {
-                        try {
-                            Method onReactNativeInitialized =
-                                    instance.getClass().getMethod("onReactNativeInitialized");
-                            onReactNativeInitialized.invoke(instance);
-                        } catch (NoSuchMethodException e) {
-                            //Expected since not all react packages would have onReactNativeInitialized() method.
-                        } catch (IllegalAccessException e) {
-                            Log.e(TAG, "IllegalAccessException: Container Initialization failed: " + e.getMessage());
-                            e.printStackTrace();
-                        } catch (InvocationTargetException e) {
-                            Log.e(TAG, "InvocationTargetException: Container Initialization failed: " + e.getMessage());
-                            e.printStackTrace();
+            reactInstanceManager.addReactInstanceEventListener(
+                    new ReactInstanceManager.ReactInstanceEventListener() {
+                        @Override
+                        public void onReactContextInitialized(ReactContext context) {
+                            sIsReactNativeReady = true;
+                            notifyReactNativeReadyListeners();
+                            for (ReactPackage instance : getPackages()) {
+                                try {
+                                    Method onReactNativeInitialized =
+                                            instance.getClass()
+                                                    .getMethod("onReactNativeInitialized");
+                                    onReactNativeInitialized.invoke(instance);
+                                } catch (NoSuchMethodException e) {
+                                    // Expected since not all react packages would have
+                                    // onReactNativeInitialized() method.
+                                } catch (IllegalAccessException e) {
+                                    Log.e(
+                                            TAG,
+                                            "IllegalAccessException: Container Initialization"
+                                                    + " failed: "
+                                                    + e.getMessage());
+                                    e.printStackTrace();
+                                } catch (InvocationTargetException e) {
+                                    Log.e(
+                                            TAG,
+                                            "InvocationTargetException: Container Initialization"
+                                                    + " failed: "
+                                                    + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
                         }
-                    }
-                }
-            });
+                    });
             return reactInstanceManager;
         }
+{{#isCodePushPluginIncluded}}
 
-        {{#isCodePushPluginIncluded}}
-        @javax.annotation.Nullable
+        @Nullable
         @Override
         protected String getJSBundleFile() {
             return CodePush.getJSBundleFile();
         }
-        {{/isCodePushPluginIncluded}}
+{{/isCodePushPluginIncluded}}
     }
+{{#RN_VERSION_GTE_54}}
 
-    {{#RN_VERSION_GTE_54}}
     private static class OkHttpClientFactoryImpl implements OkHttpClientFactory {
         private final OkHttpClient mOkHttpClient;
 
         private OkHttpClientFactoryImpl(@NonNull OkHttpClient okHttpClient) {
-            this.mOkHttpClient = okHttpClient;
+            mOkHttpClient = okHttpClient;
         }
 
         @Override
@@ -384,5 +398,5 @@ public class ElectrodeReactContainer {
             return mOkHttpClient;
         }
     }
-    {{/RN_VERSION_GTE_54}}
+{{/RN_VERSION_GTE_54}}
 }

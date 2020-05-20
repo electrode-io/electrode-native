@@ -1,24 +1,11 @@
 apply plugin: 'com.android.library'
 
-gradle.projectsEvaluated {
-    def buildTypes = android.buildTypes.collect { type -> type.name }
-    android.buildTypes.each {
-        it.resValue 'string', "CODE_PUSH_APK_BUILD_TIME", Long.toString(System.currentTimeMillis())
-    }
-}
-
 android {
-    lintOptions {
-        abortOnError false
-        ignoreWarnings true
-    }
     compileSdkVersion {{{compileSdkVersion}}}
     buildToolsVersion "{{{buildToolsVersion}}}"
     defaultConfig {
         minSdkVersion {{{minSdkVersion}}}
         targetSdkVersion {{{targetSdkVersion}}}
-        versionCode 1
-        versionName "1.0"
     }
     buildTypes {
         release {
@@ -35,10 +22,19 @@ android {
     sourceSets.main {
         res.srcDirs = [ {{{resSrcDirs}}} ]
     }
+    lintOptions {
+        abortOnError false
+    }
 }
 
 dependencies {
-  {{#implementations}}
+{{#implementations}}
     {{{.}}}
-  {{/implementations}}
+{{/implementations}}
+}
+
+gradle.projectsEvaluated {
+    android.buildTypes.each {
+        it.resValue 'string', "CODE_PUSH_APK_BUILD_TIME", Long.toString(System.currentTimeMillis())
+    }
 }
