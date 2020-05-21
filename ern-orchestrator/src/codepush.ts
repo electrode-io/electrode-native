@@ -564,8 +564,8 @@ export async function performCodePushOtaUpdate(
             minifiedUrl,
             projectRoot,
             sourceMap,
-            uploadNodeModules: true,
-            uploadSources: !!bundlingResult.isHermesBundle,
+            uploadNodeModules: false,
+            uploadSources: false,
           })
         } catch (e) {
           log.error(`Bugsnag upload failed : ${e}`)
