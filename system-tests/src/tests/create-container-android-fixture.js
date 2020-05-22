@@ -12,6 +12,7 @@ const excludeFilter = [
   'index.android.bundle',
   'index.android.bundle.meta',
   'jniLibs/**',
+  'yarn.lock',
 ]
   .map(s => `**/${s}`)
   .join(',')
