@@ -1,6 +1,5 @@
 /* tslint:disable:variable-name */
-import { BooleanProperty } from './models/properties'
-import { StringProperty } from './models/properties'
+import { BooleanProperty, StringProperty } from './models/properties'
 import { newHashMap } from './java/javaUtil'
 import StringBuilder from './java/StringBuilder'
 

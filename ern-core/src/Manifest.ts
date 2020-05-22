@@ -11,7 +11,6 @@ import { isDependencyApi, isDependencyApiImpl } from './utils'
 import config from './config'
 import log from './log'
 import { NativePlatform } from './NativePlatform'
-import semver from 'semver'
 
 export type PluginConfig<T extends NativePlatform> = T extends 'android'
   ? AndroidPluginConfig

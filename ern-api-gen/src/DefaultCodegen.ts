@@ -26,26 +26,25 @@ import {
   UUIDProperty,
 } from './models/properties'
 import {
-  SerializableParameter,
-  Parameter,
   BodyParameter,
   CookieParameter,
   FormParameter,
   HeaderParameter,
   PathParameter,
   QueryParameter,
+  SerializableParameter,
 } from './models/parameters'
 import System from './java/System'
 import { log } from 'ern-core'
 import File from './java/File'
 import StringBuilder from './java/StringBuilder'
 import {
-  Lists,
-  Collections,
-  newHashSet,
-  newHashMap,
   asMap,
+  Collections,
   isNotEmptySet,
+  Lists,
+  newHashMap,
+  newHashSet,
 } from './java/javaUtil'
 import StringUtils from './java/StringUtils'
 import Json from './java/Json'

@@ -1,18 +1,18 @@
 import {
-  MiniApp,
-  utils as core,
-  ModuleTypes,
-  log,
-  kax,
   checkIfModuleNameContainsSuffix,
+  kax,
+  log,
+  MiniApp,
+  ModuleTypes,
+  utils as core,
 } from 'ern-core'
 import {
+  askUserToInputPackageName,
   epilog,
   logErrorAndExitIfNotSatisfied,
-  promptUserToUseSuffixModuleName,
   performPkgNameConflictCheck,
+  promptUserToUseSuffixModuleName,
   tryCatchWrap,
-  askUserToInputPackageName,
 } from '../lib'
 import chalk from 'chalk'
 import { Argv } from 'yargs'

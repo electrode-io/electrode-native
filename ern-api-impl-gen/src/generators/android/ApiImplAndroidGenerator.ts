@@ -1,13 +1,13 @@
 import {
-  PackagePath,
-  mustacheUtils,
-  shell,
-  fileUtils,
-  manifest,
-  Platform,
-  log,
-  PluginConfig,
   android,
+  fileUtils,
+  log,
+  manifest,
+  mustacheUtils,
+  PackagePath,
+  Platform,
+  PluginConfig,
+  shell,
 } from 'ern-core'
 import fs from 'fs-extra'
 import path from 'path'

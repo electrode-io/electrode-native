@@ -1,4 +1,5 @@
 import { PackagePath } from 'ern-core'
+
 export interface CompositeGeneratorConfig {
   /**
    * Base Composite

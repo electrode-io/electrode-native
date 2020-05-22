@@ -1,12 +1,12 @@
+import * as cauldronApi from 'ern-cauldron-api'
 import {
   CauldronApi,
   CauldronHelper,
   EphemeralFileStore,
   InMemoryDocumentStore,
 } from 'ern-cauldron-api'
-import { AppVersionDescriptor, PackagePath, Platform } from 'ern-core'
 import * as core from 'ern-core'
-import * as cauldronApi from 'ern-cauldron-api'
+import { AppVersionDescriptor, PackagePath, Platform } from 'ern-core'
 import * as publisher from 'ern-container-publisher'
 import * as launch from '../src/launchRunner'
 import * as getRun from '../src/getRunnerGeneratorForPlatform'

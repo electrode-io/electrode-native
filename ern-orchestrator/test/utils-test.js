@@ -1,18 +1,10 @@
 import { assert, expect } from 'chai'
-import {
-  ModuleTypes,
-  yarn,
-  utils as coreUtils,
-  createTmpDir,
-  PackagePath,
-  AppVersionDescriptor,
-} from 'ern-core'
+import { AppVersionDescriptor, yarn } from 'ern-core'
 import * as cauldron from 'ern-cauldron-api'
 import {
-  doesThrow,
-  doesNotThrow,
-  beforeTest,
   afterTest,
+  beforeTest,
+  doesThrow,
   fixtures as utilFixtures,
 } from 'ern-util-dev'
 import * as container from '../src/container'
@@ -20,9 +12,6 @@ import * as composite from '../src/composite'
 import * as pipeline from '../src/runContainerPipelineForDescriptor'
 import { GeneratedComposite } from 'ern-composite-gen'
 import sinon from 'sinon'
-import utils from '../src/utils'
-import * as fixtures from './fixtures/common'
-import fs from 'fs'
 import path from 'path'
 import { syncCauldronContainer } from '../src/syncCauldronContainer'
 import { parseJsonFromStringOrFile } from '../src/parseJsonFromStringOrFile'

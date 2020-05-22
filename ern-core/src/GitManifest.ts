@@ -1,7 +1,6 @@
 import { PackagePath } from './PackagePath'
 import shell from './shell'
 import { gitCli } from './gitCli'
-import _ from 'lodash'
 import fs from 'fs-extra'
 import path from 'path'
 import Platform from './Platform'

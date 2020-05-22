@@ -1,8 +1,8 @@
 import {
-  NativePlatform,
   BaseMiniApp,
-  readPackageJsonSync,
   handleCopyDirective,
+  NativePlatform,
+  readPackageJsonSync,
 } from 'ern-core'
 import { getAssetsPath } from './getAssetsPath'
 import path from 'path'

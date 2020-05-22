@@ -1,20 +1,20 @@
 import fs from 'fs-extra'
 import { ApiGen } from 'ern-api-gen'
 import {
-  PackagePath,
-  manifest,
-  utils as coreUtils,
-  ModuleTypes,
-  log,
   checkIfModuleNameContainsSuffix,
+  log,
+  manifest,
+  ModuleTypes,
+  PackagePath,
+  utils as coreUtils,
 } from 'ern-core'
 import {
+  askUserToInputPackageName,
   epilog,
   logErrorAndExitIfNotSatisfied,
   performPkgNameConflictCheck,
   promptUserToUseSuffixModuleName,
   tryCatchWrap,
-  askUserToInputPackageName,
 } from '../lib'
 import { Argv } from 'yargs'
 

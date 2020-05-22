@@ -10,9 +10,9 @@ import { log } from 'ern-core'
 import File from './java/File'
 import {
   Collections,
+  isNotEmptySet,
   newHashMap,
   newHashSet,
-  isNotEmptySet,
 } from './java/javaUtil'
 import IOUtils from './java/IOUtils'
 import AbstractGenerator from './AbstractGenerator'

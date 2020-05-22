@@ -1,4 +1,5 @@
 import { Rule } from './Rule'
+
 export class InvalidRule extends Rule {
   public reason
 

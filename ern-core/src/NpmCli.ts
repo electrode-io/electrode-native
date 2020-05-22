@@ -1,5 +1,3 @@
-import path from 'path'
-import fs from 'fs'
 import { PackagePath } from './PackagePath'
 import { execp } from './childProcess'
 import log from './log'

@@ -1,12 +1,12 @@
 import { AppVersionDescriptor, log } from 'ern-core'
 import { performCodePushPatch } from 'ern-orchestrator'
 import {
+  askUserForCodePushDeploymentName,
+  askUserForCodePushLabel,
+  askUserToChooseANapDescriptorFromCauldron,
   epilog,
   logErrorAndExitIfNotSatisfied,
-  askUserForCodePushDeploymentName,
-  askUserToChooseANapDescriptorFromCauldron,
   tryCatchWrap,
-  askUserForCodePushLabel,
 } from '../../lib'
 import { Argv } from 'yargs'
 

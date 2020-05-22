@@ -4,6 +4,7 @@ import ArrayModel from '../src/models/ArrayModel'
 import ComposedModel from '../src/models/ComposedModel'
 import { expect } from 'chai'
 import RefFormat from '../src/models/refs/RefFormat'
+
 describe('models', function() {
   it('should ModelImpl', () => {
     const m = new ModelImpl()

@@ -1,5 +1,4 @@
 import SwaggerCodegen from '../src/SwaggerCodegen'
-import { expect } from 'chai'
 import ernUtilDev from 'ern-util-dev'
 
 function execTest(out, resolve = () => {}, reject = () => {}) {

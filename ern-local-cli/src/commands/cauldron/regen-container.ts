@@ -2,12 +2,11 @@ import { AppVersionDescriptor, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { syncCauldronContainer } from 'ern-orchestrator'
 import {
+  askUserToChooseANapDescriptorFromCauldron,
   epilog,
   logErrorAndExitIfNotSatisfied,
-  askUserToChooseANapDescriptorFromCauldron,
   tryCatchWrap,
 } from '../../lib'
-import _ from 'lodash'
 import { Argv } from 'yargs'
 import untildify from 'untildify'
 

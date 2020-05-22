@@ -1,6 +1,4 @@
-import { log, ModuleTypes, utils, readPackageJsonSync } from 'ern-core'
-import fs from 'fs'
-import path from 'path'
+import { log, ModuleTypes, readPackageJsonSync, utils } from 'ern-core'
 
 /**
  *

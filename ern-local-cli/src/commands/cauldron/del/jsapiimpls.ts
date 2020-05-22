@@ -1,12 +1,12 @@
-import { PackagePath, AppVersionDescriptor, log } from 'ern-core'
+import { AppVersionDescriptor, log, PackagePath } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { syncCauldronContainer } from 'ern-orchestrator'
 import {
+  askUserToChooseANapDescriptorFromCauldron,
+  emptyContainerIfSingleMiniAppOrJsApiImpl,
   epilog,
   logErrorAndExitIfNotSatisfied,
-  askUserToChooseANapDescriptorFromCauldron,
   tryCatchWrap,
-  emptyContainerIfSingleMiniAppOrJsApiImpl,
 } from '../../../lib'
 import { Argv } from 'yargs'
 

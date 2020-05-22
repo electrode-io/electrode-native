@@ -1,4 +1,5 @@
 import { Parameter } from './Parameter'
+
 export class SerializableParameter extends Parameter {
   public copy() {
     const res = new SerializableParameter()

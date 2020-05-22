@@ -1,13 +1,12 @@
 import {
+  AppVersionDescriptor,
+  bugsnagUpload,
   createTmpDir,
-  Platform,
   kax,
   log,
-  AppVersionDescriptor,
-  SourceMapStoreSdk,
-  createProxyAgentFromErnConfig,
-  bugsnagUpload,
   PackagePath,
+  Platform,
+  SourceMapStoreSdk,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { runCauldronContainerGen } from './container'
@@ -15,7 +14,6 @@ import { runContainerPipelineForDescriptor } from './runContainerPipelineForDesc
 import * as constants from './constants'
 import path from 'path'
 import semver from 'semver'
-import _ from 'lodash'
 import { runCauldronCompositeGen } from './composite'
 import fs from 'fs-extra'
 

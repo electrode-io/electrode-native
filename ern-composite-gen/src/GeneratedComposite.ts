@@ -1,13 +1,13 @@
 import {
-  NativeDependencies,
+  BaseMiniApp,
   findNativeDependencies,
+  manifest,
+  nativeDepenciesVersionResolution,
+  NativeDependencies,
+  NativePlatform,
   PackagePath,
   readPackageJson,
   readPackageJsonSync,
-  BaseMiniApp,
-  nativeDepenciesVersionResolution,
-  manifest,
-  NativePlatform,
 } from 'ern-core'
 import { CompositeGeneratorConfig } from './types'
 import { generateComposite } from './generateComposite'

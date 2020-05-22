@@ -4,6 +4,7 @@ import {
   NativePlatform,
   PackagePath,
 } from 'ern-core'
+
 export interface Composite {
   readonly path: string
   readonly packageJson: any

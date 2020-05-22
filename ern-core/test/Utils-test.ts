@@ -3,10 +3,11 @@ import * as coreUtils from '../src/utils'
 import log from '../src/log'
 import { AppVersionDescriptor } from '../src/descriptors'
 import { PackagePath } from '../src/PackagePath'
-const sandbox = sinon.createSandbox()
-import { expect, assert } from 'chai'
+import { assert, expect } from 'chai'
 import { doesThrow } from 'ern-util-dev'
 import * as git from '../src/gitCli'
+
+const sandbox = sinon.createSandbox()
 
 let processExitStub: any
 let logStub: any

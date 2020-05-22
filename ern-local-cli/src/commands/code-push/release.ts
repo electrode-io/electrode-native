@@ -1,18 +1,18 @@
 import {
-  PackagePath,
   AppVersionDescriptor,
   log,
+  PackagePath,
   utils as coreUtils,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { performCodePushOtaUpdate } from 'ern-orchestrator'
 import {
-  epilog,
-  logErrorAndExitIfNotSatisfied,
+  askUserConfirmation,
   askUserForCodePushDeploymentName,
   askUserToChooseOneOrMoreNapDescriptorFromCauldron,
+  epilog,
+  logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
-  askUserConfirmation,
 } from '../../lib'
 import _ from 'lodash'
 import { Argv } from 'yargs'

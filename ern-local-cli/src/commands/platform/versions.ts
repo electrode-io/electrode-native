@@ -1,4 +1,4 @@
-import { Platform, tagOneLine, log } from 'ern-core'
+import { log, Platform, tagOneLine } from 'ern-core'
 import chalk from 'chalk'
 import { epilog, tryCatchWrap } from '../../lib'
 import semver from 'semver'

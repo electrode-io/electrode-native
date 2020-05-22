@@ -6,8 +6,8 @@ import ernConfig from './config'
 import * as deviceConfigUtil from './deviceConfig'
 import log from './log'
 import os from 'os'
-import simctl = require('node-simctl')
 import kax from './kax'
+import simctl = require('node-simctl')
 
 export interface IosDevice {
   name: string

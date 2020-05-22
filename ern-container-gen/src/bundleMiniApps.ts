@@ -1,5 +1,5 @@
 import { generateComposite } from 'ern-composite-gen'
-import { BundlingResult, kax, NativePlatform, PackagePath, log } from 'ern-core'
+import { BundlingResult, kax, NativePlatform, PackagePath } from 'ern-core'
 import { reactNativeBundleAndroid } from './reactNativeBundleAndroid'
 import { reactNativeBundleIos } from './reactNativeBundleIos'
 

@@ -5,10 +5,10 @@ import shell from './shell'
 import fs from 'fs-extra'
 import path from 'path'
 import archiver from 'archiver'
-import DecompressZip = require('decompress-zip')
 import got from 'got'
 import FormData from 'form-data'
 import { createProxyAgentFromErnConfig } from './createProxyAgent'
+import DecompressZip = require('decompress-zip')
 
 export class ErnBinaryStore implements BinaryStore {
   public readonly gotCommonOpts = {

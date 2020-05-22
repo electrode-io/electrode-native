@@ -1,4 +1,5 @@
 import os from 'os'
+
 export const pkgNameUnpublished = 'zxc-pkg-not-in-npm-bnm'
 export const pkgNamePublished = 'lodash'
 export const pkgName = 'chai'

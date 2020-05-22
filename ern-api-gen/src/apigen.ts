@@ -1,21 +1,22 @@
 import generateProject, {
-  generateSwagger,
   generateFlowConfig,
   generatePackageJson,
+  generateSwagger,
 } from './generateProject'
 import normalizeConfig from './normalizeConfig'
 import fs from 'fs-extra'
 import path from 'path'
 import semver from 'semver'
-import { PKG_FILE, FLOW_CONFIG_FILE } from './Constants'
+import { FLOW_CONFIG_FILE, PKG_FILE } from './Constants'
 import {
+  childProcess,
+  log,
   PackagePath,
   shell,
-  childProcess,
   utils as coreUtils,
-  log,
 } from 'ern-core'
 import inquirer from 'inquirer'
+
 const { execp } = childProcess
 
 /**

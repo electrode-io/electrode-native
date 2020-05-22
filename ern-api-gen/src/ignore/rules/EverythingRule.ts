@@ -1,4 +1,5 @@
 import { Rule } from './Rule'
+
 /**
  * An ignore rule which matches everything.
  */

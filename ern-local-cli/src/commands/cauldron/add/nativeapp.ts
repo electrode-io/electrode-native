@@ -1,12 +1,11 @@
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { AppVersionDescriptor, log, kax, AppPlatformDescriptor } from 'ern-core'
+import { AppPlatformDescriptor, AppVersionDescriptor, kax, log } from 'ern-core'
 import { parseJsonFromStringOrFile } from 'ern-orchestrator'
-import _ from 'lodash'
 import {
+  askUserConfirmation,
   epilog,
   logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
-  askUserConfirmation,
 } from '../../../lib'
 import { Argv } from 'yargs'
 

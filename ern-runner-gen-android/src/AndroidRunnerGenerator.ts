@@ -1,14 +1,13 @@
 import { RunnerGenerator, RunnerGeneratorConfig } from 'ern-runner-gen'
 import {
+  android,
+  injectReactNativeVersionKeysInObject,
   mustacheUtils,
   NativePlatform,
   shell,
-  injectReactNativeVersionKeysInObject,
-  log,
 } from 'ern-core'
 import readDir from 'fs-readdir-recursive'
 import path from 'path'
-import { android } from 'ern-core'
 
 const defaultReactNativePackagerHost = 'localhost'
 const defaultReactNativePackagerPort = '8081'

@@ -4,6 +4,7 @@ import File from '../java/File'
 import { log } from 'ern-core'
 import { Rule } from './rules/Rule'
 import fs from 'fs'
+
 const { Operation } = Rule
 export default class CodegenIgnoreProcessor {
   public static IGNORE_FILE = '.swagger-codegen-ignore'

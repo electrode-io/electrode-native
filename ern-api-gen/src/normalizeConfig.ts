@@ -1,6 +1,7 @@
 import { PackagePath } from 'ern-core'
 import { MODEL_FILE } from './Constants'
 import path from 'path'
+
 const cwd = path.join.bind(path, process.cwd())
 
 // Generate a configuration. This looks in the apigen schema

@@ -1,4 +1,5 @@
 import _snakeCase from 'lodash/snakeCase'
+
 const EMPTY = ''
 const INDEX_NOT_FOUND = -1
 

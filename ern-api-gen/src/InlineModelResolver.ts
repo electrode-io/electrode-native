@@ -1,7 +1,7 @@
 import ArrayModel from './models/ArrayModel'
 import ModelImpl from './models//ModelImpl'
 import RefModel from './models/RefModel'
-import { BodyParameter, RefParameter } from './models/parameters'
+import { BodyParameter } from './models/parameters'
 import {
   ArrayProperty,
   MapProperty,
@@ -9,7 +9,7 @@ import {
   RefProperty,
 } from './models/properties'
 import Json from './java/Json'
-import { newHashMap, isNotEmptySet } from './java/javaUtil'
+import { isNotEmptySet, newHashMap } from './java/javaUtil'
 
 function hasProperties(obj) {
   if (obj == null) {

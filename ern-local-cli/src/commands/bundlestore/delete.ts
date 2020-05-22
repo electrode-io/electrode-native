@@ -1,5 +1,5 @@
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { AppVersionDescriptor, BundleStoreSdk, log, config } from 'ern-core'
+import { AppVersionDescriptor, BundleStoreSdk, config, log } from 'ern-core'
 import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../../lib'
 import { Argv } from 'yargs'
 import untildify from 'untildify'

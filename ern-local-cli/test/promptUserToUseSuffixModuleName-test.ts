@@ -1,4 +1,4 @@
-import { assert, expect } from 'chai'
+import { expect } from 'chai'
 import sinon from 'sinon'
 import inquirer from 'inquirer'
 import { ModuleTypes } from 'ern-core'

@@ -1,13 +1,13 @@
 import { regenerateApiImpl } from 'ern-api-impl-gen'
 import {
-  Platform,
+  log,
   ModuleTypes,
+  PackagePath,
+  Platform,
   utils as coreUtils,
   yarn,
-  PackagePath,
-  log,
 } from 'ern-core'
-import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../lib'
+import { epilog, logErrorAndExitIfNotSatisfied } from '../lib'
 import path from 'path'
 import fs from 'fs-extra'
 import semver from 'semver'

@@ -11,8 +11,9 @@ import {
   runYarnUsingMiniAppDeltas,
 } from '../src/miniAppsDeltasUtils'
 import * as ernUtil from 'ern-core'
-const { YarnCli, shell } = ernUtil
 import { PackagePath } from 'ern-core'
+
+const { YarnCli, shell } = ernUtil
 const sandbox = sinon.createSandbox()
 
 // Spies

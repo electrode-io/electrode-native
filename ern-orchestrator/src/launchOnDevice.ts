@@ -1,4 +1,4 @@
-import { ios, kax, shell, IosDevice } from 'ern-core'
+import { ios, IosDevice, kax, shell } from 'ern-core'
 import { buildIosRunner } from './buildIosRunner'
 import { spawnSync } from 'child_process'
 

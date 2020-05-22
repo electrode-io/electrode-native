@@ -1,4 +1,5 @@
 import { emptyContainerIfSingleMiniAppOrJsApiImpl } from '../src/lib'
+import * as cauldronApi from 'ern-cauldron-api'
 import {
   CauldronApi,
   CauldronHelper,
@@ -7,7 +8,6 @@ import {
 } from 'ern-cauldron-api'
 import { fixtures } from 'ern-util-dev'
 import { AppVersionDescriptor } from 'ern-core'
-import * as cauldronApi from 'ern-cauldron-api'
 import { expect } from 'chai'
 import sinon from 'sinon'
 import jp from 'jsonpath'

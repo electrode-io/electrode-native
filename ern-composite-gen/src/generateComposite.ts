@@ -1,14 +1,14 @@
 import {
-  gitCli,
-  log,
-  readPackageJson,
-  PackagePath,
-  shell,
-  kax,
   findNativeDependencies,
+  gitCli,
+  kax,
+  log,
   nativeDepenciesVersionResolution,
-  yarn,
   NativeDependencies,
+  PackagePath,
+  readPackageJson,
+  shell,
+  yarn,
 } from 'ern-core'
 import { cleanupCompositeDir } from './cleanupCompositeDir'
 import fs from 'fs-extra'

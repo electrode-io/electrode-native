@@ -1,4 +1,4 @@
-import { createTmpDir, yarn, AppVersionDescriptor } from 'ern-core'
+import { AppVersionDescriptor, createTmpDir, yarn } from 'ern-core'
 import * as cauldron from 'ern-cauldron-api'
 import sinon from 'sinon'
 import * as fixtures from './fixtures/common'

@@ -1,5 +1,6 @@
 import _newHashMap, { FakeHashMap } from './fakeMap'
 import { fakeSet } from './FakeHashSet'
+
 export const newHashMap = _newHashMap
 
 /**

@@ -1,5 +1,5 @@
 import * as properties from './properties'
-import { beanify, apply } from '../java/beanUtils'
+import { apply, beanify } from '../java/beanUtils'
 import ComposedModel from './ComposedModel'
 
 const values = obj =>

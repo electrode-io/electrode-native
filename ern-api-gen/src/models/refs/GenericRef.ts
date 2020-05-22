@@ -1,4 +1,5 @@
 import RefFormat from './RefFormat'
+
 /**
  * A class the encapsulates logic that is common to RefModel, RefParameter, and RefProperty.
  */

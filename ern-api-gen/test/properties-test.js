@@ -1,4 +1,4 @@
-import { expect, assert } from 'chai'
+import { assert, expect } from 'chai'
 import factory from '../src/models/factory'
 import * as propTypes from '../src/models/properties'
 

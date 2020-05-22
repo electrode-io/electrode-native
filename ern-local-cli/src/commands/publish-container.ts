@@ -1,4 +1,4 @@
-import { PackagePath, Platform, NativePlatform, log } from 'ern-core'
+import { log, NativePlatform, PackagePath, Platform } from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
 import { parseJsonFromStringOrFile } from 'ern-orchestrator'
 import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../lib'

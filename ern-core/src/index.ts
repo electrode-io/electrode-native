@@ -1,6 +1,5 @@
 import _CodePushSdk from './CodePushSdk'
 import { manifest as _manifest } from './Manifest'
-export { Manifest, PluginConfig } from './Manifest'
 import * as _ModuleTypes from './ModuleTypes'
 import _Platform from './Platform'
 import * as _android from './android'
@@ -19,11 +18,13 @@ import * as _promptUtils from './promptUtils'
 import _shell from './shell'
 import _kax from './kax'
 import * as _utils from './utils'
+import * as _nativeDepenciesVersionResolution from './resolveNativeDependenciesVersions'
+
+export { Manifest, PluginConfig } from './Manifest'
 export { MiniApp } from './MiniApp'
 export { PackagePath } from './PackagePath'
 export * from './injectReactNativeVersionKeysInObject'
 export * from './descriptors'
-import * as _nativeDepenciesVersionResolution from './resolveNativeDependenciesVersions'
 export { yarn, reactnative } from './clients'
 export {
   NativeDependencies,

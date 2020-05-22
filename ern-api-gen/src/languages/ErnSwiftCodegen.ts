@@ -2,7 +2,6 @@
 import SwiftCodegen from './SwiftCodegen'
 import ernify from './ERNMixin'
 import { newHashMap } from '../java/javaUtil'
-import File from '../java/File'
 
 export default class ErnSwiftCodegen extends SwiftCodegen {
   public library = 'ern'

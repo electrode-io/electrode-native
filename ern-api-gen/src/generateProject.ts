@@ -3,11 +3,11 @@ import fs from 'fs-extra'
 import { ModuleTypes } from 'ern-core'
 import { CodegenConfigurator, DefaultGenerator } from './index'
 import {
-  PKG_FILE,
-  MODEL_FILE,
-  FLOW_CONFIG_FILE,
   FLOW_BIN_VERSION,
+  FLOW_CONFIG_FILE,
   INITIAL_SCHEMA_FILE,
+  MODEL_FILE,
+  PKG_FILE,
 } from './Constants'
 
 export const GENERATE = [

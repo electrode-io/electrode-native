@@ -1,11 +1,11 @@
 import {
-  PackagePath,
-  NativePlatform,
-  kax,
   AppVersionDescriptor,
+  kax,
+  NativePlatform,
+  PackagePath,
 } from 'ern-core'
-import { runLocalContainerGen, runCauldronContainerGen } from './container'
-import { runLocalCompositeGen, runCauldronCompositeGen } from './composite'
+import { runCauldronContainerGen, runLocalContainerGen } from './container'
+import { runCauldronCompositeGen, runLocalCompositeGen } from './composite'
 import { ContainerGenResult } from 'ern-container-gen'
 
 export async function generateContainerForRunner(

@@ -1,20 +1,20 @@
 import {
-  PackagePath,
-  utils as coreUtils,
-  Platform,
-  ModuleTypes,
-  log,
   checkIfModuleNameContainsSuffix,
+  log,
+  ModuleTypes,
+  PackagePath,
+  Platform,
+  utils as coreUtils,
 } from 'ern-core'
 import { generateApiImpl } from 'ern-api-impl-gen'
 import {
+  askUserToInputPackageName,
+  askUserToSelectAnEnvironment,
   epilog,
   logErrorAndExitIfNotSatisfied,
   performPkgNameConflictCheck,
   promptUserToUseSuffixModuleName,
   tryCatchWrap,
-  askUserToInputPackageName,
-  askUserToSelectAnEnvironment,
 } from '../lib'
 import path from 'path'
 import { Argv } from 'yargs'

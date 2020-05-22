@@ -3,8 +3,10 @@ import _EphemeralFileStore from './EphemeralFileStore'
 import _InMemoryDocumentStore from './InMemoryDocumentStore'
 import _GitFileStore from './GitFileStore'
 import _GitDocumentStore from './GitDocumentStore'
-export { CauldronHelper } from './CauldronHelper'
 import _getActiveCauldron from './getActiveCauldron'
+import { CauldronRepositories } from './CauldronRepositories'
+
+export { CauldronHelper } from './CauldronHelper'
 
 export const CauldronApi = _CauldronApi
 export const EphemeralFileStore = _EphemeralFileStore
@@ -21,6 +23,5 @@ export {
   cauldronFileUriScheme,
 } from './util'
 
-import { CauldronRepositories } from './CauldronRepositories'
 export { CauldronRepositories } from './CauldronRepositories'
 export const cauldronRepositories = new CauldronRepositories()

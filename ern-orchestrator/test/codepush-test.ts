@@ -1,7 +1,9 @@
 import { assert, expect } from 'chai'
 import sinon from 'sinon'
 import jp from 'jsonpath'
+import * as core from 'ern-core'
 import { AppVersionDescriptor, CodePushSdk, PackagePath } from 'ern-core'
+import * as cauldronApi from 'ern-cauldron-api'
 import {
   CauldronApi,
   CauldronHelper,
@@ -10,13 +12,10 @@ import {
 } from 'ern-cauldron-api'
 import * as compositeGen from 'ern-composite-gen'
 import { GeneratedComposite } from 'ern-composite-gen'
-import { doesThrow, doesNotThrow, fixtures } from 'ern-util-dev'
-import * as core from 'ern-core'
-import * as cauldronApi from 'ern-cauldron-api'
+import { doesNotThrow, doesThrow, fixtures } from 'ern-util-dev'
 import * as sut from '../src/codepush'
 import * as compatibility from '../src/compatibility'
 import path from 'path'
-import { AppPlatformDescriptor } from 'ern-core'
 
 const sandbox = sinon.createSandbox()
 

@@ -3,6 +3,7 @@ import { fixtures } from 'ern-util-dev'
 import InMemoryDocumentStore from '../src/InMemoryDocumentStore'
 import { Cauldron } from '../src/types'
 import sinon from 'sinon'
+
 const sandbox = sinon.createSandbox()
 
 describe('InMemoryDocumentStore.js', () => {

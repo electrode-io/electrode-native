@@ -1,8 +1,6 @@
 import ApiImplAndroidGenerator from '../src/generators/android/ApiImplAndroidGenerator'
 import { assert } from 'chai'
-
-import { coloredLog } from 'ern-core'
-import { beforeTest, afterTest } from 'ern-util-dev'
+import { afterTest, beforeTest } from 'ern-util-dev'
 
 describe('ApiImplAndroidGenerator', () => {
   beforeEach(() => {
