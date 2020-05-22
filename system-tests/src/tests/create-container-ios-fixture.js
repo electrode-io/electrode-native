@@ -14,6 +14,7 @@ const excludeFilter = [
   'node_modules/**',
   'Pods/**',
   'Podfile.lock',
+  'yarn.lock',
 ]
   .map(s => `**/${s}`)
   .join(',')
