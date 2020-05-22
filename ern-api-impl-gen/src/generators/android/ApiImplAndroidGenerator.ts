@@ -22,30 +22,13 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
   public static getMustacheFileNamesMap(resourceDir: string, apiName: string) {
     const files = readDir(resourceDir, f => f.endsWith('.mustache'))
     const classNames: { [k: string]: string } = {
+      'RequestHandlerConfig.java.mustache': 'RequestHandlerConfig.java',
+      'RequestHandlerProvider.java.mustache': 'RequestHandlerProvider.java',
       'apiController.mustache': `${apiName}ApiController.java`,
       'requestHandlerProvider.mustache': `${apiName}ApiRequestHandlerProvider.java`,
       'requestHandlers.mustache': `${apiName}ApiRequestHandler.java`,
     }
     return { files, classNames }
-  }
-
-  public static createImplDirectoryAndCopyCommonClasses(paths: any) {
-    const outputDir = path.join(
-      paths.outDirectory,
-      'android/lib',
-      SRC_MAIN_JAVA_DIR,
-      API_IMPL_PACKAGE
-    )
-
-    fs.ensureDirSync(outputDir)
-
-    const resourceDir = path.join(
-      Platform.currentPlatformVersionPath,
-      'ern-api-impl-gen/resources/android'
-    )
-    shell.cp(path.join(resourceDir, 'RequestHandlerConfig.java'), outputDir)
-    shell.cp(path.join(resourceDir, 'RequestHandlerProvider.java'), outputDir)
-    return { outputDir, resourceDir }
   }
 
   private regenerateApiImpl: boolean
@@ -208,10 +191,17 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
     log.debug('=== updating request handler implementation class ===')
     try {
       const editableFiles: string[] = []
-      const {
-        outputDir,
-        resourceDir,
-      } = ApiImplAndroidGenerator.createImplDirectoryAndCopyCommonClasses(paths)
+      const resourceDir = path.join(
+        Platform.currentPlatformVersionPath,
+        'ern-api-impl-gen/resources/android'
+      )
+      const outputDir = path.join(
+        paths.outDirectory,
+        'android/lib',
+        SRC_MAIN_JAVA_DIR,
+        API_IMPL_PACKAGE
+      )
+      fs.ensureDirSync(outputDir)
 
       for (const api of apis) {
         const {

@@ -19,6 +19,8 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
   public static getMustacheFileNamesMap(resourceDir: string, apiName: string) {
     const files = readDir(resourceDir, f => f.endsWith('.mustache'))
     const classNames = {
+      'RequestHandlerConfig.swift.mustache': 'RequestHandlerConfig.swift',
+      'RequestHandlerProvider.swift.mustache': 'RequestHandlerProvider.swift',
       'apiController.mustache': `${apiName}ApiController.swift`,
       'requestHandlerDelegate.mustache': `${apiName}ApiRequestHandlerDelegate.swift`,
       'requestHandlerProvider.mustache': `${apiName}ApiRequestHandlerProvider.swift`,
@@ -106,15 +108,28 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
     apis: any
   ) {
     log.debug('=== updating request handler implementation class ===')
-
-    const {
-      outputDir,
-      resourceDir,
-    } = this.createImplDirectoryAndCopyCommonClasses(
-      pathSpec,
-      projectSpec,
-      iosProject
+    const resourceDir = path.join(
+      Platform.currentPlatformVersionPath,
+      'ern-api-impl-gen/resources/ios'
     )
+    const outputDir = path.join(
+      pathSpec.outputDir,
+      projectSpec.projectName,
+      API_IMPL_GROUP_NAME
+    )
+    fs.ensureDirSync(outputDir)
+
+    iosProject.addSourceFile(
+      path.join(API_IMPL_GROUP_NAME, 'RequestHandlerConfig.swift'),
+      null,
+      iosProject.findPBXGroupKey({ name: API_IMPL_GROUP_NAME })
+    )
+    iosProject.addSourceFile(
+      path.join(API_IMPL_GROUP_NAME, 'RequestHandlerProvider.swift'),
+      null,
+      iosProject.findPBXGroupKey({ name: API_IMPL_GROUP_NAME })
+    )
+
     const editableFiles: string[] = []
     for (const api of apis) {
       const { files, classNames } = ApiImplIosGenerator.getMustacheFileNamesMap(
@@ -168,42 +183,5 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
         `Api implementation files successfully generated for ${api.apiName}Api`
       )
     }
-  }
-
-  public createImplDirectoryAndCopyCommonClasses(
-    pathSpec: any,
-    projectSpec: any,
-    iosProject: any
-  ) {
-    const resourceDir = path.join(
-      Platform.currentPlatformVersionPath,
-      'ern-api-impl-gen/resources/ios'
-    )
-    const outputDir = path.join(
-      pathSpec.outputDir,
-      projectSpec.projectName,
-      API_IMPL_GROUP_NAME
-    )
-
-    const requestHandlerConfigFile = 'RequestHandlerConfig.swift'
-    const requestHandlerProviderFile = 'RequestHandlerProvider.swift'
-
-    fs.ensureDirSync(outputDir)
-
-    shell.cp(path.join(resourceDir, requestHandlerConfigFile), outputDir)
-    shell.cp(path.join(resourceDir, requestHandlerProviderFile), outputDir)
-
-    iosProject.addSourceFile(
-      path.join(API_IMPL_GROUP_NAME, requestHandlerConfigFile),
-      null,
-      iosProject.findPBXGroupKey({ name: API_IMPL_GROUP_NAME })
-    )
-    iosProject.addSourceFile(
-      path.join(API_IMPL_GROUP_NAME, requestHandlerProviderFile),
-      null,
-      iosProject.findPBXGroupKey({ name: API_IMPL_GROUP_NAME })
-    )
-
-    return { outputDir, resourceDir }
   }
 }
