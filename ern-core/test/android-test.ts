@@ -174,7 +174,7 @@ describe('android.js', () => {
       const avdStdOut = ''
       execpStub.resolves(avdStdOut)
       const avdList = await android.getAndroidAvds()
-      expect(avdList).to.eql([''])
+      expect(avdList).to.eql([])
     })
   })
 
