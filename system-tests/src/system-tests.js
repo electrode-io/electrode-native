@@ -6,15 +6,18 @@ const run = require('./utils/run')
 const cauldronRepoBeforeRun = require('./utils/getCurrentCauldron')()
 
 const runAll = process.argv.includes('--all')
-const interactiveSelection = process.argv.includes('-i') || process.argv.includes('--interactive')
+const interactiveSelection =
+  process.argv.includes('-i') || process.argv.includes('--interactive')
 
 const pathToSystemTests = path.join(__dirname, 'tests')
 const testsSourceFiles = fs.readdirSync(pathToSystemTests)
 
 if (runAll) {
-  console.log('--all is deprecated and has no effect\n' +
-    'Use -i/--interactive for interactive selection, or pass the names of ' +
-    'individual tests to run.')
+  console.log(
+    '--all is deprecated and has no effect\n' +
+      'Use -i/--interactive for interactive selection, or pass the names of ' +
+      'individual tests to run.'
+  )
 }
 
 try {

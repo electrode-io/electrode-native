@@ -65,8 +65,8 @@ function regenAndroidContainerFixture() {
 
 function regenIosContainerFixture() {
   if (process.platform !== 'darwin') {
-    console.log("The iOS Container Fixture can only be regenerated on macOS")
-    return;
+    console.log('The iOS Container Fixture can only be regenerated on macOS')
+    return
   }
   logHeader('Regenerating iOS Container Fixture')
   shell.rm('-rf', pathsToFixtures['ios-container'])

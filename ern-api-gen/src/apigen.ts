@@ -109,7 +109,7 @@ export async function regenerateCode(options: any = {}) {
 
   isNewVersion
     ? await publish(await readPackage())
-    : log.info('Done. Make sure to update the version and npm publish if needed.')
+    : log.info('Done. Remember to publish a new version if needed.')
 }
 
 export async function cleanGenerated(outFolder: string = process.cwd()) {
