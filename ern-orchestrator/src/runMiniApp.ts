@@ -10,9 +10,6 @@ import {
   shell,
   utils,
   AppVersionDescriptor,
-  YarnLockParser,
-  manifest,
-  yarn,
 } from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
 import { getActiveCauldron } from 'ern-cauldron-api'
@@ -209,11 +206,6 @@ export async function runMiniApp(
     compositeNativeDeps.all,
     p => p.name === 'react-native'
   )
-
-  const hasErnNavigation =
-    YarnLockParser.fromPath(
-      path.join(containerGenResult.config.composite.path, 'yarn.lock')
-    ).findPackage(PackagePath.fromString('ern-navigation')).length > 0
 
   const runnerGeneratorConfig: RunnerGeneratorConfig = {
     extra: {
