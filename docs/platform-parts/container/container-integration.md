@@ -91,27 +91,12 @@ Be sure to include the module in your project `settings.gradle`, and add a `api 
 
 The following android build parameters can be configured with application specific needs.
 
-- `androidGradlePlugin` - Android Gradle plugin adds several features that are specific to building Android apps. The version specified will update the top level `build.gradle` file.
-
-  ```groovy
-    dependencies {
-      classpath 'com.android.tools.build:gradle:3.2.1'
-  }
-  ```
-
 - `buildToolsVersion` - Android SDK build tools is a component of the Android SDK required for building Android apps. The version specified will update the app level `build.gradle`
   ```groovy
   android {
     buildToolsVersion "28.0.3"
   }
   ```
-- `gradleDistributionVersion` - The url downloads the gradle wrapper. This allows executing Gradle builds without having to set up Gradle. The version specified here updates the `gradle/wrapper/gradle-wrapper.properties`
-
-  ```
-  distributionUrl=https\://services.gradle.org/distributions/gradle-4.6-all.zip
-  ```
-
-  _NOTE: Check the compatibility chart of Gradle version required for each version of the Android Gradle plugin_ [here](https://developer.android.com/studio/releases/gradle-plugin)
 
 - `compileSdkVersion` - The API level designated to compile the application.
 
@@ -145,10 +130,8 @@ You can configure `androidConfig` in the cauldron as show below.
 {
   "containerGenerator": {
     "androidConfig": {
-      "androidGradlePlugin": "3.2.1",
       "buildToolsVersion": "28.0.3",
       "compileSdkVersion": "28",
-      "gradleDistributionVersion": "4.6",
       "minSdkVersion": "19",
       "supportLibraryVersion": "28.0.0",
       "targetSdkVersion": "28"
