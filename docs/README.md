@@ -9,8 +9,8 @@
 
 - Install the platform by running the following command in a terminal :
 
-```bash
-$ npm install -g electrode-native && ern
+```sh
+npm install -g electrode-native
 ```
 
 ## Getting Started
