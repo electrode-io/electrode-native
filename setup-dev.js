@@ -5,32 +5,42 @@
 const childProcess = require('child_process')
 const execSync = childProcess.execSync
 
-console.log('Performing Electrode Native development setup. Please wait.')
-execSync(`yarn install`)
+console.log('Performing Electrode Native development setup. Please wait...')
+execSync(`yarn`)
 
 const chalk = require('chalk')
 const shell = require('shelljs')
 const os = require('os')
 const path = require('path')
+const fs = require('fs')
 
-// Path to ern platform root directory
-const ERN_PATH = process.env.ERN_HOME || path.join(os.homedir(), '.ern')
-// Path to ern platform cache directory (containing all installed cached versions of the platform)
-const ERN_VERSIONS_CACHE_PATH = path.join(ERN_PATH, 'versions')
-// Path from where this script is run (wherever the user cloned the repo locally)
-const WORKING_DIR = process.cwd()
-// Create the cache directory for this version as a symlink to current working directory
-shell.cd(ERN_VERSIONS_CACHE_PATH)
-shell.ln('-sf', WORKING_DIR, '1000.0.0')
+// Ensure directory structure exists and create symlink
+const ERN_HOME = process.env.ERN_HOME || path.join(os.homedir(), '.ern')
+shell.mkdir('-p', path.join(ERN_HOME, 'versions'))
+shell.ln('-sf', process.cwd(), path.join(ERN_HOME, 'versions', '1000.0.0'))
+
+// Create initial .ernrc if necessary
+const ERN_RC = path.join(ERN_HOME, '.ernrc')
+if (!fs.existsSync(ERN_RC)) {
+  const ernRc = {
+    platformVersion: '1000.0.0',
+  }
+  fs.writeFileSync(ERN_RC, JSON.stringify(ernRc, null, 2).concat('\n'))
+}
 
 console.log(
   chalk.green(`
-=================================================================
-Development environment is now setup !
-Version v1000.0.0 has been created and points to your working directory.
-You can switch to this version by running :
+==============================================================================
+Development environment setup complete!
+Version ${chalk.bold(`1000.0.0`)} has been symlinked to the current directory.
+
+You can switch to the latest release version by running:
+${chalk.yellow(`ern platform use latest`)}
+
+Switch to the development version:
 ${chalk.yellow(`ern platform use 1000.0.0`)}
+
 Enjoï.
-=================================================================
+==============================================================================
 `)
 )
