@@ -1,12 +1,12 @@
 /*
  * Copyright 2017 WalmartLabs
-
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
-
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
-
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
+#import "ElectrodePluginConfig.h"
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "ElectrodePluginConfig.h"
-
 
 @protocol APIImplsConfigWrapperDelegate <NSObject>
 @end
 
-
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ElectrodeContainerConfig: NSObject <ElectrodePluginConfig>
-@property (nonatomic, assign) BOOL debugEnabled;
-@property (nonatomic, copy) NSString *packagerHost;
-@property (nonatomic, copy) NSString *packagerPort;
-@property (nonatomic, copy) NSString *bundleStoreHostPort;
+@interface ElectrodeContainerConfig : NSObject <ElectrodePluginConfig>
+@property(nonatomic, assign) BOOL debugEnabled;
+@property(nonatomic, copy) NSString *packagerHost;
+@property(nonatomic, copy) NSString *packagerPort;
+@property(nonatomic, copy) NSString *bundleStoreHostPort;
 @end
 
 @protocol MiniAppViewDelegate <NSObject>
@@ -51,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  To load default bundle. Always `localhost:8080`
  */
-@property (nonatomic, copy) NSString *defaultHostAndPort;
+@property(nonatomic, copy) NSString *defaultHostAndPort;
 
 /**
  Create a singleton instance of ElectrodeReactNative with the ability to set
@@ -74,11 +72,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 
 + (void)startWithConfigurations:(id<ElectrodePluginConfig>)reactContainerConfig
-                        __attribute((deprecated("use -startWithConfigurations:ernDelegate instead")));
+    __attribute((deprecated("use -startWithConfigurations:ernDelegate instead")));
 
-+ (void)startWithConfigurations:(id<ElectrodePluginConfig>)reactContainerConfig ernDelegate:(id<ERNDelegate>)ernDelegate
-;
-
++ (void)startWithConfigurations:(id<ElectrodePluginConfig>)reactContainerConfig
+                    ernDelegate:(id<ERNDelegate>)ernDelegate;
 
 /**
  Returns a react native miniapp (from a JSBundle) inside a view controller.
@@ -89,7 +86,7 @@ NS_ASSUME_NONNULL_BEGIN
  @return A UIViewController containing the view of the miniapp.
  */
 - (UIViewController *)miniAppWithName:(NSString *)name
-                           properties:(NSDictionary * _Nullable)properties;
+                           properties:(NSDictionary *_Nullable)properties;
 
 /**
  Returns a react native miniapp (from a JSBundle).
@@ -113,7 +110,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (UIView *)miniAppViewWithName:(NSString *)name
                      properties:(NSDictionary *_Nullable)properties
                 sizeFlexibility:(NSInteger)sizeFlexibilty
-        __attribute((deprecated("use -miniAppViewWithName:properties:sizeFlexibility:delegate instead")));
+    __attribute((deprecated("use -miniAppViewWithName:properties:sizeFlexibility:delegate instead")));
 
 /**
  Returns a react native miniapp (from a JSBundle).
@@ -130,8 +127,8 @@ NS_ASSUME_NONNULL_BEGIN
                        delegate:(id<MiniAppViewDelegate> _Nullable)delegate;
 
 /**
- Call this to update an RCTRootView with new props. Calling this with new props will cause the view to be rerendered.
- Request will be ignored if the returned view is not an RCTRootView instance.
+ Call this to update an RCTRootView with new props. Calling this with new props will cause the view
+ to be rerendered. Request will be ignored if the returned view is not an RCTRootView instance.
  */
 - (void)updateView:(UIView *)view withProps:(NSDictionary *)newProps;
 

@@ -36,7 +36,7 @@
 - (instancetype)initWithDeploymentKey:(NSString *)deploymentKey;
 
 // Optional Properties
-@property (nonatomic, copy, readonly) NSString *codePushWithServerURLString;
-@property (nonatomic, copy, readonly) NSString *codePushWithIDString;
+@property(nonatomic, copy, readonly) NSString *codePushWithServerURLString;
+@property(nonatomic, copy, readonly) NSString *codePushWithIDString;
 
 @end
