@@ -65,14 +65,17 @@ function firstTimeInstall() {
     // Create cached versions directory
     fs.mkdirSync(ERN_VERSIONS_CACHE_PATH)
 
-    // Initial version to install is either the one declared in local .ernrc file
-    // if it exists, or the latest available version of Electrode Native CLI
+    // The initial version to install is either set via an environment variable,
+    // declared in a local .ernrc file if it exists, or the latest available
+    // version available on npm.
     let initialVersion
-    if (ERN_RC_LOCAL_FILE_PATH === ENR_RC_RESOLVED_PATH) {
+    if (process.env['ERN_INITIAL_VERSION']) {
+      initialVersion = process.env['ERN_INITIAL_VERSION']
+    } else if (ERN_RC_LOCAL_FILE_PATH === ENR_RC_RESOLVED_PATH) {
       const ernRc = JSON.parse(fs.readFileSync(ENR_RC_RESOLVED_PATH, 'utf-8'))
       initialVersion = ernRc.platformVersion
     } else {
-      initialVersion = getLatestErnLocalCliVersion()
+      initialVersion = getLatestVersion(ERN_LOCAL_CLI_PACKAGE)
     }
 
     // Create the version directory
@@ -158,6 +161,7 @@ function firstTimeInstall() {
         spinner.succeed(
           `Hurray ! Electrode Native v${initialVersion} was successfully installed.`
         )
+        runLocalCli()
       } else {
         spinner.fail(
           'Something went wrong :( Run the command again with --debug flag for more info.'
@@ -166,7 +170,7 @@ function firstTimeInstall() {
       }
     })
   } catch (e) {
-    console.log(
+    console.error(
       'Something went wrong :( Run the command again with --debug flag for more info.'
     )
     cleanupAndExitWithFailure()
@@ -225,21 +229,21 @@ function runLocalCli() {
   require(pathToErnVersionEntryPoint)
 }
 
-function getLatestErnLocalCliVersion() {
+function getLatestVersion(pkg) {
   try {
     let versions
     if (isYarnInstalled()) {
       versions = JSON.parse(
-        execSync(`yarn info ${ERN_LOCAL_CLI_PACKAGE} versions --json`)
+        execSync(`yarn info ${pkg} versions --json`)
       ).data
     } else {
       versions = JSON.parse(
-        execSync(`npm info ${ERN_LOCAL_CLI_PACKAGE} versions --json`)
+        execSync(`npm v ${pkg} versions --json`)
       )
     }
     return versions.pop()
   } catch (e) {
-    console.log(e)
+    console.error(e)
   }
 }
 
