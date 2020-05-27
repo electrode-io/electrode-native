@@ -179,25 +179,23 @@ async function generateFullComposite(
       extraJsDependencies.push(
         PackagePath.fromString(`react-native@${miniAppRnVersion}`)
       )
-      // If the version of RN < 0.60.0 we also need to add react dependency
-      // to the composite as it needs to be local to the bundler root for
-      // some reason (probably haste related).
-      // Otherwise bundling will fail to locate some react modules and throw
-      // 'Unable to resolve module ...' errors.
-      if (semver.lte(miniAppRnVersion, '0.60.0')) {
-        extraJsDependencies.push(
-          PackagePath.fromString(`react@${pJson.dependencies.react}`)
-        )
-      }
-
+      // We also need to keep react in the composite project root as
+      // keeping it outside the root will lead to isses with versions of
+      // react native <= 0.60.0 but also cause some side effect with
+      // more recent react native version (one we identified has to do
+      // with react hooks causing a red screen if react is not part of
+      // the project root)
+      const miniAppReactVersion = pJson.dependencies.react
+      extraJsDependencies.push(
+        PackagePath.fromString(`react@${miniAppReactVersion}`)
+      )
+      // Explicitly add react as an extra node module in metro config
+      // Because its not a native module, it will not be auto added
+      // later on as done for native modules
+      extraNodeModules.react = path.join(outDir, 'node_modules/react')
       // Also add latest version of the bridge
       extraJsDependencies.push(
         PackagePath.fromString(`react-native-electrode-bridge`)
-      )
-      // We also need to have react added as an extra node module in metro config
-      extraNodeModules.react = path.join(
-        localMiniAppsPaths[0],
-        'node_modules/react'
       )
     }
 
@@ -280,7 +278,11 @@ You should resolve the following version mismatches prior to retrying.${os.EOL}`
       blacklistRe = _.difference(
         allNativeModules.map(d => d.basePath),
         dedupedNativeModules.resolved.map(d => d.basePath)
-      ).map(l => new RegExp(`${l}\/.*`))
+      )
+        .concat(
+          ...localMiniAppsPaths.map(p => path.join(p, 'node_modules/react'))
+        )
+        .map(l => new RegExp(`${l}\/.*`))
     }
 
     await patchCompositeBabelRcRoots({
