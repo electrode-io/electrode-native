@@ -24,6 +24,7 @@ import { createIndexJs } from './createIndexJs'
 import { createBaseCompositeImports } from './createBaseCompositeImports'
 import { patchCompositeBabelRcRoots } from './patchCompositeBabelRcRoots'
 import { patchMetro51AssetsBug } from './patchMetro51AssetsBug'
+import { patchMetroAssetsBug } from './patchMetroAssetsBug'
 import { patchMetroBabelEnv } from './patchMetroBabelEnv'
 import { createBabelRc } from './createBabelRc'
 import { applyYarnResolutions } from './applyYarnResolutions'
@@ -303,6 +304,13 @@ You should resolve the following version mismatches prior to retrying.${os.EOL}`
     await addRNDepToPjson(outDir, rnVersion)
     if (semver.lt(rnVersion, '0.60.0')) {
       await patchMetro51AssetsBug({ cwd: outDir })
+    }
+    if (localMiniApps.length > 0) {
+      // We only need to apply this patch if there is at least one local
+      // MiniApp, as the bug it fixes only happens when dealing with
+      // a monorepo like configuration. Such a configuration is only created
+      // when at least one local MiniApp is present in the composite
+      await patchMetroAssetsBug({ cwd: outDir })
     }
     await patchMetroBabelEnv({ cwd: outDir })
   } finally {
