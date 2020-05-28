@@ -9,14 +9,13 @@ import com.ern.api.impl.navigation.ElectrodeBaseActivity;
 // Feel free to modify it at your convenience.
 
 public class MainActivity extends ElectrodeBaseActivity {
-
     @NonNull
     @Override
     public String getRootComponentName() {
         return "{{{miniAppName}}}";
     }
 
-     @Override
+    @Override
     protected int mainLayout() {
         return R.layout.activity_main;
     }

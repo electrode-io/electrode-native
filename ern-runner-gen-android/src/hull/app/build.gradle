@@ -1,15 +1,5 @@
 apply plugin: 'com.android.application'
 
-/**
- * Set this to true to create two separate APKs instead of one:
- *   - An APK that only works on ARM devices
- *   - An APK that only works on x86 devices
- * The advantage is the size of the APK is reduced by about 4MB.
- * Upload all the APKs to the Play Store and people will download
- * the correct one based on the CPU architecture of their device.
- */
-def enableSeparateBuildPerCPUArchitecture = false
-
 android {
     compileSdkVersion {{{compileSdkVersion}}}
     buildToolsVersion "{{{buildToolsVersion}}}"
@@ -19,26 +9,7 @@ android {
         targetSdkVersion {{{targetSdkVersion}}}
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        {{#RN_VERSION_LT_59}}
-        ndk {
-            abiFilters "armeabi-v7a", "x86"
-        }
-        {{/RN_VERSION_LT_59}}
     }
-    splits {
-       abi {
-           reset()
-           enable enableSeparateBuildPerCPUArchitecture
-           universalApk false  // If true, also generate a universal APK
-           {{#RN_VERSION_LT_59}}
-           include "armeabi-v7a", "x86"
-           {{/RN_VERSION_LT_59}}
-           {{#RN_VERSION_GTE_59}}
-           include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
-           {{/RN_VERSION_GTE_59}}
-       }
-   }
     buildTypes {
         release {
             minifyEnabled false
@@ -57,35 +28,15 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
-
     packagingOptions {
         pickFirst "lib/armeabi-v7a/libc++_shared.so"
         pickFirst "lib/arm64-v8a/libc++_shared.so"
         pickFirst "lib/x86/libc++_shared.so"
         pickFirst "lib/x86_64/libc++_shared.so"
     }
-
-    // applicationVariants are e.g. debug, release
-    applicationVariants.all { variant ->
-       variant.outputs.each { output ->
-           // For each separate APK per architecture, set a unique version code as described here:
-           // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-           {{#RN_VERSION_LT_59}}
-           def versionCodes = ["armeabi-v7a":1, "x86":2]
-           {{/RN_VERSION_LT_59}}
-           {{#RN_VERSION_GTE_59}}
-           def versionCodes = ["armeabi-v7a":1, "x86":2, "arm64-v8a": 3, "x86_64": 4]
-           {{/RN_VERSION_GTE_59}}
-           def abi = output.getFilter(com.android.build.OutputFile.ABI)
-           if (abi != null) {  // null for the universal-debug, universal-release variants
-               output.versionCodeOverride =
-                       versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
-           }
-       }
-   }
 }
 
 dependencies {
     // Recompile this dependency on every build as it can be updated at any time (snapshot)
-    api('{{{groupId}}}:{{{artifactId}}}:1.0.0') { changing = true }
+    implementation('{{{groupId}}}:{{{artifactId}}}:1.0.0') { changing = true }
 }
