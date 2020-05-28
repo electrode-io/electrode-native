@@ -16,7 +16,6 @@ import {
 } from '../lib'
 import chalk from 'chalk'
 import { Argv } from 'yargs'
-import inquirer from 'inquirer'
 
 export const command = 'create-miniapp <appName>'
 export const desc = 'Create a new ern application(miniapp)'
@@ -31,7 +30,7 @@ export const builder = (argv: Argv) => {
     })
     .option('packageName', {
       alias: 'p',
-      describe: 'Name to use for the MiniApp NPM package',
+      describe: 'Name to use for the MiniApp npm package',
     })
     .option('platformVersion', {
       alias: 'v',
@@ -43,17 +42,22 @@ export const builder = (argv: Argv) => {
       describe: 'Id of the Manifest entry to use to create this MiniApp',
       type: 'string',
     })
+    .option('npm', {
+      describe: 'Use npm instead of Yarn to install dependencies',
+      type: 'boolean',
+    })
     .option('scope', {
       alias: 's',
       describe: 'Scope to use for the MiniApp NPM package',
     })
     .option('skipNpmCheck', {
       describe:
-        'Skip the check ensuring package does not already exists in NPM registry',
+        'Skip the check ensuring package does not already exists in npm registry',
       type: 'boolean',
     })
     .option('packageManager', {
       choices: ['npm', 'yarn', undefined],
+      deprecated: 'Yarn is the default, use --npm to override',
       describe: 'Package manager to use for this MiniApp',
       type: 'string',
     })
@@ -68,6 +72,7 @@ export const commandHandler = async ({
   appName,
   language,
   manifestId,
+  npm,
   packageManager,
   packageName,
   platformVersion,
@@ -78,6 +83,7 @@ export const commandHandler = async ({
   appName: string
   language: 'JavaScript' | 'TypeScript'
   manifestId?: string
+  npm?: boolean
   packageName?: string
   packageManager?: 'npm' | 'yarn'
   platformVersion: string
@@ -93,6 +99,14 @@ export const commandHandler = async ({
 
   if (language) {
     log.warn('Deprecated: --language. Use --template, or omit to use default.')
+  }
+
+  if (packageManager === 'yarn') {
+    log.warn('Deprecated: --packageManager. Yarn is the default.')
+  } else if (packageManager === 'npm') {
+    log.warn(
+      'Deprecated: --packageManager. Use --npm to override default usage of Yarn.'
+    )
   }
 
   if (manifestId) {
@@ -118,16 +132,10 @@ export const commandHandler = async ({
     packageName = await askUserToInputPackageName({ defaultPackageName })
   }
 
-  if (!packageManager) {
-    const { userSelectedPackageManager } = await inquirer.prompt([
-      <inquirer.Question>{
-        choices: ['yarn', 'npm'],
-        message: 'Choose the package manager to use for this MiniApp',
-        name: 'userSelectedPackageManager',
-        type: 'list',
-      },
-    ])
-    packageManager = userSelectedPackageManager
+  if (packageManager === 'npm' || npm) {
+    packageManager = 'npm'
+  } else {
+    packageManager = 'yarn'
   }
 
   await logErrorAndExitIfNotSatisfied({
