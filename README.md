@@ -21,16 +21,16 @@
 
 ### Prerequisites
 
-- Node.js >= 8.3
-- NPM >= 3.0
+- Node.js >= 10
+- npm >= 5.6.0
 - Android Studio (for Android apps)
 - Xcode >= 10 (for iOS apps)
-- CocoaPods (for iOS apps using a version of React Native >= 0.60)
+- CocoaPods (if using a version of React Native >= 0.60)
 
 ### Install
 
-```console
-$ npm install -g electrode-native && ern
+```sh
+npm install -g electrode-native
 ```
 
 ## Documentation

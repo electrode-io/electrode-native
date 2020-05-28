@@ -22,7 +22,7 @@ If you want to contribute code to the Electrode Native platform, you'll first ne
 1. If you have not already installed the platform, install by running the following command:
 
     ```bash
-    npm install -g electrode-native && ern
+    npm install -g electrode-native
     ```
 
 1. Fork and clone the `electrode-native` repository.
