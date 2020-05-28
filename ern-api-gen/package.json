@@ -46,7 +46,7 @@
     "mkdirp": "^0.5.1",
     "mustache": "^4.0.1",
     "semver": "^5.5.0",
-    "shelljs": "^0.8.2",
+    "shelljs": "^0.8.4",
     "swagger-methods": "^1.0.4",
     "sway": "^1.0.0"
   },

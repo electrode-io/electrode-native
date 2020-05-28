@@ -62,7 +62,7 @@
     "node-simctl": "^5.1.1",
     "react-native-cli": "^2.0.1",
     "semver": "^5.5.0",
-    "shelljs": "^0.8.2",
+    "shelljs": "^0.8.4",
     "simple-git": "^1.106.0",
     "tmp": "^0.0.33",
     "treeify": "^1.1.0",
