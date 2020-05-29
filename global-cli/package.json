@@ -1,8 +1,8 @@
 {
   "name": "electrode-native",
-  "version": "1.0.17",
+  "version": "1.1.0",
   "description": "Electrode Native Global CLI",
-  "main": "./dist/index.js",
+  "main": "./src/index.js",
   "bin": {
     "ern": "bin/ern.js"
   },
@@ -21,6 +21,7 @@
     "Benoit Lemaire <blemaire@walmartlabs.com>",
     "Bharath Marulasiddappa <BMarulasiddappa@walmartlabs.com>",
     "Deepu Ganapathiyadan <DGanapathiyadan@walmartlabs.com>",
+    "Frieder Bluemle <frieder.bluemle@walmartlabs.com>",
     "Krunal Shah <KShah1@walmartlabs.com>",
     "Weijie Li <WLi@walmartlabs.com>"
   ],
