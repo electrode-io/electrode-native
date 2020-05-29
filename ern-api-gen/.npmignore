@@ -1,6 +1,4 @@
 src
-.coverage
-.nyc_output
 test
 tsconfig.release.json
 yarn.lock

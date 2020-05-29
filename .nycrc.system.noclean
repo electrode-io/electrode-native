@@ -1,0 +1,4 @@
+{
+  "extends": "./.nycrc.system",
+  "clean": false
+} 

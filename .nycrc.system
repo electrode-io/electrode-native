@@ -1,0 +1,7 @@
+{
+  "all": true,
+  "exclude-after-remap": false,
+  "include": "ern-*/dist/**/*.{ts,js}",
+  "instrument": false,
+  "reporter": ["text", "html", "json"]
+} 

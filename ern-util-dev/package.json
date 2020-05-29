@@ -5,9 +5,7 @@
   "main": "index.js",
   "bin": {
     "ern-copyfiles": "bin/ern-copyfiles.js",
-    "ern-instrument-dist": "bin/ern-instrument-dist.js",
     "ern-mocha": "bin/ern-mocha.js",
-    "ern-nyc": "bin/ern-nyc.js",
     "ern-typescript": "bin/ern-typescript.js"
   },
   "scripts": {

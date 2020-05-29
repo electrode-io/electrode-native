@@ -77,6 +77,24 @@ System tests are running `ern` commands as a user would do. This test suite is t
 
 Our tests are written using [mocha], [chai] and [sinon].
 
+### Coverage
+
+We are using [nyc][5] to generate and report test coverage.
+
+The following commands can be used to get coverage reports locally:
+
+- `yarn coverage:unit`\
+To generate and report unit tests coverage
+- `yarn coverage:system`\
+To generate and report system tests coverage
+- `yarn coverage:all`\
+To generate and report combined UT/ST coverage
+
+Once done, the coverage will be reported in the terminal.\
+An html report will also be generated in the `coverage` directory.
+
+Combine UT/ST coverage of the `master` branch is posted daily to [coveralls][6].
+
 ## Guidelines for documentation contributions
 
 We are using [GitBook] for our documentation.  
@@ -151,3 +169,5 @@ Another CI job is taking care of running the complete system test suite daily.
 [2]: https://github.com/lerna/lerna
 [3]: https://github.com/yarnpkg/yarn
 [4]: https://palantir.github.io/tslint/
+[5]: https://github.com/istanbuljs/nyc
+[6]: https://coveralls.io/github/electrode-io/electrode-native

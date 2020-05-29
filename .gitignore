@@ -31,7 +31,6 @@ lerna-debug.log
 
 # Coverage data
 #
-.coverage/
 .nyc_output/
 coverage/
 

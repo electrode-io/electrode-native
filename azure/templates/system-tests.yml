@@ -20,7 +20,8 @@ steps:
       ern platform use 1000.0.0
     displayName: 'Use dev version of ern'
   - script: |
-      yarn coverage:ci
+      yarn coverage:all
+      yarn coverage:upload
     env:
       COVERALLS_REPO_TOKEN: $(coverallsToken)
     displayName: 'Run full test suite with coverage'
