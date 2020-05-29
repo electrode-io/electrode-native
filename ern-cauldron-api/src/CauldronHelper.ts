@@ -1,25 +1,25 @@
 import _ from 'lodash'
 import {
-  log,
-  PackagePath,
-  fileUtils,
-  NativePlatform,
-  normalizeVersionsToSemver,
-  utils as coreUtils,
-  AppPlatformDescriptor,
-  AppVersionDescriptor,
   AnyAppDescriptor,
   AppNameDescriptor,
+  AppPlatformDescriptor,
+  AppVersionDescriptor,
+  fileUtils,
+  log,
+  NativePlatform,
+  normalizeVersionsToSemver,
+  PackagePath,
+  utils as coreUtils,
 } from 'ern-core'
 import {
+  CauldronCodePushEntry,
+  CauldronCodePushMetadata,
+  CauldronConfigLevel,
+  CauldronGitHubConfig,
   CauldronNativeApp,
   CauldronNativeAppPlatform,
-  CauldronCodePushMetadata,
-  CauldronCodePushEntry,
-  CauldronConfigLevel,
   CauldronNativeAppVersion,
   CauldronStartCommandConfig,
-  CauldronGitHubConfig,
 } from './types'
 import CauldronApi from './CauldronApi'
 import semver from 'semver'

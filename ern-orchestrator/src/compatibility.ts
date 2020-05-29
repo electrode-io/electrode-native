@@ -1,10 +1,10 @@
 import {
-  PackagePath,
+  AppVersionDescriptor,
+  kax,
+  log,
   manifest,
   MiniApp,
-  log,
-  kax,
-  AppVersionDescriptor,
+  PackagePath,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import _ from 'lodash'

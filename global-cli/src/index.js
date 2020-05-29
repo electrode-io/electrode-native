@@ -233,13 +233,9 @@ function getLatestVersion(pkg) {
   try {
     let versions
     if (isYarnInstalled()) {
-      versions = JSON.parse(
-        execSync(`yarn info ${pkg} versions --json`)
-      ).data
+      versions = JSON.parse(execSync(`yarn info ${pkg} versions --json`)).data
     } else {
-      versions = JSON.parse(
-        execSync(`npm v ${pkg} versions --json`)
-      )
+      versions = JSON.parse(execSync(`npm v ${pkg} versions --json`))
     }
     return versions.pop()
   } catch (e) {

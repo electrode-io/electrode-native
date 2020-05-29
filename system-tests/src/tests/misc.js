@@ -135,7 +135,9 @@ run(
 
 // Container gen should be successful for the two following commands
 run(`create-container --miniapps file:${miniAppPath} -p android`)
-run(`create-container --miniapps file:${miniAppPath} -p ios`, { expectedExitCode: process.platform === 'darwin' ? 0 : 1 })
+run(`create-container --miniapps file:${miniAppPath} -p ios`, {
+  expectedExitCode: process.platform === 'darwin' ? 0 : 1,
+})
 
 // transform-container / publish-container should be successful
 run(

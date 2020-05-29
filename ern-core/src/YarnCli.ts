@@ -1,7 +1,6 @@
 import createTmpDir from './createTmpDir'
 import shell from './shell'
 import path from 'path'
-import fs from 'fs-extra'
 import { PackagePath } from './PackagePath'
 import { execp } from './childProcess'
 import log from './log'

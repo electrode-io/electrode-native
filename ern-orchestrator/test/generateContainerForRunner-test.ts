@@ -1,9 +1,8 @@
 import sinon from 'sinon'
-import { PackagePath } from 'ern-core'
+import { AppVersionDescriptor, PackagePath } from 'ern-core'
 import { generateContainerForRunner } from '../src/generateContainerForRunner'
 import * as container from '../src/container'
 import * as composite from '../src/composite'
-import { AppVersionDescriptor } from 'ern-core'
 
 const sandbox = sinon.createSandbox()
 

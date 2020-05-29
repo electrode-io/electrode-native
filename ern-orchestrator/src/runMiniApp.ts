@@ -1,4 +1,5 @@
 import {
+  AppVersionDescriptor,
   getDefaultMavenLocalDirectory,
   kax,
   log,
@@ -9,7 +10,6 @@ import {
   reactnative,
   shell,
   utils,
-  AppVersionDescriptor,
 } from 'ern-core'
 import { publishContainer } from 'ern-container-publisher'
 import { getActiveCauldron } from 'ern-cauldron-api'

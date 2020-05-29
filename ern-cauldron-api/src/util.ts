@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import Joi from '@hapi/joi'
 import semver from 'semver'
-import { schemaVersion, cauldronApiVersionBySchemaVersion } from './schemas'
+import { cauldronApiVersionBySchemaVersion, schemaVersion } from './schemas'
 
 // ====================================
 // Cauldron Helper

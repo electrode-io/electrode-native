@@ -1,14 +1,13 @@
 import {
-  epilog,
   askUserToChooseANapDescriptorFromCauldron,
+  epilog,
+  logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
 } from '../lib'
 import { start } from 'ern-orchestrator'
-import _ from 'lodash'
-import { PackagePath, AppVersionDescriptor } from 'ern-core'
+import { AppVersionDescriptor, PackagePath } from 'ern-core'
 import { Argv } from 'yargs'
 import untildify from 'untildify'
-import { logErrorAndExitIfNotSatisfied } from '../lib'
 
 export const command = 'start'
 export const desc = 'Start a composite MiniApp'

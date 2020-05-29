@@ -1,7 +1,7 @@
 import {
+  findDirectoriesHavingRnConfig,
   handleCopyDirective,
   NativePlatform,
-  findDirectoriesHavingRnConfig,
 } from 'ern-core'
 import { getAssetsPath } from './getAssetsPath'
 import readDir from 'fs-readdir-recursive'

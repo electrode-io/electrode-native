@@ -1,21 +1,22 @@
 import generateProject, {
-  generateSwagger,
   generateFlowConfig,
   generatePackageJson,
+  generateSwagger,
 } from './generateProject'
 import normalizeConfig from './normalizeConfig'
 import fs from 'fs-extra'
 import path from 'path'
 import semver from 'semver'
-import { PKG_FILE, FLOW_CONFIG_FILE } from './Constants'
+import { FLOW_CONFIG_FILE, PKG_FILE } from './Constants'
 import {
+  childProcess,
+  log,
   PackagePath,
   shell,
-  childProcess,
   utils as coreUtils,
-  log,
 } from 'ern-core'
 import inquirer from 'inquirer'
+
 const { execp } = childProcess
 
 /**
@@ -108,7 +109,7 @@ export async function regenerateCode(options: any = {}) {
 
   isNewVersion
     ? await publish(await readPackage())
-    : log.info('Done. Make sure to update the version and npm publish if needed.')
+    : log.info('Done. Remember to publish a new version if needed.')
 }
 
 export async function cleanGenerated(outFolder: string = process.cwd()) {

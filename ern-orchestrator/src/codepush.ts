@@ -1,24 +1,19 @@
 import {
-  createTmpDir,
-  PackagePath,
-  AppVersionDescriptor,
-  reactnative,
-  CodePushPackage,
-  getCodePushSdk,
-  log,
-  kax,
-  SourceMapStoreSdk,
-  HermesCli,
   android,
-  createProxyAgentFromErnConfig,
+  AppVersionDescriptor,
   bugsnagUpload,
+  CodePushPackage,
+  createTmpDir,
+  getCodePushSdk,
+  HermesCli,
+  kax,
+  log,
+  PackagePath,
+  reactnative,
+  SourceMapStoreSdk,
 } from 'ern-core'
 import { GeneratedComposite } from 'ern-composite-gen'
-import {
-  CauldronCodePushMetadata,
-  CauldronCodePushEntry,
-  getActiveCauldron,
-} from 'ern-cauldron-api'
+import { getActiveCauldron } from 'ern-cauldron-api'
 import * as compatibility from './compatibility'
 import _ from 'lodash'
 import path from 'path'

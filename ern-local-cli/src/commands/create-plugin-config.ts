@@ -1,14 +1,14 @@
 import {
-  readPackageJson,
+  createTmpDir,
   PackagePath,
   PluginConfigGenerator,
-  createTmpDir,
+  promptUtils,
+  readPackageJson,
   shell,
   yarn,
-  promptUtils,
 } from 'ern-core'
 
-import { epilog, tryCatchWrap, askUserInput } from '../lib'
+import { askUserInput, epilog, tryCatchWrap } from '../lib'
 import { Argv } from 'yargs'
 import fs from 'fs-extra'
 import path from 'path'

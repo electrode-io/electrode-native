@@ -1,5 +1,5 @@
 import { ApiImplGeneratable } from '../../ApiImplGeneratable'
-import { PackagePath, shell, mustacheUtils, Platform, log } from 'ern-core'
+import { log, mustacheUtils, PackagePath, Platform, shell } from 'ern-core'
 import fs from 'fs-extra'
 import path from 'path'
 

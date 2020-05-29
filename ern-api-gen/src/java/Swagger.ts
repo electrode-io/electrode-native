@@ -7,13 +7,14 @@ import SwaggerApi from 'sway/lib/types/api'
 import Path from 'sway/lib/types/path'
 import Operation from 'sway/lib/types/operation'
 import parameterFactory from '../models/parameters'
-import { beanify, apply } from './beanUtils'
+import { apply, beanify } from './beanUtils'
 import { Property } from '../models/properties'
 import { toModel } from '../models/PropertyBuilder'
 import authFactory from '../models/auth'
 import Sway from 'sway'
 import { upperFirst } from './StringUtils'
 import supportedHttpMethods from 'swagger-methods'
+
 supportedHttpMethods.push('event')
 /**
  * This class fixes up Sway so that it can work as the model for swagger-codegen.

@@ -6,6 +6,7 @@ import path from 'path'
 import shell from 'shelljs'
 import _tmp from 'tmp'
 import sinon from 'sinon'
+
 const sandbox = sinon.createSandbox()
 const jsdiff = require('diff')
 require('colors')

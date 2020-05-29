@@ -1,6 +1,6 @@
 import { getActiveCauldron } from 'ern-cauldron-api'
-import { log, AppVersionDescriptor, PackagePath } from 'ern-core'
-import { alignPackageJsonOnManifest, getGitHubApi } from 'ern-orchestrator'
+import { AppVersionDescriptor, PackagePath } from 'ern-core'
+import { alignPackageJsonOnManifest } from 'ern-orchestrator'
 import {
   askUserToChooseANapDescriptorFromCauldron,
   epilog,

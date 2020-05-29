@@ -2,6 +2,7 @@ import { log } from 'ern-core'
 import _F from './java/File'
 import fs from 'fs'
 import path from 'path'
+
 const File = _F
 
 const ABSTRACT_SEARCH_PATHS = [path.join(__dirname, '..', 'resources')]

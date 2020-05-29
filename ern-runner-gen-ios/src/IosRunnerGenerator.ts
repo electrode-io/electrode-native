@@ -1,9 +1,9 @@
 import { RunnerGenerator, RunnerGeneratorConfig } from 'ern-runner-gen'
 import {
+  injectReactNativeVersionKeysInObject,
   mustacheUtils,
   NativePlatform,
   shell,
-  injectReactNativeVersionKeysInObject,
 } from 'ern-core'
 import path from 'path'
 import fs from 'fs-extra'

@@ -3,6 +3,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import { Cauldron, ICauldronDocumentStore } from './types'
 import { schemaVersion } from './schemas'
+
 const CAULDRON_FILENAME = 'cauldron.json'
 
 export default class GitDocumentStore extends BaseGit

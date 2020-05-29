@@ -7,14 +7,14 @@ import { manifest } from './Manifest'
 import * as ModuleType from './ModuleTypes'
 import path from 'path'
 import log from './log'
-import camelCase = require('lodash/camelCase')
 import { readPackageJson } from './packageJsonFileUtils'
 import {
+  AnyAppDescriptor,
   AppNameDescriptor,
   AppPlatformDescriptor,
   AppVersionDescriptor,
-  AnyAppDescriptor,
 } from './descriptors'
+import camelCase = require('lodash/camelCase')
 
 const gitDirectoryRe = /.*\/(.*).git/
 

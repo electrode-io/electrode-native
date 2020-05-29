@@ -1,5 +1,5 @@
 import { CauldronHelper } from './CauldronHelper'
-import { config, kax, Platform, utils } from 'ern-core'
+import { config, kax, Platform } from 'ern-core'
 import { getCurrentSchemaVersion } from './util'
 import semver from 'semver'
 import { defaultCauldron } from './CauldronApiFactory'

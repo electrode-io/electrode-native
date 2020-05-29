@@ -1,4 +1,4 @@
-import { HashMap, newHashMap, newHashSet } from '../src/java/javaUtil'
+import { newHashMap, newHashSet } from '../src/java/javaUtil'
 import { expect } from 'chai'
 import BooleanHelper from '../src/java/BooleanHelper'
 

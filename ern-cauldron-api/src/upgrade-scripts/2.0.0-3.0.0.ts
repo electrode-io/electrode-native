@@ -1,9 +1,9 @@
 import CauldronApi from '../CauldronApi'
 import {
-  log,
-  AppVersionDescriptor,
-  AppPlatformDescriptor,
   AppNameDescriptor,
+  AppPlatformDescriptor,
+  AppVersionDescriptor,
+  log,
 } from 'ern-core'
 
 const transformerPrefix = 'ern-container-transformer-'

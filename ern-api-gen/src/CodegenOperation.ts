@@ -1,4 +1,5 @@
 import { newHashSet } from './java/javaUtil'
+
 const UPDATE = newHashSet('PUT', 'PATCH')
 
 export default class CodegenOperation {

@@ -1,4 +1,4 @@
-import { lowerFirst as lcFirst, upperFirst as ucFirst } from './StringUtils'
+import { upperFirst as ucFirst } from './StringUtils'
 
 /**
  * Takes a prototype and a list of property names and creates getters and

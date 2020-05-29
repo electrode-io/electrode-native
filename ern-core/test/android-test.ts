@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { beforeTest, afterTest } from 'ern-util-dev'
+import { afterTest, beforeTest } from 'ern-util-dev'
 import fs from 'fs'
 import path from 'path'
 import * as childProcess from '../src/childProcess'

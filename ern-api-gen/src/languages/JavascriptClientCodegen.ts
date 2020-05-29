@@ -13,8 +13,6 @@ import ModelImpl from '../models/ModelImpl'
 import {
   ArrayProperty,
   BooleanProperty,
-  DateProperty,
-  DateTimeProperty,
   DoubleProperty,
   FloatProperty,
   IntegerProperty,
@@ -25,7 +23,7 @@ import {
 } from '../models/properties'
 import { log } from 'ern-core'
 import File from '../java/File'
-import { newHashSet, newHashMap, Collections } from '../java/javaUtil'
+import { Collections, newHashMap, newHashSet } from '../java/javaUtil'
 import StringBuilder from '../java/StringBuilder'
 import { isEmpty } from '../java/StringUtils'
 import path from 'path'

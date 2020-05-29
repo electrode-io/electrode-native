@@ -1,4 +1,4 @@
-import { resolve, factory } from './factory'
+import { factory } from './factory'
 import ModelImpl from './ModelImpl'
 import ArrayModel from './ArrayModel'
 import RefModel from './RefModel'

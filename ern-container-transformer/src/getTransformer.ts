@@ -1,4 +1,4 @@
-import { ModuleFactory, Platform, PackagePath } from 'ern-core'
+import { ModuleFactory, PackagePath, Platform } from 'ern-core'
 import { ContainerTransformer } from './types'
 
 const ERN_TRANSFORMER_CACHE_DIRECTORY =

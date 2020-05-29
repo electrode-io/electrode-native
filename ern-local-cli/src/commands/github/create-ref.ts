@@ -1,4 +1,4 @@
-import { log, AppVersionDescriptor, PackagePath } from 'ern-core'
+import { AppVersionDescriptor, PackagePath } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { createBranch, createTag } from 'ern-orchestrator'
 import {
@@ -7,7 +7,6 @@ import {
   logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
 } from '../../lib'
-import _ from 'lodash'
 import { Argv } from 'yargs'
 import inquirer from 'inquirer'
 

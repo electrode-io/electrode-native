@@ -1,4 +1,4 @@
-import { Platform, config, shell } from 'ern-core'
+import { config, Platform, shell } from 'ern-core'
 import { CauldronRepository } from './types'
 
 export class CauldronRepositories {

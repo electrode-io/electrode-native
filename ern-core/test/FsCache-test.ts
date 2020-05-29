@@ -1,10 +1,9 @@
 import { assert, expect } from 'chai'
 import { FsCache, maxDefaultCacheSize } from '../src/FsCache'
-import { doesThrow, doesNotThrow } from 'ern-util-dev'
+import { doesThrow } from 'ern-util-dev'
 import shell from '../src/shell'
 import path from 'path'
 import fs from 'fs'
-import _ from 'lodash'
 
 const testRootCachePath = path.join(__dirname, 'tmp')
 

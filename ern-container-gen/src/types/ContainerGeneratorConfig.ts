@@ -1,4 +1,4 @@
-import { NativePlatform, PackagePath, BaseMiniApp } from 'ern-core'
+import { NativePlatform, PackagePath } from 'ern-core'
 import { Composite } from 'ern-composite-gen'
 
 export interface ContainerGeneratorConfig {

@@ -1,8 +1,7 @@
 import parameters, {
-  RefParameter,
   BodyParameter,
+  RefParameter,
 } from '../src/models/parameters'
-import { ObjectProperty } from '../src/models/properties'
 import { expect } from 'chai'
 import RefFormat from '../src/models/refs/RefFormat'
 import ModelImpl from '../src/models/ModelImpl'

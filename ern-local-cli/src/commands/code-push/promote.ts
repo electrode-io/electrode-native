@@ -2,15 +2,14 @@ import { AppVersionDescriptor, log } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { performCodePushPromote } from 'ern-orchestrator'
 import {
-  epilog,
-  logErrorAndExitIfNotSatisfied,
+  askUserConfirmation,
   askUserForCodePushDeploymentName,
   askUserToChooseANapDescriptorFromCauldron,
   askUserToChooseOneOrMoreNapDescriptorFromCauldron,
+  epilog,
+  logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
-  askUserConfirmation,
 } from '../../lib'
-import _ from 'lodash'
 import { Argv } from 'yargs'
 
 export const command = 'promote'

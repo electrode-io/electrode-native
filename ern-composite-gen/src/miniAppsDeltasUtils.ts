@@ -1,4 +1,4 @@
-import { log, PackagePath, yarn, utils, kax } from 'ern-core'
+import { kax, log, PackagePath, utils, yarn } from 'ern-core'
 import {
   getYarnLockTopLevelDependencyRe,
   getYarnLockTopLevelGitDependencyRe,

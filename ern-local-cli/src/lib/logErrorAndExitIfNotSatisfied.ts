@@ -1,9 +1,9 @@
 import {
+  AnyAppDescriptor,
+  AppVersionDescriptor,
   kax,
   PackagePath,
   utils,
-  AppVersionDescriptor,
-  AnyAppDescriptor,
 } from 'ern-core'
 import { Ensure } from 'ern-orchestrator'
 import fs from 'fs'

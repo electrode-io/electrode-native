@@ -1,11 +1,11 @@
 import {
+  AnyAppDescriptor,
+  AppVersionDescriptor,
   config,
+  dependencyLookup,
   manifest,
   PackagePath,
   utils as coreUtils,
-  dependencyLookup,
-  AppVersionDescriptor,
-  AnyAppDescriptor,
   YarnLockParser,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'

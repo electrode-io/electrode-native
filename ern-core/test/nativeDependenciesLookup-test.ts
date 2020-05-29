@@ -4,7 +4,6 @@ import {
   resolvePackagePaths,
 } from '../src/nativeDependenciesLookup'
 import path from 'path'
-import _ from 'lodash'
 import sinon from 'sinon'
 import { manifest } from '../src/Manifest'
 

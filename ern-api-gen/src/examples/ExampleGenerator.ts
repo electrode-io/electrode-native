@@ -17,7 +17,7 @@ import {
   UUIDProperty,
 } from '../models/properties'
 import Json from '../java/Json'
-import { newHashMap, newHashSet, asMap } from '../java/javaUtil'
+import { asMap, newHashMap, newHashSet } from '../java/javaUtil'
 
 export default class ExampleGenerator {
   public examples

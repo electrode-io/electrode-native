@@ -1,13 +1,14 @@
 import {
-  applySystemPropertiesKvp,
-  applyInstantiationTypesKvp,
-  applyImportMappingsKvp,
-  applyTypeMappingsKvp,
   applyAdditionalPropertiesKvp,
+  applyImportMappingsKvp,
+  applyInstantiationTypesKvp,
   applyLanguageSpecificPrimitivesCsv,
+  applySystemPropertiesKvp,
+  applyTypeMappingsKvp,
 } from '../src/config/CodegenConfiguratorUtils'
 import CodegenConfigurator from '../src/config/CodegenConfigurator'
 import { expect } from 'chai'
+
 describe('CodegenConfiguratorUtils', function() {
   let config
   beforeEach(() => (config = new CodegenConfigurator()))

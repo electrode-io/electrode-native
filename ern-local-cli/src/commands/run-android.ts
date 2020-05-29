@@ -1,13 +1,12 @@
 import { epilog, tryCatchWrap } from '../lib'
 import {
-  deviceConfig,
-  readPackageJson,
   AppVersionDescriptor,
+  deviceConfig,
   PackagePath,
+  readPackageJson,
 } from 'ern-core'
-import { runMiniApp } from 'ern-orchestrator'
+import { parseJsonFromStringOrFile, runMiniApp } from 'ern-orchestrator'
 import { Argv } from 'yargs'
-import { parseJsonFromStringOrFile } from 'ern-orchestrator'
 
 export const command = 'run-android'
 export const desc = 'Run one or more MiniApps in the Android Runner application'

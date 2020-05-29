@@ -1,5 +1,5 @@
 /* tslint:disable:variable-name */
-import { Collections, newHashMap, asMap } from '../java/javaUtil'
+import { asMap, Collections, newHashMap } from '../java/javaUtil'
 import AbstractModel from './AbstractModel'
 import factory from './factory'
 

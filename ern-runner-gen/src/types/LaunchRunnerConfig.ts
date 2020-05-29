@@ -1,4 +1,5 @@
 import { NativePlatform } from 'ern-core'
+
 export interface LaunchRunnerConfig {
   /**
    * Extra configuration needed to launch the miniapp.

@@ -1,4 +1,4 @@
-import { manifest, Platform, PackagePath, log } from 'ern-core'
+import { log, manifest, PackagePath, Platform } from 'ern-core'
 import {
   epilog,
   logErrorAndExitIfNotSatisfied,

@@ -1,13 +1,13 @@
 import ModelImpl from '../models/ModelImpl'
 import RefModel from '../models/RefModel'
 import {
-  Property,
   ArrayProperty,
   BooleanProperty,
   DateProperty,
   DateTimeProperty,
   IntegerProperty,
   LongProperty,
+  Property,
   RefProperty,
   StringProperty,
 } from '../models/properties'

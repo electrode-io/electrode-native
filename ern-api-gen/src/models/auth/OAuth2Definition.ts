@@ -1,5 +1,5 @@
 import AbstractSecuritySchemeDefinition from './AbstractSecuritySchemeDefinition'
-import { newHashMap, asMap } from '../../java/javaUtil'
+import { asMap, newHashMap } from '../../java/javaUtil'
 
 export default class OAuth2Definition extends AbstractSecuritySchemeDefinition {
   public static TYPE = 'oauth2'

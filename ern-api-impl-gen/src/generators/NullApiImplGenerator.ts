@@ -1,4 +1,4 @@
-import { PackagePath, log } from 'ern-core'
+import { log, PackagePath } from 'ern-core'
 import { ApiImplGeneratable } from '../ApiImplGeneratable'
 
 export default class NullApiImplGenerator implements ApiImplGeneratable {

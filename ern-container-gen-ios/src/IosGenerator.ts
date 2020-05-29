@@ -1,16 +1,16 @@
 import {
   childProcess,
-  manifest,
-  iosUtil,
   injectReactNativeVersionKeysInObject,
-  utils,
-  PackagePath,
-  shell,
-  log,
-  NativePlatform,
+  iosUtil,
   kax,
+  log,
+  manifest,
+  NativePlatform,
+  PackagePath,
   PluginConfig,
   readPackageJson,
+  shell,
+  utils,
   writePackageJson,
   yarn,
 } from 'ern-core'
@@ -18,9 +18,9 @@ import {
   ContainerGenerator,
   ContainerGeneratorConfig,
   ContainerGenResult,
+  generateContainer,
   generatePluginsMustacheViews,
   populateApiImplMustacheView,
-  generateContainer,
 } from 'ern-container-gen'
 
 import fs from 'fs-extra'

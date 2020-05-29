@@ -1,8 +1,8 @@
-import { PackagePath, MiniApp, AppVersionDescriptor, log } from 'ern-core'
+import { AppVersionDescriptor, log, MiniApp, PackagePath } from 'ern-core'
 import { checkCompatibilityWithNativeApp } from 'ern-orchestrator'
 import {
-  epilog,
   askUserToChooseANapDescriptorFromCauldron,
+  epilog,
   tryCatchWrap,
 } from '../lib'
 

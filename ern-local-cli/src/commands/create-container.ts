@@ -1,30 +1,29 @@
 import {
-  PackagePath,
   AppVersionDescriptor,
-  NativePlatform,
-  kax,
-  Platform,
   createTmpDir,
+  kax,
   log,
+  NativePlatform,
+  PackagePath,
+  Platform,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import {
-  runLocalContainerGen,
-  runLocalCompositeGen,
-  runCauldronContainerGen,
+  parseJsonFromStringOrFile,
   runCauldronCompositeGen,
+  runCauldronContainerGen,
+  runLocalCompositeGen,
+  runLocalContainerGen,
 } from 'ern-orchestrator'
 import {
+  askUserToChooseANapDescriptorFromCauldron,
+  askUserToSelectAPlatform,
   epilog,
   logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
-  askUserToChooseANapDescriptorFromCauldron,
-  askUserToSelectAPlatform,
 } from '../lib'
-import _ from 'lodash'
 import { Argv } from 'yargs'
 import fs from 'fs-extra'
-import { parseJsonFromStringOrFile } from 'ern-orchestrator'
 import untildify from 'untildify'
 
 export const command = 'create-container'

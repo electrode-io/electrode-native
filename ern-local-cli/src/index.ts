@@ -4,6 +4,8 @@ import fs from 'fs-extra'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import {
   config,
+  ERN_RC_GLOBAL_FILE_PATH,
+  ernRcFilePath,
   kax,
   log,
   LogLevel,
@@ -11,8 +13,6 @@ import {
   OverrideManifestConfig,
   Platform,
   shell,
-  ernRcFilePath,
-  ERN_RC_GLOBAL_FILE_PATH,
 } from 'ern-core'
 import {
   KaxAdvancedRenderer,

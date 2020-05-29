@@ -1,4 +1,4 @@
-import { ModuleFactory, Platform, PackagePath } from 'ern-core'
+import { ModuleFactory, PackagePath, Platform } from 'ern-core'
 import { ContainerPublisher } from './types'
 
 const ERN_PUBLISHER_CACHE_DIRECTORY = Platform.containerPublishersCacheDirectory

@@ -1,5 +1,6 @@
 import ServiceLoader from '../java/ServiceLoader'
 import { Command } from '../java/cli'
+
 export default class Langs {
   public static Usage = new Command(
     { name: 'langs', description: 'Shows available langs' },

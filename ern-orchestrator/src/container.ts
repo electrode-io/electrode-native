@@ -7,18 +7,16 @@ import { Composite } from 'ern-composite-gen'
 import { AndroidGenerator } from 'ern-container-gen-android'
 import { IosGenerator } from 'ern-container-gen-ios'
 import {
+  AppVersionDescriptor,
+  BundlingResult,
   createTmpDir,
-  PackagePath,
-  Platform,
+  kax,
   log,
   NativePlatform,
-  kax,
-  BundlingResult,
-  AppVersionDescriptor,
+  PackagePath,
+  Platform,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
-import _ from 'lodash'
-import semver from 'semver'
 import * as constants from './constants'
 
 // Run container generator locally, without relying on the Cauldron, given a list of miniapp packages

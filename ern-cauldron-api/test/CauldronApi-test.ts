@@ -1,7 +1,13 @@
 import { assert, expect } from 'chai'
 import sinon from 'sinon'
-import { PackagePath, utils } from 'ern-core'
-import { doesThrow, doesNotThrow, fixtures } from 'ern-util-dev'
+import {
+  AppNameDescriptor,
+  AppPlatformDescriptor,
+  AppVersionDescriptor,
+  PackagePath,
+  utils,
+} from 'ern-core'
+import { doesNotThrow, doesThrow, fixtures } from 'ern-util-dev'
 import {
   CauldronCodePushEntry,
   ICauldronDocumentStore,
@@ -13,11 +19,6 @@ import InMemoryDocumentStore from '../src/InMemoryDocumentStore'
 import jp from 'jsonpath'
 import fs from 'fs'
 import path from 'path'
-import {
-  AppNameDescriptor,
-  AppPlatformDescriptor,
-  AppVersionDescriptor,
-} from 'ern-core'
 
 const sandbox = sinon.createSandbox()
 

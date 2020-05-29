@@ -1,10 +1,10 @@
 import { epilog, tryCatchWrap } from '../lib'
 import {
-  deviceConfig,
-  log,
   AppVersionDescriptor,
-  PackagePath,
+  deviceConfig,
   getLocalIp,
+  log,
+  PackagePath,
 } from 'ern-core'
 import { runMiniApp } from 'ern-orchestrator'
 import { Argv } from 'yargs'

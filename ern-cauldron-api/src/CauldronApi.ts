@@ -1,23 +1,23 @@
 import * as schemas from './schemas'
 import {
-  PackagePath,
+  AnyAppDescriptor,
   AppNameDescriptor,
   AppPlatformDescriptor,
   AppVersionDescriptor,
-  AnyAppDescriptor,
+  PackagePath,
 } from 'ern-core'
 import { exists, joiValidate, normalizeCauldronFilePath } from './util'
 import _ from 'lodash'
 import {
   Cauldron,
   CauldronCodePushEntry,
+  CauldronConfigLevel,
   CauldronNativeApp,
   CauldronNativeAppPlatform,
   CauldronNativeAppVersion,
+  CauldronObject,
   ICauldronDocumentStore,
   ICauldronFileStore,
-  CauldronConfigLevel,
-  CauldronObject,
 } from './types'
 import upgradeScripts from './upgrade-scripts/scripts'
 import path from 'path'

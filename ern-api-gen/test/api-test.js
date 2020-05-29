@@ -7,7 +7,6 @@ import { execSync } from 'child_process'
 import CodegenConfigurator from '../src/config/CodegenConfigurator'
 import Langs from '../src/cmd/Langs'
 import fs from 'fs'
-import { log } from 'ern-core'
 import { expect } from 'chai'
 
 describe('api schemas', async function() {

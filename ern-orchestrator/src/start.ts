@@ -1,21 +1,21 @@
 import {
-  createTmpDir,
   android,
-  ios,
+  AppVersionDescriptor,
   config as ernConfig,
+  createTmpDir,
+  ErnBinaryStore,
+  findNativeDependencies,
+  ios,
+  kax,
+  log,
+  nativeDepenciesVersionResolution,
   PackagePath,
   reactnative,
-  ErnBinaryStore,
-  log,
-  kax,
-  AppVersionDescriptor,
-  findNativeDependencies,
-  nativeDepenciesVersionResolution,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import {
-  GeneratedComposite,
   createMetroConfig,
+  GeneratedComposite,
   patchCompositeBabelRcRoots,
 } from 'ern-composite-gen'
 import _ from 'lodash'

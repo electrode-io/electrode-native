@@ -1,4 +1,3 @@
-import pad from 'lodash/padEnd'
 import camelCase from 'lodash/camelCase'
 import { CommandUsage } from './CommandUsage'
 import { Help } from './Help'

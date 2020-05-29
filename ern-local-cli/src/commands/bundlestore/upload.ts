@@ -1,24 +1,23 @@
 import {
   AppVersionDescriptor,
   BundleStoreEngine,
-  log,
-  PackagePath,
-  kax,
   createTmpDir,
+  kax,
+  log,
   NativePlatform,
+  PackagePath,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { generateComposite } from 'ern-composite-gen'
 import { bundleMiniAppsFromComposite } from 'ern-container-gen'
 import {
-  epilog,
-  tryCatchWrap,
-  logErrorAndExitIfNotSatisfied,
   askUserToChooseANapDescriptorFromCauldron,
+  epilog,
+  logErrorAndExitIfNotSatisfied,
+  tryCatchWrap,
 } from '../../lib'
 import { Argv } from 'yargs'
 import path from 'path'
-import untildify from 'untildify'
 
 export const command = 'upload'
 export const desc = 'Upload a bundle to a store'

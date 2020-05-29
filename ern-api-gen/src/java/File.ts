@@ -2,6 +2,7 @@
 import fs from 'fs'
 import path from 'path'
 import { sync as mkdirsSync } from 'mkdirp'
+
 function canAccess(file) {
   try {
     fs.accessSync(file)

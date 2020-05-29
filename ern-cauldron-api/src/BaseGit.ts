@@ -1,6 +1,6 @@
 import fs from 'fs-extra'
 import path from 'path'
-import { log, gitCli } from 'ern-core'
+import { gitCli, log } from 'ern-core'
 import { ITransactional } from './types'
 
 const GIT_REMOTE_NAME = 'upstream'

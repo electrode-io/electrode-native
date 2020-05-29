@@ -1,20 +1,19 @@
 import { generateComposite } from 'ern-composite-gen'
 import {
-  PackagePath,
   AppVersionDescriptor,
-  Platform,
+  kax,
   log,
   NativePlatform,
-  kax,
+  PackagePath,
+  Platform,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import {
+  askUserToChooseANapDescriptorFromCauldron,
   epilog,
   logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
-  askUserToChooseANapDescriptorFromCauldron,
 } from '../lib'
-import _ from 'lodash'
 import { Argv } from 'yargs'
 import fs from 'fs-extra'
 import path from 'path'

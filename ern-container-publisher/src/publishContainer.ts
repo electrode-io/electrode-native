@@ -1,6 +1,6 @@
 import { ContainerPublisherConfig } from './types'
 import getPublisher from './getPublisher'
-import { createTmpDir, shell, Platform } from 'ern-core'
+import { createTmpDir, Platform, shell } from 'ern-core'
 import path from 'path'
 
 export default async function publishContainer(conf: ContainerPublisherConfig) {

@@ -1,14 +1,14 @@
 import { getBinaryStoreFromCauldron } from '../src/getBinaryStoreFromCauldron'
-import { expect, assert } from 'chai'
-import { doesThrow, fixtures } from 'ern-util-dev'
-import { ErnBinaryStore, createTmpDir, shell } from 'ern-core'
+import { expect } from 'chai'
+import { fixtures } from 'ern-util-dev'
+import { createTmpDir, ErnBinaryStore, shell } from 'ern-core'
+import * as cauldronApi from 'ern-cauldron-api'
 import {
   CauldronApi,
   CauldronHelper,
   EphemeralFileStore,
   InMemoryDocumentStore,
 } from 'ern-cauldron-api'
-import * as cauldronApi from 'ern-cauldron-api'
 import sinon from 'sinon'
 import path from 'path'
 

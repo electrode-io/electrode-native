@@ -3,9 +3,9 @@ import fs from 'fs-extra'
 import path from 'path'
 import { kax, log, PackagePath, shell, writePackageJson, yarn } from 'ern-core'
 import {
-  MiniAppsDeltas,
   getMiniAppsDeltas,
   getPackageJsonDependenciesUsingMiniAppDeltas,
+  MiniAppsDeltas,
   runYarnUsingMiniAppDeltas,
 } from './miniAppsDeltasUtils'
 

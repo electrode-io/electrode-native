@@ -1,10 +1,10 @@
 import {
   iosUtil,
-  Platform,
-  PackagePath,
-  shell,
-  mustacheUtils,
   log,
+  mustacheUtils,
+  PackagePath,
+  Platform,
+  shell,
 } from 'ern-core'
 import { ApiImplGeneratable } from '../../ApiImplGeneratable'
 import fs from 'fs-extra'

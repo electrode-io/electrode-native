@@ -1,15 +1,14 @@
 import { Composite, GeneratedComposite } from 'ern-composite-gen'
 import {
-  createTmpDir,
-  PackagePath,
-  log,
-  kax,
-  YarnLockParser,
   AppVersionDescriptor,
+  createTmpDir,
+  kax,
+  log,
+  PackagePath,
+  YarnLockParser,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import treeify from 'treeify'
-import _ from 'lodash'
 import * as constants from './constants'
 import path from 'path'
 

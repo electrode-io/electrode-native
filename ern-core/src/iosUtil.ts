@@ -5,18 +5,17 @@ import shell from './shell'
 import { manifest, PluginConfig } from './Manifest'
 import handleCopyDirective from './handleCopyDirective'
 import log from './log'
-import { isDependencyJsApiImpl, extractJsApiImplementations } from './utils'
+import { isDependencyJsApiImpl, isDependencyPathNativeApiImpl } from './utils'
 import path from 'path'
 import xcode from 'xcode-ern'
 import fs from 'fs-extra'
 import _ from 'lodash'
-import readDir = require('fs-readdir-recursive')
 import kax from './kax'
-import { isDependencyPathNativeApiImpl } from './utils'
 import { readPackageJson } from './packageJsonFileUtils'
 import { getNativeDependencyPath } from './nativeDependenciesLookup'
 import { gitApply } from './gitApply'
 import semver from 'semver'
+import readDir = require('fs-readdir-recursive')
 
 export async function fillProjectHull(
   pathSpec: {

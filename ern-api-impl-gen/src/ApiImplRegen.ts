@@ -1,5 +1,5 @@
 import ApiImplGen from './generators/ApiImplGen'
-import { PackagePath, log } from 'ern-core'
+import { PackagePath } from 'ern-core'
 
 export default async function regenerateApiImpl({
   api,

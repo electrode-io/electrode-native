@@ -1,7 +1,6 @@
 import AbstractModel from './AbstractModel'
 import { DEFINITION } from './refs/RefType'
 import GenericRef from './refs/GenericRef'
-import { apply } from '../java/beanUtils'
 
 export default class RefModel extends AbstractModel {
   public description

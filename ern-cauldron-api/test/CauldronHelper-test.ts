@@ -3,15 +3,15 @@ import { assert, expect } from 'chai'
 import { CauldronHelper } from '../src/CauldronHelper'
 import { CauldronConfigLevel, ICauldronFileStore } from '../src/types'
 import {
+  AppNameDescriptor,
+  AppPlatformDescriptor,
+  AppVersionDescriptor,
   createTmpDir,
   PackagePath,
-  utils,
   shell,
-  AppVersionDescriptor,
-  AppPlatformDescriptor,
-  AppNameDescriptor,
+  utils,
 } from 'ern-core'
-import { doesThrow, doesNotThrow, fixtures } from 'ern-util-dev'
+import { doesNotThrow, doesThrow, fixtures } from 'ern-util-dev'
 import {
   CauldronApi,
   CauldronCodePushEntry,
@@ -22,6 +22,7 @@ import jp from 'jsonpath'
 import path from 'path'
 import mockFs from 'mock-fs'
 import fs from 'fs'
+
 const sandbox = sinon.createSandbox()
 
 const codePushMetadataFixtureOne = {

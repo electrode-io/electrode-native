@@ -1,8 +1,8 @@
 import {
   AppVersionDescriptor,
+  log,
   PackagePath,
   YarnLockParser,
-  log,
 } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import {

@@ -1,5 +1,6 @@
 import Mustache from '../src/java/Mustache'
 import { expect } from 'chai'
+
 const RENDER = 'render:'
 
 function mustache(data, out) {

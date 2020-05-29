@@ -1,4 +1,4 @@
-import { log, PackagePath, GitHubApi, manifest } from 'ern-core'
+import { GitHubApi, log, manifest, PackagePath } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 
 export async function getGitHubApi({

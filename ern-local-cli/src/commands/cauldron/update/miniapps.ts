@@ -1,13 +1,12 @@
-import { PackagePath, AppVersionDescriptor, log, utils } from 'ern-core'
+import { AppVersionDescriptor, log, PackagePath, utils } from 'ern-core'
 import { getActiveCauldron } from 'ern-cauldron-api'
 import { syncCauldronContainer } from 'ern-orchestrator'
 import {
+  askUserToChooseANapDescriptorFromCauldron,
   epilog,
   logErrorAndExitIfNotSatisfied,
-  askUserToChooseANapDescriptorFromCauldron,
   tryCatchWrap,
 } from '../../../lib'
-import _ from 'lodash'
 import { Argv } from 'yargs'
 
 export const command = 'miniapps <miniapps..>'

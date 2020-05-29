@@ -1,9 +1,9 @@
 import {
   createTmpDir,
   findNativeDependencies,
-  yarn,
-  shell,
   PackagePath,
+  shell,
+  yarn,
 } from 'ern-core'
 import { epilog, logErrorAndExitIfNotSatisfied, tryCatchWrap } from '../../lib'
 import chalk from 'chalk'

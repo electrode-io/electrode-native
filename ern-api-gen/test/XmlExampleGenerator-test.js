@@ -5,6 +5,7 @@ import Xml from '../src/models/Xml'
 import ModelImpl from '../src/models/ModelImpl'
 import { StringProperty } from '../src/models/properties'
 import { newHashMap } from '../src/java/javaUtil'
+
 describe('XmlExampleGenerator', function() {
   it('should recursiveModelsTest', function() {
     const _JSON = 'application/json'

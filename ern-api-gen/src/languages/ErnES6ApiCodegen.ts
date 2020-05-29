@@ -2,6 +2,7 @@
 import ES6Codegen from '../languages/ES6Codegen'
 import ernify from './ERNMixin'
 import { newHashMap } from '../java/javaUtil'
+
 const { postProcessOperations } = ES6Codegen.prototype
 export const ERN_SUPPORTING = [
   'index.mustache',

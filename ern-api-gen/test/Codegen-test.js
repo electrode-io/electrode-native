@@ -1,6 +1,7 @@
 import CodegenModelTypes from '../src/CodegenModelType'
 import { expect } from 'chai'
 import CodegenModelFactory from '../src/CodegenModelFactory'
+
 describe('Codegen', function() {
   describe('toString', function() {
     for (const name of Object.keys(CodegenModelTypes)) {
