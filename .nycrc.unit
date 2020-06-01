@@ -3,4 +3,4 @@
   "all": true,
   "include": "ern-*/src/**/*.{ts,js}",
   "reporter": ["text", "html", "json"]
-} 
+}

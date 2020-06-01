@@ -87,7 +87,7 @@ The following commands can be used to get coverage reports locally:
 To generate and report unit tests coverage
 - `yarn coverage:system`\
 To generate and report system tests coverage
-- `yarn coverage:all`\
+- `yarn coverage`\
 To generate and report combined UT/ST coverage
 
 Once done, the coverage will be reported in the terminal.\

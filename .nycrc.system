@@ -4,4 +4,4 @@
   "include": "ern-*/dist/**/*.{ts,js}",
   "instrument": false,
   "reporter": ["text", "html", "json"]
-} 
+}
