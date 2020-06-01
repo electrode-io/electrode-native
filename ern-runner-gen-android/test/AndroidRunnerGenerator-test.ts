@@ -1,73 +1,46 @@
 import path from 'path'
-import shell from 'shelljs'
+import tmp from 'tmp'
 import { assert } from 'chai'
 import { sameDirContent } from 'ern-util-dev'
-import { getRunnerGeneratorForPlatform } from 'ern-orchestrator'
+import { AndroidRunnerGenerator } from 'ern-runner-gen-android'
+import { RunnerGeneratorConfig } from 'ern-runner-gen'
 
 describe('AndroidRunnerGenerator', () => {
-  const simpleAndroidRunnerTestGeneratedPath = path.join(
-    __dirname,
-    'generated',
-    'simple-android-runner'
-  )
-  const simpleAndroidRunnerFixturePath = path.join(
+  const fixtureRunnerPath = path.join(
     __dirname,
     'fixtures',
     'simple-android-runner'
   )
+  const generatedRunnerPath = tmp.dirSync({ unsafeCleanup: true }).name
+  process.chdir(generatedRunnerPath)
 
-  before(() => {
-    // Recreate the directory where tests will generate the runner
-    shell.rm('-rf', simpleAndroidRunnerTestGeneratedPath)
-    shell.mkdir('-p', simpleAndroidRunnerTestGeneratedPath)
-  })
-
-  it('should generate simple-android-runner fixture given same configuration ', async () => {
-    await getRunnerGeneratorForPlatform('android').generate({
-      extra: {
-        androidConfig: {
-          artifactId: 'runner-ern-container-dummy',
-          groupId: 'com.walmartlabs.ern',
-          packageFilePath: 'com/walmartlabs/ern/dummy',
-          packageName: 'com.walmartlabs.ern.dummy',
-        },
+  const generatorConfig: RunnerGeneratorConfig = {
+    extra: {
+      androidConfig: {
+        artifactId: 'runner-ern-container-dummy',
+        groupId: 'com.walmartlabs.ern',
+        packageFilePath: 'com/walmartlabs/ern/dummy',
+        packageName: 'com.walmartlabs.ern.dummy',
       },
-      mainMiniAppName: 'dummy',
-      outDir: simpleAndroidRunnerTestGeneratedPath,
-      reactNativeVersion: '0.59.8',
-      targetPlatform: 'android',
-    })
+    },
+    mainMiniAppName: 'dummy',
+    outDir: generatedRunnerPath,
+    reactNativeVersion: '0.59.8',
+    targetPlatform: 'android',
+  }
+
+  it('should generate simple-android-runner fixture given same configuration', async () => {
+    await new AndroidRunnerGenerator().generate(generatorConfig)
     assert(
-      sameDirContent(
-        simpleAndroidRunnerFixturePath,
-        simpleAndroidRunnerTestGeneratedPath,
-        []
-      ),
+      sameDirContent(fixtureRunnerPath, generatedRunnerPath),
       'Generated Android Runner project differs from simple-android-runner fixture'
     )
   })
 
-  it('should re-generate configuration of simple-android-runner fixture given same configuration ', async () => {
-    await getRunnerGeneratorForPlatform('android').regenerateRunnerConfig({
-      extra: {
-        androidConfig: {
-          artifactId: 'runner-ern-container-dummy',
-          groupId: 'com.walmartlabs.ern',
-          packageFilePath: 'com/walmartlabs/ern/dummy',
-          packageName: 'com.walmartlabs.ern.dummy',
-        },
-      },
-      mainMiniAppName: 'dummy',
-      outDir: simpleAndroidRunnerTestGeneratedPath,
-      reactNativeVersion: '0.59.8',
-      targetPlatform: 'android',
-    })
+  it('should re-generate configuration of simple-android-runner fixture given same configuration', async () => {
+    await new AndroidRunnerGenerator().regenerateRunnerConfig(generatorConfig)
     assert(
-      sameDirContent(
-        simpleAndroidRunnerFixturePath,
-        simpleAndroidRunnerTestGeneratedPath,
-        []
-      ),
+      sameDirContent(fixtureRunnerPath, generatedRunnerPath),
       'Generated Android Runner project differs from simple-android-runner fixture'
     )
   })
