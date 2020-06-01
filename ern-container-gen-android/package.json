@@ -6,8 +6,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "ern-typescript && ern-copyfiles",
-    "coverage": "ern-nyc",
-    "instrument-dist": "ern-instrument-dist && ern-copyfiles",
+    "instrument": "yarn nyc instrument dist --in-place && ern-copyfiles",
     "prepublish": "yarn run build",
     "test": "ern-mocha"
   },

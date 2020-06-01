@@ -9,7 +9,7 @@
     "typeRoots": ["node_modules/@types", "./typings"],
     "module": "commonjs",
     "moduleResolution": "node",
-    "inlineSourceMap": true,
+    "sourceMap": true,
     "allowJs": true,
     "esModuleInterop": true,
     "strictNullChecks": true,

@@ -5,9 +5,7 @@
   "main": "index.js",
   "bin": {
     "ern-copyfiles": "bin/ern-copyfiles.js",
-    "ern-instrument-dist": "bin/ern-instrument-dist.js",
     "ern-mocha": "bin/ern-mocha.js",
-    "ern-nyc": "bin/ern-nyc.js",
     "ern-typescript": "bin/ern-typescript.js"
   },
   "scripts": {
@@ -42,7 +40,6 @@
     "diff": "^3.5.0",
     "dir-compare": "^1.4.0",
     "fs-readdir-recursive": "^1.1.0",
-    "istanbul": "^0.4.5",
     "shelljs": "^0.8.4",
     "tmp": "^0.0.33"
   },
