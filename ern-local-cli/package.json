@@ -35,7 +35,7 @@
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
-  "homepage": "http://www.electrode.io",
+  "homepage": "https://www.electrode.io",
   "dependencies": {
     "chalk": "^4.1.1",
     "cli-table": "^0.3.6",

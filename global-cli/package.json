@@ -33,7 +33,7 @@
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
-  "homepage": "http://www.electrode.io",
+  "homepage": "https://www.electrode.io",
   "dependencies": {
     "ora": "^5.4.0",
     "update-notifier": "^5.1.0"

@@ -35,7 +35,7 @@
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
-  "homepage": "http://www.electrode.io",
+  "homepage": "https://www.electrode.io",
   "dependencies": {
     "ern-composite-gen": "1000.0.0",
     "ern-core": "1000.0.0",

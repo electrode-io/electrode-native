@@ -33,7 +33,7 @@
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
-  "homepage": "http://www.electrode.io",
+  "homepage": "https://www.electrode.io",
   "dependencies": {
     "@octokit/rest": "18.5.3",
     "@yarnpkg/lockfile": "^1.1.0",

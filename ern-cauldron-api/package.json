@@ -34,7 +34,7 @@
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
-  "homepage": "http://www.electrode.io",
+  "homepage": "https://www.electrode.io",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "ern-core": "1000.0.0",
