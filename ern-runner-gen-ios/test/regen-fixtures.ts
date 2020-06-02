@@ -1,31 +1,23 @@
 import shell from 'shelljs'
 import chalk from 'chalk'
 import path from 'path'
-import { getRunnerGeneratorForPlatform } from 'ern-orchestrator'
+import { IosRunnerGenerator } from 'ern-runner-gen-ios'
 
-const pathToTestFixtures = path.join(__dirname, 'fixtures')
-const pathToGeneratedFixtures = path.join(
-  __dirname,
-  'generated/simple-ios-runner'
-)
-logHeader('Regenerating iOS Runner Fixture')
-getRunnerGeneratorForPlatform('ios')
-  .regenerateRunnerConfig({
+async function regenIosRunnerFixture() {
+  console.log('Regenerating iOS Runner Fixture...')
+  const fixturesPath = path.join(__dirname, 'fixtures', 'simple-ios-runner')
+  shell.rm('-rf', fixturesPath)
+  shell.mkdir('-p', fixturesPath)
+  await new IosRunnerGenerator().generate({
     extra: {
       containerGenWorkingDir: '/path/to/container',
     },
     mainMiniAppName: 'dummy',
-    outDir: pathToGeneratedFixtures,
-    reactNativeVersion: '0.60.5',
+    outDir: fixturesPath,
+    reactNativeVersion: '0.62.2',
     targetPlatform: 'ios',
   })
-  .then(() => {
-    shell.cp('-Rf', pathToGeneratedFixtures, pathToTestFixtures)
-    console.log(chalk.green('Done!'))
-  })
-
-function logHeader(message: string) {
-  console.log('======================================================')
-  console.log(message)
-  console.log('======================================================')
+  console.log(chalk.green('Done!'))
 }
+
+regenIosRunnerFixture().catch(e => console.error(e))

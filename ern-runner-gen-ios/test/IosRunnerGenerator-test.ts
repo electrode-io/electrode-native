@@ -1,66 +1,49 @@
 import path from 'path'
-import shell from 'shelljs'
 import { assert } from 'chai'
 import { sameDirContent } from 'ern-util-dev'
 import os from 'os'
-import { getRunnerGeneratorForPlatform } from 'ern-orchestrator'
+import { RunnerGeneratorConfig } from 'ern-runner-gen'
+import { IosRunnerGenerator } from 'ern-runner-gen-ios'
+import tmp from 'tmp'
 
 describe('IosRunnerGenerator', () => {
-  const simpleIosRunnerTestGeneratedPath = path.join(
+  const fixtureRunnerPath = path.join(
     __dirname,
-    'generated/simple-ios-runner'
+    'fixtures',
+    'simple-ios-runner'
   )
-  const simpleIosRunnerFixturePath = path.join(
-    __dirname,
-    'fixtures/simple-ios-runner'
-  )
+  const generatedRunnerPath = tmp.dirSync({ unsafeCleanup: true }).name
+  process.chdir(generatedRunnerPath)
+
+  const runnerConfig: RunnerGeneratorConfig = {
+    extra: {
+      containerGenWorkingDir: '/path/to/container',
+    },
+    mainMiniAppName: 'dummy',
+    outDir: generatedRunnerPath,
+    reactNativeVersion: '0.59.8',
+    targetPlatform: 'ios',
+  }
 
   before(function() {
-    if (os.platform() === 'win32') {
+    if (os.platform() !== 'darwin') {
       this.skip()
       return
     }
-    // Recreate the directory where tests will generate the runner
-    shell.rm('-rf', simpleIosRunnerTestGeneratedPath)
-    shell.mkdir('-p', simpleIosRunnerTestGeneratedPath)
   })
 
   it('should generate simple-ios-runner fixture given same configuration ', async () => {
-    await getRunnerGeneratorForPlatform('ios').generate({
-      extra: {
-        containerGenWorkingDir: '/path/to/container',
-      },
-      mainMiniAppName: 'dummy',
-      outDir: simpleIosRunnerTestGeneratedPath,
-      reactNativeVersion: '0.59.8',
-      targetPlatform: 'ios',
-    })
+    await new IosRunnerGenerator().generate(runnerConfig)
     assert(
-      sameDirContent(
-        simpleIosRunnerFixturePath,
-        simpleIosRunnerTestGeneratedPath,
-        []
-      ),
+      sameDirContent(fixtureRunnerPath, generatedRunnerPath),
       'Generated iOS Runner project differs from simple-ios-runner fixture'
     )
   })
 
   it('should re-generate configuration of simple-ios-runner fixture given same configuration ', async () => {
-    await getRunnerGeneratorForPlatform('ios').regenerateRunnerConfig({
-      extra: {
-        containerGenWorkingDir: '/path/to/container',
-      },
-      mainMiniAppName: 'dummy',
-      outDir: simpleIosRunnerTestGeneratedPath,
-      reactNativeVersion: '0.59.8',
-      targetPlatform: 'ios',
-    })
+    await new IosRunnerGenerator().regenerateRunnerConfig(runnerConfig)
     assert(
-      sameDirContent(
-        simpleIosRunnerFixturePath,
-        simpleIosRunnerTestGeneratedPath,
-        []
-      ),
+      sameDirContent(fixtureRunnerPath, generatedRunnerPath),
       'Generated iOS Runner project differs from simple-ios-runner fixture'
     )
   })
