@@ -8,17 +8,11 @@ steps:
       git config --global user.name "Electrode Native"
     displayName: 'Set git user'
   - script: |
-      npm install -g electrode-native;
+      npm install -g electrode-native
     displayName: 'Install ern global CLI'
-  - script: |
-      ern
-    displayName: 'Install ern local CLI'
   - script: |
       node setup-dev
     displayName: 'Setup dev version of ern'
-  - script: |
-      ern platform use 1000.0.0
-    displayName: 'Use dev version of ern'
   - script: |
       yarn coverage
       yarn coverage:upload
