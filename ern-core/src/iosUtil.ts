@@ -405,7 +405,7 @@ export async function fillProjectHull(
 
         if (podspec) {
           const sourcePodspecPath = path.join(pluginConfig!.path!, podspec)
-          const destPodspecPath = path.join(pathSpec.outputDir, podspec)
+          const destPodspecPath = path.join(pluginSourcePath, podspec)
           shell.cp(sourcePodspecPath, destPodspecPath)
         }
 
