@@ -178,58 +178,69 @@ export default class IosGenerator implements ContainerGenerator {
     fs.writeFileSync(projectPath, iosProject.writeSync())
 
     if (semver.gte(reactNativePlugin.version!, '0.61.0')) {
-      //
-      // Add all native dependencies to package.json dependencies so that
-      // !use_native_modules can detect them to add their pod to the Podfile
-      const dependencies = await config.composite.getNativeDependencies({})
-      const resDependencies = [
-        ...dependencies.thirdPartyInManifest,
-        ...dependencies.thirdPartyNotInManifest,
-      ]
-      const addDependencies: any = {}
-      resDependencies.forEach(p => {
-        addDependencies[p.name!] = p.version
-      })
-
-      //
-      // Create package.json in container directory root
-      // so that native modules pods can be resolved
-      // by use_native_modules! RN ruby script
-      const pjsonObj = {
-        dependencies: addDependencies,
-        name: 'container',
-      }
-      await writePackageJson(config.outDir, pjsonObj)
-
-      //
-      // Copy all native dependencies from composite node_modules
-      // to container node_modules so that pods can be found local
-      // to the container directory
-      const containerNodeModulesPath = path.join(config.outDir, 'node_modules')
-      shell.mkdir('-p', containerNodeModulesPath)
-      resDependencies.forEach(p => {
-        shell.cp('-rf', p.basePath!, containerNodeModulesPath)
-      })
-      // Add @react-native-community/cli-platform-ios because
-      // it contains the scripts needed for native modules pods linking
-      // look in composite to match proper version
-      const compositeNodeModulesPath = path.join(
-        config.composite.path,
-        'node_modules'
-      )
-      const cliPlatformIosPkg = '@react-native-community/cli-platform-ios'
-      const cliPlatformIosPkgVersion = (
-        await readPackageJson(
-          path.join(compositeNodeModulesPath, cliPlatformIosPkg)
-        )
-      ).version
       shell.pushd(config.outDir)
       try {
+        await yarn.init()
+
+        // Add @react-native-community/cli-platform-ios because
+        // it contains the scripts needed for native modules pods linking
+        // look in composite to match proper version
+        const compositeNodeModulesPath = path.join(
+          config.composite.path,
+          'node_modules'
+        )
+        const cliPlatformIosPkg = '@react-native-community/cli-platform-ios'
+        const cliPlatformIosPkgVersion = (
+          await readPackageJson(
+            path.join(compositeNodeModulesPath, cliPlatformIosPkg)
+          )
+        ).version
+
         await yarn.add(
           PackagePath.fromString(
             `${cliPlatformIosPkg}@${cliPlatformIosPkgVersion}`
           )
         )
+
+        await yarn.add(
+          PackagePath.fromString(`react-native@${reactNativePlugin.version}`)
+        )
+
+        //
+        // Add all native dependencies to package.json dependencies so that
+        // !use_native_modules can detect them to add their pod to the Podfile
+        const dependencies = await config.composite.getNativeDependencies({})
+        const resDependencies = [
+          ...dependencies.thirdPartyInManifest,
+          ...dependencies.thirdPartyNotInManifest,
+        ]
+        const addDependencies: any = {}
+        resDependencies.forEach(p => {
+          addDependencies[p.name!] = p.version
+        })
+
+        //
+        // Create package.json in container directory root
+        // so that native modules pods can be resolved
+        // by use_native_modules! RN ruby script
+        const pjsonObj = {
+          dependencies: addDependencies,
+          name: 'container',
+        }
+        await writePackageJson(config.outDir, pjsonObj)
+
+        //
+        // Copy all native dependencies from composite node_modules
+        // to container node_modules so that pods can be found local
+        // to the container directory
+        const containerNodeModulesPath = path.join(
+          config.outDir,
+          'node_modules'
+        )
+        shell.mkdir('-p', containerNodeModulesPath)
+        resDependencies.forEach(p => {
+          shell.cp('-rf', p.basePath!, containerNodeModulesPath)
+        })
       } finally {
         shell.popd()
       }
