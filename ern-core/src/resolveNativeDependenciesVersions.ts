@@ -63,7 +63,7 @@ export function resolvePackageVersionsGivenMismatchLevel(
 
   for (const name of Object.keys(pluginsByName)) {
     const entry = pluginsByName[name]
-    const pluginVersions = _.map(entry, 'version')
+    const pluginVersions = _.uniq(_.map(entry, 'version'))
     if (pluginVersions.length > 1) {
       // If there are multiple versions of the dependency
       if (
@@ -114,11 +114,9 @@ export function resolveNativeDependenciesVersions(
     aggregateNativeDependencies.thirdPartyInManifest.push(
       ...nativeDependencies.thirdPartyInManifest
     )
-    if (aggregateNativeDependencies.thirdPartyNotInManifest.length > 0) {
-      aggregateNativeDependencies.thirdPartyNotInManifest.push(
-        ...nativeDependencies.thirdPartyNotInManifest
-      )
-    }
+    aggregateNativeDependencies.thirdPartyNotInManifest.push(
+      ...nativeDependencies.thirdPartyNotInManifest
+    )
   }
 
   return resolveNativeDependenciesVersionsEx(aggregateNativeDependencies)
