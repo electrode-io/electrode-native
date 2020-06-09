@@ -24,10 +24,14 @@
 
 **Options**
 
-`--current true|false`
+- `--current true|false`
 
-- Set the repository as the active repository after adding it to the collection of repositories.
-- If this option is not provided, you are prompted to choose if you want to set the repository as the active repository.
+  - Set the repository as the active repository after adding it to the collection of repositories.
+  - If this option is not provided, you are prompted to choose if you want to set the repository as the active repository.
+
+- `--force/-f true|false`
+
+  Overwrite an existing alias with the same name
 
 **Example**
 
@@ -40,6 +44,9 @@ Add a new Cauldron repository with alias `my-local-cauldron` and url pointing to
 `ern cauldron repo add my-other-cauldron git@github.com:username/other-cauldron#development --current`  
 Add a new Cauldron repository, with alias `my-other-cauldron`, and url `git@github.com:username/other-cauldron`, to the local collection of Cauldron repositories and set it at the current activated Cauldron. The branch that will be used for this Cauldron will be `development` as it was explicitly specified in the Cauldron url.
 
+`ern cauldron repo add -f my-local-cauldron ~/path/to/local/cauldron`\
+Adds the `my-local-cauldron` alias, and overwrites it if it already exists.
+
 #### Remarks
 
-- If the `alias` already exists, this command will fail.
+- If the `alias` already exists, this command will fail, unless `--force/-f` is used.

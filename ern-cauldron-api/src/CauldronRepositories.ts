@@ -7,11 +7,15 @@ export class CauldronRepositories {
     url: string,
     {
       activate,
+      force,
     }: {
       activate?: boolean
+      force?: boolean
     }
   ): CauldronRepository {
-    this.throwIfAliasExist({ alias })
+    if (!force) {
+      this.throwIfAliasExist({ alias })
+    }
 
     const supportedGitHttpsSchemeRe = /(^https:\/\/.+:.+@.+$)|(^https:\/\/.+@.+$)/
     if (url.startsWith('https')) {

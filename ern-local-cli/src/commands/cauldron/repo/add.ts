@@ -13,25 +13,30 @@ export const builder = (argv: Argv) => {
       describe: 'Set repo as the current Cauldron repository',
       type: 'boolean',
     })
+    .option('force', {
+      alias: 'f',
+      describe: 'Overwrite an existing alias with the same name',
+      type: 'boolean',
+    })
     .epilog(epilog(exports))
 }
 
 export const commandHandler = async ({
   alias,
   current,
+  force,
   url,
 }: {
   alias: string
   current: boolean
+  force: boolean
   url: string
 }) => {
-  if (current === undefined) {
-    current = await askUserConfirmation(
-      `Set ${alias} as current Cauldron repository ?`
-    )
-  }
+  const activate =
+    current ??
+    (await askUserConfirmation(`Set ${alias} as current Cauldron repository?`))
 
-  cauldronRepositories.add(alias, url, { activate: current })
+  cauldronRepositories.add(alias, url, { activate, force })
 
   log.info(`Added Cauldron repository ${url} with alias ${alias}`)
 }
