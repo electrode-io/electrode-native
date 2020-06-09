@@ -115,10 +115,18 @@ export default class IosGenerator implements ContainerGenerator {
   public async fillContainerHull(
     config: ContainerGeneratorConfig
   ): Promise<void> {
-    if (process.platform !== 'darwin' && !config?.iosConfig?.bare) {
+    if (process.platform !== 'darwin' && !config?.iosConfig?.skipInstall) {
       throw new Error(
-        `Full iOS Container generation is only supported on macOS.
-You can set 'iosConfig.bare' to true to generate a bare container instead.`
+        `Full iOS Container generation with pod installation is only supported on macOS.
+You can set 'iosConfig.skipInstall' in container generator config to skip the installation step.
+Or set --skipInstall if using the create-container command.`
+      )
+    }
+
+    if (config.iosConfig.skipInstall) {
+      log.info(
+        `skipInstall option is set. 'yarn install' and 'pod install' won't be run after container generation.
+Make sure to run these commands before building the container.`
       )
     }
 
@@ -237,8 +245,8 @@ You can set 'iosConfig.bare' to true to generate a bare container instead.`
         // Copy all native dependencies from composite node_modules
         // to container node_modules so that pods can be found local
         // to the container directory
-        // [only for full (non bare) iOS container generation]
-        if (!config?.iosConfig?.bare) {
+        // [only for full iOS container generation]
+        if (!config?.iosConfig?.skipInstall) {
           const containerNodeModulesPath = path.join(
             config.outDir,
             'node_modules'
@@ -254,10 +262,10 @@ You can set 'iosConfig.bare' to true to generate a bare container instead.`
         shell.popd()
       }
 
-      // For full (non bare) iOS container generation, run 'pod install'
+      // For full iOS container generation, run 'pod install'
       // and also add all essential node_modules (needed for the build)
       // to the container
-      if (!config?.iosConfig?.bare) {
+      if (!config?.iosConfig?.skipInstall) {
         //
         // Run pod install
         shell.pushd(config.outDir)

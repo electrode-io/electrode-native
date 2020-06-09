@@ -89,17 +89,23 @@ export const builder = (argv: Argv) => {
         'Indicates whether to reset the React Native cache prior to bundling',
       type: 'boolean',
     })
+    .option('skipInstall', {
+      default: !(process.platform === 'darwin'),
+      describe:
+        'Skip `yarn install` and `pod install` after generating the container (iOS RN>=0.61 only)',
+      type: 'boolean',
+    })
+    .option('sourceMapOutput', {
+      describe: 'Path to source map file to generate for this container bundle',
+      type: 'string',
+    })
+    .coerce('sourceMapOutput', p => untildify(p))
     .option('outDir', {
       alias: 'out',
       describe: 'Directory to output the generated container to',
       type: 'string',
     })
     .coerce('outDir', p => untildify(p))
-    .option('sourceMapOutput', {
-      describe: 'Path to source map file to generate for this container bundle',
-      type: 'string',
-    })
-    .coerce('sourceMapOutput', p => untildify(p))
     .epilog(epilog(exports))
 }
 
@@ -116,6 +122,7 @@ export const commandHandler = async ({
   outDir,
   platform,
   resetCache,
+  skipInstall,
   sourceMapOutput,
 }: {
   baseComposite?: PackagePath
@@ -130,6 +137,7 @@ export const commandHandler = async ({
   outDir?: string
   platform?: NativePlatform
   resetCache?: boolean
+  skipInstall?: boolean
   sourceMapOutput?: string
 } = {}) => {
   if (outDir && (await fs.pathExists(outDir))) {
@@ -181,6 +189,12 @@ Output directory should either not exist (it will be created) or should be empty
 
   if (!descriptor && miniapps) {
     platform = platform || (await askUserToSelectAPlatform())
+
+    if (platform === 'ios') {
+      extraObj.iosConfig = extraObj.iosConfig || {}
+      extraObj.iosConfig.skipInstall =
+        extraObj.iosConfig.skipInstall || skipInstall
+    }
 
     const composite = await kax.task('Generating Composite locally').run(
       runLocalCompositeGen(miniapps, {

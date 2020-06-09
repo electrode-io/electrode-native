@@ -240,17 +240,19 @@ After installing the dependency, you will need to add additional configurations.
 5. In Build Phases, verify that `ElectrodeContainer` is in Link Binary With Libraries and Embed Frameworks.
 6. Edit Scheme for your `<your project name>` target. Locate Build Options and uncheck Parallelize Build.
 
-#### Generating a bare iOS container (RN >= 0.61)
+##### Skip installing dependencies (RN >= 0.61)
 
-When using React Native >= 0.61, you can configure the iOS container generator to generate a bare container instead of a full one (default).\
-A bare iOS container cannot be build immediately after being generated. Indeed, it does not contain the node_modules directory, nor the Pods.\
-Generating a bare container can be of use, as it allows to generate an iOS container from Windows or Linux, but will require manualy running `yarn install` followed by `pod install` after generating the container.
+When using React Native >= 0.61, you can configure the iOS container generator
+to skip the automatic installation of dependencies. **This container generation mode is the default one when generating iOS containers on Linux/Windows**, as the `pod install` command cannot be run on these platforms.\
+To also generate such a container on MacOS, you can set the `skipInstall` flag to `true` in the container generator iOS configuration, as follow:
 
 ```json
 {
   "containerGenerator": {
     "iosConfig": {
-      "bare": true
+      "skipInstall": true
     }
   }
 }
+
+Alternatively, for containers that are not generated using a cauldron, you can set the `--skipInstall` option of the `create-container` command.

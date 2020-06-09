@@ -135,9 +135,7 @@ run(
 
 // Container gen should be successful for the two following commands
 run(`create-container --miniapps file:${miniAppPath} -p android`)
-run(
-  `create-container --miniapps file:${miniAppPath} -p ios --extra '{"iosConfig": {"bare": true}}'`
-)
+run(`create-container --miniapps file:${miniAppPath} -p ios --skipInstall`)
 
 // transform-container / publish-container should be successful
 run(
