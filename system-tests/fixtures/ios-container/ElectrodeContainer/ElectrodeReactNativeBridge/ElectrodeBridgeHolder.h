@@ -32,6 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
  * Handles queuing every method calls until react native is ready.
  */
 
+extern NSString * const ElectrodeBridgeDidStartObservingNotification;
+
 @interface ElectrodeBridgeHolder : NSObject
 
 + (void)sendEvent:(ElectrodeBridgeEvent *)event;

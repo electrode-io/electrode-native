@@ -71,12 +71,14 @@ NS_ASSUME_NONNULL_BEGIN
 @implementation ElectrodeLoggerObjc
 
 + (void)loglevel:(ElectrodeLogLevel)level format:(NSString *)format, ... {
+#if DEBUG
   va_list argp;
   va_start(argp, format);
   NSString *message = [[NSString alloc] initWithFormat:format arguments:argp];
   va_end(argp);
 
   [[ElectrodeConsoleLogger sharedInstance] log:level message:message];
+#endif
 }
 
 @end
