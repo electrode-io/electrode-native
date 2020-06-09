@@ -22,6 +22,7 @@
 #import "ElectrodeEventRegistrar.h"
 #import "ElectrodeRequestRegistrar.h"
 #import "ElectrodeLogger.h"
+#import "ElectrodeBridgeHolder.h"
 
 #if __has_include(<React/RCTLog.h>)
 #import <React/RCTLog.h>
@@ -435,6 +436,10 @@ createTransactionWithRequest:(ElectrodeBridgeRequest *)request
   if (reactNativeTransceiver) {
     reactNativeTransceiver(self);
   }
+}
+
+- (void)startObserving {
+    [[NSNotificationCenter defaultCenter] postNotificationName:ElectrodeBridgeDidStartObservingNotification object:self];
 }
 
 @end

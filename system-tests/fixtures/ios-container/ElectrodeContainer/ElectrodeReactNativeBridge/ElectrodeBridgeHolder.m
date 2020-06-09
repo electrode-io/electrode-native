@@ -21,6 +21,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+NSString * const ElectrodeBridgeDidStartObservingNotification = @"ElectrodeBridgeDidStartObservingNotification";
+
 @interface ElectrodeQueuedEventListener: NSObject
 @property (nonatomic, strong) NSUUID *uuid;
 @property (copy) ElectrodeBridgeEventListener listener;
