@@ -67,7 +67,7 @@ dependencies {
 }
 ```
 
-If you are explicitly publishing a container through the use of [publish-container] command, the Maven artifact id will be `local-ern-container`. The group id will remain the same though `com.walmartlabs.ern`. You can pass options to the command to change the artifact id and group id at your convenience. Please see [publish-container] documentation for more details.  
+If you are explicitly publishing a container through the use of [publish-container] command, the Maven artifact id will be `local-ern-container`. The group id will remain the same though `com.walmartlabs.ern`. You can pass options to the command to change the artifact id and group id at your convenience. Please see [publish-container] documentation for more details.
 Also, if you use or plan to use a locally published Electrode Native container (to your maven local repository), make sure to declare `mavenLocal` in the list of repositories. This is located in the top-level project `build.gradle`.
 
 ```groovy
@@ -239,3 +239,18 @@ After installing the dependency, you will need to add additional configurations.
 4. Select `ElectrodeContainer.framework` and click Add.
 5. In Build Phases, verify that `ElectrodeContainer` is in Link Binary With Libraries and Embed Frameworks.
 6. Edit Scheme for your `<your project name>` target. Locate Build Options and uncheck Parallelize Build.
+
+#### Generating a bare iOS container (RN >= 0.61)
+
+When using React Native >= 0.61, you can configure the iOS container generator to generate a bare container instead of a full one (default).\
+A bare iOS container cannot be build immediately after being generated. Indeed, it does not contain the node_modules directory, nor the Pods.\
+Generating a bare container can be of use, as it allows to generate an iOS container from Windows or Linux, but will require manualy running `yarn install` followed by `pod install` after generating the container.
+
+```json
+{
+  "containerGenerator": {
+    "iosConfig": {
+      "bare": true
+    }
+  }
+}

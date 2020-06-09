@@ -27,6 +27,10 @@ export interface ContainerGeneratorConfig {
    */
   androidConfig?: any
   /**
+   * iOS specific configuration
+   */
+  iosConfig?: any
+  /**
    * JS main module name. Usually 'index' (for newest RN version) or
    * 'index.android'/'index.ios' (for older RN versions)
    */

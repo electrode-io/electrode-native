@@ -73,7 +73,9 @@ function regenIosContainerFixture() {
   shell.exec(
     `ern create-container --miniapps ${containerMiniapps.join(
       ' '
-    )} -p ios --out ${pathsToFixtures['ios-container']}`
+    )} -p ios --extra '{"iosConfig": {"bare": true}}' --out ${
+      pathsToFixtures['ios-container']
+    }`
   )
 }
 

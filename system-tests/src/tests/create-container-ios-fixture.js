@@ -21,7 +21,7 @@ const excludeFilter = [
 
 const command = `create-container --miniapps ${miniapps.join(
   ' '
-)} -p ios --out ${process.cwd()}`
+)} -p ios --extra '{"iosConfig": {"bare": true}}' --out ${process.cwd()}`
 
 if (process.platform === 'darwin') {
   run(command)

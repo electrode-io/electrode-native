@@ -66,6 +66,7 @@
     For example `--extra cauldron://config/container/my-container-config.json`  
     In that case, the configuration will be read from the file stored in Cauldron.  
     For this way to work, the file must exist in Cauldron (you can add a file to the cauldron by using the [ern cauldron add file] command).
+- Set to `--extra '{"iosConfig": { "bare": true } }'` to generate a bare iOS Container.
 
 `--sourceMapOutput`
 
