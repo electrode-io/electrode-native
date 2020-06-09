@@ -40,5 +40,9 @@ export function createProxyAgentFromErnConfig(
   const proxyUrl = config.get(configKey)
   if (proxyUrl) {
     return createProxyAgentFromUrl(new url.URL(proxyUrl), { https })
+  } else if (process.env.http_proxy) {
+    return createProxyAgentFromUrl(new url.URL(process.env.http_proxy), { https })
+  } else if (process.env.https_proxy) {
+    return createProxyAgentFromUrl(new url.URL(process.env.https_proxy), { https })
   }
 }
