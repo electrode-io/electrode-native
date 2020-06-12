@@ -24,7 +24,7 @@ module.exports = {
   ${
     watchFolders
       ? `watchFolders: [ 
-        ${watchFolders.map(x => `"${x}"`).join(`,${os.EOL}`)} 
+        ${watchFolders.map(x => `"${x.replace(/\\/g, '\\\\')}"`).join(`,${os.EOL}`)} 
       ],`
       : ''
   }
