@@ -104,6 +104,7 @@ export class MiniApp extends BaseMiniApp {
       packageManager,
       platformVersion = Platform.currentVersion,
       scope,
+      skipInstall,
       template,
     }: {
       language?: 'JavaScript' | 'TypeScript'
@@ -111,6 +112,7 @@ export class MiniApp extends BaseMiniApp {
       packageManager?: 'npm' | 'yarn'
       platformVersion?: string
       scope?: string
+      skipInstall?: boolean
       template?: string
     } = {}
   ) {
@@ -179,6 +181,7 @@ You can find instructions to install CocoaPods @ https://cocoapods.org`)
       )
       .run(
         reactnative.init(miniAppName, reactNativeVersion, {
+          skipInstall,
           template: template
             ? template
             : language === 'TypeScript'

@@ -55,6 +55,11 @@ The `android` and `ios` directories are not created by this command. They will b
 - This option is rarely used.
 - **Default** Will use the currently activated platform version.
 
+`--skipInstall`
+
+- Skip the installation of dependencies after project creation.
+- **Default** The value defaults to false.
+
 `--skipNpmCheck`
 
 - Skip the check ensuring package does not already exists in npm registry.
