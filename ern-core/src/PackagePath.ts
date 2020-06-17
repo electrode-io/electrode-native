@@ -4,7 +4,7 @@ import { readPackageJsonSync } from './packageJsonFileUtils'
 const FILE_PATH_WITH_PREFIX_RE = /^file:(.+)/
 const FILE_PATH_WITHOUT_PREFIX_RE = /^(\/.+)/
 const FILE_PATH_TIDLE_RE = /^(~\/.+)/
-const FILE_PATH_WITHOUT_PREFIX_WINDOWS_RE = /^[a-zA-Z]:\\[\\\S|*\S]?.*$/
+const FILE_PATH_WITHOUT_PREFIX_WINDOWS_RE = /^([a-zA-Z]:\\[\\\S|*\S]?.*)$/
 const FILE_PATH_RE = new RegExp(
   `${FILE_PATH_WITH_PREFIX_RE.source}|${FILE_PATH_WITHOUT_PREFIX_RE.source}|${FILE_PATH_WITHOUT_PREFIX_WINDOWS_RE.source}|${FILE_PATH_TIDLE_RE.source}`
 )
@@ -82,6 +82,8 @@ export class PackagePath {
       this.basePath = FILE_PATH_WITH_PREFIX_RE.exec(path)![1]
     } else if (FILE_PATH_WITHOUT_PREFIX_RE.test(path)) {
       this.basePath = FILE_PATH_WITHOUT_PREFIX_RE.exec(path)![1]
+    } else if (FILE_PATH_WITHOUT_PREFIX_WINDOWS_RE.test(path)) {
+      this.basePath = FILE_PATH_WITHOUT_PREFIX_WINDOWS_RE.exec(path)![1]
     } else if (FILE_PATH_TIDLE_RE.test(path)) {
       this.basePath = untildify(FILE_PATH_TIDLE_RE.exec(path)![1])
     } else if (REGISTRY_PATH_VERSION_RE.test(path)) {
