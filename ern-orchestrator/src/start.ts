@@ -21,6 +21,7 @@ import {
 import _ from 'lodash'
 import path from 'path'
 import fs from 'fs-extra'
+import os from 'os'
 
 export default async function start({
   baseComposite,
@@ -167,7 +168,14 @@ export default async function start({
     const blacklistRe = _.difference(
       allNativeModules.map(d => d.basePath),
       dedupedNativeModules.resolved.map(d => d.basePath)
-    ).map(l => new RegExp(`${l}\/.*`))
+    ).map(
+      l =>
+        new RegExp(
+          os.platform() === 'win32'
+            ? `${l}\\.*`.replace(/\\/g, '\\\\')
+            : `${l}\/.*`
+        )
+    )
 
     const compositeLocalMiniappsPaths = compositeMiniApps
       .filter(m => m.packagePath.isFilePath)
