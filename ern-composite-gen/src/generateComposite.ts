@@ -282,7 +282,14 @@ You should resolve the following version mismatches prior to retrying.${os.EOL}`
         .concat(
           ...localMiniAppsPaths.map(p => path.join(p, 'node_modules/react'))
         )
-        .map(l => new RegExp(`${l}\/.*`))
+        .map(
+          l =>
+            new RegExp(
+              os.platform() === 'win32'
+                ? `${l}\\.*`.replace(/\\/g, '\\\\')
+                : `${l}\/.*`
+            )
+        )
     }
 
     await patchCompositeBabelRcRoots({
