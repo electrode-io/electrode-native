@@ -941,15 +941,9 @@ export default class CauldronApi {
     const version = await this.getVersion(descriptor)
     const fileName = version.yarnLocks[key]
     if (fileName) {
-      const pathToOldYarnLock = this.getRelativePathToYarnLock(fileName)
-      await this.fileStore.removeFile(pathToOldYarnLock)
-      const newYarnLockFileName = uuidv4()
-      const pathToNewYarnLock = this.getRelativePathToYarnLock(
-        newYarnLockFileName
-      )
-      await this.fileStore.storeFile(pathToNewYarnLock, yarnlock)
-      version.yarnLocks[key] = newYarnLockFileName
-      await this.commit(`Updated yarn.lock for ${descriptor.toString()} ${key}`)
+      const yarnLockPath = this.getRelativePathToYarnLock(fileName)
+      await this.fileStore.storeFile(yarnLockPath, yarnlock)
+      await this.commit(`Update yarn.lock for ${descriptor.toString()} ${key}`)
       return true
     }
     return false
@@ -967,9 +961,7 @@ export default class CauldronApi {
       await this.fileStore.removeFile(pathToYarnLock)
     }
     version.yarnLocks[key] = id
-    await this.commit(
-      `Updated yarn.lock id for ${descriptor.toString()} ${key}`
-    )
+    await this.commit(`Update yarn.lock id for ${descriptor.toString()} ${key}`)
   }
 
   public async setYarnLocks(descriptor: AppVersionDescriptor, yarnLocks: any) {
