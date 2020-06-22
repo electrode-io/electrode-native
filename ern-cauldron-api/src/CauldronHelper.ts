@@ -495,14 +495,6 @@ export class CauldronHelper {
     return this.cauldron.getYarnLockId(descriptor, key)
   }
 
-  public async setYarnLockId(
-    descriptor: AppVersionDescriptor,
-    key: string,
-    id: string
-  ): Promise<void> {
-    return this.cauldron.setYarnLockId(descriptor, key, id)
-  }
-
   public async updateYarnLockId(
     descriptor: AppVersionDescriptor,
     key: string,
