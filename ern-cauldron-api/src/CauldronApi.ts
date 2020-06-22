@@ -880,16 +880,6 @@ export default class CauldronApi {
     return version.yarnLocks[key]
   }
 
-  public async setYarnLockId(
-    descriptor: AppVersionDescriptor,
-    key: string,
-    id: string
-  ): Promise<void> {
-    const version = await this.getVersion(descriptor)
-    version.yarnLocks[key] = id
-    return this.commit(`Add yarn.lock for ${descriptor.toString()} ${key}`)
-  }
-
   public async getYarnLock(
     descriptor: AppVersionDescriptor,
     key: string

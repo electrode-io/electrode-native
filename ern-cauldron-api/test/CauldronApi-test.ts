@@ -2284,68 +2284,6 @@ describe('CauldronApi.js', () => {
   })
 
   // ==========================================================
-  // setYarnLockId
-  // ==========================================================
-  describe('setYarnLockId', () => {
-    it('should properly set the yarn lock id of an existing key', async () => {
-      const newId = '30bf4eff61586d71fe5d52e31a2cfabcbb31e33e'
-      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      await cauldronApi({ cauldronDocument: tmpFixture }).setYarnLockId(
-        AppVersionDescriptor.fromString('test:android:17.7.0'),
-        'Production',
-        newId
-      )
-      const entry = jp.query(
-        tmpFixture,
-        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].yarnLocks["Production"]'
-      )[0]
-      expect(entry).eql(newId)
-    })
-
-    it('should properly set the yarn lock id of an unexisting key', async () => {
-      const newId = '30bf4eff61586d71fe5d52e31a2cfabcbb31e33e'
-      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      await cauldronApi({ cauldronDocument: tmpFixture }).setYarnLockId(
-        AppVersionDescriptor.fromString('test:android:17.7.0'),
-        'NewKey',
-        newId
-      )
-      const entry = jp.query(
-        tmpFixture,
-        '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].yarnLocks["NewKey"]'
-      )[0]
-      expect(entry).eql(newId)
-    })
-
-    it('should commit the document store', async () => {
-      const newId = '30bf4eff61586d71fe5d52e31a2cfabcbb31e33e'
-      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron))
-      const api = cauldronApi({ cauldronDocument: tmpFixture })
-      const commitStub = sandbox.stub(documentStore, 'commit')
-      await api.setYarnLockId(
-        AppVersionDescriptor.fromString('test:android:17.7.0'),
-        'NewKey',
-        newId
-      )
-      sinon.assert.calledOnce(commitStub)
-    })
-
-    it('should throw if the native application version is not found', async () => {
-      const newId = '30bf4eff61586d71fe5d52e31a2cfabcbb31e33e'
-      const api = cauldronApi()
-      assert(
-        await doesThrow(
-          api.setYarnLockId,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          'NewKey',
-          newId
-        )
-      )
-    })
-  })
-
-  // ==========================================================
   // getYarnLock
   // ==========================================================
   describe('getYarnLock', () => {

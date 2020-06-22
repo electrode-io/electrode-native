@@ -1179,50 +1179,6 @@ describe('CauldronHelper.js', () => {
     })
   })
 
-  describe('setYarnLockId', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron)
-      const cauldronHelper = createCauldronHelper({ cauldronDocument: fixture })
-      assert(
-        doesThrow(
-          cauldronHelper.setYarnLockId,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          'Foo',
-          'c0112c49-4bbc-47a9-ba45-d43e1e84a1a5'
-        )
-      )
-    })
-
-    it('should throw if the given native application descriptor is not in Cauldron', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron)
-      const cauldronHelper = createCauldronHelper({ cauldronDocument: fixture })
-      assert(
-        doesThrow(
-          cauldronHelper.setYarnLockId,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          'Foo',
-          'c0112c49-4bbc-47a9-ba45-d43e1e84a1a5'
-        )
-      )
-    })
-
-    it('should set the yarn lock id', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron)
-      const cauldronHelper = createCauldronHelper({ cauldronDocument: fixture })
-      await cauldronHelper.setYarnLockId(
-        AppVersionDescriptor.fromString('test:android:17.7.0'),
-        'Foo',
-        'c0112c49-4bbc-47a9-ba45-d43e1e84a1a5'
-      )
-      const nativeAppVersion = jp.query(fixture, testAndroid1770Path)[0]
-      expect(nativeAppVersion.yarnLocks)
-        .to.have.property('Foo')
-        .eql('c0112c49-4bbc-47a9-ba45-d43e1e84a1a5')
-    })
-  })
-
   describe('updateYarnLockId', () => {
     it('should throw if the given native application descriptor is partial', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron)
