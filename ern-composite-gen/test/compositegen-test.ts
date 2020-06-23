@@ -123,7 +123,7 @@ describe('ern-container-gen utils.js', () => {
       assert(yarnCliStub.add.calledTwice)
     })
 
-    it('should yarn upgrade upgraded MiniApps', async () => {
+    it('should yarn add upgraded MiniApps', async () => {
       const miniAppsDeltas = {
         upgraded: [
           PackagePath.fromString('MiniAppOne@7.0.0'),
@@ -131,10 +131,10 @@ describe('ern-container-gen utils.js', () => {
         ],
       }
       await runYarnUsingMiniAppDeltas(miniAppsDeltas)
-      assert(yarnCliStub.upgrade.calledTwice)
+      assert(yarnCliStub.add.calledTwice)
     })
 
-    it('should not yarn upgrade nor yarn add same MiniApps versions', async () => {
+    it('should not yarn add same MiniApps versions', async () => {
       const miniAppsDeltas = {
         same: [
           PackagePath.fromString('MiniAppOne@6.0.0'),
@@ -142,7 +142,6 @@ describe('ern-container-gen utils.js', () => {
         ],
       }
       await runYarnUsingMiniAppDeltas(miniAppsDeltas)
-      assert(yarnCliStub.upgrade.notCalled)
       assert(yarnCliStub.add.notCalled)
     })
 
@@ -159,8 +158,7 @@ describe('ern-container-gen utils.js', () => {
         ],
       }
       await runYarnUsingMiniAppDeltas(miniAppsDeltas)
-      assert(yarnCliStub.upgrade.calledTwice)
-      assert(yarnCliStub.add.calledOnce)
+      assert(yarnCliStub.add.calledThrice)
     })
   })
 
@@ -371,7 +369,7 @@ describe('ern-container-gen utils.js', () => {
       )
     })
 
-    it('should call yarn install prior to calling yarn add or yarn upgrade for each MiniApp', async () => {
+    it('should call yarn install prior to calling yarn add for each MiniApp', async () => {
       // One new, one same, one upgrade
       yarnCliStub.install.callsFake(() =>
         createCompositeNodeModulesReactNativePackageJson(tmpOutDir, '0.56.0')
@@ -387,10 +385,8 @@ describe('ern-container-gen utils.js', () => {
         pathToYarnLock: pathToSampleYarnLock,
       })
       assert(yarnCliStub.install.calledOnce)
-      assert(yarnCliStub.upgrade.calledOnce)
-      assert(yarnCliStub.add.calledTwice)
+      assert(yarnCliStub.add.calledThrice)
       assert(yarnCliStub.install.calledBefore(yarnCliStub.add))
-      assert(yarnCliStub.install.calledBefore(yarnCliStub.upgrade))
     })
 
     it('should create index.js', async () => {

@@ -117,23 +117,17 @@ export async function runYarnUsingMiniAppDeltas(
     }
   }
 
-  // !!! TODO !!!
-  // We run `yarn upgrade` here but that might not be the safest solution
-  // as `yarn upgrade` will run a full upgrade of all dependencies of the
-  // MiniApp, transitively, which might not be desired.
-  // Indeed if we want to be as close to the yarn.lock as possible, running
-  // `yarn add` for upgraded dependencies will only upgrade the MiniApp
-  // version but will leave its dependency graph untouched, based
-  // on yarn.lock.
-  // It might be better to given more control to the MiniApp team on
-  // dependency control.
+  //
+  // We also run `yarn add` for any upgraded MiniApps insead of
+  // `yarn upgrade`, to ensure that the dependency graph of the
+  // MiniApp will remain as close to the existing yarn.lock as
+  // possible
   if (miniAppsDeltas.upgraded) {
     for (const upgradedMiniAppVersion of miniAppsDeltas.upgraded) {
       log.debug(`Upgrading MiniApp ${upgradedMiniAppVersion.toString()}`)
-      // TODO : Once again ... Do we really want upgrade here ?
       await kax
         .task(`Upgrading ${upgradedMiniAppVersion}`)
-        .run(yarn.upgrade(upgradedMiniAppVersion))
+        .run(yarn.add(upgradedMiniAppVersion))
     }
   }
 
