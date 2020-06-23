@@ -57,15 +57,21 @@
 
 - Optional extra configuration specific to creating container
 - Override the android build config during container generation by passing `androidConfig` attributes
-  - **As a json string**  
+  - **As a json string**
     For example `--extra '{"androidConfig": {"androidGradlePlugin": "3.2.1","buildToolsVersion": "28.0.3","compileSdkVersion": "28","gradleDistributionVersion": "4.6","minSdkVersion": "19","sourceCompatibility": "VERSION_1_8","supportLibraryVersion": "28.0.0","targetCompatibility": "VERSION_1_8","targetSdkVersion": "28"}}'`
-  - **As a file path**  
-    For example `--extra /Users/username/my-container-config.json`  
+  - **As a file path**
+    For example `--extra /Users/username/my-container-config.json`
     In that case, the configuration will be read from the file.
-  - **As a Cauldron file path**  
-    For example `--extra cauldron://config/container/my-container-config.json`  
-    In that case, the configuration will be read from the file stored in Cauldron.  
+  - **As a Cauldron file path**
+    For example `--extra cauldron://config/container/my-container-config.json`
+    In that case, the configuration will be read from the file stored in Cauldron.
     For this way to work, the file must exist in Cauldron (you can add a file to the cauldron by using the [ern cauldron add file] command).
+
+`--skipInstall`
+
+- Only used when generating an iOS Container with React Native >= 0.61.
+- When set, skip `yarn install` and `pod install` after generating the container.
+- **default** true on Windows/Linux, false on macOS
 
 `--sourceMapOutput`
 

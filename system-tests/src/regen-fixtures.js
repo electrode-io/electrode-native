@@ -73,7 +73,7 @@ function regenIosContainerFixture() {
   shell.exec(
     `ern create-container --miniapps ${containerMiniapps.join(
       ' '
-    )} -p ios --out ${pathsToFixtures['ios-container']}`
+    )} -p ios --skipInstall --out ${pathsToFixtures['ios-container']}`
   )
 }
 

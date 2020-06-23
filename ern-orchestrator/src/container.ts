@@ -55,6 +55,7 @@ export async function runLocalContainerGen(
         composite,
         devJsBundle,
         ignoreRnpmAssets,
+        iosConfig: (extra && extra.iosConfig) || {},
         jsMainModuleName,
         outDir,
         plugins: [],
