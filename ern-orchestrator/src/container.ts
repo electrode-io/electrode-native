@@ -120,6 +120,7 @@ export async function runCauldronContainerGen(
           ignoreRnpmAssets:
             containerGeneratorConfig &&
             containerGeneratorConfig.ignoreRnpmAssets,
+          iosConfig: containerGeneratorConfig?.iosConfig,
           jsMainModuleName,
           outDir: outDir || Platform.getContainerGenOutDirectory(platform),
           plugins,
