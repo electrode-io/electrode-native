@@ -123,7 +123,7 @@ Or set --skipInstall if using the create-container command.`
       )
     }
 
-    if (config.iosConfig.skipInstall) {
+    if (config?.iosConfig?.skipInstall) {
       log.info(
         `skipInstall option is set. 'yarn install' and 'pod install' won't be run after container generation.
 Make sure to run these commands before building the container.`
