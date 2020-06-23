@@ -5,17 +5,18 @@ package com.walmartlabs.ern;
 package com.walmartlabs.ern.{{{lowerCaseMiniAppName}}};
 {{/isOldRunner}}
 
-//
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// GENERATED RUNNER CONFIGURATION
-// DO NOT EDIT MANUALLY
-// CHANGES TO THIS FILE WILL BE OVERWRITTEN BY NEXT RUN OF ern run-android COMMAND
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 import com.walmartlabs.ern.container.miniapps.{{{pascalCaseMiniAppName}}}Activity;
+
+//
+// GENERATED CODE: DO NOT MODIFY
+//
+// Do not modify the content of this file as it will be regenerated
+// every time a run-android command is executed.
+// See https://native.electrode.io/cli-commands/run-android
+
 final class RunnerConfig {
-  static final Class MAIN_MINIAPP_ACTIVITY_CLASS =  {{{pascalCaseMiniAppName}}}Activity.class;
-  static final boolean RN_DEV_SUPPORT_ENABLED = {{{isReactNativeDevSupportEnabled}}};
-  static final String PACKAGER_HOST = "{{{packagerHost}}}";
-  static final String PACKAGER_PORT = "{{{packagerPort}}}";
+    static final Class MAIN_MINIAPP_ACTIVITY_CLASS = {{{pascalCaseMiniAppName}}}Activity.class;
+    static final boolean RN_DEV_SUPPORT_ENABLED = {{{isReactNativeDevSupportEnabled}}};
+    static final String PACKAGER_HOST = "{{{packagerHost}}}";
+    static final String PACKAGER_PORT = "{{{packagerPort}}}";
 }
