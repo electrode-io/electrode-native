@@ -185,8 +185,8 @@ Please set the new container version through command options.`)
           minifiedUrl,
           projectRoot,
           sourceMap,
-          uploadNodeModules: true,
-          uploadSources: !!containerGenRes.bundlingResult.isHermesBundle,
+          uploadNodeModules: false,
+          uploadSources: false,
         })
       } catch (e) {
         log.error(`Bugsnag upload failed : ${e}`)
