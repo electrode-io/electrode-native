@@ -1,5 +1,5 @@
-import { StringProperty } from './StringProperty'
+import { StringProperty } from './StringProperty';
 
 export class ByteArrayProperty extends StringProperty {
-  public static FORMAT = 'byte-array'
+  public static FORMAT = 'byte-array';
 }

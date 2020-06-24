@@ -1,17 +1,17 @@
-import { AppVersionDescriptor, log, PackagePath } from 'ern-core'
-import { getActiveCauldron } from 'ern-cauldron-api'
-import { syncCauldronContainer } from 'ern-orchestrator'
+import { AppVersionDescriptor, log, PackagePath } from 'ern-core';
+import { getActiveCauldron } from 'ern-cauldron-api';
+import { syncCauldronContainer } from 'ern-orchestrator';
 import {
   askUserToChooseANapDescriptorFromCauldron,
   emptyContainerIfSingleMiniAppOrJsApiImpl,
   epilog,
   logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
-} from '../../../lib'
-import { Argv } from 'yargs'
+} from '../../../lib';
+import { Argv } from 'yargs';
 
-export const command = 'miniapps <miniapps..>'
-export const desc = 'Remove one or more MiniApp(s) from the cauldron'
+export const command = 'miniapps <miniapps..>';
+export const desc = 'Remove one or more MiniApp(s) from the cauldron';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -26,15 +26,15 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
-    .coerce('miniapps', d => d.map(PackagePath.fromString))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
+    .coerce('miniapps', (d) => d.map(PackagePath.fromString))
     .option('resetCache', {
       describe:
         'Indicates whether to reset the React Native cache prior to bundling',
       type: 'boolean',
     })
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 // This command does not actually removes or offers to remove dependencies that were
 // only used by this MiniApp
@@ -45,16 +45,16 @@ export const commandHandler = async ({
   miniapps,
   resetCache,
 }: {
-  containerVersion?: string
-  descriptor?: AppVersionDescriptor
-  miniapps: PackagePath[]
-  resetCache?: boolean
+  containerVersion?: string;
+  descriptor?: AppVersionDescriptor;
+  miniapps: PackagePath[];
+  resetCache?: boolean;
 }) => {
   descriptor =
     descriptor ||
     (await askUserToChooseANapDescriptorFromCauldron({
       onlyNonReleasedVersions: true,
-    }))
+    }));
 
   await logErrorAndExitIfNotSatisfied({
     isNewerContainerVersion: containerVersion
@@ -76,7 +76,7 @@ export const commandHandler = async ({
       extraErrorMessage:
         'This command cannot work on a non existing native application version',
     },
-  })
+  });
 
   const cauldronCommitMessage = [
     `${
@@ -84,24 +84,24 @@ export const commandHandler = async ({
         ? `Remove ${miniapps[0]} MiniApp from ${descriptor}`
         : `Remove multiple MiniApps from ${descriptor}`
     }`,
-  ]
+  ];
 
   if (!(await emptyContainerIfSingleMiniAppOrJsApiImpl(descriptor))) {
-    const cauldron = await getActiveCauldron()
+    const cauldron = await getActiveCauldron();
     await syncCauldronContainer(
       async () => {
         for (const miniapp of miniapps) {
-          await cauldron.removeMiniAppFromContainer(descriptor!, miniapp)
-          cauldronCommitMessage.push(`- Remove ${miniapp} MiniApp`)
+          await cauldron.removeMiniAppFromContainer(descriptor!, miniapp);
+          cauldronCommitMessage.push(`- Remove ${miniapp} MiniApp`);
         }
       },
       descriptor,
       cauldronCommitMessage,
-      { containerVersion, resetCache }
-    )
+      { containerVersion, resetCache },
+    );
   }
 
-  log.info(`MiniApp(s) successfully removed from ${descriptor}`)
-}
+  log.info(`MiniApp(s) successfully removed from ${descriptor}`);
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

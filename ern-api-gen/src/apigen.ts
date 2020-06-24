@@ -2,22 +2,22 @@ import generateProject, {
   generateFlowConfig,
   generatePackageJson,
   generateSwagger,
-} from './generateProject'
-import normalizeConfig from './normalizeConfig'
-import fs from 'fs-extra'
-import path from 'path'
-import semver from 'semver'
-import { FLOW_CONFIG_FILE, PKG_FILE } from './Constants'
+} from './generateProject';
+import normalizeConfig from './normalizeConfig';
+import fs from 'fs-extra';
+import path from 'path';
+import semver from 'semver';
+import { FLOW_CONFIG_FILE, PKG_FILE } from './Constants';
 import {
   childProcess,
   log,
   PackagePath,
   shell,
   utils as coreUtils,
-} from 'ern-core'
-import inquirer from 'inquirer'
+} from 'ern-core';
+import inquirer from 'inquirer';
 
-const { execp } = childProcess
+const { execp } = childProcess;
 
 /**
  * ==============================================================================
@@ -27,18 +27,18 @@ const { execp } = childProcess
  * Refer to normalizeConfig function doc for the list of options
  */
 export async function generateApi(options: any) {
-  const config: any = normalizeConfig(options)
+  const config: any = normalizeConfig(options);
 
-  const outFolder = path.join(process.cwd(), config.packageName)
+  const outFolder = path.join(process.cwd(), config.packageName);
   if (fs.pathExistsSync(outFolder)) {
-    log.error(`${outFolder} directory already exists`)
-    process.exit(1)
+    log.error(`${outFolder} directory already exists`);
+    process.exit(1);
   }
 
   // Create output folder
-  shell.mkdir(outFolder)
-  await generateProject(config, outFolder)
-  log.info(`==  Project was generated in ${outFolder}`)
+  shell.mkdir(outFolder);
+  await generateProject(config, outFolder);
+  log.info(`==  Project was generated in ${outFolder}`);
 }
 
 /**
@@ -47,31 +47,31 @@ export async function generateApi(options: any) {
  */
 export async function regenerateCode(options: any = {}) {
   const pkg = await validateApiNameAndGetPackageJson(
-    'This is not a properly named API directory. Naming convention is react-native-{name}-api'
-  )
-  const curVersion = pkg.version || '1.0.0'
-  const pkgName = pkg.name
-  let newPluginVer
+    'This is not a properly named API directory. Naming convention is react-native-{name}-api',
+  );
+  const curVersion = pkg.version || '1.0.0';
+  const pkgName = pkg.name;
+  let newPluginVer;
   if (options.skipVersion) {
-    newPluginVer = curVersion
+    newPluginVer = curVersion;
   } else {
-    newPluginVer = semver.inc(curVersion, 'minor')
+    newPluginVer = semver.inc(curVersion, 'minor');
     const { confirmPluginVer } = await inquirer.prompt([
       <inquirer.Question>{
         message: `Would you like to bump the plugin version from [${pkgName}@${curVersion}] to [${pkgName}@${newPluginVer}]?`,
         name: 'confirmPluginVer',
         type: 'confirm',
       },
-    ])
+    ]);
 
     if (!confirmPluginVer) {
-      newPluginVer = await _promptForPluginVersion(curVersion)
+      newPluginVer = await _promptForPluginVersion(curVersion);
     }
   }
-  await _checkDependencyVersion(pkg, options.targetDependencies || [])
+  await _checkDependencyVersion(pkg, options.targetDependencies || []);
 
-  const isNewVersion = semver.lt(curVersion, newPluginVer)
-  const extra = (pkg.ern && pkg.ern.message) || {}
+  const isNewVersion = semver.lt(curVersion, newPluginVer);
+  const extra = (pkg.ern && pkg.ern.message) || {};
   const config = normalizeConfig({
     apiAuthor: pkg.author,
     apiDescription: pkg.description,
@@ -89,53 +89,53 @@ export async function regenerateCode(options: any = {}) {
         : extra && extra.moduleName
         ? extra.moduleName
         : pkgName,
-  })
+  });
 
-  await cleanGenerated()
+  await cleanGenerated();
 
   // Regenerate package.json
   await fs.writeFile(
     path.join(process.cwd(), PKG_FILE),
-    generatePackageJson(config)
-  )
+    generatePackageJson(config),
+  );
   // Regenerate .flowconfig file
   await fs.writeFile(
     path.join(process.cwd(), FLOW_CONFIG_FILE),
-    generateFlowConfig()
-  )
+    generateFlowConfig(),
+  );
 
-  await generateSwagger(config, process.cwd())
-  log.info('== API generation complete.')
+  await generateSwagger(config, process.cwd());
+  log.info('== API generation complete.');
 
   isNewVersion
     ? await publish(await readPackage())
-    : log.info('Done. Remember to publish a new version if needed.')
+    : log.info('Done. Remember to publish a new version if needed.');
 }
 
 export async function cleanGenerated(outFolder: string = process.cwd()) {
   const pkg = await validateApiNameAndGetPackageJson(
-    'This is not a properly named API directory. Naming convention is react-native-{name}-api'
-  )
+    'This is not a properly named API directory. Naming convention is react-native-{name}-api',
+  );
 
-  shell.rm('-rf', path.join(outFolder, 'javascript'))
-  shell.rm('-rf', path.join(outFolder, 'swift'))
-  shell.rm('-rf', path.join(outFolder, 'android'))
-  shell.rm('-rf', path.join(outFolder, 'IOS'))
-  shell.rm('-rf', path.join(outFolder, FLOW_CONFIG_FILE))
-  shell.rm('-rf', path.join(outFolder, PKG_FILE))
-  return pkg
+  shell.rm('-rf', path.join(outFolder, 'javascript'));
+  shell.rm('-rf', path.join(outFolder, 'swift'));
+  shell.rm('-rf', path.join(outFolder, 'android'));
+  shell.rm('-rf', path.join(outFolder, 'IOS'));
+  shell.rm('-rf', path.join(outFolder, FLOW_CONFIG_FILE));
+  shell.rm('-rf', path.join(outFolder, PKG_FILE));
+  return pkg;
 }
 
 async function validateApiNameAndGetPackageJson(message: string) {
-  const pkg = await readPackage()
+  const pkg = await readPackage();
   if (await !coreUtils.isDependencyApi(pkg.name)) {
-    throw new Error(message)
+    throw new Error(message);
   }
-  return pkg
+  return pkg;
 }
 
 async function readPackage() {
-  return fs.readJson(path.join(process.cwd(), PKG_FILE))
+  return fs.readJson(path.join(process.cwd(), PKG_FILE));
 }
 
 const nextVersion = (curVersion: string, userPluginVer: string) => {
@@ -145,23 +145,23 @@ const nextVersion = (curVersion: string, userPluginVer: string) => {
     case 'q':
     case 'quit':
     case 'n':
-      return curVersion
+      return curVersion;
     default: {
       try {
         // If valid return
         if (semver.valid(userPluginVer) != null) {
-          return userPluginVer
+          return userPluginVer;
         }
-        const ret = semver.inc(curVersion, <any>userPluginVer)
+        const ret = semver.inc(curVersion, <any>userPluginVer);
         if (ret) {
-          return ret
+          return ret;
         }
       } catch (e) {
-        log.info(`Not a valid version: ${userPluginVer}`)
+        log.info(`Not a valid version: ${userPluginVer}`);
       }
     }
   }
-}
+};
 
 async function _promptForPluginVersion(curVersion: string) {
   const { userPluginVer } = await inquirer.prompt([
@@ -170,25 +170,25 @@ async function _promptForPluginVersion(curVersion: string) {
       name: 'userPluginVer',
       type: 'input',
     },
-  ])
-  const ret = nextVersion(curVersion, userPluginVer)
+  ]);
+  const ret = nextVersion(curVersion, userPluginVer);
   if (ret == null) {
     log.info(
-      'Enter a valid version. For more details visit https://github.com/npm/node-semver'
-    )
-    return _promptForPluginVersion(curVersion)
+      'Enter a valid version. For more details visit https://github.com/npm/node-semver',
+    );
+    return _promptForPluginVersion(curVersion);
   }
-  return ret
+  return ret;
 }
 
 async function _checkDependencyVersion(
   pkg: any,
-  targetDependencies: PackagePath[]
+  targetDependencies: PackagePath[],
 ) {
-  const pluginDependency = pkg.peerDependencies || {}
+  const pluginDependency = pkg.peerDependencies || {};
   const targetNativeDependenciesMap = _constructTargetNativeDependenciesMap(
-    targetDependencies
-  )
+    targetDependencies,
+  );
   for (const key of Object.keys(pluginDependency)) {
     if (
       targetNativeDependenciesMap.has(key) &&
@@ -196,33 +196,33 @@ async function _checkDependencyVersion(
     ) {
       const answer: any = await _promptForMissMatchOfSupportedPlugins(
         targetNativeDependenciesMap.get(key),
-        key
-      )
+        key,
+      );
       pluginDependency[key] = answer.userPluginVer
         ? answer.userPluginVer
-        : targetNativeDependenciesMap.get(key)
+        : targetNativeDependenciesMap.get(key);
     }
   }
 }
 
 function _constructTargetNativeDependenciesMap(
-  targetDependencies: PackagePath[]
+  targetDependencies: PackagePath[],
 ) {
   return new Map(
-    targetDependencies.map(curVal => {
-      const dependencyString = curVal.toString()
-      const idx = dependencyString.lastIndexOf('@') // logic for scoped dependency
+    targetDependencies.map((curVal) => {
+      const dependencyString = curVal.toString();
+      const idx = dependencyString.lastIndexOf('@'); // logic for scoped dependency
       return <any>[
         dependencyString.substring(0, idx),
         dependencyString.substring(idx + 1),
-      ]
-    })
-  )
+      ];
+    }),
+  );
 }
 
 function _promptForMissMatchOfSupportedPlugins(
   curVersion: any,
-  pluginName: string
+  pluginName: string,
 ): Promise<string> {
   return inquirer.prompt([
     {
@@ -230,7 +230,7 @@ function _promptForMissMatchOfSupportedPlugins(
       name: 'userPluginVer',
       type: 'input',
     },
-  ])
+  ]);
 }
 
 async function publish({ version }: { version: string }) {
@@ -240,18 +240,18 @@ async function publish({ version }: { version: string }) {
       name: 'confirmNpmPublish',
       type: 'confirm',
     },
-  ])
+  ]);
   if (answers.confirmNpmPublish) {
-    await npmPublish()
+    await npmPublish();
   }
 }
 
 async function npmPublish() {
-  return execp('npm publish')
+  return execp('npm publish');
 }
 
 export default {
   cleanGenerated,
   generateApi,
   regenerateCode,
-}
+};

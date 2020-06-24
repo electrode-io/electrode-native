@@ -1,11 +1,11 @@
-import { AnyAppDescriptor } from 'ern-core'
+import { AnyAppDescriptor } from 'ern-core';
 
 export function getDefaultExtraConfigurationOfPublisherFromCauldron({
   publisherFromCauldron,
   napDescriptor,
 }: {
-  publisherFromCauldron: any
-  napDescriptor: AnyAppDescriptor
+  publisherFromCauldron: any;
+  napDescriptor: AnyAppDescriptor;
 }): any {
   if (
     publisherFromCauldron.name === 'maven' ||
@@ -16,7 +16,7 @@ export function getDefaultExtraConfigurationOfPublisherFromCauldron({
       groupId: 'com.walmartlabs.ern',
       mavenPassword: publisherFromCauldron.mavenPassword,
       mavenUser: publisherFromCauldron.mavenUser,
-    }
+    };
   } else if (
     publisherFromCauldron.name === 'jcenter' ||
     publisherFromCauldron.name.startsWith('jcenter@')
@@ -24,6 +24,6 @@ export function getDefaultExtraConfigurationOfPublisherFromCauldron({
     return {
       artifactId: `${napDescriptor.name}-ern-container`,
       groupId: 'com.walmartlabs.ern',
-    }
+    };
   }
 }

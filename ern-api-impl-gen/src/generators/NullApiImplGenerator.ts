@@ -1,9 +1,9 @@
-import { log, PackagePath } from 'ern-core'
-import { ApiImplGeneratable } from '../ApiImplGeneratable'
+import { log, PackagePath } from 'ern-core';
+import { ApiImplGeneratable } from '../ApiImplGeneratable';
 
 export default class NullApiImplGenerator implements ApiImplGeneratable {
   get name(): string {
-    return 'NullApiImplGenerator'
+    return 'NullApiImplGenerator';
   }
 
   public async generate(
@@ -12,8 +12,8 @@ export default class NullApiImplGenerator implements ApiImplGeneratable {
     reactNativeVersion: string,
     plugins: PackagePath[],
     apis: PackagePath[],
-    regen: boolean
+    regen: boolean,
   ) {
-    log.debug('NullApiImplGenerator generate - noop')
+    log.debug('NullApiImplGenerator generate - noop');
   }
 }

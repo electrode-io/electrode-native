@@ -1,4 +1,4 @@
-import { upperFirst as ucFirst } from './StringUtils'
+import { upperFirst as ucFirst } from './StringUtils';
 
 /**
  * Takes a prototype and a list of property names and creates getters and
@@ -9,42 +9,42 @@ import { upperFirst as ucFirst } from './StringUtils'
  * @returns {*}
  */
 export const beanify = (prototype, p, prefix = '') => {
-  const props = Array.isArray(p) ? p : p == null ? [] : [p]
+  const props = Array.isArray(p) ? p : p == null ? [] : [p];
   for (const pr of props) {
-    let op = pr
-    let pre = prefix
-    let defValue
+    let op = pr;
+    let pre = prefix;
+    let defValue;
     if (Array.isArray(pr)) {
-      op = pr[0]
+      op = pr[0];
       if (pr.length > 1) {
-        defValue = pr[1]
+        defValue = pr[1];
       }
       if (pr.length > 2) {
-        pre = pr[2]
+        pre = pr[2];
       }
     }
-    const prop = `${pre}${op}`
-    const uProp = ucFirst(op)
-    const set = `set${uProp}`
-    const get = `get${uProp}`
+    const prop = `${pre}${op}`;
+    const uProp = ucFirst(op);
+    const set = `set${uProp}`;
+    const get = `get${uProp}`;
     if (!has(prototype, set)) {
-      prototype[set] = function(value) {
-        this[prop] = value
-      }
+      prototype[set] = function (value) {
+        this[prop] = value;
+      };
     }
     if (!has(prototype, get)) {
-      prototype[get] = function() {
+      prototype[get] = function () {
         return has(this, prop)
           ? this[prop]
           : typeof defValue === 'function'
           ? defValue()
-          : defValue
-      }
+          : defValue;
+      };
     }
   }
 
-  return prototype
-}
+  return prototype;
+};
 
 /**
  * Takes a bean and applies the values where the values have
@@ -52,53 +52,53 @@ export const beanify = (prototype, p, prefix = '') => {
  */
 function resolve(obj, path) {
   if (obj == null) {
-    return
+    return;
   }
   if (path == null) {
-    return obj
+    return obj;
   }
   if (typeof obj[path] === 'function') {
-    return obj[path]()
+    return obj[path]();
   }
   if (path in obj) {
-    return obj[path]
+    return obj[path];
   }
   if (obj instanceof Map) {
-    return obj.get(path)
+    return obj.get(path);
   }
 }
 
 function canResolve(obj, path) {
-  return true
+  return true;
   if (obj == null) {
-    return false
+    return false;
   }
   if (path == null) {
-    return false
+    return false;
   }
   if (typeof path !== 'string') {
-    return false
+    return false;
   }
   if (obj instanceof Map) {
-    return obj.has(path)
+    return obj.has(path);
   }
-  return Object.hasOwnProperty.call(obj, path)
+  return Object.hasOwnProperty.call(obj, path);
 }
 
 function each(obj, keys, fn?: any, scope?: any) {
   if (obj == null) {
-    return obj
+    return obj;
   }
   if (typeof obj[Symbol.iterator] === 'function') {
     for (const [k, v] of obj) {
       if (!keys || keys.indexOf(k) > -1) {
-        fn.call(scope, v, k)
+        fn.call(scope, v, k);
       }
     }
   }
-  keys = keys || Object.keys(obj)
+  keys = keys || Object.keys(obj);
   for (const k of keys) {
-    fn.call(scope, obj[k], k)
+    fn.call(scope, obj[k], k);
   }
 }
 /**
@@ -107,41 +107,41 @@ function each(obj, keys, fn?: any, scope?: any) {
  * @param obj
  */
 export const applyStrict = (bean, obj) => {
-  return apply(bean, obj, null, true)
-}
+  return apply(bean, obj, null, true);
+};
 export const canResolveNoFunc = (obj, prop) => {
   if (!canResolve(obj, prop)) {
-    return false
+    return false;
   }
-  return typeof obj[prop] !== 'function'
-}
+  return typeof obj[prop] !== 'function';
+};
 
 export const apply = (bean, obj, properties: any = null, strict = false) => {
   if (obj == null) {
-    return bean
+    return bean;
   }
   if (bean == null) {
-    throw new Error(`Bean can not be null`)
+    throw new Error(`Bean can not be null`);
   }
-  const prefix = ''
+  const prefix = '';
   each(obj, properties, (v, p) => {
-    let op = p
-    let pre = prefix
-    let defValue
+    let op = p;
+    let pre = prefix;
+    let defValue;
     if (Array.isArray(p)) {
-      op = p[0]
+      op = p[0];
       if (p.length > 1) {
-        defValue = p[1]
+        defValue = p[1];
       }
       if (p.length > 2) {
-        pre = p[2]
+        pre = p[2];
       }
     }
-    const prop = `${pre}${op}`
-    const uProp = ucFirst(op)
-    const set = `set${uProp}`
-    const is = `is${uProp}`
-    const get = `get${uProp}`
+    const prop = `${pre}${op}`;
+    const uProp = ucFirst(op);
+    const set = `set${uProp}`;
+    const is = `is${uProp}`;
+    const get = `get${uProp}`;
     if (
       canResolve(obj, prop) ||
       typeof obj[get] === 'function' ||
@@ -152,27 +152,27 @@ export const apply = (bean, obj, properties: any = null, strict = false) => {
           ? obj[get]()
           : typeof obj[is] === 'function'
           ? obj[is]()
-          : resolve(obj, prop)
+          : resolve(obj, prop);
       if (typeof bean[set] === 'function') {
-        bean[set](value)
+        bean[set](value);
       } else if (!strict || canResolveNoFunc(bean, prop)) {
-        bean[prop] = value
+        bean[prop] = value;
       }
     }
-  })
-  return bean
-}
+  });
+  return bean;
+};
 
 export const has = (obj, ...properties) => {
   if (obj == null) {
-    return false
+    return false;
   }
   for (const p of properties) {
     if (!(p in obj)) {
-      return false
+      return false;
     }
   }
-  return true
-}
+  return true;
+};
 
-export default { beanify, apply, has }
+export default { beanify, apply, has };

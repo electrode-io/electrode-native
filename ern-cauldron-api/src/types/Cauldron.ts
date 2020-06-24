@@ -1,7 +1,7 @@
-import { CauldronNativeApp } from './CauldronNativeApp'
-import { CauldronObject } from './CauldronObject'
+import { CauldronNativeApp } from './CauldronNativeApp';
+import { CauldronObject } from './CauldronObject';
 
 export interface Cauldron extends CauldronObject {
-  schemaVersion: string
-  nativeApps: CauldronNativeApp[]
+  schemaVersion: string;
+  nativeApps: CauldronNativeApp[];
 }

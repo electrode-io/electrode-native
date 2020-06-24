@@ -1,19 +1,19 @@
 export function parseBoolean(str) {
   if (str == null) {
-    return false
+    return false;
   }
   if (str === true || str === false) {
-    return str
+    return str;
   }
-  const cstr = ('' + str).toLowerCase()
+  const cstr = ('' + str).toLowerCase();
   if (cstr === 'true') {
-    return true
+    return true;
   }
   if (cstr === 'false') {
-    return false
+    return false;
   }
-  return !!str
+  return !!str;
 }
 export default {
   parseBoolean,
-}
+};

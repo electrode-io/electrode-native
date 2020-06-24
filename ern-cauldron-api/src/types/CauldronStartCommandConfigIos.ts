@@ -1,3 +1,3 @@
 export interface CauldronStartCommandConfigIos {
-  bundleId: string
+  bundleId: string;
 }

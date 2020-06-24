@@ -1,5 +1,5 @@
-import ServiceLoader from './java/ServiceLoader'
-import StringBuilder from './java/StringBuilder'
+import ServiceLoader from './java/ServiceLoader';
+import StringBuilder from './java/StringBuilder';
 
 export default {
   /**
@@ -9,23 +9,25 @@ export default {
    * @return config class
    */
   forName(name) {
-    const loader: any[] = ServiceLoader.load('io.swagger.codegen.CodegenConfig')
-    const availableConfigs = StringBuilder()
+    const loader: any[] = ServiceLoader.load(
+      'io.swagger.codegen.CodegenConfig',
+    );
+    const availableConfigs = StringBuilder();
     for (const config of loader) {
       if (config.getName() === name) {
-        return config
+        return config;
       }
-      availableConfigs.append(config.getName()).append('\n')
+      availableConfigs.append(config.getName()).append('\n');
     }
     try {
-      const Code = require(name)
-      return Code.newInstance ? Code.newInstance() : new Code()
+      const Code = require(name);
+      return Code.newInstance ? Code.newInstance() : new Code();
     } catch (e) {
       throw new Error(
         "Can't load config class with name ".concat(name) +
           ' Available: ' +
-          availableConfigs.toString()
-      )
+          availableConfigs.toString(),
+      );
     }
   },
-}
+};

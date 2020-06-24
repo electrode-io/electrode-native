@@ -1,15 +1,15 @@
-import { Argv } from 'yargs'
+import { Argv } from 'yargs';
 
-export const command = 'get'
-export const desc = 'Get objects from the Cauldron'
+export const command = 'get';
+export const desc = 'Get objects from the Cauldron';
 export const builder = (argv: Argv) => {
   return argv
     .commandDir('get', {
       extensions: process.env.ERN_ENV === 'development' ? ['js', 'ts'] : ['js'],
     })
     .demandCommand(1, 'add needs a command')
-    .strict()
-}
+    .strict();
+};
 export const handler = (args: any) => {
-  return
-}
+  return;
+};

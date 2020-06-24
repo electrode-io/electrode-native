@@ -6,21 +6,21 @@ import {
   log,
   NativePlatform,
   PackagePath,
-} from 'ern-core'
-import { getActiveCauldron } from 'ern-cauldron-api'
-import { generateComposite } from 'ern-composite-gen'
-import { bundleMiniAppsFromComposite } from 'ern-container-gen'
+} from 'ern-core';
+import { getActiveCauldron } from 'ern-cauldron-api';
+import { generateComposite } from 'ern-composite-gen';
+import { bundleMiniAppsFromComposite } from 'ern-container-gen';
 import {
   askUserToChooseANapDescriptorFromCauldron,
   epilog,
   logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
-} from '../../lib'
-import { Argv } from 'yargs'
-import path from 'path'
+} from '../../lib';
+import { Argv } from 'yargs';
+import path from 'path';
 
-export const command = 'upload'
-export const desc = 'Upload a bundle to a store'
+export const command = 'upload';
+export const desc = 'Upload a bundle to a store';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -28,19 +28,19 @@ export const builder = (argv: Argv) => {
       describe: 'Base Composite',
       type: 'string',
     })
-    .coerce('baseComposite', d => PackagePath.fromString(d))
+    .coerce('baseComposite', (d) => PackagePath.fromString(d))
     .option('descriptor', {
       alias: 'd',
       describe: 'Full native application descriptor',
       type: 'string',
     })
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .option('extraJsDependencies', {
       alias: 'e',
       describe: 'Additional JS dependency(ies)',
       type: 'array',
     })
-    .coerce('extraJsDependencies', d => d.map(PackagePath.fromString))
+    .coerce('extraJsDependencies', (d) => d.map(PackagePath.fromString))
     .option('fromGitBranches', {
       describe: 'Favor MiniApp(s) branches',
       type: 'boolean',
@@ -53,7 +53,7 @@ export const builder = (argv: Argv) => {
       describe: 'One or more JS API implementation(s)',
       type: 'array',
     })
-    .coerce('jsApiImpls', d => d.map(PackagePath.fromString))
+    .coerce('jsApiImpls', (d) => d.map(PackagePath.fromString))
     .option('miniapps', {
       alias: 'm',
       describe: 'One or more MiniApp(s)',
@@ -75,9 +75,9 @@ export const builder = (argv: Argv) => {
         'Indicates whether to reset the React Native cache prior to bundling',
       type: 'boolean',
     })
-    .coerce('miniapps', d => d.map(PackagePath.fromString))
-    .epilog(epilog(exports))
-}
+    .coerce('miniapps', (d) => d.map(PackagePath.fromString))
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   baseComposite,
@@ -91,16 +91,16 @@ export const commandHandler = async ({
   prod,
   resetCache,
 }: {
-  baseComposite?: PackagePath
-  descriptor?: AppVersionDescriptor
-  extraJsDependencies?: PackagePath[]
-  fromGitBranches?: boolean
-  fromPackager?: boolean
-  jsApiImpls?: PackagePath[]
-  miniapps?: PackagePath[]
-  platform?: NativePlatform
-  prod?: boolean
-  resetCache?: boolean
+  baseComposite?: PackagePath;
+  descriptor?: AppVersionDescriptor;
+  extraJsDependencies?: PackagePath[];
+  fromGitBranches?: boolean;
+  fromPackager?: boolean;
+  jsApiImpls?: PackagePath[];
+  miniapps?: PackagePath[];
+  platform?: NativePlatform;
+  prod?: boolean;
+  resetCache?: boolean;
 } = {}) => {
   await logErrorAndExitIfNotSatisfied({
     bundleStoreAccessKeyIsSet: {
@@ -111,19 +111,21 @@ export const commandHandler = async ({
     bundleStoreUrlSetInCauldron: {
       extraErrorMessage: `You should add bundleStore config in your Cauldron`,
     },
-  })
+  });
 
-  const platforms: NativePlatform[] = platform ? [platform] : ['android', 'ios']
+  const platforms: NativePlatform[] = platform
+    ? [platform]
+    : ['android', 'ios'];
 
-  const cauldron = await getActiveCauldron()
-  const bundleStoreUrl = (await cauldron.getBundleStoreConfig()).url
-  const engine = new BundleStoreEngine(bundleStoreUrl)
+  const cauldron = await getActiveCauldron();
+  const bundleStoreUrl = (await cauldron.getBundleStoreConfig()).url;
+  const engine = new BundleStoreEngine(bundleStoreUrl);
   if (fromPackager) {
     for (const curPlatform of platforms) {
       const bundleId = await kax
         .task(`Uploading ${curPlatform} bundle`)
-        .run(engine.uploadFromPackager({ platform: curPlatform, dev: !prod }))
-      log.info(`Successfully uploaded ${curPlatform} bundle [id: ${bundleId}]`)
+        .run(engine.uploadFromPackager({ platform: curPlatform, dev: !prod }));
+      log.info(`Successfully uploaded ${curPlatform} bundle [id: ${bundleId}]`);
     }
   } else {
     // Full native application descriptor was not provided.
@@ -131,11 +133,11 @@ export const commandHandler = async ({
     // containing all the native applications versions in the cauldron
     // Not needed if miniapps are directly provided
     if (!descriptor && !miniapps) {
-      descriptor = await askUserToChooseANapDescriptorFromCauldron()
+      descriptor = await askUserToChooseANapDescriptorFromCauldron();
     }
 
-    let pathToYarnLock
-    let resolutions
+    let pathToYarnLock;
+    let resolutions;
     if (descriptor) {
       await logErrorAndExitIfNotSatisfied({
         napDescriptorExistInCauldron: {
@@ -143,35 +145,35 @@ export const commandHandler = async ({
           extraErrorMessage:
             'You cannot create a composite for a non-existing native application version.',
         },
-      })
+      });
       miniapps = await cauldron.getContainerMiniApps(descriptor, {
         favorGitBranches: !!fromGitBranches,
-      })
-      jsApiImpls = await cauldron.getContainerJsApiImpls(descriptor)
+      });
+      jsApiImpls = await cauldron.getContainerJsApiImpls(descriptor);
       const containerGenConfig = await cauldron.getContainerGeneratorConfig(
-        descriptor
-      )
+        descriptor,
+      );
       if (!containerGenConfig || !containerGenConfig.bypassYarnLock) {
         pathToYarnLock = await cauldron.getPathToYarnLock(
           descriptor,
-          'container'
-        )
+          'container',
+        );
       } else {
         log.debug(
-          'Bypassing yarn.lock usage as bypassYarnLock flag is set in config'
-        )
+          'Bypassing yarn.lock usage as bypassYarnLock flag is set in config',
+        );
       }
       const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
-        descriptor
-      )
+        descriptor,
+      );
       baseComposite =
         baseComposite ||
         (compositeGenConfig?.baseComposite &&
-          PackagePath.fromString(compositeGenConfig.baseComposite))
-      resolutions = compositeGenConfig && compositeGenConfig.resolutions
+          PackagePath.fromString(compositeGenConfig.baseComposite));
+      resolutions = compositeGenConfig && compositeGenConfig.resolutions;
     }
 
-    const compositeDir = createTmpDir()
+    const compositeDir = createTmpDir();
     await kax.task('Generating Composite').run(
       generateComposite({
         baseComposite,
@@ -181,13 +183,13 @@ export const commandHandler = async ({
         outDir: compositeDir,
         pathToYarnLock,
         resolutions,
-      })
-    )
+      }),
+    );
 
     for (const curPlatform of platforms) {
-      const outDir = createTmpDir()
-      const bundlePath = path.join(outDir, 'index.bundle')
-      const sourceMapPath = path.join(outDir, 'index.map')
+      const outDir = createTmpDir();
+      const bundlePath = path.join(outDir, 'index.bundle');
+      const sourceMapPath = path.join(outDir, 'index.map');
       await kax.task(`Bundling MiniApps for ${curPlatform}`).run(
         bundleMiniAppsFromComposite({
           bundleOutput: bundlePath,
@@ -197,16 +199,16 @@ export const commandHandler = async ({
           platform: curPlatform,
           resetCache,
           sourceMapOutput: path.join(outDir, 'index.map'),
-        })
-      )
+        }),
+      );
       const bundleId = await kax
         .task(`Uploading ${curPlatform} bundle`)
         .run(
-          engine.upload({ bundlePath, platform: curPlatform, sourceMapPath })
-        )
-      log.info(`Successfully uploaded ${curPlatform} bundle [id: ${bundleId}]`)
+          engine.upload({ bundlePath, platform: curPlatform, sourceMapPath }),
+        );
+      log.info(`Successfully uploaded ${curPlatform} bundle [id: ${bundleId}]`);
     }
   }
-}
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

@@ -1,6 +1,6 @@
-import fs from 'fs-extra'
-import inquirer from 'inquirer'
-import path from 'path'
+import fs from 'fs-extra';
+import inquirer from 'inquirer';
+import path from 'path';
 import {
   fileUtils,
   log,
@@ -11,8 +11,8 @@ import {
   shell,
   writePackageJsonSync,
   yarn,
-} from 'ern-core'
-import ApiImplGen from './generators/ApiImplGen'
+} from 'ern-core';
+import ApiImplGen from './generators/ApiImplGen';
 
 export default async function generateApiImpl({
   apiDependency,
@@ -26,28 +26,28 @@ export default async function generateApiImpl({
   scope,
   paths,
 }: {
-  apiDependency: PackagePath
-  apiImplName: string
-  outputDirectory: string
-  nativeOnly: boolean
-  forceGenerate?: boolean
-  reactNativeVersion: string
-  hasConfig?: boolean
-  packageName: string
-  scope?: string
+  apiDependency: PackagePath;
+  apiImplName: string;
+  outputDirectory: string;
+  nativeOnly: boolean;
+  forceGenerate?: boolean;
+  reactNativeVersion: string;
+  hasConfig?: boolean;
+  packageName: string;
+  scope?: string;
   paths: {
-    apiImplHull: string
-    outDirectory: string
-  }
+    apiImplHull: string;
+    outDirectory: string;
+  };
 }) {
-  log.debug('Entering generate API IMPL')
+  log.debug('Entering generate API IMPL');
   try {
     // get the directory to output the generated project.
     paths.outDirectory = outputDirectory = formOutputDirectoryName(
       packageName,
-      outputDirectory
-    )
-    await createOutputDirectory(outputDirectory, forceGenerate)
+      outputDirectory,
+    );
+    await createOutputDirectory(outputDirectory, forceGenerate);
     await createNodePackage(
       outputDirectory,
       apiDependency,
@@ -56,26 +56,26 @@ export default async function generateApiImpl({
       nativeOnly,
       hasConfig,
       reactNativeVersion,
-      scope
-    )
+      scope,
+    );
 
-    const platforms = getPlatforms(nativeOnly)
+    const platforms = getPlatforms(nativeOnly);
 
     await new ApiImplGen().generateApiImplementation(
       apiDependency,
       paths,
       reactNativeVersion,
-      platforms
-    )
+      platforms,
+    );
   } catch (e) {
-    log.debug('command failed performing cleanup.')
-    throw new Error(e)
+    log.debug('command failed performing cleanup.');
+    throw new Error(e);
   }
 }
 
 async function createOutputDirectory(
   outputDirectoryPath: string,
-  forceGenerate: boolean
+  forceGenerate: boolean,
 ) {
   if (!forceGenerate && (await fs.pathExists(outputDirectoryPath))) {
     const { shouldRegenerate } = await inquirer.prompt([
@@ -85,25 +85,25 @@ async function createOutputDirectory(
         name: 'shouldRegenerate',
         type: 'confirm',
       },
-    ])
+    ]);
 
     if (!shouldRegenerate) {
-      throw Error('An implementation directory already exists')
+      throw Error('An implementation directory already exists');
     } else {
-      forceGenerate = true
+      forceGenerate = true;
     }
   }
 
   if (forceGenerate && (await fs.pathExists(outputDirectoryPath))) {
     log.info(
-      `Deleting the existing directory and recreating a new one in ${outputDirectoryPath}`
-    )
-    fileUtils.chmodr('755', outputDirectoryPath)
-    shell.rm('-Rf', outputDirectoryPath)
+      `Deleting the existing directory and recreating a new one in ${outputDirectoryPath}`,
+    );
+    fileUtils.chmodr('755', outputDirectoryPath);
+    shell.rm('-Rf', outputDirectoryPath);
   } else {
-    log.debug(`creating output dir: ${outputDirectoryPath}`)
+    log.debug(`creating output dir: ${outputDirectoryPath}`);
   }
-  shell.mkdir('-p', outputDirectoryPath)
+  shell.mkdir('-p', outputDirectoryPath);
 }
 
 async function createNodePackage(
@@ -114,23 +114,23 @@ async function createNodePackage(
   nativeOnly: boolean,
   hasConfig: boolean,
   reactNativeVersion: string,
-  scope?: string
+  scope?: string,
 ) {
-  shell.pushd(outputDirectoryPath)
+  shell.pushd(outputDirectoryPath);
   try {
-    await yarn.init()
+    await yarn.init();
     await yarn.add(
       PackagePath.fromString(`react-native@${reactNativeVersion}`),
-      { dev: true }
-    )
-    await yarn.add(apiDependency)
+      { dev: true },
+    );
+    await yarn.add(apiDependency);
     shell.cp(
       path.join(
         Platform.currentPlatformVersionPath,
-        'ern-api-impl-gen/resources/gitignore'
+        'ern-api-impl-gen/resources/gitignore',
       ),
-      path.join(outputDirectoryPath, '.gitignore')
-    )
+      path.join(outputDirectoryPath, '.gitignore'),
+    );
     ernifyPackageJson(
       outputDirectoryPath,
       apiImplName,
@@ -138,19 +138,19 @@ async function createNodePackage(
       nativeOnly,
       hasConfig,
       reactNativeVersion,
-      scope
-    )
+      scope,
+    );
   } finally {
-    shell.popd()
+    shell.popd();
   }
 }
 
 function formOutputDirectoryName(outputName: string, outputPath: string) {
-  return path.join(outputPath ? outputPath : process.cwd(), outputName)
+  return path.join(outputPath ? outputPath : process.cwd(), outputName);
 }
 
 function getPlatforms(nativeOnly: boolean): string[] {
-  return nativeOnly ? ['android', 'ios'] : ['js']
+  return nativeOnly ? ['android', 'ios'] : ['js'];
 }
 
 function ernifyPackageJson(
@@ -160,21 +160,21 @@ function ernifyPackageJson(
   nativeOnly: boolean,
   hasConfig: boolean,
   reactNativeVersion: string,
-  scope?: string
+  scope?: string,
 ) {
-  const packageJson = readPackageJsonSync(outputDirectoryPath)
+  const packageJson = readPackageJsonSync(outputDirectoryPath);
   const moduleType = nativeOnly
     ? ModuleTypes.NATIVE_API_IMPL
-    : ModuleTypes.JS_API_IMPL
+    : ModuleTypes.JS_API_IMPL;
   const containerGen = {
     hasConfig,
     moduleName: apiImplName,
-  }
-  packageJson.name = scope ? `@${scope}/${packageName}` : packageName
+  };
+  packageJson.name = scope ? `@${scope}/${packageName}` : packageName;
   packageJson.ern = {
     containerGen,
     moduleType,
-  }
+  };
 
   if (nativeOnly) {
     packageJson.ern.pluginConfig = {
@@ -199,11 +199,11 @@ function ernifyPackageJson(
         },
         requiresManualLinking: true,
       },
-    }
+    };
   }
 
   packageJson.keywords
     ? packageJson.keywords.push(moduleType)
-    : (packageJson.keywords = [moduleType])
-  writePackageJsonSync(outputDirectoryPath, packageJson)
+    : (packageJson.keywords = [moduleType]);
+  writePackageJsonSync(outputDirectoryPath, packageJson);
 }

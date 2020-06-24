@@ -1,24 +1,24 @@
-import { factory } from './factory'
-import ModelImpl from './ModelImpl'
-import ArrayModel from './ArrayModel'
-import RefModel from './RefModel'
-import ComposedModel from './ComposedModel'
-import { apply } from '../java/beanUtils'
-import { ArrayProperty, RefProperty } from './properties'
-import { log } from 'ern-core'
+import { factory } from './factory';
+import ModelImpl from './ModelImpl';
+import ArrayModel from './ArrayModel';
+import RefModel from './RefModel';
+import ComposedModel from './ComposedModel';
+import { apply } from '../java/beanUtils';
+import { ArrayProperty, RefProperty } from './properties';
+import { log } from 'ern-core';
 
 export function build(type, format, args) {
-  const prop = { type, format }
+  const prop = { type, format };
   if (args) {
     for (const [k, v] of args) {
-      prop[k] = v
+      prop[k] = v;
     }
   }
-  const property = factory(prop)
+  const property = factory(prop);
   if (property == null) {
-    log.error(`could not find property for type ${type} ${format}`)
+    log.error(`could not find property for type ${type} ${format}`);
   }
-  return property
+  return property;
 }
 
 export function toModel(property, parent?: any) {
@@ -28,39 +28,39 @@ export function toModel(property, parent?: any) {
     property instanceof RefModel ||
     property instanceof ModelImpl
   ) {
-    return property
+    return property;
   }
-  property = factory(property)
+  property = factory(property);
 
-  const { allowedProps } = property.constructor
-  let model
+  const { allowedProps } = property.constructor;
+  let model;
   if (property.allOf) {
-    model = new ComposedModel()
-    const interfaces = property.allOf.filter(withRef)
-    const child = property.allOf.filter(withOutRef)
+    model = new ComposedModel();
+    const interfaces = property.allOf.filter(withRef);
+    const child = property.allOf.filter(withOutRef);
 
-    model.parent(parent).child(toModel(child.shift(), model))
-    model.setInterfaces(interfaces.map(c => toModel(c, model)))
+    model.parent(parent).child(toModel(child.shift(), model));
+    model.setInterfaces(interfaces.map((c) => toModel(c, model)));
     if (child.length) {
       log.warn(
-        'An allOf can only have 1 implementation, it can have multiple $ref types'
-      )
+        'An allOf can only have 1 implementation, it can have multiple $ref types',
+      );
     }
   } else if (property instanceof ArrayProperty) {
-    model = new ArrayModel()
+    model = new ArrayModel();
   } else if (property instanceof RefProperty) {
-    model = new RefModel()
+    model = new RefModel();
   } else {
-    model = new ModelImpl()
+    model = new ModelImpl();
   }
 
-  apply(model, property, [...allowedProps, 'externalDocs'])
+  apply(model, property, [...allowedProps, 'externalDocs']);
 
-  return model
+  return model;
 }
-const withOutRef = ({ $ref }) => !$ref
-const withRef = ({ $ref }) => $ref
+const withOutRef = ({ $ref }) => !$ref;
+const withRef = ({ $ref }) => $ref;
 export default {
   build,
   toModel,
-}
+};

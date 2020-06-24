@@ -1,1 +1,1 @@
-export { RunnerGenerator, RunnerGeneratorConfig } from './types'
+export { RunnerGenerator, RunnerGeneratorConfig } from './types';

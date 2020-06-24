@@ -1,5 +1,5 @@
-import { AbstractNumericProperty } from './AbstractNumericProperty'
+import { AbstractNumericProperty } from './AbstractNumericProperty';
 
 export class BaseIntegerProperty extends AbstractNumericProperty {
-  public static TYPE = 'integer'
+  public static TYPE = 'integer';
 }

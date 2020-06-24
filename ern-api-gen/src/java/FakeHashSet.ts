@@ -1,96 +1,96 @@
 export class FakeHashSet {
-  public value: any = []
+  public value: any = [];
 
   constructor(...arr) {
-    this.addAll(arr)
+    this.addAll(arr);
   }
 
   public add(v) {
     if (this.contains(v)) {
-      return false
+      return false;
     }
-    this.value.push(v)
-    return true
+    this.value.push(v);
+    return true;
   }
 
   public addAll(all) {
-    let result = true
+    let result = true;
     for (const v of all) {
-      const ret = this.add(v)
+      const ret = this.add(v);
       if (!ret) {
-        result = false
+        result = false;
       }
     }
-    return result
+    return result;
   }
 
   public clear() {
-    this.value = []
+    this.value = [];
   }
 
   public remove(v) {
-    const idx = this.value.indexOf(v)
+    const idx = this.value.indexOf(v);
     if (idx > -1) {
-      this.value.splice(idx, 1)
-      return true
+      this.value.splice(idx, 1);
+      return true;
     }
-    return false
+    return false;
   }
 
   public removeAll(c) {
-    let result = true
+    let result = true;
     for (const v of c) {
-      const ret = this.remove(v)
+      const ret = this.remove(v);
       if (!ret) {
-        result = false
+        result = false;
       }
     }
-    return result
+    return result;
   }
 
   public contains(v) {
-    return this.value.indexOf(v) > -1
+    return this.value.indexOf(v) > -1;
   }
 
   get size() {
-    return this.value.length
+    return this.value.length;
   }
 
   get length() {
-    return this.value.length
+    return this.value.length;
   }
 
   public isEmpty() {
-    return this.value.length === 0
+    return this.value.length === 0;
   }
 
   public [Symbol.iterator]() {
-    return this.value[Symbol.iterator]()
+    return this.value[Symbol.iterator]();
   }
 
   // Java Like iterator different than Symbol.iterator.
   public iterator() {
-    const itr = this.value[Symbol.iterator]()
-    let c = itr.next()
+    const itr = this.value[Symbol.iterator]();
+    let c = itr.next();
     return {
       next() {
-        const value = c.value
-        c = itr.next()
-        return value
+        const value = c.value;
+        c = itr.next();
+        return value;
       },
       hasNext() {
-        return !c.done
+        return !c.done;
       },
-    }
+    };
   }
 
   public toArray() {
-    return this.value
+    return this.value;
   }
 
   public toJSON() {
-    return this.value
+    return this.value;
   }
 }
 
-export const fakeSet = (...arr) => new FakeHashSet(...arr)
+export const fakeSet = (...arr) => new FakeHashSet(...arr);

@@ -1,18 +1,18 @@
-import { NativePlatform } from 'ern-core'
+import { NativePlatform } from 'ern-core';
 
 export interface LaunchRunnerConfig {
   /**
    * Extra configuration needed to launch the miniapp.
    */
-  extra?: any
+  extra?: any;
 
   /**
    * Directory where the native platform project is located.
    */
-  pathToRunner: string
+  pathToRunner: string;
 
   /**
    * Target native platform
    */
-  platform: NativePlatform
+  platform: NativePlatform;
 }

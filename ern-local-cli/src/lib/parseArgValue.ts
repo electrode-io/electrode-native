@@ -1,6 +1,6 @@
-import { cauldronFileUriScheme } from 'ern-cauldron-api'
-import { parseJsonFromStringOrFile } from 'ern-orchestrator'
-import fs from 'fs-extra'
+import { cauldronFileUriScheme } from 'ern-cauldron-api';
+import { parseJsonFromStringOrFile } from 'ern-orchestrator';
+import fs from 'fs-extra';
 
 /**
  * Parse a yargs arg value to return its real representation
@@ -16,20 +16,20 @@ import fs from 'fs-extra'
  */
 export async function parseArgValue(v: number | string): Promise<any> {
   if (typeof v === 'number') {
-    return v
+    return v;
   } else if (v.startsWith(cauldronFileUriScheme)) {
-    return parseJsonFromStringOrFile(v)
+    return parseJsonFromStringOrFile(v);
   } else if (v === 'true') {
-    return true
+    return true;
   } else if (v === 'false') {
-    return false
+    return false;
   } else if (await fs.pathExists(v)) {
-    return parseJsonFromStringOrFile(v)
+    return parseJsonFromStringOrFile(v);
   } else {
     try {
-      return JSON.parse(v)
+      return JSON.parse(v);
     } catch (e) {
-      return v
+      return v;
     }
   }
 }

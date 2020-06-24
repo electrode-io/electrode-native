@@ -1,5 +1,5 @@
 export default class System {
-  public static properties = {}
+  public static properties = {};
   /**
    * Handle -Daasdasd=astasdsad
    * and process.env;
@@ -8,26 +8,26 @@ export default class System {
    * @returns {*}
    */
   public static getProperty(key) {
-    const { properties } = System
+    const { properties } = System;
     if (key in properties) {
-      return properties[key]
+      return properties[key];
     }
-    const starts = `-D${key}`
-    const args = process.argv.slice(2)
+    const starts = `-D${key}`;
+    const args = process.argv.slice(2);
     for (let i = 0, l = args.length; i < l; i++) {
-      const arg = args[i]
+      const arg = args[i];
       if (arg === starts) {
-        return (properties[key] = args[++i])
+        return (properties[key] = args[++i]);
       }
       if (arg.startsWith(starts + '=')) {
-        return (properties[key] = arg.substring(starts.length + 1))
+        return (properties[key] = arg.substring(starts.length + 1));
       }
     }
-    return process.env[key]
+    return process.env[key];
   }
 
   public static setProperty(key, value) {
-    const { properties } = System
-    properties[key] = value
+    const { properties } = System;
+    properties[key] = value;
   }
 }

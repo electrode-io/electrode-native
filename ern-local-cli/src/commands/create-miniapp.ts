@@ -5,7 +5,7 @@ import {
   MiniApp,
   ModuleTypes,
   utils as core,
-} from 'ern-core'
+} from 'ern-core';
 import {
   askUserToInputPackageName,
   epilog,
@@ -13,12 +13,12 @@ import {
   performPkgNameConflictCheck,
   promptUserToUseSuffixModuleName,
   tryCatchWrap,
-} from '../lib'
-import chalk from 'chalk'
-import { Argv } from 'yargs'
+} from '../lib';
+import chalk from 'chalk';
+import { Argv } from 'yargs';
 
-export const command = 'create-miniapp <appName>'
-export const desc = 'Create a new ern application(miniapp)'
+export const command = 'create-miniapp <appName>';
+export const desc = 'Create a new ern application(miniapp)';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -51,8 +51,7 @@ export const builder = (argv: Argv) => {
       describe: 'Scope to use for the MiniApp NPM package',
     })
     .option('skipInstall', {
-      describe:
-        'Skip the installation of dependencies after project creation',
+      describe: 'Skip the installation of dependencies after project creation',
       type: 'boolean',
     })
     .option('skipNpmCheck', {
@@ -70,8 +69,8 @@ export const builder = (argv: Argv) => {
       describe: 'Template to use to create the MiniApp',
       type: 'string',
     })
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   appName,
@@ -86,34 +85,34 @@ export const commandHandler = async ({
   skipNpmCheck,
   template,
 }: {
-  appName: string
-  language: 'JavaScript' | 'TypeScript'
-  manifestId?: string
-  npm?: boolean
-  packageName?: string
-  packageManager?: 'npm' | 'yarn'
-  platformVersion: string
-  scope?: string
-  skipInstall?: boolean
-  skipNpmCheck?: boolean
-  template?: string
+  appName: string;
+  language: 'JavaScript' | 'TypeScript';
+  manifestId?: string;
+  npm?: boolean;
+  packageName?: string;
+  packageManager?: 'npm' | 'yarn';
+  platformVersion: string;
+  scope?: string;
+  skipInstall?: boolean;
+  skipNpmCheck?: boolean;
+  template?: string;
 }) => {
   await logErrorAndExitIfNotSatisfied({
     isValidElectrodeNativeModuleName: {
       name: appName,
     },
-  })
+  });
 
   if (language) {
-    log.warn('Deprecated: --language. Use --template, or omit to use default.')
+    log.warn('Deprecated: --language. Use --template, or omit to use default.');
   }
 
   if (packageManager === 'yarn') {
-    log.warn('Deprecated: --packageManager. Yarn is the default.')
+    log.warn('Deprecated: --packageManager. Yarn is the default.');
   } else if (packageManager === 'npm') {
     log.warn(
-      'Deprecated: --packageManager. Use --npm to override default usage of Yarn.'
-    )
+      'Deprecated: --packageManager. Use --npm to override default usage of Yarn.',
+    );
   }
 
   if (manifestId) {
@@ -121,38 +120,38 @@ export const commandHandler = async ({
       manifestIdExists: {
         id: manifestId,
       },
-    })
+    });
   }
 
   if (!checkIfModuleNameContainsSuffix(appName, ModuleTypes.MINIAPP)) {
     appName = await promptUserToUseSuffixModuleName(
       appName,
-      ModuleTypes.MINIAPP
-    )
+      ModuleTypes.MINIAPP,
+    );
   }
 
   if (!packageName) {
     const defaultPackageName = core.getDefaultPackageNameForModule(
       appName,
-      ModuleTypes.MINIAPP
-    )
-    packageName = await askUserToInputPackageName({ defaultPackageName })
+      ModuleTypes.MINIAPP,
+    );
+    packageName = await askUserToInputPackageName({ defaultPackageName });
   }
 
   if (packageManager === 'npm' || npm) {
-    packageManager = 'npm'
+    packageManager = 'npm';
   } else {
-    packageManager = 'yarn'
+    packageManager = 'yarn';
   }
 
   await logErrorAndExitIfNotSatisfied({
     isValidNpmPackageName: {
       name: packageName,
     },
-  })
+  });
 
   if (!skipNpmCheck && !(await performPkgNameConflictCheck(packageName))) {
-    throw new Error(`Aborting command `)
+    throw new Error(`Aborting command `);
   }
 
   await kax.task('Creating MiniApp').run(
@@ -164,24 +163,24 @@ export const commandHandler = async ({
       scope,
       skipInstall,
       template,
-    })
-  )
+    }),
+  );
 
-  logSuccessFooter(appName)
-}
+  logSuccessFooter(appName);
+};
 
 function logSuccessFooter(appName: string) {
-  log.info(`${appName} MiniApp was successfully created !`)
-  log.info(`================================================`)
-  log.info(chalk.bold.white('To run your MiniApp on Android :'))
-  log.info(chalk.white(`    > cd ${appName}`))
-  log.info(chalk.white(`followed by :`))
-  log.info(chalk.white(`    > ern run-android`))
-  log.info(chalk.bold.white('To run your MiniApp on iOS :'))
-  log.info(chalk.white(`    > cd ${appName}`))
-  log.info(chalk.white(`followed by :`))
-  log.info(chalk.white(`    > ern run-ios`))
-  log.info(`================================================`)
+  log.info(`${appName} MiniApp was successfully created !`);
+  log.info(`================================================`);
+  log.info(chalk.bold.white('To run your MiniApp on Android :'));
+  log.info(chalk.white(`    > cd ${appName}`));
+  log.info(chalk.white(`followed by :`));
+  log.info(chalk.white(`    > ern run-android`));
+  log.info(chalk.bold.white('To run your MiniApp on iOS :'));
+  log.info(chalk.white(`    > cd ${appName}`));
+  log.info(chalk.white(`followed by :`));
+  log.info(chalk.white(`    > ern run-ios`));
+  log.info(`================================================`);
 }
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

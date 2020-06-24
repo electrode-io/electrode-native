@@ -1,4 +1,4 @@
-import { Composite, GeneratedComposite } from 'ern-composite-gen'
+import { Composite, GeneratedComposite } from 'ern-composite-gen';
 import {
   AppVersionDescriptor,
   createTmpDir,
@@ -6,11 +6,11 @@ import {
   log,
   PackagePath,
   YarnLockParser,
-} from 'ern-core'
-import { getActiveCauldron } from 'ern-cauldron-api'
-import treeify from 'treeify'
-import * as constants from './constants'
-import path from 'path'
+} from 'ern-core';
+import { getActiveCauldron } from 'ern-cauldron-api';
+import treeify from 'treeify';
+import * as constants from './constants';
+import path from 'path';
 
 export async function runLocalCompositeGen(
   miniappPackagesPaths: PackagePath[],
@@ -20,11 +20,11 @@ export async function runLocalCompositeGen(
     outDir,
     resolutions,
   }: {
-    baseComposite?: PackagePath
-    jsApiImpls?: PackagePath[]
-    outDir?: string
-    resolutions?: { [pkg: string]: string }
-  }
+    baseComposite?: PackagePath;
+    jsApiImpls?: PackagePath[];
+    outDir?: string;
+    resolutions?: { [pkg: string]: string };
+  },
 ): Promise<GeneratedComposite> {
   try {
     const composite = await kax.task('Generating Composite').run(
@@ -34,15 +34,15 @@ export async function runLocalCompositeGen(
         miniApps: miniappPackagesPaths,
         outDir: outDir || createTmpDir(),
         resolutions,
-      })
-    )
+      }),
+    );
 
-    await validateCompositeNativeDependencies(composite)
+    await validateCompositeNativeDependencies(composite);
 
-    return composite
+    return composite;
   } catch (e) {
-    log.error(`runLocalCompositeGen failed: ${e}`)
-    throw e
+    log.error(`runLocalCompositeGen failed: ${e}`);
+    throw e;
   }
 }
 
@@ -54,40 +54,40 @@ export async function runCauldronCompositeGen(
     outDir,
     favorGitBranches,
   }: {
-    baseComposite?: PackagePath
-    outDir?: string
-    favorGitBranches?: boolean
-  } = {}
+    baseComposite?: PackagePath;
+    outDir?: string;
+    favorGitBranches?: boolean;
+  } = {},
 ): Promise<GeneratedComposite> {
   try {
-    const cauldron = await getActiveCauldron()
+    const cauldron = await getActiveCauldron();
     const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
-      napDescriptor
-    )
+      napDescriptor,
+    );
     baseComposite =
       baseComposite ||
       (compositeGenConfig?.baseComposite &&
-        PackagePath.fromString(compositeGenConfig.baseComposite))
+        PackagePath.fromString(compositeGenConfig.baseComposite));
     const miniapps = await cauldron.getContainerMiniApps(napDescriptor, {
       favorGitBranches,
-    })
-    const jsApiImpls = await cauldron.getContainerJsApiImpls(napDescriptor)
+    });
+    const jsApiImpls = await cauldron.getContainerJsApiImpls(napDescriptor);
 
     // bypassYarnLock to move into compositeGen config
     const containerGenConfig = await cauldron.getContainerGeneratorConfig(
-      napDescriptor
-    )
-    let pathToYarnLock
+      napDescriptor,
+    );
+    let pathToYarnLock;
 
     if (!containerGenConfig || !containerGenConfig.bypassYarnLock) {
       pathToYarnLock = await cauldron.getPathToYarnLock(
         napDescriptor,
-        constants.CONTAINER_YARN_KEY
-      )
+        constants.CONTAINER_YARN_KEY,
+      );
     } else {
       log.debug(
-        'Bypassing yarn.lock usage as bypassYarnLock flag is set in Cauldron config'
-      )
+        'Bypassing yarn.lock usage as bypassYarnLock flag is set in Cauldron config',
+      );
     }
 
     const composite = await kax.task('Generating Composite').run(
@@ -98,89 +98,93 @@ export async function runCauldronCompositeGen(
         outDir: outDir || createTmpDir(),
         pathToYarnLock,
         resolutions: compositeGenConfig && compositeGenConfig.resolutions,
-      })
-    )
+      }),
+    );
 
-    await validateCompositeNativeDependencies(composite)
+    await validateCompositeNativeDependencies(composite);
 
-    return composite
+    return composite;
   } catch (e) {
-    log.error(`runCauldronCompositeGen failed: ${e}`)
-    throw e
+    log.error(`runCauldronCompositeGen failed: ${e}`);
+    throw e;
   }
 }
 
 export async function validateCompositeNativeDependencies(
-  composite: Composite
+  composite: Composite,
 ) {
   // Validate composite native dependencies
-  const resolution = await composite.getResolvedNativeDependencies()
+  const resolution = await composite.getResolvedNativeDependencies();
   if (resolution.pluginsWithMismatchingVersions.length > 0) {
-    logMismatchingDependenciesTree(composite, resolution)
+    logMismatchingDependenciesTree(composite, resolution);
     throw new Error(`The following plugins are using incompatible versions:
-     ${resolution.pluginsWithMismatchingVersions.toString()}`)
+     ${resolution.pluginsWithMismatchingVersions.toString()}`);
   }
   try {
-    logResolvedDependenciesTree(composite, resolution)
+    logResolvedDependenciesTree(composite, resolution);
   } catch (e) {
-    log.error(e)
+    log.error(e);
   }
 }
 
 export function logResolvedAndMismatchingDependenciesTree(
   composite: Composite,
   resolution: {
-    pluginsWithMismatchingVersions: string[]
-    resolved: PackagePath[]
-  }
+    pluginsWithMismatchingVersions: string[];
+    resolved: PackagePath[];
+  },
 ) {
-  logResolvedDependenciesTree(composite, resolution)
+  logResolvedDependenciesTree(composite, resolution);
   if (resolution.pluginsWithMismatchingVersions.length > 0) {
-    logMismatchingDependenciesTree(composite, resolution)
+    logMismatchingDependenciesTree(composite, resolution);
   }
 }
 
 export function logResolvedDependenciesTree(
   composite: Composite,
   resolution: {
-    pluginsWithMismatchingVersions: string[]
-    resolved: PackagePath[]
-  }
+    pluginsWithMismatchingVersions: string[];
+    resolved: PackagePath[];
+  },
 ) {
-  const parser = YarnLockParser.fromPath(path.join(composite.path, 'yarn.lock'))
-  log.debug('[ == RESOLVED NATIVE DEPENDENCIES ==]')
+  const parser = YarnLockParser.fromPath(
+    path.join(composite.path, 'yarn.lock'),
+  );
+  log.debug('[ == RESOLVED NATIVE DEPENDENCIES ==]');
   logDependenciesTree(
     parser,
-    resolution.resolved.map(x => PackagePath.fromString(x.name!)),
-    'debug'
-  )
+    resolution.resolved.map((x) => PackagePath.fromString(x.name!)),
+    'debug',
+  );
 }
 
 export function logMismatchingDependenciesTree(
   composite: Composite,
   resolution: {
-    pluginsWithMismatchingVersions: string[]
-    resolved: PackagePath[]
-  }
+    pluginsWithMismatchingVersions: string[];
+    resolved: PackagePath[];
+  },
 ) {
-  const parser = YarnLockParser.fromPath(path.join(composite.path, 'yarn.lock'))
-  log.error('[ == MISMATCHING NATIVE DEPENDENCIES ==]')
+  const parser = YarnLockParser.fromPath(
+    path.join(composite.path, 'yarn.lock'),
+  );
+  log.error('[ == MISMATCHING NATIVE DEPENDENCIES ==]');
   logDependenciesTree(
     parser,
     resolution.pluginsWithMismatchingVersions.map(PackagePath.fromString),
-    'error'
-  )
+    'error',
+  );
 }
 
 export function logDependenciesTree(
   parser: YarnLockParser,
   deps: PackagePath[],
-  logLevel: 'debug' | 'error'
+  logLevel: 'debug' | 'error',
 ) {
   for (const dep of deps) {
-    const depTree = parser.buildDependencyTree(dep)
+    const depTree = parser.buildDependencyTree(dep);
     logLevel === 'debug'
       ? log.debug(treeify.asTree(depTree, true, true))
-      : log.error(treeify.asTree(depTree, true, true))
+      : log.error(treeify.asTree(depTree, true, true));
   }
 }

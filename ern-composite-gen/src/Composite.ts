@@ -3,30 +3,30 @@ import {
   NativeDependencies,
   NativePlatform,
   PackagePath,
-} from 'ern-core'
+} from 'ern-core';
 
 export interface Composite {
-  readonly path: string
-  readonly packageJson: any
-  getJsApiImpls(): Promise<PackagePath[]>
-  getMiniApps(): Promise<BaseMiniApp[]>
+  readonly path: string;
+  readonly packageJson: any;
+  getJsApiImpls(): Promise<PackagePath[]>;
+  getMiniApps(): Promise<BaseMiniApp[]>;
   getResolvedNativeDependencies(): Promise<{
-    pluginsWithMismatchingVersions: string[]
-    resolved: PackagePath[]
-  }>
+    pluginsWithMismatchingVersions: string[];
+    resolved: PackagePath[];
+  }>;
   getInjectableNativeDependencies(
-    platform: NativePlatform
-  ): Promise<PackagePath[]>
+    platform: NativePlatform,
+  ): Promise<PackagePath[]>;
   getMiniAppsPackages(): Promise<
     Array<{
-      name: string
-      path: string
-      packagePath: PackagePath
+      name: string;
+      path: string;
+      packagePath: PackagePath;
     }>
-  >
+  >;
   getNativeDependencies({
     manifestId,
   }: {
-    manifestId?: string
-  }): Promise<NativeDependencies>
+    manifestId?: string;
+  }): Promise<NativeDependencies>;
 }

@@ -9,4 +9,4 @@
  */
 
 // tslint:disable-next-line:no-var-requires
-require('../dist/index')
+require('../dist/index');

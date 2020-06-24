@@ -1,69 +1,69 @@
-import semver from 'semver'
-import _ from 'lodash'
-import { NativeDependencies } from './nativeDependenciesLookup'
-import { PackagePath } from './PackagePath'
+import semver from 'semver';
+import _ from 'lodash';
+import { NativeDependencies } from './nativeDependenciesLookup';
+import { PackagePath } from './PackagePath';
 
 export function containsVersionMismatch(
   versions: string[],
-  mismatchLevel: 'major' | 'minor' | 'patch'
+  mismatchLevel: 'major' | 'minor' | 'patch',
 ): boolean {
-  const semverVersions = versions.map(v => semver.parse(v)!)
-  const hasMajorDiff = _.uniqBy(semverVersions, 'major').length > 1
-  const hasMinorDiff = _.uniqBy(semverVersions, 'minor').length > 1
-  const hasPatchDiff = _.uniqBy(semverVersions, 'patch').length > 1
+  const semverVersions = versions.map((v) => semver.parse(v)!);
+  const hasMajorDiff = _.uniqBy(semverVersions, 'major').length > 1;
+  const hasMinorDiff = _.uniqBy(semverVersions, 'minor').length > 1;
+  const hasPatchDiff = _.uniqBy(semverVersions, 'patch').length > 1;
   const hasPreReleaseDiff =
     _.uniqWith(
-      semverVersions.map(v => v.prerelease),
-      _.isEqual
-    ).length > 1
+      semverVersions.map((v) => v.prerelease),
+      _.isEqual,
+    ).length > 1;
 
   return mismatchLevel === 'patch'
     ? hasMajorDiff || hasMinorDiff || hasPatchDiff || hasPreReleaseDiff
     : mismatchLevel === 'minor'
     ? hasMajorDiff || hasMinorDiff || hasPreReleaseDiff
-    : hasMajorDiff || hasPreReleaseDiff
+    : hasMajorDiff || hasPreReleaseDiff;
 }
 
 export function retainHighestVersions(
   dependenciesA: PackagePath[],
-  dependenciesB: PackagePath[]
+  dependenciesB: PackagePath[],
 ): PackagePath[] {
-  const result: PackagePath[] = []
-  const groups = _.groupBy([...dependenciesA, ...dependenciesB], 'name')
-  let dependencyGroup: any
+  const result: PackagePath[] = [];
+  const groups = _.groupBy([...dependenciesA, ...dependenciesB], 'name');
+  let dependencyGroup: any;
   for (dependencyGroup of Object.values(groups)) {
-    let highestVersionDependency = dependencyGroup[0]
+    let highestVersionDependency = dependencyGroup[0];
     if (
       dependencyGroup.length > 1 &&
       semver.gt(dependencyGroup[1].version, dependencyGroup[0].version)
     ) {
-      highestVersionDependency = dependencyGroup[1]
+      highestVersionDependency = dependencyGroup[1];
     }
-    result.push(highestVersionDependency)
+    result.push(highestVersionDependency);
   }
-  return result
+  return result;
 }
 
 export function resolvePackageVersionsGivenMismatchLevel(
   plugins: PackagePath[],
-  mismatchLevel: 'major' | 'minor' | 'patch'
+  mismatchLevel: 'major' | 'minor' | 'patch',
 ): {
-  resolved: PackagePath[]
-  pluginsWithMismatchingVersions: string[]
+  resolved: PackagePath[];
+  pluginsWithMismatchingVersions: string[];
 } {
   const result: any = {
     pluginsWithMismatchingVersions: [],
     resolved: [],
-  }
+  };
 
   const pluginsByName = _.groupBy(
-    _.unionBy(plugins, p => p.toString()),
-    'name'
-  )
+    _.unionBy(plugins, (p) => p.toString()),
+    'name',
+  );
 
   for (const name of Object.keys(pluginsByName)) {
-    const entry = pluginsByName[name]
-    const pluginVersions = _.uniq(_.map(entry, 'version'))
+    const entry = pluginsByName[name];
+    const pluginVersions = _.uniq(_.map(entry, 'version'));
     if (pluginVersions.length > 1) {
       // If there are multiple versions of the dependency
       if (
@@ -73,29 +73,29 @@ export function resolvePackageVersionsGivenMismatchLevel(
           containsVersionMismatch(<string[]>pluginVersions, 'major'))
       ) {
         // If at least one of the versions major digit differs, deem incompatibility
-        result.pluginsWithMismatchingVersions.push(name)
+        result.pluginsWithMismatchingVersions.push(name);
       } else {
         // No mismatchLevel version differences, just return the highest version
         result.resolved.push(
           _.find(
             entry,
-            c =>
+            (c) =>
               c.name === name &&
-              c.version === semver.maxSatisfying(<string[]>pluginVersions, '*')
-          )
-        )
+              c.version === semver.maxSatisfying(<string[]>pluginVersions, '*'),
+          ),
+        );
       }
     } else {
       // Only one version is used across all MiniApps, just use this version
-      result.resolved.push(entry[0])
+      result.resolved.push(entry[0]);
     }
   }
 
-  return result
+  return result;
 }
 
 export function resolveNativeDependenciesVersions(
-  nativeDependenciesArr: NativeDependencies[]
+  nativeDependenciesArr: NativeDependencies[],
 ): any {
   const aggregateNativeDependencies: NativeDependencies = {
     all: [],
@@ -103,62 +103,62 @@ export function resolveNativeDependenciesVersions(
     nativeApisImpl: [],
     thirdPartyInManifest: [],
     thirdPartyNotInManifest: [],
-  }
+  };
 
   // Build a map of all the native dependencies of each of the MiniApps
   for (const nativeDependencies of nativeDependenciesArr) {
-    aggregateNativeDependencies.apis.push(...nativeDependencies.apis)
+    aggregateNativeDependencies.apis.push(...nativeDependencies.apis);
     aggregateNativeDependencies.nativeApisImpl.push(
-      ...nativeDependencies.nativeApisImpl
-    )
+      ...nativeDependencies.nativeApisImpl,
+    );
     aggregateNativeDependencies.thirdPartyInManifest.push(
-      ...nativeDependencies.thirdPartyInManifest
-    )
+      ...nativeDependencies.thirdPartyInManifest,
+    );
     aggregateNativeDependencies.thirdPartyNotInManifest.push(
-      ...nativeDependencies.thirdPartyNotInManifest
-    )
+      ...nativeDependencies.thirdPartyNotInManifest,
+    );
   }
 
-  return resolveNativeDependenciesVersionsEx(aggregateNativeDependencies)
+  return resolveNativeDependenciesVersionsEx(aggregateNativeDependencies);
 }
 
 export function resolveNativeDependenciesVersionsEx(
-  dependencies: NativeDependencies
+  dependencies: NativeDependencies,
 ): {
-  pluginsWithMismatchingVersions: string[]
-  resolved: PackagePath[]
+  pluginsWithMismatchingVersions: string[];
+  resolved: PackagePath[];
 } {
   // Resolve native dependencies versions of APIs / APIs impls
-  let apisAndApiImplsNativeDeps: PackagePath[] = []
+  let apisAndApiImplsNativeDeps: PackagePath[] = [];
   if (dependencies.apis.length > 0) {
-    apisAndApiImplsNativeDeps.push(..._.flatten(dependencies.apis))
+    apisAndApiImplsNativeDeps.push(..._.flatten(dependencies.apis));
   }
   if (dependencies.nativeApisImpl.length > 0) {
-    apisAndApiImplsNativeDeps.push(..._.flatten(dependencies.nativeApisImpl))
+    apisAndApiImplsNativeDeps.push(..._.flatten(dependencies.nativeApisImpl));
   }
-  apisAndApiImplsNativeDeps = _.flatten(apisAndApiImplsNativeDeps)
+  apisAndApiImplsNativeDeps = _.flatten(apisAndApiImplsNativeDeps);
   const apiAndApiImplsResolvedVersions = resolvePackageVersionsGivenMismatchLevel(
     apisAndApiImplsNativeDeps,
-    'major'
-  )
+    'major',
+  );
 
   // Resolve native dependencies versions third party native modules
-  let thirdPartyNativeModules: PackagePath[] = []
+  let thirdPartyNativeModules: PackagePath[] = [];
   if (dependencies.thirdPartyInManifest.length > 0) {
     thirdPartyNativeModules.push(
-      ..._.flatten(dependencies.thirdPartyInManifest)
-    )
+      ..._.flatten(dependencies.thirdPartyInManifest),
+    );
   }
   if (dependencies.thirdPartyNotInManifest.length > 0) {
     thirdPartyNativeModules.push(
-      ..._.flatten(dependencies.thirdPartyNotInManifest)
-    )
+      ..._.flatten(dependencies.thirdPartyNotInManifest),
+    );
   }
-  thirdPartyNativeModules = _.flatten(thirdPartyNativeModules)
+  thirdPartyNativeModules = _.flatten(thirdPartyNativeModules);
   const thirdPartyNativeModulesResolvedVersions = resolvePackageVersionsGivenMismatchLevel(
     thirdPartyNativeModules,
-    'patch'
-  )
+    'patch',
+  );
 
   return {
     pluginsWithMismatchingVersions: [
@@ -169,5 +169,5 @@ export function resolveNativeDependenciesVersionsEx(
       ...apiAndApiImplsResolvedVersions.resolved,
       ...thirdPartyNativeModulesResolvedVersions.resolved,
     ],
-  }
+  };
 }

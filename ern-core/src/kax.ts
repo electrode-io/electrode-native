@@ -1,4 +1,4 @@
-import { Kax, KaxAdvancedRenderer } from 'kax'
+import { Kax, KaxAdvancedRenderer } from 'kax';
 
-const kax = new Kax(new KaxAdvancedRenderer())
-export default kax
+const kax = new Kax(new KaxAdvancedRenderer());
+export default kax;

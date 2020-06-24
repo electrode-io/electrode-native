@@ -1,1 +1,1 @@
-export * from './CompositeGeneratorConfig'
+export * from './CompositeGeneratorConfig';

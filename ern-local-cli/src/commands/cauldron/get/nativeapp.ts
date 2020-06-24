@@ -1,10 +1,10 @@
-import { AnyAppDescriptor, log } from 'ern-core'
-import { getActiveCauldron } from 'ern-cauldron-api'
-import { epilog, tryCatchWrap } from '../../../lib'
-import { Argv } from 'yargs'
+import { AnyAppDescriptor, log } from 'ern-core';
+import { getActiveCauldron } from 'ern-cauldron-api';
+import { epilog, tryCatchWrap } from '../../../lib';
+import { Argv } from 'yargs';
 
-export const command = 'nativeapp [descriptor]'
-export const desc = 'Get a native application from the cauldron'
+export const command = 'nativeapp [descriptor]';
+export const desc = 'Get a native application from the cauldron';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -13,28 +13,28 @@ export const builder = (argv: Argv) => {
       describe: 'Output result as a single line JSON record',
       type: 'boolean',
     })
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   descriptor,
   json,
 }: {
-  descriptor?: AnyAppDescriptor
-  json?: boolean
+  descriptor?: AnyAppDescriptor;
+  json?: boolean;
 }) => {
-  const cauldron = await getActiveCauldron()
+  const cauldron = await getActiveCauldron();
   if (!descriptor) {
-    const napDescriptors = await cauldron.getNapDescriptorStrings()
+    const napDescriptors = await cauldron.getNapDescriptorStrings();
     json
       ? process.stdout.write(JSON.stringify(napDescriptors))
-      : napDescriptors.forEach(n => log.info(n))
+      : napDescriptors.forEach((n) => log.info(n));
   } else {
-    const nativeApp = await cauldron.getDescriptor(descriptor)
+    const nativeApp = await cauldron.getDescriptor(descriptor);
     process.stdout.write(
-      json ? JSON.stringify(nativeApp) : JSON.stringify(nativeApp, null, 1)
-    )
+      json ? JSON.stringify(nativeApp) : JSON.stringify(nativeApp, null, 1),
+    );
   }
-}
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

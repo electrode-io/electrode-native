@@ -1,18 +1,18 @@
-import path from 'path'
-import fs from 'fs-extra'
-import { readPackageJson } from 'ern-core'
+import path from 'path';
+import fs from 'fs-extra';
+import { readPackageJson } from 'ern-core';
 
 export async function getNodeModuleVersion({
   cwd,
   name,
 }: {
-  cwd: string
-  name: string
+  cwd: string;
+  name: string;
 }) {
-  const pathToModule = path.join(cwd, `node_modules/${name}`)
+  const pathToModule = path.join(cwd, `node_modules/${name}`);
   if (!(await fs.pathExists(pathToModule))) {
-    throw new Error(`Path ${pathToModule} not found`)
+    throw new Error(`Path ${pathToModule} not found`);
   }
-  const pJson = await readPackageJson(pathToModule)
-  return pJson.version
+  const pJson = await readPackageJson(pathToModule);
+  return pJson.version;
 }

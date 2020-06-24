@@ -1,10 +1,10 @@
-import { log } from 'ern-core'
-import { askUserConfirmation, epilog, tryCatchWrap } from '../../../lib'
-import { Argv } from 'yargs'
-import { cauldronRepositories } from 'ern-cauldron-api'
+import { log } from 'ern-core';
+import { askUserConfirmation, epilog, tryCatchWrap } from '../../../lib';
+import { Argv } from 'yargs';
+import { cauldronRepositories } from 'ern-cauldron-api';
 
-export const command = 'add <alias> <url> [current]'
-export const desc = 'Add a Cauldron git repository'
+export const command = 'add <alias> <url> [current]';
+export const desc = 'Add a Cauldron git repository';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -18,8 +18,8 @@ export const builder = (argv: Argv) => {
       describe: 'Overwrite an existing alias with the same name',
       type: 'boolean',
     })
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   alias,
@@ -27,18 +27,18 @@ export const commandHandler = async ({
   force,
   url,
 }: {
-  alias: string
-  current: boolean
-  force: boolean
-  url: string
+  alias: string;
+  current: boolean;
+  force: boolean;
+  url: string;
 }) => {
   const activate =
     current ??
-    (await askUserConfirmation(`Set ${alias} as current Cauldron repository?`))
+    (await askUserConfirmation(`Set ${alias} as current Cauldron repository?`));
 
-  cauldronRepositories.add(alias, url, { activate, force })
+  cauldronRepositories.add(alias, url, { activate, force });
 
-  log.info(`Added Cauldron repository ${url} with alias ${alias}`)
-}
+  log.info(`Added Cauldron repository ${url} with alias ${alias}`);
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

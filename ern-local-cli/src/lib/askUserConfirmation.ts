@@ -1,7 +1,7 @@
-import inquirer from 'inquirer'
+import inquirer from 'inquirer';
 
 export async function askUserConfirmation(
-  message: string = 'Do you confirm ?'
+  message: string = 'Do you confirm ?',
 ): Promise<boolean> {
   const { result } = await inquirer.prompt([
     <inquirer.Question>{
@@ -9,6 +9,6 @@ export async function askUserConfirmation(
       name: 'result',
       type: 'confirm',
     },
-  ])
-  return result
+  ]);
+  return result;
 }

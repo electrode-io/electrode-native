@@ -3,9 +3,9 @@ import {
   log,
   PackagePath,
   utils as coreUtils,
-} from 'ern-core'
-import { getActiveCauldron } from 'ern-cauldron-api'
-import { performCodePushOtaUpdate } from 'ern-orchestrator'
+} from 'ern-core';
+import { getActiveCauldron } from 'ern-cauldron-api';
+import { performCodePushOtaUpdate } from 'ern-orchestrator';
 import {
   askUserConfirmation,
   askUserForCodePushDeploymentName,
@@ -13,13 +13,13 @@ import {
   epilog,
   logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
-} from '../../lib'
-import _ from 'lodash'
-import { Argv } from 'yargs'
+} from '../../lib';
+import _ from 'lodash';
+import { Argv } from 'yargs';
 
-export const command = 'release'
+export const command = 'release';
 export const desc =
-  'CodePush MiniApp(s) or JS API implementation(s) version(s) to a target native application version'
+  'CodePush MiniApp(s) or JS API implementation(s) version(s) to a target native application version';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -27,7 +27,7 @@ export const builder = (argv: Argv) => {
       describe: 'Base Composite',
       type: 'string',
     })
-    .coerce('baseComposite', d => PackagePath.fromString(d))
+    .coerce('baseComposite', (d) => PackagePath.fromString(d))
     .option('deploymentName', {
       describe: 'Deployment to release the update to',
       type: 'string',
@@ -43,8 +43,8 @@ export const builder = (argv: Argv) => {
         'Full native application descriptors (target native application versions for the push)',
       type: 'array',
     })
-    .coerce('descriptors', d =>
-      d.map((t: string) => AppVersionDescriptor.fromString(t))
+    .coerce('descriptors', (d) =>
+      d.map((t: string) => AppVersionDescriptor.fromString(t)),
     )
     .option('force', {
       alias: 'f',
@@ -98,8 +98,8 @@ export const builder = (argv: Argv) => {
         'Semver expression that specifies the binary app version(s) this release is targeting',
       type: 'string',
     })
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   baseComposite,
@@ -117,25 +117,25 @@ export const commandHandler = async ({
   sourceMapOutput,
   targetBinaryVersion,
 }: {
-  baseComposite?: PackagePath
-  deploymentName: string
-  description: string
-  descriptors?: AppVersionDescriptor[]
-  disableDuplicateReleaseError: boolean
-  force: boolean
-  jsApiImpls: string[]
-  mandatory?: boolean
-  miniapps: string[]
-  rollout?: number
-  skipConfirmation?: boolean
-  semVerDescriptor?: string
-  sourceMapOutput?: string
-  targetBinaryVersion?: string
+  baseComposite?: PackagePath;
+  deploymentName: string;
+  description: string;
+  descriptors?: AppVersionDescriptor[];
+  disableDuplicateReleaseError: boolean;
+  force: boolean;
+  jsApiImpls: string[];
+  mandatory?: boolean;
+  miniapps: string[];
+  rollout?: number;
+  skipConfirmation?: boolean;
+  semVerDescriptor?: string;
+  sourceMapOutput?: string;
+  targetBinaryVersion?: string;
 }) => {
   if (miniapps.length === 0 && jsApiImpls.length === 0) {
     throw new Error(
-      'You need to provide at least one MiniApp or one JS API implementation version to CodePush'
-    )
+      'You need to provide at least one MiniApp or one JS API implementation version to CodePush',
+    );
   }
 
   await logErrorAndExitIfNotSatisfied({
@@ -144,7 +144,7 @@ export const commandHandler = async ({
       semVerDescriptor,
       targetBinaryVersion,
     },
-  })
+  });
 
   if (descriptors.length > 0) {
     // User provided one or more descriptor(s)
@@ -159,36 +159,36 @@ export const commandHandler = async ({
         extraErrorMessage:
           'You can only pass descriptors that match the same native application and version',
       },
-    })
+    });
   } else if (descriptors.length === 0 && !semVerDescriptor) {
     // User provided no descriptors, nor a semver descriptor
     descriptors = await askUserToChooseOneOrMoreNapDescriptorFromCauldron({
       onlyReleasedVersions: true,
-    })
+    });
   } else if (semVerDescriptor) {
     // User provided a semver Descriptor
     const semVerNapDescriptor = AppVersionDescriptor.fromString(
-      semVerDescriptor
-    )
-    const cauldron = await getActiveCauldron()
+      semVerDescriptor,
+    );
+    const cauldron = await getActiveCauldron();
     descriptors = await cauldron.getDescriptorsMatchingSemVerDescriptor(
-      semVerNapDescriptor
-    )
+      semVerNapDescriptor,
+    );
     if (descriptors.length === 0) {
-      throw new Error(`No versions matching ${semVerDescriptor} were found`)
+      throw new Error(`No versions matching ${semVerDescriptor} were found`);
     } else {
       log.info(
-        'CodePush release will target the following native application descriptors :'
-      )
+        'CodePush release will target the following native application descriptors :',
+      );
       for (const descriptor of descriptors) {
-        log.info(`- ${descriptor}`)
+        log.info(`- ${descriptor}`);
       }
       if (!skipConfirmation) {
         const userConfirmedVersions = await askUserConfirmation(
-          'Do you want to proceed ?'
-        )
+          'Do you want to proceed ?',
+        );
         if (!userConfirmedVersions) {
-          throw new Error('Aborting command execution')
+          throw new Error('Aborting command execution');
         }
       }
     }
@@ -200,25 +200,25 @@ export const commandHandler = async ({
         'You cannot provide dependencies using git or file scheme for this command. Only the form miniapp@version is allowed.',
       obj: [...miniapps, ...jsApiImpls],
     },
-  })
+  });
 
-  const miniAppsPackages = _.map(miniapps, PackagePath.fromString)
-  const jsApiImplsPackages = _.map(jsApiImpls, PackagePath.fromString)
-  const packages = [...miniAppsPackages, ...jsApiImplsPackages]
+  const miniAppsPackages = _.map(miniapps, PackagePath.fromString);
+  const jsApiImplsPackages = _.map(jsApiImpls, PackagePath.fromString);
+  const packages = [...miniAppsPackages, ...jsApiImplsPackages];
   for (const pkg of packages) {
     if (pkg.isGitPath && (await coreUtils.isGitBranch(pkg))) {
       throw new Error(
-        'You cannot code push packages from a git branch. Only SHA or TAGs are supported.'
-      )
+        'You cannot code push packages from a git branch. Only SHA or TAGs are supported.',
+      );
     }
   }
 
   if (!deploymentName) {
-    deploymentName = await askUserForCodePushDeploymentName(descriptors[0])
+    deploymentName = await askUserForCodePushDeploymentName(descriptors[0]);
   }
 
   for (const descriptor of descriptors) {
-    const pathToYarnLock = await getPathToYarnLock(descriptor, deploymentName)
+    const pathToYarnLock = await getPathToYarnLock(descriptor, deploymentName);
     await performCodePushOtaUpdate(
       descriptor,
       deploymentName,
@@ -234,31 +234,31 @@ export const commandHandler = async ({
         pathToYarnLock: pathToYarnLock || undefined,
         sourceMapOutput,
         targetBinaryVersion,
-      }
-    )
+      },
+    );
   }
-  log.info(`Successfully released`)
-}
+  log.info(`Successfully released`);
+};
 
 async function getPathToYarnLock(
   napDescriptor: AppVersionDescriptor,
-  deploymentName: string
+  deploymentName: string,
 ) {
-  const cauldron = await getActiveCauldron()
+  const cauldron = await getActiveCauldron();
   if (!cauldron) {
-    throw new Error('[getPathToYarnLock] No active Cauldron')
+    throw new Error('[getPathToYarnLock] No active Cauldron');
   }
   let pathToYarnLock = await cauldron.getPathToYarnLock(
     napDescriptor,
-    deploymentName
-  )
+    deploymentName,
+  );
   if (!pathToYarnLock) {
     pathToYarnLock = await cauldron.getPathToYarnLock(
       napDescriptor,
-      'container'
-    )
+      'container',
+    );
   }
-  return pathToYarnLock
+  return pathToYarnLock;
 }
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

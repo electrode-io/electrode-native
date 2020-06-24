@@ -1,39 +1,39 @@
-import { log } from 'ern-core'
-import _F from './java/File'
-import fs from 'fs'
-import path from 'path'
+import { log } from 'ern-core';
+import _F from './java/File';
+import fs from 'fs';
+import path from 'path';
 
-const File = _F
+const File = _F;
 
-const ABSTRACT_SEARCH_PATHS = [path.join(__dirname, '..', 'resources')]
+const ABSTRACT_SEARCH_PATHS = [path.join(__dirname, '..', 'resources')];
 
 export default class AbstractGenerator {
-  public static SEARCH_PATHS = ABSTRACT_SEARCH_PATHS
+  public static SEARCH_PATHS = ABSTRACT_SEARCH_PATHS;
 
   public writeToFile(filename, contents) {
-    log.info('writing file ' + filename)
-    const f = new File(filename)
-    f.getParentFile().mkdirs()
-    return fs.writeFileSync(f.getPath(), contents, 'utf8')
+    log.info('writing file ' + filename);
+    const f = new File(filename);
+    f.getParentFile().mkdirs();
+    return fs.writeFileSync(f.getPath(), contents, 'utf8');
   }
 
   public readTemplate(name) {
-    const reader = this.getTemplateReader(name)
+    const reader = this.getTemplateReader(name);
     if (reader == null) {
-      throw new Error(`no file found for "${name}"`)
+      throw new Error(`no file found for "${name}"`);
     }
-    return reader
+    return reader;
   }
 
   public getTemplateReader(name) {
-    const f = this._resolveFilePath(name)
+    const f = this._resolveFilePath(name);
     if (f == null) {
-      throw new Error("can't load template " + name)
+      throw new Error("can't load template " + name);
     }
     try {
-      return fs.readFileSync(f, 'utf-8')
+      return fs.readFileSync(f, 'utf-8');
     } catch (e) {
-      log.trace(e)
+      log.trace(e);
     }
   }
 
@@ -48,73 +48,73 @@ export default class AbstractGenerator {
    * @return String Full template file path
    */
   public getFullTemplateFile(config, templateFile) {
-    const library = config.getLibrary()
+    const library = config.getLibrary();
     if (library) {
       const libTemplateFile = this._resolveFilePath(
         config.embeddedTemplateDir(),
         'libraries',
         library,
-        templateFile
-      )
+        templateFile,
+      );
       if (libTemplateFile != null) {
-        return libTemplateFile
+        return libTemplateFile;
       }
     }
 
     const embeddedTemplate = this._resolveFilePath(
       config.embeddedTemplateDir(),
-      templateFile
-    )
+      templateFile,
+    );
     if (embeddedTemplate != null) {
-      return embeddedTemplate
+      return embeddedTemplate;
     }
 
-    const template = this._resolveFilePath(config.templateDir(), templateFile)
+    const template = this._resolveFilePath(config.templateDir(), templateFile);
     if (template != null) {
-      return template
+      return template;
     }
   }
 
   public readResourceContents(resourceFilePath) {
-    const file = this._resolveFilePath(resourceFilePath)
+    const file = this._resolveFilePath(resourceFilePath);
     if (file == null) {
-      log.warn(`Could not resolve ${resourceFilePath}`)
-      return
+      log.warn(`Could not resolve ${resourceFilePath}`);
+      return;
     }
 
-    return fs.readFileSync(file, 'utf8')
+    return fs.readFileSync(file, 'utf8');
   }
 
   public embeddedTemplateExists(name) {
-    const f = this._resolveFile(name)
-    return f != null
+    const f = this._resolveFile(name);
+    return f != null;
   }
 
   public getCPResourcePath(name) {
     if (!('/' === File.separator)) {
-      return name.replace(new RegExp(File.separator, 'g'), '/')
+      return name.replace(new RegExp(File.separator, 'g'), '/');
     }
-    return name
+    return name;
   }
 
   protected _resolveFilePath(...paths) {
-    const f = this._resolveFile(...paths)
+    const f = this._resolveFile(...paths);
     if (f == null) {
-      return
+      return;
     }
-    return f.getAbsolutePath()
+    return f.getAbsolutePath();
   }
 
   protected _resolveFile(...paths) {
     for (const p of AbstractGenerator.SEARCH_PATHS) {
-      const file = new File(p, ...paths)
+      const file = new File(p, ...paths);
       if (file.exists()) {
-        return file
+        return file;
       }
     }
-    const last = new File(paths.shift(), ...paths)
+    const last = new File(paths.shift(), ...paths);
     if (last.exists()) {
-      return last
+      return last;
     }
   }
 }

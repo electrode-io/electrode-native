@@ -1,27 +1,27 @@
-import createTmpDir from './createTmpDir'
-import shell from './shell'
-import { yarn } from './clients'
-import { PackagePath } from './PackagePath'
-import { spawnp } from './childProcess'
-import path from 'path'
+import createTmpDir from './createTmpDir';
+import shell from './shell';
+import { yarn } from './clients';
+import { PackagePath } from './PackagePath';
+import { spawnp } from './childProcess';
+import path from 'path';
 
 export class HermesCli {
   public static async fromVersion(version: string): Promise<HermesCli> {
-    const workingDir = createTmpDir()
-    shell.pushd(workingDir)
+    const workingDir = createTmpDir();
+    shell.pushd(workingDir);
     try {
-      await yarn.init()
-      await yarn.add(PackagePath.fromString(`hermes-engine@${version}`))
-      return new HermesCli(path.join(workingDir, HermesCli.hermesModulePath))
+      await yarn.init();
+      await yarn.add(PackagePath.fromString(`hermes-engine@${version}`));
+      return new HermesCli(path.join(workingDir, HermesCli.hermesModulePath));
     } finally {
-      shell.popd()
+      shell.popd();
     }
   }
 
   public static get hermesModulePath(): string {
     return path.normalize(
-      `node_modules/hermes-engine/${HermesCli.platformDirectory}/hermes`
-    )
+      `node_modules/hermes-engine/${HermesCli.platformDirectory}/hermes`,
+    );
   }
 
   public static get platformDirectory(): string {
@@ -29,7 +29,7 @@ export class HermesCli {
       ? 'osx-bin'
       : /^win/.test(process.platform)
       ? 'win64-bin'
-      : 'linux64-bin'
+      : 'linux64-bin';
   }
 
   constructor(private readonly hermesPath: string) {}
@@ -38,18 +38,18 @@ export class HermesCli {
     jsBundlePath,
     outputBundlePath,
   }: {
-    jsBundlePath: string
-    outputBundlePath?: string
+    jsBundlePath: string;
+    outputBundlePath?: string;
   }): Promise<{
-    hermesBundlePath: string
+    hermesBundlePath: string;
   }> {
-    const hermesBundlePath = outputBundlePath || jsBundlePath
+    const hermesBundlePath = outputBundlePath || jsBundlePath;
     await this.run({
       args: ['-emit-binary', '-out', hermesBundlePath, jsBundlePath],
-    })
+    });
     return {
       hermesBundlePath,
-    }
+    };
   }
 
   public async compileReleaseBundle({
@@ -58,24 +58,27 @@ export class HermesCli {
     jsBundlePath,
     outputBundlePath,
   }: {
-    bundleSourceMapPath?: string
-    compositePath: string
-    jsBundlePath: string
-    outputBundlePath?: string
+    bundleSourceMapPath?: string;
+    compositePath: string;
+    jsBundlePath: string;
+    outputBundlePath?: string;
   }): Promise<{
-    compilerSourceMapPath?: string
-    hermesBundlePath: string
-    packagerSourceMapPath?: string
+    compilerSourceMapPath?: string;
+    hermesBundlePath: string;
+    packagerSourceMapPath?: string;
   }> {
-    const hermesBundlePath = outputBundlePath || jsBundlePath
-    const hermesSourceMapPath = `${hermesBundlePath}.map`
+    const hermesBundlePath = outputBundlePath || jsBundlePath;
+    const hermesSourceMapPath = `${hermesBundlePath}.map`;
     const packagerSourceMapPath =
       bundleSourceMapPath &&
-      path.join(path.dirname(bundleSourceMapPath), 'index.android.packager.map')
+      path.join(
+        path.dirname(bundleSourceMapPath),
+        'index.android.packager.map',
+      );
 
     if (bundleSourceMapPath) {
       // Rename the existing JS bundle sourcemap as index.android.packager.map
-      shell.mv(bundleSourceMapPath, packagerSourceMapPath!)
+      shell.mv(bundleSourceMapPath, packagerSourceMapPath!);
     }
 
     await this.run({
@@ -87,7 +90,7 @@ export class HermesCli {
         '-O',
         '-output-source-map',
       ],
-    })
+    });
 
     // Hermes CLI does not give control over the
     // location of generated source map. It just generates it in
@@ -97,9 +100,9 @@ export class HermesCli {
     // to index.android.compiler.map
     const compilerSourceMapPath = path.join(
       path.dirname(bundleSourceMapPath || hermesBundlePath),
-      'index.android.compiler.map'
-    )
-    shell.mv(hermesSourceMapPath, compilerSourceMapPath)
+      'index.android.compiler.map',
+    );
+    shell.mv(hermesSourceMapPath, compilerSourceMapPath);
 
     // Delete the compiler source map if its not needed
     // Note that it's not possible to not generate it in the first place
@@ -107,18 +110,18 @@ export class HermesCli {
     // as it would still generate the source map but inlined in the
     // hermes bundle making its size much bigger
     if (!bundleSourceMapPath) {
-      shell.rm(compilerSourceMapPath)
+      shell.rm(compilerSourceMapPath);
     }
 
     if (bundleSourceMapPath) {
       // Compose both source maps to get final one, and write it to sourcemap path
       const pathToComposeScript = path.join(
         compositePath,
-        'node_modules/react-native/scripts/compose-source-maps.js'
-      )
+        'node_modules/react-native/scripts/compose-source-maps.js',
+      );
       shell.exec(
-        `node ${pathToComposeScript} ${packagerSourceMapPath} ${compilerSourceMapPath} -o ${bundleSourceMapPath}`
-      )
+        `node ${pathToComposeScript} ${packagerSourceMapPath} ${compilerSourceMapPath} -o ${bundleSourceMapPath}`,
+      );
     }
 
     return {
@@ -127,10 +130,10 @@ export class HermesCli {
         : undefined,
       hermesBundlePath,
       packagerSourceMapPath,
-    }
+    };
   }
 
   public async run({ args }: { args: string[] }) {
-    return spawnp(this.hermesPath, args)
+    return spawnp(this.hermesPath, args);
   }
 }

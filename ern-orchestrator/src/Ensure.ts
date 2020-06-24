@@ -7,51 +7,51 @@ import {
   PackagePath,
   utils as coreUtils,
   YarnLockParser,
-} from 'ern-core'
-import { getActiveCauldron } from 'ern-cauldron-api'
-import { getContainerMetadataPath } from 'ern-container-gen'
-import _ from 'lodash'
-import semver from 'semver'
-import validateNpmPackageName from 'validate-npm-package-name'
-import fs from 'fs'
-import levenshtein from 'fast-levenshtein'
-import * as constants from './constants'
-import treeify from 'treeify'
-import got from 'got'
+} from 'ern-core';
+import { getActiveCauldron } from 'ern-cauldron-api';
+import { getContainerMetadataPath } from 'ern-container-gen';
+import _ from 'lodash';
+import semver from 'semver';
+import validateNpmPackageName from 'validate-npm-package-name';
+import fs from 'fs';
+import levenshtein from 'fast-levenshtein';
+import * as constants from './constants';
+import treeify from 'treeify';
+import got from 'got';
 
 export default class Ensure {
   public static isValidElectrodeNativeModuleName(
     name: string,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
     if (!coreUtils.isValidElectrodeNativeModuleName(name)) {
-      const errorMessage = `${name} is not a valid Electrode Native module name.\nCheck GLOSSARY for Electrode Native module naming rules.\nhttps://native.electrode.io/reference/glossary${extraErrorMessage}`
-      throw new Error(errorMessage)
+      const errorMessage = `${name} is not a valid Electrode Native module name.\nCheck GLOSSARY for Electrode Native module naming rules.\nhttps://native.electrode.io/reference/glossary${extraErrorMessage}`;
+      throw new Error(errorMessage);
     }
   }
 
   public static isValidNpmPackageName(
     name: string,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
-    const validation = validateNpmPackageName(name)
+    const validation = validateNpmPackageName(name);
     if (!validation.validForNewPackages) {
       const errorMessage = `${name} is not a valid NPM package name\n`
         .concat(validation.errors ? validation.errors.join('\n') : '')
-        .concat(`\n${extraErrorMessage}`)
-      throw new Error(errorMessage)
+        .concat(`\n${extraErrorMessage}`);
+      throw new Error(errorMessage);
     }
   }
 
   public static async isNewerContainerVersion(
     descriptor: string | AppVersionDescriptor,
     containerVersion: string,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
-    const cauldron = await getActiveCauldron()
+    const cauldron = await getActiveCauldron();
     const cauldronContainerVersion = await cauldron.getTopLevelContainerVersion(
-      coreUtils.coerceToAppVersionDescriptor(descriptor)
-    )
+      coreUtils.coerceToAppVersionDescriptor(descriptor),
+    );
 
     if (cauldronContainerVersion) {
       // If both versions are valid semver versions, use semver comparison
@@ -59,99 +59,99 @@ export default class Ensure {
       const gt =
         semver.valid(containerVersion) && semver.valid(cauldronContainerVersion)
           ? semver.gt(containerVersion, cauldronContainerVersion)
-          : containerVersion > cauldronContainerVersion
+          : containerVersion > cauldronContainerVersion;
       if (!gt) {
         throw new Error(
-          `Container version ${containerVersion} is older than ${cauldronContainerVersion}\n${extraErrorMessage}`
-        )
+          `Container version ${containerVersion} is older than ${cauldronContainerVersion}\n${extraErrorMessage}`,
+        );
       }
     }
   }
 
   public static noGitOrFilesystemPath(
     obj: string | PackagePath | Array<string | PackagePath> | void,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
     if (!obj) {
-      return
+      return;
     }
-    const packagePaths = coreUtils.coerceToPackagePathArray(obj)
+    const packagePaths = coreUtils.coerceToPackagePathArray(obj);
     for (const packagePath of packagePaths) {
       if (packagePath.isFilePath || packagePath.isGitPath) {
         throw new Error(
-          `Found a git or file system path.\n${extraErrorMessage}`
-        )
+          `Found a git or file system path.\n${extraErrorMessage}`,
+        );
       }
     }
   }
 
   public static noFileSystemPath(
     obj: string | string[],
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
-    const paths = obj instanceof Array ? obj : [obj]
+    const paths = obj instanceof Array ? obj : [obj];
     for (const path of paths) {
-      const dependencyPath = PackagePath.fromString(path)
+      const dependencyPath = PackagePath.fromString(path);
       if (dependencyPath.isFilePath) {
-        throw new Error(`Found a file system path.\n${extraErrorMessage}`)
+        throw new Error(`Found a file system path.\n${extraErrorMessage}`);
       }
     }
   }
 
   public static async napDescritorExistsInCauldron(
     d: string | AnyAppDescriptor | Array<string | AnyAppDescriptor>,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
-    const cauldron = await getActiveCauldron()
-    const descriptors = coreUtils.coerceToAnyAppDescriptorArray(d)
+    const cauldron = await getActiveCauldron();
+    const descriptors = coreUtils.coerceToAnyAppDescriptorArray(d);
     for (const descriptor of descriptors) {
-      const result = await cauldron.isDescriptorInCauldron(descriptor)
+      const result = await cauldron.isDescriptorInCauldron(descriptor);
       if (!result) {
         throw new Error(
-          `${descriptor.toString()} descriptor does not exist in Cauldron.\n${extraErrorMessage}`
-        )
+          `${descriptor.toString()} descriptor does not exist in Cauldron.\n${extraErrorMessage}`,
+        );
       }
     }
   }
 
   public static sameNativeApplicationAndPlatform(
     descriptors: Array<string | AppVersionDescriptor>,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
     const basePathDescriptors = _.map(
       coreUtils.coerceToAppVersionDescriptorArray(descriptors),
-      d => `${d.name}:${d.platform}`
-    )
+      (d) => `${d.name}:${d.platform}`,
+    );
     if (_.uniq(basePathDescriptors).length > 1) {
       throw new Error(
-        `Descriptors do not all match the same native application/platform pair.\n${extraErrorMessage}`
-      )
+        `Descriptors do not all match the same native application/platform pair.\n${extraErrorMessage}`,
+      );
     }
   }
 
   public static async napDescritorDoesNotExistsInCauldron(
     d: AnyAppDescriptor | string,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
-    const cauldron = await getActiveCauldron()
-    const descriptor = coreUtils.coerceToAnyAppDescriptor(d)
+    const cauldron = await getActiveCauldron();
+    const descriptor = coreUtils.coerceToAnyAppDescriptor(d);
     if (await cauldron.isDescriptorInCauldron(descriptor)) {
       throw new Error(
-        `${descriptor} descriptor exist in Cauldron.\n${extraErrorMessage}`
-      )
+        `${descriptor} descriptor exist in Cauldron.\n${extraErrorMessage}`,
+      );
     }
   }
 
   public static async publishedToNpm(
     obj: string | PackagePath | Array<string | PackagePath>,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
-    const dependencies = coreUtils.coerceToPackagePathArray(obj)
+    const dependencies = coreUtils.coerceToPackagePathArray(obj);
     for (const dependency of dependencies) {
       if (!(await coreUtils.isPublishedToNpm(dependency))) {
         throw new Error(
-          `${dependency} version is not published to NPM.\n${extraErrorMessage}`
-        )
+          `${dependency} version is not published to NPM.\n${extraErrorMessage}`,
+        );
       }
     }
   }
@@ -159,13 +159,13 @@ export default class Ensure {
   public static async miniAppNotInNativeApplicationVersionContainer(
     obj: string | PackagePath | Array<string | PackagePath> | void,
     napDescriptor: AppVersionDescriptor,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
     if (!obj) {
-      return
+      return;
     }
-    const cauldron = await getActiveCauldron()
-    const miniApps = coreUtils.coerceToPackagePathArray(obj)
+    const cauldron = await getActiveCauldron();
+    const miniApps = coreUtils.coerceToPackagePathArray(obj);
     for (const miniApp of miniApps) {
       if (
         await cauldron.isMiniAppInContainer(napDescriptor, miniApp.basePath)
@@ -173,8 +173,8 @@ export default class Ensure {
         throw new Error(
           `${
             miniApp.basePath
-          } MiniApp exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`
-        )
+          } MiniApp exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`,
+        );
       }
     }
   }
@@ -182,25 +182,25 @@ export default class Ensure {
   public static async dependencyNotInNativeApplicationVersionContainer(
     obj: string | PackagePath | Array<string | PackagePath> | void,
     napDescriptor: AppVersionDescriptor,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
     if (!obj) {
-      return
+      return;
     }
-    const cauldron = await getActiveCauldron()
-    const dependencies = coreUtils.coerceToPackagePathArray(obj)
+    const cauldron = await getActiveCauldron();
+    const dependencies = coreUtils.coerceToPackagePathArray(obj);
     for (const dependency of dependencies) {
       if (
         await cauldron.isNativeDependencyInContainer(
           napDescriptor,
-          dependency.basePath
+          dependency.basePath,
         )
       ) {
         throw new Error(
           `${
             dependency.basePath
-          } dependency exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`
-        )
+          } dependency exists in ${napDescriptor.toString()}.\n${extraErrorMessage}`,
+        );
       }
     }
   }
@@ -208,13 +208,13 @@ export default class Ensure {
   public static async miniAppIsInNativeApplicationVersionContainer(
     obj: string | PackagePath | Array<string | PackagePath> | void,
     napDescriptor: AppVersionDescriptor,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
     if (!obj) {
-      return
+      return;
     }
-    const cauldron = await getActiveCauldron()
-    const miniApps = coreUtils.coerceToPackagePathArray(obj)
+    const cauldron = await getActiveCauldron();
+    const miniApps = coreUtils.coerceToPackagePathArray(obj);
     for (const miniApp of miniApps) {
       if (
         !(await cauldron.isMiniAppInContainer(napDescriptor, miniApp.basePath))
@@ -222,8 +222,8 @@ export default class Ensure {
         throw new Error(
           `${
             miniApp.basePath
-          } MiniApp does not exist in ${napDescriptor.toString()}.\n${extraErrorMessage}`
-        )
+          } MiniApp does not exist in ${napDescriptor.toString()}.\n${extraErrorMessage}`,
+        );
       }
     }
   }
@@ -231,23 +231,23 @@ export default class Ensure {
   public static async dependencyIsInNativeApplicationVersionContainer(
     obj: string | PackagePath | Array<string | PackagePath> | void,
     napDescriptor: AppVersionDescriptor,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
     if (!obj) {
-      return
+      return;
     }
-    const cauldron = await getActiveCauldron()
-    const dependencies = coreUtils.coerceToPackagePathArray(obj)
+    const cauldron = await getActiveCauldron();
+    const dependencies = coreUtils.coerceToPackagePathArray(obj);
     for (const dependency of dependencies) {
       if (
         !(await cauldron.getContainerNativeDependency(
           napDescriptor,
-          dependency.basePath
+          dependency.basePath,
         ))
       ) {
         throw new Error(
-          `${dependency.basePath} does not exists in ${napDescriptor}.\n${extraErrorMessage}`
-        )
+          `${dependency.basePath} does not exists in ${napDescriptor}.\n${extraErrorMessage}`,
+        );
       }
     }
   }
@@ -255,30 +255,29 @@ export default class Ensure {
   public static async miniAppIsInNativeApplicationVersionContainerWithDifferentVersion(
     obj: string | PackagePath | Array<string | PackagePath> | void,
     napDescriptor: AppVersionDescriptor,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
     if (!obj) {
-      return
+      return;
     }
-    const cauldron = await getActiveCauldron()
-    const miniApps = coreUtils.coerceToPackagePathArray(obj)
+    const cauldron = await getActiveCauldron();
+    const miniApps = coreUtils.coerceToPackagePathArray(obj);
     await Ensure.miniAppIsInNativeApplicationVersionContainer(
       miniApps,
-      napDescriptor
-    )
+      napDescriptor,
+    );
     for (const miniApp of miniApps) {
       const miniAppFromCauldron = await cauldron.getContainerMiniApp(
         napDescriptor,
-        miniApp.basePath
-      )
-      const cauldronMiniApp = PackagePath.fromString(miniAppFromCauldron)
+        miniApp.basePath,
+      );
+      const cauldronMiniApp = PackagePath.fromString(miniAppFromCauldron);
       if (cauldronMiniApp.version === miniApp.version) {
         throw new Error(
-          `${
-            cauldronMiniApp.basePath
-          } is already at version ${miniApp.version ||
-            ''} in ${napDescriptor}.\n${extraErrorMessage}`
-        )
+          `${cauldronMiniApp.basePath} is already at version ${
+            miniApp.version || ''
+          } in ${napDescriptor}.\n${extraErrorMessage}`,
+        );
       }
     }
   }
@@ -286,32 +285,31 @@ export default class Ensure {
   public static async dependencyIsInNativeApplicationVersionContainerWithDifferentVersion(
     obj: string | PackagePath[] | Array<string | PackagePath> | void,
     napDescriptor: AppVersionDescriptor,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
     if (!obj) {
-      return
+      return;
     }
-    const cauldron = await getActiveCauldron()
+    const cauldron = await getActiveCauldron();
     await Ensure.dependencyIsInNativeApplicationVersionContainer(
       obj,
-      napDescriptor
-    )
-    const dependencies = coreUtils.coerceToPackagePathArray(obj)
+      napDescriptor,
+    );
+    const dependencies = coreUtils.coerceToPackagePathArray(obj);
     for (const dependency of dependencies) {
       const dependencyFromCauldron = await cauldron.getContainerNativeDependency(
         napDescriptor,
-        dependency.basePath
-      )
+        dependency.basePath,
+      );
       if (
         dependencyFromCauldron &&
         dependencyFromCauldron.version === dependency.version
       ) {
         throw new Error(
-          `${
-            dependency.basePath
-          } is already at version ${dependencyFromCauldron.version ||
-            'undefined'} in ${napDescriptor.toString()}.\n${extraErrorMessage}`
-        )
+          `${dependency.basePath} is already at version ${
+            dependencyFromCauldron.version || 'undefined'
+          } in ${napDescriptor.toString()}.\n${extraErrorMessage}`,
+        );
       }
     }
   }
@@ -319,40 +317,41 @@ export default class Ensure {
   public static async dependencyNotInUseByAMiniApp(
     obj: string | PackagePath | Array<string | PackagePath> | void,
     napDescriptor: AppVersionDescriptor,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
     if (!obj) {
-      return
+      return;
     }
-    const cauldron = await getActiveCauldron()
-    const dependencies = coreUtils.coerceToPackagePathArray(obj)
+    const cauldron = await getActiveCauldron();
+    const dependencies = coreUtils.coerceToPackagePathArray(obj);
 
     // First let's figure out if any of the MiniApps are using this/these dependency(ies)
     // to make sure that we don't remove any dependency currently used by any MiniApp
-    const miniApps = await cauldron.getContainerMiniApps(napDescriptor)
+    const miniApps = await cauldron.getContainerMiniApps(napDescriptor);
 
     for (const dependency of dependencies) {
       const miniAppsUsingDependency = await dependencyLookup.getMiniAppsUsingNativeDependency(
         miniApps,
-        dependency
-      )
+        dependency,
+      );
       if (miniAppsUsingDependency?.length > 0) {
-        let errorMessage = ''
-        errorMessage += 'The following MiniApp(s) are using this dependency\n'
+        let errorMessage = '';
+        errorMessage += 'The following MiniApp(s) are using this dependency\n';
         for (const miniApp of miniAppsUsingDependency) {
-          errorMessage += `=> ${miniApp.name}\n`
+          errorMessage += `=> ${miniApp.name}\n`;
         }
         errorMessage +=
-          'You cannot remove a native dependency that is being used by at least a MiniApp\n'
+          'You cannot remove a native dependency that is being used by at least a MiniApp\n';
         errorMessage +=
-          'To properly remove this native dependency, you cant either :\n'
+          'To properly remove this native dependency, you cant either :\n';
         errorMessage +=
-          '- Remove the native dependency from the MiniApp(s) that are using it\n'
-        errorMessage += '- Remove the MiniApps that are using this dependency\n'
+          '- Remove the native dependency from the MiniApp(s) that are using it\n';
         errorMessage +=
-          '- Provide the force flag to this command (if you really now what you are doing !)\n'
-        errorMessage += extraErrorMessage
-        throw new Error(errorMessage)
+          '- Remove the MiniApps that are using this dependency\n';
+        errorMessage +=
+          '- Provide the force flag to this command (if you really now what you are doing !)\n';
+        errorMessage += extraErrorMessage;
+        throw new Error(errorMessage);
       }
     }
   }
@@ -360,134 +359,136 @@ export default class Ensure {
   public static async dependencyIsOrphaned(
     obj: string | PackagePath | Array<string | PackagePath> | void,
     napDescriptor: AppVersionDescriptor,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
     if (!obj) {
-      return
+      return;
     }
-    const cauldron = await getActiveCauldron()
-    const lock = await cauldron.getYarnLock(napDescriptor, 'container')
-    const dependencies = coreUtils.coerceToPackagePathArray(obj)
+    const cauldron = await getActiveCauldron();
+    const lock = await cauldron.getYarnLock(napDescriptor, 'container');
+    const dependencies = coreUtils.coerceToPackagePathArray(obj);
     if (!lock) {
-      return
+      return;
     }
-    const parser = YarnLockParser.fromContent(lock.toString())
+    const parser = YarnLockParser.fromContent(lock.toString());
 
-    let errorMessage = ''
+    let errorMessage = '';
     for (const dependency of dependencies) {
       const tree = parser.buildDependencyTree(
-        PackagePath.fromString(dependency.basePath)
-      )
+        PackagePath.fromString(dependency.basePath),
+      );
       if (
         _.isEmpty(tree) ||
         _.isEmpty(
-          Object.keys(tree).filter(k => Object.keys(tree[k]).length > 0)
+          Object.keys(tree).filter((k) => Object.keys(tree[k]).length > 0),
         )
       ) {
-        continue
+        continue;
       }
 
-      errorMessage += `${dependency} is not orphaned. It is used by one or more packages :\n`
-      errorMessage += `${treeify.asTree(tree, true, true)}\n`
+      errorMessage += `${dependency} is not orphaned. It is used by one or more packages :\n`;
+      errorMessage += `${treeify.asTree(tree, true, true)}\n`;
     }
 
     if (errorMessage !== '') {
-      errorMessage += extraErrorMessage
-      throw new Error(errorMessage)
+      errorMessage += extraErrorMessage;
+      throw new Error(errorMessage);
     }
   }
 
   public static async cauldronIsActive(extraErrorMessage: string = '') {
     if (!(await getActiveCauldron({ throwIfNoActiveCauldron: false }))) {
-      throw new Error(`There is no active Cauldron\n${extraErrorMessage}`)
+      throw new Error(`There is no active Cauldron\n${extraErrorMessage}`);
     }
   }
 
   public static async pathExist(
     p: fs.PathLike,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
     return new Promise((resolve, reject) => {
-      fs.exists(p, exists =>
+      fs.exists(p, (exists) =>
         exists
           ? resolve()
-          : reject(new Error(`${p} path does not exist.\n${extraErrorMessage}`))
-      )
-    })
+          : reject(
+              new Error(`${p} path does not exist.\n${extraErrorMessage}`),
+            ),
+      );
+    });
   }
 
   public static async isFilePath(
     p: fs.PathLike,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
     return new Promise((resolve, reject) => {
       fs.stat(p, (err, stats) => {
         if (err) {
-          reject(new Error(`${p} path does not exist.\n${extraErrorMessage}`))
+          reject(new Error(`${p} path does not exist.\n${extraErrorMessage}`));
         } else {
           if (stats.isFile()) {
-            resolve()
+            resolve();
           } else {
-            reject(new Error(`${p} is not a file.\n${extraErrorMessage}`))
+            reject(new Error(`${p} is not a file.\n${extraErrorMessage}`));
           }
         }
-      })
-    })
+      });
+    });
   }
 
   public static async isDirectoryPath(
     p: fs.PathLike,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
     return new Promise((resolve, reject) => {
       fs.stat(p, (err, stats) => {
         if (err) {
-          reject(new Error(`${p} path does not exist.\n${extraErrorMessage}`))
+          reject(new Error(`${p} path does not exist.\n${extraErrorMessage}`));
         } else {
           if (stats.isDirectory()) {
-            resolve()
+            resolve();
           } else {
-            reject(new Error(`${p} is not a directory.\n${extraErrorMessage}`))
+            reject(new Error(`${p} is not a directory.\n${extraErrorMessage}`));
           }
         }
-      })
-    })
+      });
+    });
   }
 
   public static checkIfCodePushOptionsAreValid(
     descriptors?: Array<string | AppVersionDescriptor>,
     targetBinaryVersion?: string,
     semVerDescriptor?: string,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
     if (targetBinaryVersion && semVerDescriptor) {
       throw new Error(
-        'Specify either targetBinaryVersion or semVerDescriptor not both'
-      )
+        'Specify either targetBinaryVersion or semVerDescriptor not both',
+      );
     }
     if (targetBinaryVersion && descriptors && descriptors.length > 1) {
       throw new Error(
-        'targetBinaryVersion must specify only 1 target native application version for the push'
-      )
+        'targetBinaryVersion must specify only 1 target native application version for the push',
+      );
     }
   }
 
   public static isValidPlatformConfig(
     key: string,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
     const availablePlatformKeys = () =>
-      constants.availableUserConfigKeys.map(e => e.name)
+      constants.availableUserConfigKeys.map((e) => e.name);
     if (!availablePlatformKeys().includes(key)) {
       const closestKeyName = (k: string) =>
         availablePlatformKeys().reduce((acc, cur) =>
-          levenshtein.get(acc, k) > levenshtein.get(cur, k) ? cur : acc
-        )
+          levenshtein.get(acc, k) > levenshtein.get(cur, k) ? cur : acc,
+        );
       throw new Error(
         `Configuration key ${key} does not exists. Did you mean ${closestKeyName(
-          key
-        )}?`
-      )
+          key,
+        )}?`,
+      );
     }
   }
 
@@ -499,24 +500,24 @@ export default class Ensure {
   // - Registry Path  : Fixed (and valid) semantic version. No Ranges.
   public static isSupportedMiniAppOrJsApiImplVersion(
     obj: string | PackagePath | Array<string | PackagePath> | void,
-    extraErrorMessage?: string
+    extraErrorMessage?: string,
   ) {
     if (obj) {
-      const dependencies = coreUtils.coerceToPackagePathArray(obj)
+      const dependencies = coreUtils.coerceToPackagePathArray(obj);
       for (const dependency of dependencies) {
         if (dependency.isFilePath) {
-          throw new Error('File Path not supported')
+          throw new Error('File Path not supported');
         } else if (dependency.isRegistryPath) {
           if (!dependency.version) {
-            throw new Error(`Missing version for ${dependency}`)
+            throw new Error(`Missing version for ${dependency}`);
           } else if (!semver.valid(dependency.version)) {
             throw new Error(
-              `Unsupported version ${dependency.version} for ${dependency.basePath}`
-            )
+              `Unsupported version ${dependency.version} for ${dependency.basePath}`,
+            );
           }
         } else if (!dependency.version) {
           // git path
-          throw new Error(`Missing version for ${dependency}`)
+          throw new Error(`Missing version for ${dependency}`);
         }
       }
     }
@@ -525,65 +526,65 @@ export default class Ensure {
   public static isContainerPath(path: string, extraErrorMessage: string = '') {
     if (!fs.existsSync(getContainerMetadataPath(path))) {
       throw new Error(
-        `${path} is not a path to a Container\n${extraErrorMessage}`
-      )
+        `${path} is not a path to a Container\n${extraErrorMessage}`,
+      );
     }
   }
 
   public static isEnvVariableDefined(
     envVarName: string,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
     if (!process.env[envVarName]) {
-      throw new Error(`${envVarName} is not defined\n${extraErrorMessage}`)
+      throw new Error(`${envVarName} is not defined\n${extraErrorMessage}`);
     }
   }
 
   public static async manifestIdExists(
     manifestId: string,
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
     if (!(await manifest.hasManifestId(manifestId))) {
       throw new Error(
-        `${manifestId} id not found in the Manifest(s)\n${extraErrorMessage}`
-      )
+        `${manifestId} id not found in the Manifest(s)\n${extraErrorMessage}`,
+      );
     }
   }
 
   public static async bundleStoreUrlSetInCauldron(
-    extraErrorMessage: string = ''
+    extraErrorMessage: string = '',
   ) {
-    const cauldron = await getActiveCauldron()
-    const bundleStoreConfig = await cauldron.getBundleStoreConfig()
+    const cauldron = await getActiveCauldron();
+    const bundleStoreConfig = await cauldron.getBundleStoreConfig();
     if (!bundleStoreConfig || !bundleStoreConfig.url) {
       throw new Error(
-        `bundleStore url not set in Cauldron\n${extraErrorMessage}`
-      )
+        `bundleStore url not set in Cauldron\n${extraErrorMessage}`,
+      );
     }
   }
 
   public static bundleStoreAccessKeyIsSet(extraErrorMessage: string = '') {
     if (!config.get('bundlestore-accesskey')) {
       throw new Error(
-        `bundlestore-accesskey is not set in configuration\n${extraErrorMessage}`
-      )
+        `bundlestore-accesskey is not set in configuration\n${extraErrorMessage}`,
+      );
     }
   }
 
   public static async metroServerIsNotRunning(
     host: string,
     port: string,
-    extraErrorMessage?: string
+    extraErrorMessage?: string,
   ) {
-    const metroServerUrl = `http://${host}:${port}`
+    const metroServerUrl = `http://${host}:${port}`;
 
     try {
-      await got.get(metroServerUrl)
+      await got.get(metroServerUrl);
     } catch (err) {
-      return
+      return;
     }
     throw new Error(
-      `Metro server is running on ${metroServerUrl}\n${extraErrorMessage}`
-    )
+      `Metro server is running on ${metroServerUrl}\n${extraErrorMessage}`,
+    );
   }
 }

@@ -1,87 +1,87 @@
-import { RunnerGenerator, RunnerGeneratorConfig } from 'ern-runner-gen'
+import { RunnerGenerator, RunnerGeneratorConfig } from 'ern-runner-gen';
 import {
   injectReactNativeVersionKeysInObject,
   mustacheUtils,
   NativePlatform,
   shell,
-} from 'ern-core'
-import path from 'path'
-import fs from 'fs-extra'
+} from 'ern-core';
+import path from 'path';
+import fs from 'fs-extra';
 
-const defaultReactNativePackagerHost = 'localhost'
-const defaultReactNativePackagerPort = '8081'
-const runnerHullPath = path.join(__dirname, 'hull')
+const defaultReactNativePackagerHost = 'localhost';
+const defaultReactNativePackagerPort = '8081';
+const runnerHullPath = path.join(__dirname, 'hull');
 
 export default class IosRunerGenerator implements RunnerGenerator {
   public get platform(): NativePlatform {
-    return 'ios'
+    return 'ios';
   }
 
   public async generate(config: RunnerGeneratorConfig): Promise<void> {
-    this.validateExtraConfig(config)
-    const mustacheView = this.createMustacheView({ config })
+    this.validateExtraConfig(config);
+    const mustacheView = this.createMustacheView({ config });
 
-    shell.cp('-R', path.join(runnerHullPath, '*'), config.outDir)
+    shell.cp('-R', path.join(runnerHullPath, '*'), config.outDir);
 
     const filesToMustache = [
       'ErnRunner/RunnerConfig.m',
       'ErnRunner.xcodeproj/project.pbxproj',
-    ]
+    ];
 
     if ((mustacheView as any).RN_VERSION_LT_61) {
       // Delete ErnRunner.xcworkspace directory as it is only needed for RN61+
-      shell.rm('-rf', path.join(config.outDir, 'ErnRunner.xcworkspace'))
+      shell.rm('-rf', path.join(config.outDir, 'ErnRunner.xcworkspace'));
     } else {
       // Otherwise keep it and include the xcworkspacedata file for mustache
       // processing as it contains some mustache template placeholders
-      filesToMustache.push('ErnRunner.xcworkspace/contents.xcworkspacedata')
+      filesToMustache.push('ErnRunner.xcworkspace/contents.xcworkspacedata');
     }
 
     for (const file of filesToMustache) {
       await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
         path.join(config.outDir, file),
         mustacheView,
-        path.join(config.outDir, file)
-      )
+        path.join(config.outDir, file),
+      );
     }
   }
 
   public async regenerateRunnerConfig(
-    config: RunnerGeneratorConfig
+    config: RunnerGeneratorConfig,
   ): Promise<void> {
-    this.validateExtraConfig(config)
-    const mustacheView = this.createMustacheView({ config })
+    this.validateExtraConfig(config);
+    const mustacheView = this.createMustacheView({ config });
     const pathToRunnerConfig = path.join(
       config.outDir,
-      'ErnRunner/RunnerConfig.m'
-    )
+      'ErnRunner/RunnerConfig.m',
+    );
     shell.cp(
       path.join(runnerHullPath, 'ErnRunner/RunnerConfig.m'),
-      pathToRunnerConfig
-    )
+      pathToRunnerConfig,
+    );
     await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
       pathToRunnerConfig,
       mustacheView,
-      pathToRunnerConfig
-    )
+      pathToRunnerConfig,
+    );
     if ((mustacheView as any).RN_VERSION_GTE_61) {
       // If using a version of react native >= 0.61.0 and if the xcworkspace
       // is not present in runner, let's copy it
-      const xcworkspacePath = path.join(config.outDir, 'ErnRunner.xcworkspace')
+      const xcworkspacePath = path.join(config.outDir, 'ErnRunner.xcworkspace');
       if (!fs.pathExistsSync(xcworkspacePath)) {
         shell.cp(
           '-rf',
           path.join(runnerHullPath, 'ErnRunner.xcworkspace'),
-          config.outDir
-        )
+          config.outDir,
+        );
       }
     }
   }
 
   public createMustacheView({ config }: { config: RunnerGeneratorConfig }) {
     const pathToElectrodeContainerXcodeProj = replaceHomePathWithTidle(
-      path.join(config.extra.containerGenWorkingDir, 'out/ios')
-    )
+      path.join(config.extra.containerGenWorkingDir, 'out/ios'),
+    );
     const mustacheView = {
       isReactNativeDevSupportEnabled:
         config.reactNativeDevSupportEnabled === true ? 'YES' : 'NO',
@@ -92,28 +92,28 @@ export default class IosRunerGenerator implements RunnerGenerator {
         config.reactNativePackagerPort ?? defaultReactNativePackagerPort,
       pascalCaseMiniAppName: pascalCase(config.mainMiniAppName),
       pathToElectrodeContainerXcodeProj,
-    }
+    };
 
     injectReactNativeVersionKeysInObject(
       mustacheView,
-      config.reactNativeVersion
-    )
+      config.reactNativeVersion,
+    );
 
-    return mustacheView
+    return mustacheView;
   }
 
   private validateExtraConfig(config: RunnerGeneratorConfig) {
     if (!config.extra || !config.extra.containerGenWorkingDir) {
-      throw new Error('Missing containerGenWorkingDir in extra config')
+      throw new Error('Missing containerGenWorkingDir in extra config');
     }
   }
 }
 
 // Given a string returns the same string with its first letter capitalized
 function pascalCase(str: string) {
-  return `${str.charAt(0).toUpperCase()}${str.slice(1)}`
+  return `${str.charAt(0).toUpperCase()}${str.slice(1)}`;
 }
 
 function replaceHomePathWithTidle(p: string) {
-  return process.env.HOME ? p.replace(process.env.HOME, '~') : p
+  return process.env.HOME ? p.replace(process.env.HOME, '~') : p;
 }

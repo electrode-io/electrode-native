@@ -1,5 +1,5 @@
-import CodegenConfigurator from './config/CodegenConfigurator'
-import DefaultGenerator from './DefaultGenerator'
+import CodegenConfigurator from './config/CodegenConfigurator';
+import DefaultGenerator from './DefaultGenerator';
 
 export default class ApiGenUtils {
   /**
@@ -11,44 +11,44 @@ export default class ApiGenUtils {
         inputSpec: swaggerSchemaFile,
         lang: 'ERNAndroid', // Using android as a reference language, apiName, requests and responses will be same for all the langs.
         outputDir: 'fake',
-      }
-      const cc = new CodegenConfigurator(config)
-      const opts = await cc.toClientOptInput()
-      const generator = new DefaultGenerator().opts(opts)
-      const apis = generator.processPaths(generator.swagger.getPaths()).value
+      };
+      const cc = new CodegenConfigurator(config);
+      const opts = await cc.toClientOptInput();
+      const generator = new DefaultGenerator().opts(opts);
+      const apis = generator.processPaths(generator.swagger.getPaths()).value;
 
       const result: Array<{
-        apiName: string
-        requests: string[]
-        events: string[]
-      }> = []
+        apiName: string;
+        requests: string[];
+        events: string[];
+      }> = [];
       for (const apiKey in apis) {
         if (apis.hasOwnProperty(apiKey)) {
           const {
             requests,
             events,
-          } = ApiGenUtils.generateApiEventsAndRequestNames(apis[apiKey])
-          result.push({ apiName: apiKey, requests, events })
+          } = ApiGenUtils.generateApiEventsAndRequestNames(apis[apiKey]);
+          result.push({ apiName: apiKey, requests, events });
         }
       }
-      return result
+      return result;
     } catch (e) {
-      throw new Error(`Unable to extract the apis: ${e}`)
+      throw new Error(`Unable to extract the apis: ${e}`);
     }
   }
 
   public static generateApiEventsAndRequestNames(
-    api: any
+    api: any,
   ): { requests: string[]; events: string[] } {
-    const requests: string[] = []
-    const events: string[] = []
+    const requests: string[] = [];
+    const events: string[] = [];
     for (const key in api) {
       if (api.hasOwnProperty(key) && api[key].httpMethod === `EVENT`) {
-        events.push(api[key].camelizedNickName)
+        events.push(api[key].camelizedNickName);
       } else {
-        requests.push(api[key].camelizedNickName)
+        requests.push(api[key].camelizedNickName);
       }
     }
-    return { requests, events }
+    return { requests, events };
   }
 }

@@ -1,5 +1,5 @@
-import { StringProperty } from './StringProperty'
+import { StringProperty } from './StringProperty';
 
 export class DateProperty extends StringProperty {
-  public static FORMAT = 'date'
+  public static FORMAT = 'date';
 }

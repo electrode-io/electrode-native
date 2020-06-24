@@ -31,217 +31,217 @@
  * - Add iterator
  */
 export default class TreeMap {
-  private keyComparator
-  private root
-  private keyType
-  private length
+  private keyComparator;
+  private root;
+  private keyType;
+  private length;
 
   constructor(keyComparator?: any) {
     if (keyComparator && !keyComparator.compare) {
-      throw new Error('keyComparator does not expose a compare function ')
+      throw new Error('keyComparator does not expose a compare function ');
     }
-    this.keyComparator = keyComparator
-    this.root = null
-    this.keyType = void 0
-    this.length = 0
+    this.keyComparator = keyComparator;
+    this.root = null;
+    this.keyType = void 0;
+    this.length = 0;
   }
 
   public checkKey(key, checkKeyType = false) {
-    const localKeyType = typeof key
+    const localKeyType = typeof key;
 
     if (
       localKeyType !== 'number' &&
       localKeyType !== 'string' &&
       localKeyType !== 'boolean'
     ) {
-      throw new Error("'key' must be a number, a string or a boolean")
+      throw new Error("'key' must be a number, a string or a boolean");
     }
 
     if (checkKeyType === true && localKeyType !== this.keyType) {
-      throw new Error('All keys must be of the same type')
+      throw new Error('All keys must be of the same type');
     }
 
-    return localKeyType
+    return localKeyType;
   }
 
   public call(callback, ...rest) {
-    const args = Array.prototype.slice.call(arguments, 1)
+    const args = Array.prototype.slice.call(arguments, 1);
 
     if (typeof callback === 'function') {
-      callback.apply(void 0, args)
+      callback.apply(void 0, args);
     }
   }
 
   public getTree() {
-    return this.root
+    return this.root;
   }
 
   public getLength() {
-    return this.length
+    return this.length;
   }
 
   public each(callback) {
-    this.internalEach(this.root, callback)
+    this.internalEach(this.root, callback);
   }
 
   public *[Symbol.iterator]() {
-    const res: any = []
+    const res: any = [];
     this.each((value, key) => {
-      res.push([key, value])
-    })
-    yield* res
+      res.push([key, value]);
+    });
+    yield* res;
   }
 
   public get(key) {
-    this.checkKey(key)
-    return this.internalGet(key, this.root)
+    this.checkKey(key);
+    return this.internalGet(key, this.root);
   }
 
   public set(key, value) {
     if (this.root === null) {
-      this.keyType = this.checkKey(key)
+      this.keyType = this.checkKey(key);
     } else {
-      this.checkKey(key, true)
+      this.checkKey(key, true);
     }
 
-    this.root = this.internalSet(key, value, this.root)
+    this.root = this.internalSet(key, value, this.root);
   }
 
   public getMaxKey() {
-    const maxNode = this.getMaxNode(this.root)
+    const maxNode = this.getMaxNode(this.root);
 
     if (maxNode !== null) {
-      return maxNode.key
+      return maxNode.key;
     }
 
-    return maxNode
+    return maxNode;
   }
 
   public getMinKey() {
-    const minNode = this.getMinNode(this.root)
+    const minNode = this.getMinNode(this.root);
 
     if (minNode !== null) {
-      return minNode.key
+      return minNode.key;
     }
 
-    return minNode
+    return minNode;
   }
 
   public getMaxNode(node) {
     while (node !== null && node.right !== null) {
-      node = node.right
+      node = node.right;
     }
 
-    return node
+    return node;
   }
 
   public getMinNode(node) {
     while (node !== null && node.left !== null) {
-      node = node.left
+      node = node.left;
     }
 
-    return node
+    return node;
   }
 
   public remove(key) {
-    this.checkKey(key)
+    this.checkKey(key);
 
-    this.root = this.internalRemove(key, this.root)
+    this.root = this.internalRemove(key, this.root);
   }
 
   public lt(a, b) {
-    return this.keyComparator ? this.keyComparator.compare(a, b) === -1 : a < b
+    return this.keyComparator ? this.keyComparator.compare(a, b) === -1 : a < b;
   }
 
   public gt(a, b) {
-    return this.keyComparator ? this.keyComparator.compare(a, b) === 1 : a > b
+    return this.keyComparator ? this.keyComparator.compare(a, b) === 1 : a > b;
   }
 
   private internalGet(key, node) {
     if (node === null) {
-      return void 0
+      return void 0;
     }
 
     if (this.lt(key, node.key)) {
-      return this.internalGet(key, node.left)
+      return this.internalGet(key, node.left);
     } else if (this.gt(key, node.key)) {
-      return this.internalGet(key, node.right)
+      return this.internalGet(key, node.right);
     } else {
-      return node.value
+      return node.value;
     }
   }
 
   private internalSet(key, value, node) {
     if (node === null) {
-      this.length++
+      this.length++;
 
       return {
         key,
         left: null,
         right: null,
         value,
-      }
+      };
     }
 
     if (this.lt(key, node.key)) {
-      node.left = this.internalSet(key, value, node.left)
+      node.left = this.internalSet(key, value, node.left);
     } else if (this.gt(key, node.key)) {
-      node.right = this.internalSet(key, value, node.right)
+      node.right = this.internalSet(key, value, node.right);
     } else {
-      node.value = value
+      node.value = value;
     }
 
-    return node
+    return node;
   }
 
   private internalRemove(key, node) {
     if (node === null) {
-      return null
+      return null;
     }
 
     if (this.lt(key, node.key)) {
-      node.left = this.internalRemove(key, node.left)
+      node.left = this.internalRemove(key, node.left);
     } else if (this.gt(key, node.key)) {
-      node.right = this.internalRemove(key, node.right)
+      node.right = this.internalRemove(key, node.right);
     } else {
       if (node.left !== null && node.right !== null) {
-        const maxNode = this.getMaxNode(node.left)
+        const maxNode = this.getMaxNode(node.left);
 
-        const maxNodeKey = maxNode.key
-        const maxNodeValue = maxNode.value
+        const maxNodeKey = maxNode.key;
+        const maxNodeValue = maxNode.value;
 
-        maxNode.key = node.key
-        maxNode.value = node.value
-        node.key = maxNodeKey
-        node.value = maxNodeValue
+        maxNode.key = node.key;
+        maxNode.value = node.value;
+        node.key = maxNodeKey;
+        node.value = maxNodeValue;
 
-        node.left = this.internalRemove(key, node.left)
+        node.left = this.internalRemove(key, node.left);
       } else if (node.left !== null) {
-        this.length--
-        return node.left
+        this.length--;
+        return node.left;
       } else if (node.right !== null) {
-        this.length--
-        return node.right
+        this.length--;
+        return node.right;
       } else {
-        this.length--
-        return null
+        this.length--;
+        return null;
       }
     }
 
-    return node
+    return node;
   }
 
   private internalEach(node, callback, internalCallback?: any) {
     if (node === null) {
-      return this.call(internalCallback)
+      return this.call(internalCallback);
     }
 
     this.internalEach(node.left, callback, () => {
-      this.call(callback, node.value, node.key)
+      this.call(callback, node.value, node.key);
 
       this.internalEach(node.right, callback, () => {
-        this.call(internalCallback)
-      })
-    })
+        this.call(internalCallback);
+      });
+    });
   }
 }

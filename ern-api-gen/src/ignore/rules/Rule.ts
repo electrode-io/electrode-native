@@ -1,6 +1,6 @@
-import IgnoreToken from './IgnoreToken'
-import StringBuilder from '../../java/StringBuilder'
-import { log } from 'ern-core'
+import IgnoreToken from './IgnoreToken';
+import StringBuilder from '../../java/StringBuilder';
+import { log } from 'ern-core';
 
 export abstract class Rule {
   public static Operation = {
@@ -8,27 +8,27 @@ export abstract class Rule {
     EXCLUDE_AND_TERMINATE: 3,
     INCLUDE: 1,
     NOOP: 2,
-  }
+  };
 
-  public syntax
-  public definition
+  public syntax;
+  public definition;
 
   constructor(syntax, definition) {
-    this.syntax = syntax
-    this.definition = definition
+    this.syntax = syntax;
+    this.definition = definition;
   }
 
   public getDefinition() {
-    return this.definition
+    return this.definition;
   }
 
   public getPattern() {
     if (this.syntax == null) {
-      return this.definition
+      return this.definition;
     }
-    const sb = StringBuilder()
+    const sb = StringBuilder();
     for (const current of this.syntax) {
-      const token = current.getToken()
+      const token = current.getToken();
 
       switch (token) {
         case IgnoreToken.MATCH_ALL:
@@ -38,17 +38,17 @@ export abstract class Rule {
         case IgnoreToken.PATH_DELIM:
         case IgnoreToken.TEXT:
         case IgnoreToken.DIRECTORY_MARKER:
-          sb.append(current.getValue())
-          break
+          sb.append(current.getValue());
+          break;
         case IgnoreToken.NEGATE:
         case IgnoreToken.ROOTED_MARKER:
         case IgnoreToken.COMMENT:
-          break
+          break;
         default:
-          log.warn('unknown token')
+          log.warn('unknown token');
       }
     }
-    return sb.toString()
+    return sb.toString();
   }
 
   /**
@@ -61,27 +61,27 @@ export abstract class Rule {
     const negated =
       this.syntax &&
       this.syntax[0] &&
-      this.syntax[0].getToken().equals(IgnoreToken.NEGATE)
-    return negated
+      this.syntax[0].getToken().equals(IgnoreToken.NEGATE);
+    return negated;
   }
 
   public evaluate(relativePath) {
     if (this.matches(relativePath)) {
       if (this.getNegated()) {
-        return this.getIncludeOperation()
+        return this.getIncludeOperation();
       }
-      return this.getExcludeOperation()
+      return this.getExcludeOperation();
     }
-    return Rule.Operation.NOOP
+    return Rule.Operation.NOOP;
   }
 
   public getIncludeOperation() {
-    return Rule.Operation.INCLUDE
+    return Rule.Operation.INCLUDE;
   }
 
   public getExcludeOperation() {
-    return Rule.Operation.EXCLUDE
+    return Rule.Operation.EXCLUDE;
   }
 
-  protected abstract matches(relativePath: any): boolean
+  protected abstract matches(relativePath: any): boolean;
 }

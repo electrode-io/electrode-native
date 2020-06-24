@@ -1,6 +1,6 @@
-import { AppVersionDescriptor, log } from 'ern-core'
-import { getActiveCauldron } from 'ern-cauldron-api'
-import { performCodePushPromote } from 'ern-orchestrator'
+import { AppVersionDescriptor, log } from 'ern-core';
+import { getActiveCauldron } from 'ern-cauldron-api';
+import { performCodePushPromote } from 'ern-orchestrator';
 import {
   askUserConfirmation,
   askUserForCodePushDeploymentName,
@@ -9,12 +9,12 @@ import {
   epilog,
   logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
-} from '../../lib'
-import { Argv } from 'yargs'
+} from '../../lib';
+import { Argv } from 'yargs';
 
-export const command = 'promote'
+export const command = 'promote';
 export const desc =
-  'Promote a CodePush release to a different deployment environment'
+  'Promote a CodePush release to a different deployment environment';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -81,7 +81,7 @@ export const builder = (argv: Argv) => {
         'Full native application descriptor from which to promote a release',
       type: 'string',
     })
-    .coerce('sourceDescriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('sourceDescriptor', (d) => AppVersionDescriptor.fromString(d))
     .option('targetBinaryVersion', {
       alias: 't',
       describe:
@@ -97,15 +97,15 @@ export const builder = (argv: Argv) => {
         'One or more native application descriptors matching targeted versions',
       type: 'array',
     })
-    .coerce('targetDescriptors', d =>
-      d.map((t: string) => AppVersionDescriptor.fromString(t))
+    .coerce('targetDescriptors', (d) =>
+      d.map((t: string) => AppVersionDescriptor.fromString(t)),
     )
     .option('targetSemVerDescriptor', {
       describe:
         'A target native application descriptor using a semver expression for the version',
     })
-    .epilog(epilog(exports))
-}
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   description,
@@ -124,21 +124,21 @@ export const commandHandler = async ({
   skipConfirmation,
   skipNativeDependenciesVersionAlignedCheck,
 }: {
-  description?: string
-  disableDuplicateReleaseError?: boolean
-  force?: boolean
-  label?: string
-  mandatory?: boolean
-  reuseReleaseBinaryVersion?: boolean
-  sourceDeploymentName?: string
-  targetBinaryVersion?: string
-  targetDeploymentName?: string
-  sourceDescriptor?: AppVersionDescriptor
-  targetDescriptors?: AppVersionDescriptor[]
-  targetSemVerDescriptor?: string
-  rollout?: number
-  skipConfirmation?: boolean
-  skipNativeDependenciesVersionAlignedCheck?: boolean
+  description?: string;
+  disableDuplicateReleaseError?: boolean;
+  force?: boolean;
+  label?: string;
+  mandatory?: boolean;
+  reuseReleaseBinaryVersion?: boolean;
+  sourceDeploymentName?: string;
+  targetBinaryVersion?: string;
+  targetDeploymentName?: string;
+  sourceDescriptor?: AppVersionDescriptor;
+  targetDescriptors?: AppVersionDescriptor[];
+  targetSemVerDescriptor?: string;
+  rollout?: number;
+  skipConfirmation?: boolean;
+  skipNativeDependenciesVersionAlignedCheck?: boolean;
 }) => {
   await logErrorAndExitIfNotSatisfied({
     checkIfCodePushOptionsAreValid: {
@@ -146,12 +146,12 @@ export const commandHandler = async ({
       semVerDescriptor: targetSemVerDescriptor,
       targetBinaryVersion,
     },
-  })
+  });
 
   if (reuseReleaseBinaryVersion && targetBinaryVersion) {
     throw new Error(
-      `reuseReleaseBinaryVersion and targetBinaryVersion options are mutually exclusive`
-    )
+      `reuseReleaseBinaryVersion and targetBinaryVersion options are mutually exclusive`,
+    );
   }
 
   sourceDescriptor =
@@ -159,7 +159,7 @@ export const commandHandler = async ({
     (await askUserToChooseANapDescriptorFromCauldron({
       message: 'Please select a source native application descriptor',
       onlyReleasedVersions: true,
-    }))
+    }));
 
   if (targetDescriptors.length > 0) {
     // User provided one or more target descriptor(s)
@@ -169,7 +169,7 @@ export const commandHandler = async ({
         extraErrorMessage:
           'You cannot CodePush to a non existing native application version.',
       },
-    })
+    });
   } else if (targetDescriptors.length === 0 && !targetSemVerDescriptor) {
     // User provided no target descriptors, nor a target semver descriptor
     targetDescriptors = await askUserToChooseOneOrMoreNapDescriptorFromCauldron(
@@ -177,34 +177,34 @@ export const commandHandler = async ({
         message:
           'Please select one or more target native application descriptor(s)',
         onlyReleasedVersions: true,
-      }
-    )
+      },
+    );
   } else if (targetSemVerDescriptor) {
     // User provided a target semver descriptor
     const targetSemVerNapDescriptor = AppVersionDescriptor.fromString(
-      targetSemVerDescriptor
-    )
-    const cauldron = await getActiveCauldron()
+      targetSemVerDescriptor,
+    );
+    const cauldron = await getActiveCauldron();
     targetDescriptors = await cauldron.getDescriptorsMatchingSemVerDescriptor(
-      targetSemVerNapDescriptor
-    )
+      targetSemVerNapDescriptor,
+    );
     if (targetDescriptors.length === 0) {
       throw new Error(
-        `No versions matching ${targetSemVerDescriptor} were found`
-      )
+        `No versions matching ${targetSemVerDescriptor} were found`,
+      );
     } else {
       log.info(
-        'CodePush promotion will target the following native application descriptors :'
-      )
+        'CodePush promotion will target the following native application descriptors :',
+      );
       for (const targetDescriptor of targetDescriptors) {
-        log.info(`- ${targetDescriptor}`)
+        log.info(`- ${targetDescriptor}`);
       }
       if (!skipConfirmation) {
         const userConfirmedVersions = await askUserConfirmation(
-          'Do you want to proceed ?'
-        )
+          'Do you want to proceed ?',
+        );
         if (!userConfirmedVersions) {
-          throw new Error('Aborting command execution')
+          throw new Error('Aborting command execution');
         }
       }
     }
@@ -216,20 +216,20 @@ export const commandHandler = async ({
       extraErrorMessage:
         'You can only pass descriptors that match the same native application and version',
     },
-  })
+  });
 
   if (!sourceDeploymentName) {
     sourceDeploymentName = await askUserForCodePushDeploymentName(
       sourceDescriptor,
-      'Please select a source deployment environment'
-    )
+      'Please select a source deployment environment',
+    );
   }
 
   if (!targetDeploymentName) {
     targetDeploymentName = await askUserForCodePushDeploymentName(
       sourceDescriptor,
-      'Please select a target deployment environment'
-    )
+      'Please select a target deployment environment',
+    );
   }
 
   await performCodePushPromote(
@@ -247,9 +247,9 @@ export const commandHandler = async ({
       rollout,
       skipNativeDependenciesVersionAlignedCheck,
       targetBinaryVersion,
-    }
-  )
-  log.info(`Successfully promoted ${sourceDescriptor}`)
-}
+    },
+  );
+  log.info(`Successfully promoted ${sourceDescriptor}`);
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

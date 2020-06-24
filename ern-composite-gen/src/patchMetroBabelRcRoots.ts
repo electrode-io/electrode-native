@@ -1,6 +1,6 @@
-import fs from 'fs-extra'
-import path from 'path'
-import semver from 'semver'
+import fs from 'fs-extra';
+import path from 'path';
+import semver from 'semver';
 
 export async function patchMetroBabelRcRoots({
   babelRcRootsRe,
@@ -8,10 +8,10 @@ export async function patchMetroBabelRcRoots({
   metroVersion,
   rnVersion,
 }: {
-  babelRcRootsRe: RegExp[]
-  cwd: string
-  metroVersion: string
-  rnVersion: string
+  babelRcRootsRe: RegExp[];
+  cwd: string;
+  metroVersion: string;
+  rnVersion: string;
 }) {
   // If React Native version is greater or equal than 0.56.0
   // it is using Babel 7
@@ -27,41 +27,41 @@ export async function patchMetroBabelRcRoots({
   // This code will be kept even when a new version of metro supporting
   // this option will be released, to keep backward compatibility.
   // It will be deprecated at some point.
-  const cwdNodeModules = path.join(cwd, 'node_modules')
+  const cwdNodeModules = path.join(cwd, 'node_modules');
   if (semver.gte(rnVersion, '0.56.0') && babelRcRootsRe.length > 0) {
-    let pathToFileToPatch
+    let pathToFileToPatch;
     if (semver.lt(metroVersion, '0.51.0')) {
       // For versions of metro < 0.51.0, we are patching the reactNativeTransformer.js file
       // https://github.com/facebook/metro/blob/v0.50.0/packages/metro/src/reactNativeTransformer.js#L120
       pathToFileToPatch = path.join(
         cwdNodeModules,
-        'metro/src/reactNativeTransformer.js'
-      )
+        'metro/src/reactNativeTransformer.js',
+      );
     } else {
       // For versions of metro >= 0.51.0, we are patching the index.js file
       // https://github.com/facebook/metro/blob/v0.51.0/packages/metro-react-native-babel-transformer/src/index.js#L120
       const pathInCommunityCli = path.join(
         cwdNodeModules,
-        '@react-native-community/cli/node_modules/metro-react-native-babel-transformer/src/index.js'
-      )
+        '@react-native-community/cli/node_modules/metro-react-native-babel-transformer/src/index.js',
+      );
       if (await fs.pathExists(pathInCommunityCli)) {
-        pathToFileToPatch = pathInCommunityCli
+        pathToFileToPatch = pathInCommunityCli;
       } else {
         pathToFileToPatch = path.join(
           cwdNodeModules,
-          'metro-react-native-babel-transformer/src/index.js'
-        )
+          'metro-react-native-babel-transformer/src/index.js',
+        );
       }
     }
 
-    const fileToPatch = await fs.readFile(pathToFileToPatch)
-    const lineToPatch = `let config = Object.assign({}, babelRC, extraConfig);`
+    const fileToPatch = await fs.readFile(pathToFileToPatch);
+    const lineToPatch = `let config = Object.assign({}, babelRC, extraConfig);`;
     // Just add extra code line to inject babelrcRoots option
 
     const patch = `extraConfig.babelrcRoots = [
-${babelRcRootsRe.map(b => b.toString()).join(',')} ]
-${lineToPatch}`
-    const patchedFile = fileToPatch.toString().replace(lineToPatch, patch)
-    await fs.writeFile(pathToFileToPatch, patchedFile)
+${babelRcRootsRe.map((b) => b.toString()).join(',')} ]
+${lineToPatch}`;
+    const patchedFile = fileToPatch.toString().replace(lineToPatch, patch);
+    await fs.writeFile(pathToFileToPatch, patchedFile);
   }
 }

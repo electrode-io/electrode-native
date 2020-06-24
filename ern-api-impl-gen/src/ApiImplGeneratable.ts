@@ -1,13 +1,13 @@
-import { PackagePath } from 'ern-core'
+import { PackagePath } from 'ern-core';
 
 export interface ApiImplGeneratable {
-  readonly name: string
+  readonly name: string;
   generate(
     apiDependency: PackagePath,
     paths: any,
     reactNativeVersion: string,
     plugins: PackagePath[],
     apis: PackagePath[],
-    regen: boolean
-  ): any
+    regen: boolean,
+  ): any;
 }

@@ -5,53 +5,53 @@ import {
   readPackageJsonSync,
   writePackageJsonSync,
   yarn,
-} from 'ern-core'
-import { ApiGenUtils } from 'ern-api-gen'
-import _ from 'lodash'
-import chalk from 'chalk'
-import path from 'path'
-import ApiImplAndroidGenerator from './android/ApiImplAndroidGenerator'
-import ApiImplIosGenerator from './ios/ApiImplIosGenerator'
-import ApiImplJsGenerator from './js/ApiImplJsGenerator'
-import NullApiImplGenerator from './NullApiImplGenerator'
-import { ApiImplGeneratable } from '../ApiImplGeneratable'
+} from 'ern-core';
+import { ApiGenUtils } from 'ern-api-gen';
+import _ from 'lodash';
+import chalk from 'chalk';
+import path from 'path';
+import ApiImplAndroidGenerator from './android/ApiImplAndroidGenerator';
+import ApiImplIosGenerator from './ios/ApiImplIosGenerator';
+import ApiImplJsGenerator from './js/ApiImplJsGenerator';
+import NullApiImplGenerator from './NullApiImplGenerator';
+import { ApiImplGeneratable } from '../ApiImplGeneratable';
 
 export default class ApiImplGen {
   public async generateApiImplementation(
     apiPackagePath: PackagePath,
     paths: {
-      apiImplHull: string
-      outDirectory: string
+      apiImplHull: string;
+      outDirectory: string;
     },
     reactNativeVersion: string,
     platforms: string[],
-    regen: boolean = false
+    regen: boolean = false,
   ) {
     log.debug(
-      `Inside generateApiImplementation for api:${apiPackagePath.toString()},  platforms:${platforms.toString()}`
-    )
+      `Inside generateApiImplementation for api:${apiPackagePath.toString()},  platforms:${platforms.toString()}`,
+    );
 
     const schemaJson = path.join(
       paths.outDirectory,
       'node_modules',
       apiPackagePath.name!,
-      'schema.json'
-    )
+      'schema.json',
+    );
 
     const apis: any[] = await ApiGenUtils.extractApiEventsAndRequests(
-      schemaJson
-    )
+      schemaJson,
+    );
 
-    this.updatePackageJsonWithApiNames(paths.outDirectory, apis)
+    this.updatePackageJsonWithApiNames(paths.outDirectory, apis);
 
     const reactNativeElectrodeBridge: any = await readPackageJson(
       path.join(
         paths.outDirectory,
-        'node_modules/react-native-electrode-bridge'
-      )
-    )
+        'node_modules/react-native-electrode-bridge',
+      ),
+    );
 
-    const generators: ApiImplGeneratable[] = this.getGenerators(platforms)
+    const generators: ApiImplGeneratable[] = this.getGenerators(platforms);
     for (const generator of generators) {
       try {
         if (generator) {
@@ -63,83 +63,85 @@ export default class ApiImplGen {
               apiPackagePath,
               PackagePath.fromString(`react-native@${reactNativeVersion}`),
               PackagePath.fromString(
-                `react-native-electrode-bridge@${reactNativeElectrodeBridge.version}`
+                `react-native-electrode-bridge@${reactNativeElectrodeBridge.version}`,
               ),
             ],
             apis,
-            regen
-          )
+            regen,
+          );
         }
       } catch (e) {
-        throw new Error(`API implementation project generation failed: ${e}`)
+        throw new Error(`API implementation project generation failed: ${e}`);
       }
     }
 
     log.info(
       chalk.green(
-        `API implementation project was successfully generated in ${paths.outDirectory}`
-      )
-    )
+        `API implementation project was successfully generated in ${paths.outDirectory}`,
+      ),
+    );
   }
 
   public async getDependencies(
-    apiPackagePath: PackagePath
+    apiPackagePath: PackagePath,
   ): Promise<PackagePath[]> {
     try {
-      log.info('Looking for peerDependencies')
-      const { dependencies, peerDependencies } = await yarn.info(apiPackagePath)
+      log.info('Looking for peerDependencies');
+      const { dependencies, peerDependencies } = await yarn.info(
+        apiPackagePath,
+      );
 
-      const pluginsNames: string[] = []
+      const pluginsNames: string[] = [];
 
       if (peerDependencies) {
-        this.pushDependencyNames(peerDependencies, pluginsNames)
+        this.pushDependencyNames(peerDependencies, pluginsNames);
       }
 
       if (dependencies) {
-        this.pushDependencyNames(dependencies, pluginsNames)
+        this.pushDependencyNames(dependencies, pluginsNames);
       }
 
       if (pluginsNames.length === 0) {
-        log.info(`no other dependencies found for ${apiPackagePath.name}`)
+        log.info(`no other dependencies found for ${apiPackagePath.name}`);
       }
 
-      return _.map(pluginsNames, PackagePath.fromString)
+      return _.map(pluginsNames, PackagePath.fromString);
     } catch (e) {
-      throw new Error(`getDependencies: ${e}`)
+      throw new Error(`getDependencies: ${e}`);
     }
   }
 
   public pushDependencyNames(
     dependencies: any,
-    pluginsNames: string[]
+    pluginsNames: string[],
   ): string[] {
     for (const dependency of Object.keys(dependencies)) {
-      pluginsNames.push(`${dependency}@${dependencies[dependency]}`)
+      pluginsNames.push(`${dependency}@${dependencies[dependency]}`);
     }
-    return pluginsNames
+    return pluginsNames;
   }
 
   public getGenerators(platforms: string[]): ApiImplGeneratable[] {
     return _.map(platforms, (platform: string) => {
       switch (platform) {
         case 'android':
-          return new ApiImplAndroidGenerator()
+          return new ApiImplAndroidGenerator();
         case 'ios':
-          return new ApiImplIosGenerator()
+          return new ApiImplIosGenerator();
         case 'js':
-          return new ApiImplJsGenerator()
+          return new ApiImplJsGenerator();
         default:
-          return new NullApiImplGenerator()
+          return new NullApiImplGenerator();
       }
-    })
+    });
   }
 
   public updatePackageJsonWithApiNames(
     outputDirectoryPath: string,
-    apis: any[]
+    apis: any[],
   ) {
-    const packageJson = readPackageJsonSync(outputDirectoryPath)
-    packageJson.ern.containerGen.apiNames = _.map(apis, api => api.apiName)
-    writePackageJsonSync(outputDirectoryPath, packageJson)
+    const packageJson = readPackageJsonSync(outputDirectoryPath);
+    packageJson.ern.containerGen.apiNames = _.map(apis, (api) => api.apiName);
+    writePackageJsonSync(outputDirectoryPath, packageJson);
   }
 }

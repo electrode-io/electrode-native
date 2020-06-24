@@ -7,15 +7,15 @@ import {
   PackagePath,
   Platform,
   SourceMapStoreSdk,
-} from 'ern-core'
-import { getActiveCauldron } from 'ern-cauldron-api'
-import { runCauldronContainerGen } from './container'
-import { runContainerPipelineForDescriptor } from './runContainerPipelineForDescriptor'
-import * as constants from './constants'
-import path from 'path'
-import semver from 'semver'
-import { runCauldronCompositeGen } from './composite'
-import fs from 'fs-extra'
+} from 'ern-core';
+import { getActiveCauldron } from 'ern-cauldron-api';
+import { runCauldronContainerGen } from './container';
+import { runContainerPipelineForDescriptor } from './runContainerPipelineForDescriptor';
+import * as constants from './constants';
+import path from 'path';
+import semver from 'semver';
+import { runCauldronCompositeGen } from './composite';
+import fs from 'fs-extra';
 
 export async function syncCauldronContainer(
   stateUpdateFunc: () => Promise<any>,
@@ -26,87 +26,87 @@ export async function syncCauldronContainer(
     resetCache,
     sourceMapOutput,
   }: {
-    containerVersion?: string
-    resetCache?: boolean
-    sourceMapOutput?: string
-  } = {}
+    containerVersion?: string;
+    resetCache?: boolean;
+    sourceMapOutput?: string;
+  } = {},
 ) {
   if (!descriptor.platform) {
-    throw new Error(`${descriptor} does not specify a platform`)
+    throw new Error(`${descriptor} does not specify a platform`);
   }
 
-  const platform = descriptor.platform
-  const outDir = Platform.getContainerGenOutDirectory(platform)
-  let cauldronContainerNewVersion
-  let cauldron
+  const platform = descriptor.platform;
+  const outDir = Platform.getContainerGenOutDirectory(platform);
+  let cauldronContainerNewVersion;
+  let cauldron;
 
   try {
-    cauldron = await getActiveCauldron()
+    cauldron = await getActiveCauldron();
 
     // ================================================================
     // Set new Container version
     // ================================================================
     if (containerVersion) {
-      cauldronContainerNewVersion = containerVersion
+      cauldronContainerNewVersion = containerVersion;
     } else {
       const detachContainerVersionFromRoot = await cauldron.getConfigForKey(
         'detachContainerVersionFromRoot',
-        descriptor
-      )
+        descriptor,
+      );
       cauldronContainerNewVersion = detachContainerVersionFromRoot
         ? await cauldron.getContainerVersion(descriptor)
-        : await cauldron.getTopLevelContainerVersion(descriptor)
+        : await cauldron.getTopLevelContainerVersion(descriptor);
       if (cauldronContainerNewVersion) {
         if (!semver.valid(cauldronContainerNewVersion)) {
           throw new Error(`${cauldronContainerNewVersion} is not a semver compliant version and therefore cannot be auto patch incremented.
-Please set the new container version through command options.`)
+Please set the new container version through command options.`);
         }
         cauldronContainerNewVersion = semver.inc(
           cauldronContainerNewVersion,
-          'patch'
-        )
+          'patch',
+        );
       } else {
         // Default to 1.0.0 for Container version
-        cauldronContainerNewVersion = '1.0.0'
+        cauldronContainerNewVersion = '1.0.0';
       }
     }
 
     // Begin a Cauldron transaction
-    await cauldron.beginTransaction()
+    await cauldron.beginTransaction();
 
     // Trigger state change in Cauldron
-    await stateUpdateFunc()
+    await stateUpdateFunc();
 
     // ================================================================
     // Generate Composite from Cauldron
     // ================================================================
     const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
-      descriptor
-    )
+      descriptor,
+    );
     const baseComposite =
       compositeGenConfig?.baseComposite &&
-      PackagePath.fromString(compositeGenConfig.baseComposite)
+      PackagePath.fromString(compositeGenConfig.baseComposite);
 
-    const compositeDir = createTmpDir()
+    const compositeDir = createTmpDir();
 
     const composite = await kax.task('Generating Composite from Cauldron').run(
       runCauldronCompositeGen(descriptor, {
         baseComposite,
         outDir: compositeDir,
-      })
-    )
+      }),
+    );
 
     // Sync native dependencies in Cauldron
     const compositeNativeDeps = await composite.getInjectableNativeDependencies(
-      platform
-    )
+      platform,
+    );
     await cauldron.setNativeDependenciesInContainer(
       descriptor,
-      compositeNativeDeps
-    )
+      compositeNativeDeps,
+    );
 
     // Generate Container from Cauldron
-    sourceMapOutput = sourceMapOutput ?? path.join(createTmpDir(), 'index.map')
+    sourceMapOutput = sourceMapOutput ?? path.join(createTmpDir(), 'index.map');
     const containerGenRes = await kax
       .task('Generating Container from Cauldron')
       .run(
@@ -114,28 +114,28 @@ Please set the new container version through command options.`)
           outDir,
           resetCache,
           sourceMapOutput,
-        })
-      )
+        }),
+      );
 
     // Update container version in Cauldron
     await cauldron.updateContainerVersion(
       descriptor,
-      cauldronContainerNewVersion!
-    )
+      cauldronContainerNewVersion!,
+    );
 
     // Update version of ern used to generate this Container
     await cauldron.updateContainerErnVersion(
       descriptor,
-      Platform.currentVersion
-    )
+      Platform.currentVersion,
+    );
 
     // Update yarn lock and run Container transformers sequentially
-    const pathToNewYarnLock = path.join(compositeDir, 'yarn.lock')
+    const pathToNewYarnLock = path.join(compositeDir, 'yarn.lock');
     await cauldron.addOrUpdateYarnLock(
       descriptor,
       constants.CONTAINER_YARN_KEY,
-      pathToNewYarnLock
-    )
+      pathToNewYarnLock,
+    );
 
     // Run container pipeline (transformers/publishers)
     await kax.task('Running Container Pipeline').run(
@@ -143,42 +143,42 @@ Please set the new container version through command options.`)
         containerPath: outDir,
         containerVersion: cauldronContainerNewVersion!,
         descriptor,
-      })
-    )
+      }),
+    );
 
     // Upload source map if a source map store server is configured
-    const sourcemapStoreConfig = await cauldron.getSourceMapStoreConfig()
+    const sourcemapStoreConfig = await cauldron.getSourceMapStoreConfig();
     if (sourcemapStoreConfig) {
       try {
-        const sdk = new SourceMapStoreSdk(sourcemapStoreConfig.url)
+        const sdk = new SourceMapStoreSdk(sourcemapStoreConfig.url);
         await kax
           .task(
-            `Uploading source map to source map store [${sourcemapStoreConfig.url}]`
+            `Uploading source map to source map store [${sourcemapStoreConfig.url}]`,
           )
           .run(
             sdk.uploadContainerSourceMap({
               containerVersion: cauldronContainerNewVersion!,
               descriptor,
               sourceMapPath: sourceMapOutput,
-            })
-          )
+            }),
+          );
       } catch (e) {
-        log.error(`Source map upload failed : ${e}`)
+        log.error(`Source map upload failed : ${e}`);
       }
     }
 
     // Upload source map to bugsnag if configured
-    const bugsnagConfig = await cauldron.getBugsnagConfig(descriptor)
+    const bugsnagConfig = await cauldron.getBugsnagConfig(descriptor);
     if (bugsnagConfig) {
       try {
-        const { apiKey } = bugsnagConfig
+        const { apiKey } = bugsnagConfig;
         const [minifiedFile, minifiedUrl, projectRoot, sourceMap] = [
           await fs.realpath(containerGenRes.bundlingResult.bundlePath),
           path.basename(containerGenRes.bundlingResult.bundlePath),
           await fs.realpath(path.join(composite.path, 'node_modules')),
           await fs.realpath(containerGenRes.bundlingResult.sourceMapPath!),
-        ]
-        const compositeMiniApps = await composite.getMiniAppsPackages()
+        ];
+        const compositeMiniApps = await composite.getMiniAppsPackages();
         await bugsnagUpload({
           apiKey,
           minifiedFile,
@@ -187,25 +187,25 @@ Please set the new container version through command options.`)
           sourceMap,
           uploadNodeModules: false,
           uploadSources: false,
-        })
+        });
       } catch (e) {
-        log.error(`Bugsnag upload failed : ${e}`)
+        log.error(`Bugsnag upload failed : ${e}`);
       }
     }
 
     // Commit Cauldron transaction
     await kax
       .task('Updating Cauldron')
-      .run(cauldron.commitTransaction(commitMessage))
+      .run(cauldron.commitTransaction(commitMessage));
 
     log.info(
-      `Added new container version ${cauldronContainerNewVersion} for ${descriptor} in Cauldron`
-    )
+      `Added new container version ${cauldronContainerNewVersion} for ${descriptor} in Cauldron`,
+    );
   } catch (e) {
-    log.error(`[syncCauldronContainer] An error occurred: ${e}`)
+    log.error(`[syncCauldronContainer] An error occurred: ${e}`);
     if (cauldron) {
-      cauldron.discardTransaction()
+      cauldron.discardTransaction();
     }
-    throw e
+    throw e;
   }
 }

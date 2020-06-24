@@ -1,112 +1,112 @@
-import { FakeHashSet } from './FakeHashSet'
+import { FakeHashSet } from './FakeHashSet';
 
 export class FakeHashMap {
   public static toEntry(key) {
-    const self = this
+    const self = this;
     return {
       getValue() {
-        return self[key]
+        return self[key];
       },
       getKey() {
-        return key
+        return key;
       },
-    }
+    };
   }
 
-  public value = {}
+  public value = {};
 
   constructor(...args) {
     for (const [k, v] of args) {
-      this.value[k] = v
+      this.value[k] = v;
     }
   }
 
   public [Symbol.iterator]() {
-    const { value } = this
-    const it = Object.keys(value)[Symbol.iterator]()
+    const { value } = this;
+    const it = Object.keys(value)[Symbol.iterator]();
     return {
       next() {
-        const n: any = it.next()
+        const n: any = it.next();
         if (!n.done) {
-          n.value = [n.value, value[n.value]]
+          n.value = [n.value, value[n.value]];
         }
-        return n
+        return n;
       },
-    }
+    };
   }
 
   public put(key, value) {
-    return (this.value[key] = value)
+    return (this.value[key] = value);
   }
 
   public putAll(all) {
     if (Symbol.iterator in all) {
       for (const [key, value] of all) {
-        this.value[key] = value
+        this.value[key] = value;
       }
     } else {
       for (const key of Object.keys(all)) {
-        this.value[key] = all[key]
+        this.value[key] = all[key];
       }
     }
   }
 
   public entrySet() {
     return new FakeHashSet(
-      ...Object.keys(this.value).map(FakeHashMap.toEntry, this.value)
-    )
+      ...Object.keys(this.value).map(FakeHashMap.toEntry, this.value),
+    );
   }
 
   public keySet() {
-    return new FakeHashSet(...Object.keys(this.value))
+    return new FakeHashSet(...Object.keys(this.value));
   }
 
   public isEmpty() {
-    return this.size === 0
+    return this.size === 0;
   }
 
   public remove(key) {
-    return delete this.value[key]
+    return delete this.value[key];
   }
 
   public clear() {
-    this.value = {}
+    this.value = {};
   }
 
   public values() {
-    const values: any = []
+    const values: any = [];
     for (const [k, v] of this) {
-      values.push(v)
+      values.push(v);
     }
-    return values
+    return values;
   }
 
   public containsValue(value) {
     for (const key of Object.keys(this.value)) {
       if (this.value[key] === value) {
-        return true
+        return true;
       }
     }
-    return false
+    return false;
   }
 
   public containsKey(value) {
-    return value in this.value
+    return value in this.value;
   }
 
   public get(key) {
-    return this.value[key]
+    return this.value[key];
   }
 
   public get size() {
-    return Object.keys(this.value).length
+    return Object.keys(this.value).length;
   }
 
   public toJSON() {
-    return this.value
+    return this.value;
   }
 }
 
 export default function newHashMap(...args) {
-  return new FakeHashMap(...args)
+  return new FakeHashMap(...args);
 }

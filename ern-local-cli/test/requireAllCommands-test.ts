@@ -1,5 +1,5 @@
-import readDir from 'fs-readdir-recursive'
-import path from 'path'
+import readDir from 'fs-readdir-recursive';
+import path from 'path';
 
 //
 // Require all commands for these source files to be
@@ -8,8 +8,8 @@ import path from 'path'
 // address an identified issue in nyc, not properly reporting
 // combined UT/ST coverage for these files if they don't get
 // loaded from UTs (and thus have 0% coverage from UT)
-const commandsDir = path.resolve(__dirname, '../src/commands')
+const commandsDir = path.resolve(__dirname, '../src/commands');
 readDir(commandsDir)
-  .filter(f => path.extname(f) === '.ts')
-  .map(f => path.join(commandsDir, f))
-  .forEach(f => require(f))
+  .filter((f) => path.extname(f) === '.ts')
+  .map((f) => path.join(commandsDir, f))
+  .forEach((f) => require(f));

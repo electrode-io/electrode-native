@@ -1,10 +1,10 @@
-import { ContainerPublisherConfig } from './types'
-import getPublisher from './getPublisher'
-import { createTmpDir, Platform, shell } from 'ern-core'
-import path from 'path'
+import { ContainerPublisherConfig } from './types';
+import getPublisher from './getPublisher';
+import { createTmpDir, Platform, shell } from 'ern-core';
+import path from 'path';
 
 export default async function publishContainer(conf: ContainerPublisherConfig) {
-  let publicationWorkingDir = conf.containerPath
+  let publicationWorkingDir = conf.containerPath;
   if (!conf.inPlace) {
     // Duplicate the directory containing generated Container to a temporary
     // directory, and pass this temporary directory to the publisher.
@@ -16,23 +16,23 @@ export default async function publishContainer(conf: ContainerPublisherConfig) {
     // Otherwise, if publication changes were made to the original Container
     // path, it would be much harder to use a different publisher for the
     // same Container.
-    publicationWorkingDir = createTmpDir()
+    publicationWorkingDir = createTmpDir();
     shell.cp(
       '-Rf',
       path.join(conf.containerPath, '{.*,*}'),
-      publicationWorkingDir
-    )
+      publicationWorkingDir,
+    );
   }
 
-  conf.containerPath = publicationWorkingDir
-  conf.ernVersion = Platform.currentVersion
+  conf.containerPath = publicationWorkingDir;
+  conf.ernVersion = Platform.currentVersion;
 
-  const publisher = await getPublisher(conf.publisher)
+  const publisher = await getPublisher(conf.publisher);
 
   if (!publisher.platforms.includes(conf.platform)) {
     throw new Error(
-      `The ${publisher.name} publisher does not support publication of ${conf.platform} Containers`
-    )
+      `The ${publisher.name} publisher does not support publication of ${conf.platform} Containers`,
+    );
   }
-  return publisher.publish(conf)
+  return publisher.publish(conf);
 }

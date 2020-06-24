@@ -1,16 +1,16 @@
-import { AppVersionDescriptor, log, MiniApp, PackagePath } from 'ern-core'
-import { checkCompatibilityWithNativeApp } from 'ern-orchestrator'
+import { AppVersionDescriptor, log, MiniApp, PackagePath } from 'ern-core';
+import { checkCompatibilityWithNativeApp } from 'ern-orchestrator';
 import {
   askUserToChooseANapDescriptorFromCauldron,
   epilog,
   tryCatchWrap,
-} from '../lib'
+} from '../lib';
 
-import { Argv } from 'yargs'
+import { Argv } from 'yargs';
 
-export const command = 'compat-check [miniapp]'
+export const command = 'compat-check [miniapp]';
 export const desc =
-  'Run compatibility checks for one or more MiniApp(s) against a target native application version'
+  'Run compatibility checks for one or more MiniApp(s) against a target native application version';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -19,7 +19,7 @@ export const builder = (argv: Argv) => {
       describe:
         'Full native application selector (target native application version for the push)',
     })
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .coerce('miniapp', PackagePath.fromString)
     .option('miniapps', {
       alias: 'm',
@@ -27,37 +27,38 @@ export const builder = (argv: Argv) => {
       type: 'array',
     })
 
-    .coerce('miniapps', d => d.map(PackagePath.fromString))
-    .epilog(epilog(exports))
-}
+    .coerce('miniapps', (d) => d.map(PackagePath.fromString))
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   descriptor,
   miniapp,
   miniapps = [],
 }: {
-  descriptor?: AppVersionDescriptor
-  miniapp?: PackagePath
-  miniapps: PackagePath[]
+  descriptor?: AppVersionDescriptor;
+  miniapp?: PackagePath;
+  miniapps: PackagePath[];
 }) => {
   if (!miniapp && miniapps.length === 0) {
-    miniapps.push(MiniApp.fromCurrentPath().packagePath)
+    miniapps.push(MiniApp.fromCurrentPath().packagePath);
   } else if (miniapp && miniapps.length === 0) {
-    miniapps.push(miniapp)
+    miniapps.push(miniapp);
   }
 
-  descriptor = descriptor || (await askUserToChooseANapDescriptorFromCauldron())
+  descriptor =
+    descriptor || (await askUserToChooseANapDescriptorFromCauldron());
 
   for (const miniappPkgPath of miniapps) {
-    const miniAppPackage = await MiniApp.fromPackagePath(miniappPkgPath)
-    log.info(`=> ${miniAppPackage.name}`)
+    const miniAppPackage = await MiniApp.fromPackagePath(miniappPkgPath);
+    log.info(`=> ${miniAppPackage.name}`);
     await checkCompatibilityWithNativeApp(
       miniAppPackage,
       descriptor.name,
       descriptor.platform || undefined,
-      descriptor.version || undefined
-    )
+      descriptor.version || undefined,
+    );
   }
-}
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

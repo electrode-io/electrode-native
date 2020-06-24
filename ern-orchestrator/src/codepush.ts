@@ -11,15 +11,15 @@ import {
   PackagePath,
   reactnative,
   SourceMapStoreSdk,
-} from 'ern-core'
-import { GeneratedComposite } from 'ern-composite-gen'
-import { getActiveCauldron } from 'ern-cauldron-api'
-import * as compatibility from './compatibility'
-import _ from 'lodash'
-import path from 'path'
-import shell from 'shelljs'
-import fs from 'fs-extra'
-import semver from 'semver'
+} from 'ern-core';
+import { GeneratedComposite } from 'ern-composite-gen';
+import { getActiveCauldron } from 'ern-cauldron-api';
+import * as compatibility from './compatibility';
+import _ from 'lodash';
+import path from 'path';
+import shell from 'shelljs';
+import fs from 'fs-extra';
+import semver from 'semver';
 
 export async function performCodePushPatch(
   napDescriptor: AppVersionDescriptor,
@@ -31,26 +31,26 @@ export async function performCodePushPatch(
     isMandatory,
     rollout,
   }: {
-    description?: string
-    isDisabled?: boolean
-    isMandatory?: boolean
-    rollout?: number
-  } = {}
+    description?: string;
+    isDisabled?: boolean;
+    isMandatory?: boolean;
+    rollout?: number;
+  } = {},
 ) {
-  let cauldron
+  let cauldron;
   try {
-    cauldron = await getActiveCauldron()
-    await cauldron.beginTransaction()
-    const appName = await getCodePushAppName(napDescriptor)
-    const codePushSdk = getCodePushSdk()
-    description = description || ''
+    cauldron = await getActiveCauldron();
+    await cauldron.beginTransaction();
+    const appName = await getCodePushAppName(napDescriptor);
+    const codePushSdk = getCodePushSdk();
+    description = description || '';
     await codePushSdk.patch(appName, deploymentName, {
       description,
       isDisabled,
       isMandatory,
       label,
       rollout,
-    })
+    });
     await cauldron.updateCodePushEntry(napDescriptor, {
       deploymentName,
       description,
@@ -58,16 +58,16 @@ export async function performCodePushPatch(
       isMandatory,
       label,
       rollout,
-    })
+    });
     await cauldron.commitTransaction(
-      `CodePush patched ${napDescriptor.toString()} ${deploymentName} ${label}`
-    )
+      `CodePush patched ${napDescriptor.toString()} ${deploymentName} ${label}`,
+    );
   } catch (e) {
     if (cauldron) {
-      await cauldron.discardTransaction()
+      await cauldron.discardTransaction();
     }
-    log.error(`[performCodePushPatch] ${e}`)
-    throw e
+    log.error(`[performCodePushPatch] ${e}`);
+    throw e;
   }
 }
 
@@ -87,55 +87,56 @@ export async function performCodePushPromote(
     skipNativeDependenciesVersionAlignedCheck = false,
     targetBinaryVersion,
   }: {
-    description?: string
-    disableDuplicateReleaseError?: boolean
-    force?: boolean
-    label?: string
-    mandatory?: boolean
-    reuseReleaseBinaryVersion?: boolean
-    rollout?: number
-    skipNativeDependenciesVersionAlignedCheck?: boolean
-    targetBinaryVersion?: string
-  } = {}
+    description?: string;
+    disableDuplicateReleaseError?: boolean;
+    force?: boolean;
+    label?: string;
+    mandatory?: boolean;
+    reuseReleaseBinaryVersion?: boolean;
+    rollout?: number;
+    skipNativeDependenciesVersionAlignedCheck?: boolean;
+    targetBinaryVersion?: string;
+  } = {},
 ) {
-  let cauldron
+  let cauldron;
   try {
     if (reuseReleaseBinaryVersion && targetBinaryVersion) {
       throw new Error(
-        `sameBinaryVersionAsRelease and targetBinaryVersion options are mutually exclusive`
-      )
+        `sameBinaryVersionAsRelease and targetBinaryVersion options are mutually exclusive`,
+      );
     }
 
-    const codePushSdk = getCodePushSdk()
-    cauldron = await getActiveCauldron()
-    await cauldron.beginTransaction()
+    const codePushSdk = getCodePushSdk();
+    cauldron = await getActiveCauldron();
+    await cauldron.beginTransaction();
     const cauldronCommitMessage = [
       `CodePush release promotion of ${sourceNapDescriptor.toString()} ${sourceDeploymentName} to ${targetDeploymentName} of`,
-    ]
+    ];
 
     for (const targetNapDescriptor of targetNapDescriptors) {
       if (!targetNapDescriptor.version) {
-        throw new Error(`Missing version in ${targetNapDescriptor.toString()}`)
+        throw new Error(`Missing version in ${targetNapDescriptor.toString()}`);
       }
 
       const codePushEntrySource = await cauldron.getCodePushEntry(
         sourceNapDescriptor,
         sourceDeploymentName,
-        { label }
-      )
+        { label },
+      );
       if (!codePushEntrySource) {
         throw new Error(
-          `No CodePush entry found in Cauldron matching [desc: ${sourceNapDescriptor} dep: ${sourceDeploymentName} label: ${label ||
-            'latest'}`
-        )
+          `No CodePush entry found in Cauldron matching [desc: ${sourceNapDescriptor} dep: ${sourceDeploymentName} label: ${
+            label || 'latest'
+          }`,
+        );
       }
 
-      const miniApps = _.map(codePushEntrySource.miniapps, miniapp =>
-        PackagePath.fromString(miniapp)
-      )
-      const jsApiImpls = _.map(codePushEntrySource.jsApiImpls, jsapiimpl =>
-        PackagePath.fromString(jsapiimpl)
-      )
+      const miniApps = _.map(codePushEntrySource.miniapps, (miniapp) =>
+        PackagePath.fromString(miniapp),
+      );
+      const jsApiImpls = _.map(codePushEntrySource.jsApiImpls, (jsapiimpl) =>
+        PackagePath.fromString(jsapiimpl),
+      );
 
       // If sourceNapDescriptor.version === targetNapDescriptor.version skip the compatibility check
       // As the compatibility check would have already happened as part of the code-push release
@@ -149,31 +150,31 @@ export async function performCodePushPromote(
       ) {
         const nativeDependenciesVersionAligned = await compatibility.areCompatible(
           miniApps,
-          targetNapDescriptor
-        )
+          targetNapDescriptor,
+        );
 
         if (!nativeDependenciesVersionAligned && force) {
           log.warn(
-            'Native dependencies versions are not aligned but ignoring due to the use of force flag'
-          )
+            'Native dependencies versions are not aligned but ignoring due to the use of force flag',
+          );
         } else if (!nativeDependenciesVersionAligned && !force) {
           throw new Error(
-            'Native dependencies versions of MiniApps are not aligned. Relaunch the operation with the force flag if you wish to ignore.'
-          )
+            'Native dependencies versions of MiniApps are not aligned. Relaunch the operation with the force flag if you wish to ignore.',
+          );
         }
       }
 
-      const appName = await getCodePushAppName(sourceNapDescriptor)
+      const appName = await getCodePushAppName(sourceNapDescriptor);
       targetBinaryVersion = targetBinaryVersion
         ? targetBinaryVersion
         : reuseReleaseBinaryVersion
         ? codePushEntrySource.metadata.appVersion
         : await buildCodePushTargetBinaryVersion(
             targetNapDescriptor,
-            targetDeploymentName
-          )
+            targetDeploymentName,
+          );
 
-      description = description || ''
+      description = description || '';
       const codePushResponse: CodePushPackage | void = await kax
         .task(`Promoting release to ${targetBinaryVersion}`)
         .run(
@@ -188,27 +189,27 @@ export async function performCodePushPromote(
               label,
               rollout,
             },
-            disableDuplicateReleaseError
-          )
-        )
+            disableDuplicateReleaseError,
+          ),
+        );
 
       if (codePushResponse) {
         const sourceYarnLockId = await cauldron.getYarnLockId(
           sourceNapDescriptor,
-          sourceDeploymentName
-        )
+          sourceDeploymentName,
+        );
         if (!sourceYarnLockId) {
           log.error(
-            `No yarn.lock was found in source deployment [${sourceDeploymentName} for ${sourceNapDescriptor.toString()}]`
-          )
-          log.error(`Skipping promotion to ${targetNapDescriptor.toString()}`)
-          continue
+            `No yarn.lock was found in source deployment [${sourceDeploymentName} for ${sourceNapDescriptor.toString()}]`,
+          );
+          log.error(`Skipping promotion to ${targetNapDescriptor.toString()}`);
+          continue;
         }
         await cauldron.updateYarnLockId(
           targetNapDescriptor,
           targetDeploymentName,
-          sourceYarnLockId
-        )
+          sourceYarnLockId,
+        );
 
         await cauldron.addCodePushEntry(
           targetNapDescriptor,
@@ -225,17 +226,17 @@ export async function performCodePushPromote(
             size: codePushResponse.size,
           },
           miniApps,
-          jsApiImpls || []
-        )
+          jsApiImpls || [],
+        );
 
         // Copy source map if a source map store server is configured
-        const sourcemapStoreConfig = await cauldron.getSourceMapStoreConfig()
+        const sourcemapStoreConfig = await cauldron.getSourceMapStoreConfig();
         if (sourcemapStoreConfig) {
           try {
-            const sdk = new SourceMapStoreSdk(sourcemapStoreConfig.url)
+            const sdk = new SourceMapStoreSdk(sourcemapStoreConfig.url);
             await kax
               .task(
-                `Copying source map in source map store [${sourcemapStoreConfig.url}]`
+                `Copying source map in source map store [${sourcemapStoreConfig.url}]`,
               )
               .run(
                 sdk.copyCodePushSourceMap({
@@ -245,25 +246,25 @@ export async function performCodePushPromote(
                   toDeploymentName: targetDeploymentName,
                   toLabel: codePushResponse.label!,
                   toVersion: targetNapDescriptor.version,
-                })
-              )
+                }),
+              );
           } catch (e) {
-            log.error(`Source map copy failed : ${e}`)
+            log.error(`Source map copy failed : ${e}`);
           }
         }
 
-        cauldronCommitMessage.push(`- ${targetNapDescriptor.toString()}`)
+        cauldronCommitMessage.push(`- ${targetNapDescriptor.toString()}`);
       }
       await kax
         .task('Updating Cauldron')
-        .run(cauldron.commitTransaction(cauldronCommitMessage))
+        .run(cauldron.commitTransaction(cauldronCommitMessage));
     }
   } catch (e) {
     if (cauldron) {
-      await cauldron.discardTransaction()
+      await cauldron.discardTransaction();
     }
-    log.error(`[performCodePushPromote] ${e}`)
-    throw e
+    log.error(`[performCodePushPromote] ${e}`);
+    throw e;
   }
 }
 
@@ -283,68 +284,68 @@ export async function performCodePushOtaUpdate(
     sourceMapOutput,
     targetBinaryVersion,
   }: {
-    baseComposite?: PackagePath
-    codePushIsMandatoryRelease?: boolean
-    codePushRolloutPercentage?: number
-    description?: string
-    disableDuplicateReleaseError?: boolean
-    force?: boolean
-    pathToYarnLock?: string
-    sourceMapOutput?: string
-    targetBinaryVersion?: string
-  } = {}
+    baseComposite?: PackagePath;
+    codePushIsMandatoryRelease?: boolean;
+    codePushRolloutPercentage?: number;
+    description?: string;
+    disableDuplicateReleaseError?: boolean;
+    force?: boolean;
+    pathToYarnLock?: string;
+    sourceMapOutput?: string;
+    targetBinaryVersion?: string;
+  } = {},
 ) {
-  let cauldron
+  let cauldron;
   try {
-    const codePushSdk = getCodePushSdk()
-    cauldron = await getActiveCauldron()
-    const plugins = await cauldron.getNativeDependencies(napDescriptor)
+    const codePushSdk = getCodePushSdk();
+    cauldron = await getActiveCauldron();
+    const plugins = await cauldron.getNativeDependencies(napDescriptor);
     const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
-      napDescriptor
-    )
+      napDescriptor,
+    );
     baseComposite =
       baseComposite ??
       (compositeGenConfig?.baseComposite &&
-        PackagePath.fromString(compositeGenConfig.baseComposite))
-    await cauldron.beginTransaction()
+        PackagePath.fromString(compositeGenConfig.baseComposite));
+    await cauldron.beginTransaction();
     const codePushPlugin = _.find(
       plugins,
-      p => p.name === 'react-native-code-push'
-    )
+      (p) => p.name === 'react-native-code-push',
+    );
     if (!codePushPlugin) {
-      throw new Error('react-native-code-push plugin is not in native app !')
+      throw new Error('react-native-code-push plugin is not in native app !');
     }
 
-    const reactNative = _.find(plugins, p => p.name === 'react-native')
+    const reactNative = _.find(plugins, (p) => p.name === 'react-native');
     if (!codePushPlugin) {
-      throw new Error('react-native is not in native app !')
+      throw new Error('react-native is not in native app !');
     }
 
-    const tmpWorkingDir = createTmpDir()
+    const tmpWorkingDir = createTmpDir();
 
     const miniAppsNativeDependenciesVersionAligned = await compatibility.areCompatible(
       miniApps,
-      napDescriptor
-    )
+      napDescriptor,
+    );
 
     if (!miniAppsNativeDependenciesVersionAligned && force) {
       log.warn(
-        'Native dependencies versions of MiniApps are not aligned but ignoring due to the use of force flag'
-      )
+        'Native dependencies versions of MiniApps are not aligned but ignoring due to the use of force flag',
+      );
     } else if (!miniAppsNativeDependenciesVersionAligned && !force) {
       throw new Error(
-        'Native dependencies versions of MiniApps are not aligned. Relaunch the operation with the force flag if you wish to ignore.'
-      )
+        'Native dependencies versions of MiniApps are not aligned. Relaunch the operation with the force flag if you wish to ignore.',
+      );
     }
 
     const latestCodePushedMiniApps = await cauldron.getCodePushMiniApps(
       napDescriptor,
-      deploymentName
-    )
+      deploymentName,
+    );
     const latestCodePushedJsApiImpls = await cauldron.getCodePushJsApiImpls(
       napDescriptor,
-      deploymentName
-    )
+      deploymentName,
+    );
 
     // We need to include, in this CodePush bundle, all the MiniApps and JS API implementations that were part
     // of the previous CodePush. We will override versions of the MiniApps and JS API implementations with
@@ -354,51 +355,52 @@ export async function performCodePushOtaUpdate(
     // the bundle we will push will container MiniAppOne@2.0.0 and MiniAppTwo@1.0.0.
     // If this the first ever CodePush bundle for this specific native application version
     // then the reference miniapp versions are the one from the container.
-    let referenceMiniAppsToCodePush = latestCodePushedMiniApps
+    let referenceMiniAppsToCodePush = latestCodePushedMiniApps;
     if (
       !referenceMiniAppsToCodePush ||
       referenceMiniAppsToCodePush.length === 0
     ) {
       referenceMiniAppsToCodePush = await cauldron.getContainerMiniApps(
-        napDescriptor
-      )
+        napDescriptor,
+      );
     }
 
-    let referenceJsApiImplsToCodePush = latestCodePushedJsApiImpls
+    let referenceJsApiImplsToCodePush = latestCodePushedJsApiImpls;
     if (
       !referenceJsApiImplsToCodePush ||
       referenceJsApiImplsToCodePush.length === 0
     ) {
       referenceJsApiImplsToCodePush = await cauldron.getContainerJsApiImpls(
-        napDescriptor
-      )
+        napDescriptor,
+      );
     }
 
     const miniAppsToBeCodePushed = _.unionBy(
       miniApps,
       referenceMiniAppsToCodePush,
-      x => x.basePath
-    )
+      (x) => x.basePath,
+    );
 
     const jsApiImplsToBeCodePushed = _.unionBy(
       jsApiImpls,
       referenceJsApiImplsToCodePush,
-      x => x.basePath
-    )
+      (x) => x.basePath,
+    );
 
-    const pathsToMiniAppsToBeCodePushed = _.map(miniAppsToBeCodePushed, m =>
-      PackagePath.fromString(m.toString())
-    )
-    const pathToJsApiImplsToBeCodePushed = _.map(jsApiImplsToBeCodePushed, j =>
-      PackagePath.fromString(j.toString())
-    )
+    const pathsToMiniAppsToBeCodePushed = _.map(miniAppsToBeCodePushed, (m) =>
+      PackagePath.fromString(m.toString()),
+    );
+    const pathToJsApiImplsToBeCodePushed = _.map(
+      jsApiImplsToBeCodePushed,
+      (j) => PackagePath.fromString(j.toString()),
+    );
 
-    const codePushConfig = await cauldron.getCodePushConfig(napDescriptor)
+    const codePushConfig = await cauldron.getCodePushConfig(napDescriptor);
     if (codePushConfig && codePushConfig.bypassYarnLock) {
-      pathToYarnLock = undefined
+      pathToYarnLock = undefined;
       log.debug(
-        'Bypassing yarn.lock usage as bypassYarnLock flag is set in Cauldron config'
-      )
+        'Bypassing yarn.lock usage as bypassYarnLock flag is set in Cauldron config',
+      );
     }
 
     const composite = await kax.task('Generating composite module').run(
@@ -409,23 +411,23 @@ export async function performCodePushOtaUpdate(
         outDir: tmpWorkingDir,
         pathToYarnLock,
         resolutions: compositeGenConfig && compositeGenConfig.resolutions,
-      })
-    )
+      }),
+    );
 
-    const bundleOutputDirectory = path.join(tmpWorkingDir, 'bundleOut')
-    shell.mkdir('-p', bundleOutputDirectory)
-    const platform = napDescriptor.platform || ''
+    const bundleOutputDirectory = path.join(tmpWorkingDir, 'bundleOut');
+    shell.mkdir('-p', bundleOutputDirectory);
+    const platform = napDescriptor.platform || '';
     const bundleOutputPath =
       platform === 'android'
         ? path.join(bundleOutputDirectory, 'index.android.bundle')
-        : path.join(bundleOutputDirectory, 'MiniApp.jsbundle')
+        : path.join(bundleOutputDirectory, 'MiniApp.jsbundle');
 
-    sourceMapOutput = sourceMapOutput || path.join(createTmpDir(), 'index.map')
+    sourceMapOutput = sourceMapOutput || path.join(createTmpDir(), 'index.map');
     const entryFile = fs.existsSync(
-      path.join(tmpWorkingDir, `index.${platform}.js`)
+      path.join(tmpWorkingDir, `index.${platform}.js`),
     )
       ? `index.${platform}.js`
-      : 'index.js'
+      : 'index.js';
     const bundlingResult = await kax
       .task('Generating composite bundle for miniapps')
       .run(
@@ -438,19 +440,19 @@ export async function performCodePushOtaUpdate(
           resetCache: true,
           sourceMapOutput,
           workingDir: tmpWorkingDir,
-        })
-      )
+        }),
+      );
 
     if (platform === 'android') {
-      const conf = await cauldron.getContainerGeneratorConfig(napDescriptor)
-      const isHermesEnabled = conf?.androidConfig?.jsEngine === 'hermes'
+      const conf = await cauldron.getContainerGeneratorConfig(napDescriptor);
+      const isHermesEnabled = conf?.androidConfig?.jsEngine === 'hermes';
       if (isHermesEnabled) {
         const hermesVersion =
           conf.androidConfig.hermesVersion ??
-          android.getDefaultHermesVersion(reactNative?.version!)
+          android.getDefaultHermesVersion(reactNative?.version!);
         const hermesCli = await kax
           .task(`Installing hermes-engine@${hermesVersion}`)
-          .run(HermesCli.fromVersion(hermesVersion))
+          .run(HermesCli.fromVersion(hermesVersion));
         const res = await kax
           .task('Compiling JS bundle to Hermes bytecode')
           .run(
@@ -458,20 +460,20 @@ export async function performCodePushOtaUpdate(
               bundleSourceMapPath: sourceMapOutput,
               compositePath: tmpWorkingDir,
               jsBundlePath: bundleOutputPath,
-            })
-          )
-        bundlingResult.isHermesBundle = true
+            }),
+          );
+        bundlingResult.isHermesBundle = true;
       }
     }
 
-    const appName = await getCodePushAppName(napDescriptor)
+    const appName = await getCodePushAppName(napDescriptor);
 
     targetBinaryVersion =
       targetBinaryVersion ||
-      (await buildCodePushTargetBinaryVersion(napDescriptor, deploymentName))
+      (await buildCodePushTargetBinaryVersion(napDescriptor, deploymentName));
 
-    log.info(`Target Binary version : ${targetBinaryVersion}`)
-    description = description || ''
+    log.info(`Target Binary version : ${targetBinaryVersion}`);
+    description = description || '';
     const codePushResponse: CodePushPackage | void = await kax
       .task('Releasing bundle through CodePush')
       .run(
@@ -485,9 +487,9 @@ export async function performCodePushOtaUpdate(
             isMandatory: codePushIsMandatoryRelease,
             rollout: codePushRolloutPercentage,
           },
-          disableDuplicateReleaseError
-        )
-      )
+          disableDuplicateReleaseError,
+        ),
+      );
     if (codePushResponse) {
       await cauldron.addCodePushEntry(
         napDescriptor,
@@ -503,10 +505,10 @@ export async function performCodePushOtaUpdate(
           size: codePushResponse.size,
         },
         miniAppsToBeCodePushed,
-        jsApiImplsToBeCodePushed
-      )
+        jsApiImplsToBeCodePushed,
+      );
 
-      const pathToNewYarnLock = path.join(tmpWorkingDir, 'yarn.lock')
+      const pathToNewYarnLock = path.join(tmpWorkingDir, 'yarn.lock');
       if (await fs.pathExists(pathToNewYarnLock)) {
         await kax
           .task('Adding yarn.lock to Cauldron')
@@ -514,19 +516,19 @@ export async function performCodePushOtaUpdate(
             cauldron.addOrUpdateYarnLock(
               napDescriptor,
               deploymentName,
-              pathToNewYarnLock
-            )
-          )
+              pathToNewYarnLock,
+            ),
+          );
       }
 
       // Upload source map if a source map store server is configured
-      const sourcemapStoreConfig = await cauldron.getSourceMapStoreConfig()
+      const sourcemapStoreConfig = await cauldron.getSourceMapStoreConfig();
       if (sourcemapStoreConfig) {
         try {
-          const sdk = new SourceMapStoreSdk(sourcemapStoreConfig.url)
+          const sdk = new SourceMapStoreSdk(sourcemapStoreConfig.url);
           await kax
             .task(
-              `Uploading source map to source map store [${sourcemapStoreConfig.url}]`
+              `Uploading source map to source map store [${sourcemapStoreConfig.url}]`,
             )
             .run(
               sdk.uploadCodePushSourceMap({
@@ -534,25 +536,25 @@ export async function performCodePushOtaUpdate(
                 descriptor: napDescriptor,
                 label: codePushResponse.label!,
                 sourceMapPath: sourceMapOutput,
-              })
-            )
+              }),
+            );
         } catch (e) {
-          log.error(`Source map upload failed : ${e}`)
+          log.error(`Source map upload failed : ${e}`);
         }
       }
 
       // Upload source map to bugsnag if configured
-      const bugsnagConfig = await cauldron.getBugsnagConfig(napDescriptor)
+      const bugsnagConfig = await cauldron.getBugsnagConfig(napDescriptor);
       if (bugsnagConfig) {
         try {
-          const { apiKey } = bugsnagConfig
+          const { apiKey } = bugsnagConfig;
           const [minifiedFile, minifiedUrl, projectRoot, sourceMap] = [
             await fs.realpath(bundleOutputPath),
             path.basename(bundleOutputPath),
             await fs.realpath(path.join(composite.path, 'node_modules')),
             await fs.realpath(sourceMapOutput),
-          ]
-          const compositeMiniAppsPackages = await composite.getMiniAppsPackages()
+          ];
+          const compositeMiniAppsPackages = await composite.getMiniAppsPackages();
           await bugsnagUpload({
             apiKey,
             minifiedFile,
@@ -561,47 +563,47 @@ export async function performCodePushOtaUpdate(
             sourceMap,
             uploadNodeModules: false,
             uploadSources: false,
-          })
+          });
         } catch (e) {
-          log.error(`Bugsnag upload failed : ${e}`)
+          log.error(`Bugsnag upload failed : ${e}`);
         }
       }
 
       await cauldron.commitTransaction(
-        `CodePush release for ${napDescriptor.toString()} ${deploymentName}`
-      )
+        `CodePush release for ${napDescriptor.toString()} ${deploymentName}`,
+      );
     }
   } catch (e) {
     if (cauldron) {
-      await cauldron.discardTransaction()
+      await cauldron.discardTransaction();
     }
-    log.error(`performCodePushOtaUpdate ${e}`)
+    log.error(`performCodePushOtaUpdate ${e}`);
 
-    throw e
+    throw e;
   }
 }
 
 export async function buildCodePushTargetBinaryVersion(
   napDescriptor: AppVersionDescriptor,
-  deploymentName: string
+  deploymentName: string,
 ) {
   if (!napDescriptor.version) {
     throw new Error(
-      `Native application descriptor ${napDescriptor} does not contain a version !`
-    )
+      `Native application descriptor ${napDescriptor} does not contain a version !`,
+    );
   }
-  let targetBinaryVersion = napDescriptor.version
-  const cauldron = await getActiveCauldron()
-  const codePushConfig = await cauldron.getCodePushConfig(napDescriptor)
+  let targetBinaryVersion = napDescriptor.version;
+  const cauldron = await getActiveCauldron();
+  const codePushConfig = await cauldron.getCodePushConfig(napDescriptor);
   if (codePushConfig) {
-    const { versionModifiers, trimZeroPatchDigit } = codePushConfig
+    const { versionModifiers, trimZeroPatchDigit } = codePushConfig;
     targetBinaryVersion = versionModifiers
       ? applyVersionModifiers({
           deploymentName,
           targetBinaryVersion,
           versionModifiers,
         })
-      : targetBinaryVersion
+      : targetBinaryVersion;
     targetBinaryVersion =
       trimZeroPatchDigit &&
       semver.valid(targetBinaryVersion) &&
@@ -609,10 +611,10 @@ export async function buildCodePushTargetBinaryVersion(
         ? removeZeroPatchDigit({
             targetBinaryVersion,
           })
-        : targetBinaryVersion
+        : targetBinaryVersion;
   }
 
-  return targetBinaryVersion
+  return targetBinaryVersion;
 }
 
 export function applyVersionModifiers({
@@ -620,42 +622,42 @@ export function applyVersionModifiers({
   targetBinaryVersion,
   versionModifiers,
 }: {
-  deploymentName: string
-  targetBinaryVersion: string
-  versionModifiers: Array<{ deploymentName: string; modifier: string }>
+  deploymentName: string;
+  targetBinaryVersion: string;
+  versionModifiers: Array<{ deploymentName: string; modifier: string }>;
 }): string {
   const versionModifier = _.find(
     versionModifiers,
-    m => m.deploymentName === deploymentName
-  )
+    (m) => m.deploymentName === deploymentName,
+  );
   return versionModifier
     ? targetBinaryVersion.replace(/(.+)/, versionModifier.modifier)
-    : targetBinaryVersion
+    : targetBinaryVersion;
 }
 
 export function removeZeroPatchDigit({
   targetBinaryVersion,
 }: {
-  targetBinaryVersion: string
+  targetBinaryVersion: string;
 }) {
   return semver.prerelease(targetBinaryVersion)
     ? `${semver.major(targetBinaryVersion)}.${semver.minor(
-        targetBinaryVersion
+        targetBinaryVersion,
       )}-${semver.prerelease(targetBinaryVersion)!.join('.')}`
     : `${semver.major(targetBinaryVersion)}.${semver.minor(
-        targetBinaryVersion
-      )}`
+        targetBinaryVersion,
+      )}`;
 }
 
 export async function getCodePushAppName(
-  napDescriptor: AppVersionDescriptor
+  napDescriptor: AppVersionDescriptor,
 ): Promise<string> {
-  const cauldron = await getActiveCauldron()
-  const codePushConfig = await cauldron.getCodePushConfig(napDescriptor)
+  const cauldron = await getActiveCauldron();
+  const codePushConfig = await cauldron.getCodePushConfig(napDescriptor);
   return (
     codePushConfig?.appName ??
     `${napDescriptor.name}${
       napDescriptor.platform === 'ios' ? 'Ios' : 'Android'
     }`
-  )
+  );
 }

@@ -1,90 +1,90 @@
-import Part from './Part'
-import ParserException from './ParserException'
-import IgnoreToken from './IgnoreToken'
-import StringBuilder from '../../java/StringBuilder'
+import Part from './Part';
+import ParserException from './ParserException';
+import IgnoreToken from './IgnoreToken';
+import StringBuilder from '../../java/StringBuilder';
 
 export class IgnoreLineParser {
   public static parse(text) {
-    const parts: Part[] = []
-    const sb = StringBuilder()
-    const characters = text.split('')
-    let next = null
+    const parts: Part[] = [];
+    const sb = StringBuilder();
+    const characters = text.split('');
+    let next = null;
 
     for (let i = 0, totalLength = characters.length; i < totalLength; i++) {
-      let current = characters[i]
-      next = i < totalLength - 1 ? characters[i + 1] : null
+      let current = characters[i];
+      next = i < totalLength - 1 ? characters[i + 1] : null;
       if (i === 0) {
         if (current === '#') {
-          parts.push(new Part(IgnoreToken.COMMENT, text))
-          i = totalLength
-          continue
+          parts.push(new Part(IgnoreToken.COMMENT, text));
+          i = totalLength;
+          continue;
         } else if (current === '!') {
           if (i === totalLength - 1) {
-            throw new ParserException('Negation with no negated pattern.')
+            throw new ParserException('Negation with no negated pattern.');
           } else {
-            parts.push(new Part(IgnoreToken.NEGATE))
-            continue
+            parts.push(new Part(IgnoreToken.NEGATE));
+            continue;
           }
         } else if (current === '\\' && next === '#') {
-          current = next
-          next = null
-          i++
+          current = next;
+          next = null;
+          i++;
         }
       }
-      const a = IgnoreToken.MATCH_ANY.getPattern()
+      const a = IgnoreToken.MATCH_ANY.getPattern();
       if (a === current) {
         if (a === next) {
           if (i + 3 < totalLength && characters[i + 2] === a) {
-            throw new ParserException('The pattern *** is invalid.')
+            throw new ParserException('The pattern *** is invalid.');
           }
-          parts.push(new Part(IgnoreToken.MATCH_ALL))
-          i++
-          continue
+          parts.push(new Part(IgnoreToken.MATCH_ALL));
+          i++;
+          continue;
         } else {
           if (sb.length() > 0) {
-            parts.push(new Part(IgnoreToken.TEXT, sb.toString()))
-            sb.delete(0, sb.length())
+            parts.push(new Part(IgnoreToken.TEXT, sb.toString()));
+            sb.delete(0, sb.length());
           }
-          parts.push(new Part(IgnoreToken.MATCH_ANY))
-          continue
+          parts.push(new Part(IgnoreToken.MATCH_ANY));
+          continue;
         }
       }
       if (i === 0 && IgnoreToken.ROOTED_MARKER.getPattern() === current) {
-        parts.push(new Part(IgnoreToken.ROOTED_MARKER))
-        continue
+        parts.push(new Part(IgnoreToken.ROOTED_MARKER));
+        continue;
       }
       if (current === '\\' && next === ' ') {
-        parts.push(new Part(IgnoreToken.ESCAPED_SPACE))
-        i++
-        continue
+        parts.push(new Part(IgnoreToken.ESCAPED_SPACE));
+        i++;
+        continue;
       } else if (current === '\\' && next === '!') {
-        parts.push(new Part(IgnoreToken.ESCAPED_EXCLAMATION))
-        i++
-        continue
+        parts.push(new Part(IgnoreToken.ESCAPED_EXCLAMATION));
+        i++;
+        continue;
       }
       if (IgnoreToken.PATH_DELIM.getPattern() === current) {
         if (i !== totalLength - 1) {
           if (sb.length() > 0) {
-            parts.push(new Part(IgnoreToken.TEXT, sb.toString()))
-            sb.delete(0, sb.length())
+            parts.push(new Part(IgnoreToken.TEXT, sb.toString()));
+            sb.delete(0, sb.length());
           }
-          parts.push(new Part(IgnoreToken.PATH_DELIM))
+          parts.push(new Part(IgnoreToken.PATH_DELIM));
           if (IgnoreToken.PATH_DELIM.getPattern() === next) {
-            i++
+            i++;
           }
-          continue
+          continue;
         } else {
-          parts.push(new Part(IgnoreToken.TEXT, sb.toString()))
-          sb.delete(0, sb.length())
-          parts.push(new Part(IgnoreToken.DIRECTORY_MARKER))
-          continue
+          parts.push(new Part(IgnoreToken.TEXT, sb.toString()));
+          sb.delete(0, sb.length());
+          parts.push(new Part(IgnoreToken.DIRECTORY_MARKER));
+          continue;
         }
       }
-      sb.append(current)
+      sb.append(current);
     }
     if (sb.length() > 0) {
-      parts.push(new Part(IgnoreToken.TEXT, sb.toString().trim()))
+      parts.push(new Part(IgnoreToken.TEXT, sb.toString().trim()));
     }
-    return parts
+    return parts;
   }
 }

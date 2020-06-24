@@ -1,5 +1,5 @@
-import { UriProperty } from './UriProperty'
+import { UriProperty } from './UriProperty';
 
 export class UrlProperty extends UriProperty {
-  public static FORMAT = 'url'
+  public static FORMAT = 'url';
 }

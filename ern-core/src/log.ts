@@ -1,3 +1,3 @@
-import ColoredLog from './coloredLog'
+import ColoredLog from './coloredLog';
 
-export default new ColoredLog()
+export default new ColoredLog();

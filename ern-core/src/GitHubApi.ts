@@ -1,10 +1,10 @@
-import Octokit from '@octokit/rest'
-import log from './log'
+import Octokit from '@octokit/rest';
+import log from './log';
 
 export class GitHubApi {
-  private readonly octokit: Octokit
-  private readonly owner: string
-  private readonly repo: string
+  private readonly octokit: Octokit;
+  private readonly owner: string;
+  private readonly repo: string;
 
   /**
    * Creates an instance of the GitHubApi class
@@ -18,13 +18,13 @@ export class GitHubApi {
     owner,
     repo,
   }: {
-    opts: Octokit.Options | undefined
-    owner: string
-    repo: string
+    opts: Octokit.Options | undefined;
+    owner: string;
+    repo: string;
   }) {
-    this.octokit = new Octokit(opts)
-    this.owner = owner
-    this.repo = repo
+    this.octokit = new Octokit(opts);
+    this.owner = owner;
+    this.repo = repo;
   }
 
   /**
@@ -43,29 +43,29 @@ export class GitHubApi {
     fromTag,
     name,
   }: {
-    fromBranch?: string
-    fromSha?: string
-    fromTag?: string
-    name: string
+    fromBranch?: string;
+    fromSha?: string;
+    fromTag?: string;
+    name: string;
   }) {
     if (!fromBranch && !fromSha && !fromTag) {
-      fromBranch = await this.getDefaultBranch()
+      fromBranch = await this.getDefaultBranch();
     }
 
     const sha = fromSha
       ? fromSha
-      : await this.getSha({ ofBranch: fromBranch, ofTag: fromTag })
+      : await this.getSha({ ofBranch: fromBranch, ofTag: fromTag });
 
     const opts = {
       owner: this.owner,
       ref: this.fullBranchRef(name),
       repo: this.repo,
       sha,
-    }
+    };
 
-    log.debug(`git.createRef(${JSON.stringify(opts, null, 2)})`)
+    log.debug(`git.createRef(${JSON.stringify(opts, null, 2)})`);
 
-    return this.octokit.git.createRef(opts)
+    return this.octokit.git.createRef(opts);
   }
 
   /**
@@ -78,11 +78,11 @@ export class GitHubApi {
       owner: this.owner,
       ref: this.shortBranchRef(name),
       repo: this.repo,
-    }
+    };
 
-    log.debug(`git.deleteRef(${JSON.stringify(opts, null, 2)})`)
+    log.debug(`git.deleteRef(${JSON.stringify(opts, null, 2)})`);
 
-    return this.octokit.git.deleteRef(opts)
+    return this.octokit.git.deleteRef(opts);
   }
 
   /**
@@ -101,25 +101,25 @@ export class GitHubApi {
     fromTag,
     name,
   }: {
-    fromBranch?: string
-    fromSha?: string
-    fromTag?: string
-    name: string
+    fromBranch?: string;
+    fromSha?: string;
+    fromTag?: string;
+    name: string;
   }) {
     if (!fromBranch && !fromSha && !fromTag) {
-      fromBranch = await this.getDefaultBranch()
+      fromBranch = await this.getDefaultBranch();
     }
 
     const sha = fromSha
       ? fromSha
-      : await this.getSha({ ofBranch: fromBranch, ofTag: fromTag })
+      : await this.getSha({ ofBranch: fromBranch, ofTag: fromTag });
 
     return this.octokit.git.createRef({
       owner: this.owner,
       ref: this.fullTagRef(name),
       repo: this.repo,
       sha,
-    })
+    });
   }
 
   /**
@@ -132,11 +132,11 @@ export class GitHubApi {
       owner: this.owner,
       ref: this.shortTagRef(name),
       repo: this.repo,
-    }
+    };
 
-    log.debug(`git.deleteRef(${JSON.stringify(opts, null, 2)})`)
+    log.debug(`git.deleteRef(${JSON.stringify(opts, null, 2)})`);
 
-    return this.octokit.git.deleteRef(opts)
+    return this.octokit.git.deleteRef(opts);
   }
 
   /**
@@ -154,26 +154,26 @@ export class GitHubApi {
     fromBranch,
     fromTag,
   }: {
-    path: string
-    fromBranch?: string
-    fromTag?: string
+    path: string;
+    fromBranch?: string;
+    fromTag?: string;
   }): Promise<string> {
     const opts: any = {
       owner: this.owner,
       path,
       repo: this.repo,
-    }
+    };
 
     if (fromBranch) {
-      opts.ref = this.fullBranchRef(fromBranch)
+      opts.ref = this.fullBranchRef(fromBranch);
     } else if (fromTag) {
-      opts.ref = this.fullTagRef(fromTag)
+      opts.ref = this.fullTagRef(fromTag);
     }
 
-    log.debug(`repos.getContents(${JSON.stringify(opts, null, 2)})`)
-    const res = await this.octokit.repos.getContents(opts)
-    const buff = new Buffer((res.data as any).content, 'base64')
-    return buff.toString('utf8')
+    log.debug(`repos.getContents(${JSON.stringify(opts, null, 2)})`);
+    const res = await this.octokit.repos.getContents(opts);
+    const buff = new Buffer((res.data as any).content, 'base64');
+    return buff.toString('utf8');
   }
 
   /**
@@ -190,10 +190,10 @@ export class GitHubApi {
     newContent,
     commitMessage,
   }: {
-    path: string
-    onBranch?: string
-    newContent: string
-    commitMessage: string
+    path: string;
+    onBranch?: string;
+    newContent: string;
+    commitMessage: string;
   }) {
     const sha = ((
       await this.octokit.repos.getContents({
@@ -202,10 +202,10 @@ export class GitHubApi {
         ref: onBranch || undefined,
         repo: this.repo,
       })
-    ).data as any).sha
+    ).data as any).sha;
 
-    const buff = new Buffer(newContent)
-    const content = buff.toString('base64')
+    const buff = new Buffer(newContent);
+    const content = buff.toString('base64');
 
     return this.octokit.repos.createOrUpdateFile({
       branch: onBranch || undefined,
@@ -215,7 +215,7 @@ export class GitHubApi {
       path,
       repo: this.repo,
       sha,
-    })
+    });
   }
 
   /**
@@ -230,20 +230,20 @@ export class GitHubApi {
     ofBranch,
     ofTag,
   }: {
-    ofBranch?: string
-    ofTag?: string
+    ofBranch?: string;
+    ofTag?: string;
   } = {}): Promise<string> {
     if (!ofBranch && !ofTag) {
-      ofBranch = await this.getDefaultBranch()
+      ofBranch = await this.getDefaultBranch();
     }
 
     const res = await this.octokit.repos.getCommit({
       owner: this.owner,
       ref: ofBranch ? this.fullBranchRef(ofBranch!) : this.fullTagRef(ofTag!),
       repo: this.repo,
-    })
+    });
 
-    return (res.data as any).sha
+    return (res.data as any).sha;
   }
 
   /**
@@ -253,8 +253,8 @@ export class GitHubApi {
     const res = await this.octokit.repos.get({
       owner: this.owner,
       repo: this.repo,
-    })
-    return res.data.default_branch
+    });
+    return res.data.default_branch;
   }
 
   /**
@@ -266,13 +266,13 @@ export class GitHubApi {
         owner: this.owner,
         ref: `heads/${x}`,
         repo: this.repo,
-      })
-      return res.status === 200
+      });
+      return res.status === 200;
     } catch (e) {
       if (e.status === 404) {
-        return false
+        return false;
       } else {
-        throw e
+        throw e;
       }
     }
   }
@@ -286,13 +286,13 @@ export class GitHubApi {
         owner: this.owner,
         ref: `tags/${x}`,
         repo: this.repo,
-      })
-      return res.status === 200
+      });
+      return res.status === 200;
     } catch (e) {
       if (e.status === 404) {
-        return false
+        return false;
       } else {
-        throw e
+        throw e;
       }
     }
   }
@@ -306,30 +306,30 @@ export class GitHubApi {
         commit_sha: x,
         owner: this.owner,
         repo: this.repo,
-      })
-      return res.status === 200
+      });
+      return res.status === 200;
     } catch (e) {
       if (e.status === 404) {
-        return false
+        return false;
       } else {
-        throw e
+        throw e;
       }
     }
   }
 
   public fullTagRef(tag: string): string {
-    return `refs/${this.shortTagRef(tag)}`
+    return `refs/${this.shortTagRef(tag)}`;
   }
 
   public shortTagRef(tag: string): string {
-    return `tags/${tag}`
+    return `tags/${tag}`;
   }
 
   public fullBranchRef(branch: string): string {
-    return `refs/${this.shortBranchRef(branch)}`
+    return `refs/${this.shortBranchRef(branch)}`;
   }
 
   public shortBranchRef(branch: string): string {
-    return `heads/${branch}`
+    return `heads/${branch}`;
   }
 }

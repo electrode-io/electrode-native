@@ -1,5 +1,5 @@
-import { ObjectPropertyBase } from './ObjectPropertyBase'
+import { ObjectPropertyBase } from './ObjectPropertyBase';
 
 export class MapProperty extends ObjectPropertyBase {
-  public static TYPE = 'object'
+  public static TYPE = 'object';
 }

@@ -1,9 +1,9 @@
-import _AndroidGenerator from './AndroidGenerator'
+import _AndroidGenerator from './AndroidGenerator';
 
-export const AndroidGenerator = _AndroidGenerator
+export const AndroidGenerator = _AndroidGenerator;
 
 export default {
   AndroidGenerator: _AndroidGenerator,
-}
+};
 
-export * from './AndroidGenerator'
+export * from './AndroidGenerator';

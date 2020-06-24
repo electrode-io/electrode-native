@@ -8,7 +8,7 @@ export default class ParserException extends Error {
    * later retrieval by the {@link #getMessage()} method.
    */
   constructor(message) {
-    super(message)
-    this.message = message
+    super(message);
+    this.message = message;
   }
 }

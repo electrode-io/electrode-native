@@ -1,4 +1,4 @@
-import RefFormat from './RefFormat'
+import RefFormat from './RefFormat';
 
 /**
  * A class the encapsulates logic that is common to RefModel, RefParameter, and RefProperty.
@@ -6,54 +6,54 @@ import RefFormat from './RefFormat'
 export default class GenericRef {
   public static computeSimpleRef = (ref, format, type) => {
     if (format === RefFormat.INTERNAL) {
-      return ref.substring(type.getInternalPrefix().length)
+      return ref.substring(type.getInternalPrefix().length);
     }
-    return ref
-  }
+    return ref;
+  };
 
-  public static computeRefFormat = ref => {
+  public static computeRefFormat = (ref) => {
     if (ref.startsWith('http:') || ref.startsWith('https:')) {
-      return RefFormat.URL
+      return RefFormat.URL;
     } else if (ref.startsWith('#/')) {
-      return RefFormat.INTERNAL
+      return RefFormat.INTERNAL;
     } else if (ref.startsWith('.') || ref.startsWith('/')) {
-      return RefFormat.RELATIVE
+      return RefFormat.RELATIVE;
     }
 
-    return RefFormat.INTERNAL
-  }
+    return RefFormat.INTERNAL;
+  };
 
-  public ref
-  public format
-  public type
-  public simpleRef
+  public ref;
+  public format;
+  public type;
+  public simpleRef;
 
   constructor(type, ref) {
     if (type != null && typeof ref === 'string') {
-      this.format = GenericRef.computeRefFormat(ref)
-      this.type = type
+      this.format = GenericRef.computeRefFormat(ref);
+      this.type = type;
       if (this.format === RefFormat.INTERNAL && !ref.startsWith('#/')) {
-        this.ref = type.getInternalPrefix() + ref
+        this.ref = type.getInternalPrefix() + ref;
       } else {
-        this.ref = ref
+        this.ref = ref;
       }
-      this.simpleRef = GenericRef.computeSimpleRef(this.ref, this.format, type)
+      this.simpleRef = GenericRef.computeSimpleRef(this.ref, this.format, type);
     }
   }
 
   public getFormat() {
-    return this.format
+    return this.format;
   }
 
   public getType() {
-    return this.type
+    return this.type;
   }
 
   public getRef() {
-    return this.ref
+    return this.ref;
   }
 
   public getSimpleRef() {
-    return this.simpleRef
+    return this.simpleRef;
   }
 }

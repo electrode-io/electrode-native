@@ -1,24 +1,24 @@
-import { newHashSet } from './java/javaUtil'
+import { newHashSet } from './java/javaUtil';
 
-const UPDATE = newHashSet('PUT', 'PATCH')
+const UPDATE = newHashSet('PUT', 'PATCH');
 
 export default class CodegenOperation {
-  public responseHeaders = []
-  public hasMore = true
-  public isResponseBinary = false
-  public hasReference = false
-  public allParams = []
-  public bodyParams = []
-  public pathParams = []
-  public queryParams = []
-  public headerParams = []
-  public formParams = []
-  public responses = []
-  public imports = newHashSet()
+  public responseHeaders = [];
+  public hasMore = true;
+  public isResponseBinary = false;
+  public hasReference = false;
+  public allParams = [];
+  public bodyParams = [];
+  public pathParams = [];
+  public queryParams = [];
+  public headerParams = [];
+  public formParams = [];
+  public responses = [];
+  public imports = newHashSet();
   // [TSCONV: not set]
-  public httpMethod
-  public baseName
-  public path
+  public httpMethod;
+  public baseName;
+  public path;
 
   /**
    * Check if act as Restful index method
@@ -26,7 +26,7 @@ export default class CodegenOperation {
    * @return true if act as Restful index method, false otherwise
    */
   public isRestfulIndex() {
-    return 'GET' === this.httpMethod && '' === this.pathWithoutBaseName()
+    return 'GET' === this.httpMethod && '' === this.pathWithoutBaseName();
   }
 
   /**
@@ -35,7 +35,7 @@ export default class CodegenOperation {
    * @return true if act as Restful show method, false otherwise
    */
   public isRestfulShow() {
-    return 'GET' === this.httpMethod && this.isMemberPath()
+    return 'GET' === this.httpMethod && this.isMemberPath();
   }
 
   /**
@@ -44,7 +44,7 @@ export default class CodegenOperation {
    * @return true if act as Restful create method, false otherwise
    */
   public isRestfulCreate() {
-    return 'POST' === this.httpMethod && '' === this.pathWithoutBaseName()
+    return 'POST' === this.httpMethod && '' === this.pathWithoutBaseName();
   }
 
   /**
@@ -53,7 +53,7 @@ export default class CodegenOperation {
    * @return true if act as Restful update method, false otherwise
    */
   public isRestfulUpdate() {
-    return UPDATE.contains(this.httpMethod) && this.isMemberPath()
+    return UPDATE.contains(this.httpMethod) && this.isMemberPath();
   }
 
   /**
@@ -62,7 +62,7 @@ export default class CodegenOperation {
    * @return true if act as Restful destroy method, false otherwise
    */
   public isRestfulDestroy() {
-    return 'DELETE' === this.httpMethod && this.isMemberPath()
+    return 'DELETE' === this.httpMethod && this.isMemberPath();
   }
 
   /**
@@ -77,7 +77,7 @@ export default class CodegenOperation {
       this.isRestfulCreate() ||
       this.isRestfulUpdate() ||
       this.isRestfulDestroy()
-    )
+    );
   }
 
   /**
@@ -88,7 +88,7 @@ export default class CodegenOperation {
   public pathWithoutBaseName() {
     return this.baseName != null
       ? this.path.split('/' + this.baseName.toLowerCase()).join('')
-      : this.path
+      : this.path;
   }
 
   /**
@@ -98,13 +98,13 @@ export default class CodegenOperation {
    */
   public isMemberPath() {
     if (this.pathParams.length !== 1) {
-      return false
+      return false;
     }
-    const id = (this.pathParams[0] as any).baseName
-    return '/{' + id + '}' === this.pathWithoutBaseName()
+    const id = (this.pathParams[0] as any).baseName;
+    return '/{' + id + '}' === this.pathWithoutBaseName();
   }
 
   public toString() {
-    return `${this.baseName}(${this.path})`
+    return `${this.baseName}(${this.path})`;
   }
 }

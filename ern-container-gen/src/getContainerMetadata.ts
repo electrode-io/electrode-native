@@ -1,12 +1,12 @@
-import { ContainerMetadata } from './types'
-import { getContainerMetadataPath } from './getContainerMetadataPath'
-import fs from 'fs-extra'
+import { ContainerMetadata } from './types';
+import { getContainerMetadataPath } from './getContainerMetadataPath';
+import fs from 'fs-extra';
 
 export async function getContainerMetadata(
-  containerPath: string
+  containerPath: string,
 ): Promise<ContainerMetadata | void> {
-  const pathToMetadataFile = getContainerMetadataPath(containerPath)
+  const pathToMetadataFile = getContainerMetadataPath(containerPath);
   if (await fs.pathExists(pathToMetadataFile)) {
-    return fs.readJson(pathToMetadataFile)
+    return fs.readJson(pathToMetadataFile);
   }
 }

@@ -1,5 +1,5 @@
-import { StringProperty } from './StringProperty'
+import { StringProperty } from './StringProperty';
 
 export class FileProperty extends StringProperty {
-  public static TYPE = 'file'
+  public static TYPE = 'file';
 }

@@ -1,5 +1,5 @@
-import fs from 'fs-extra'
-import path from 'path'
+import fs from 'fs-extra';
+import path from 'path';
 
 //
 // Patch a metro bug related to BABEL_ENV resolution
@@ -14,20 +14,20 @@ export async function patchMetroBabelEnv({ cwd }: { cwd: string }) {
   const filesToPach = [
     path.join(
       cwd,
-      'node_modules/metro-react-native-babel-transformer/src/index.js'
+      'node_modules/metro-react-native-babel-transformer/src/index.js',
     ),
     path.join(cwd, 'node_modules/metro-babel-transformer/src/index.js'),
-  ]
-  const stringToReplace = 'process.env.BABEL_ENV = OLD_BABEL_ENV;'
+  ];
+  const stringToReplace = 'process.env.BABEL_ENV = OLD_BABEL_ENV;';
   const replacementString =
-    'if (OLD_BABEL_ENV) { process.env.BABEL_ENV = OLD_BABEL_ENV; }'
+    'if (OLD_BABEL_ENV) { process.env.BABEL_ENV = OLD_BABEL_ENV; }';
   for (const fileToPatch of filesToPach) {
     if (await fs.pathExists(fileToPatch)) {
-      const file = await fs.readFile(fileToPatch)
+      const file = await fs.readFile(fileToPatch);
       const patchedFile = file
         .toString()
-        .replace(stringToReplace, replacementString)
-      await fs.writeFile(fileToPatch, patchedFile)
+        .replace(stringToReplace, replacementString);
+      await fs.writeFile(fileToPatch, patchedFile);
     }
   }
 }

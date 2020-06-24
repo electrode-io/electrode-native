@@ -1,17 +1,18 @@
-import { AppVersionDescriptor, log } from 'ern-core'
-import { getActiveCauldron } from 'ern-cauldron-api'
-import { syncCauldronContainer } from 'ern-orchestrator'
+import { AppVersionDescriptor, log } from 'ern-core';
+import { getActiveCauldron } from 'ern-cauldron-api';
+import { syncCauldronContainer } from 'ern-orchestrator';
 import {
   askUserToChooseANapDescriptorFromCauldron,
   epilog,
   logErrorAndExitIfNotSatisfied,
   tryCatchWrap,
-} from '../../lib'
-import { Argv } from 'yargs'
-import untildify from 'untildify'
+} from '../../lib';
+import { Argv } from 'yargs';
+import untildify from 'untildify';
 
-export const command = 'regen-container'
-export const desc = 'Triggers the regeneration of a Container from the Cauldron'
+export const command = 'regen-container';
+export const desc =
+  'Triggers the regeneration of a Container from the Cauldron';
 
 export const builder = (argv: Argv) => {
   return argv
@@ -26,7 +27,7 @@ export const builder = (argv: Argv) => {
       describe: 'A complete native application descriptor',
       type: 'string',
     })
-    .coerce('descriptor', d => AppVersionDescriptor.fromString(d))
+    .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
     .option('fullRegen', {
       describe: 'Perform complete regeneration',
       type: 'boolean',
@@ -40,9 +41,9 @@ export const builder = (argv: Argv) => {
       describe: 'Path to source map file to generate for this container bundle',
       type: 'string',
     })
-    .coerce('sourceMapOutput', p => untildify(p))
-    .epilog(epilog(exports))
-}
+    .coerce('sourceMapOutput', (p) => untildify(p))
+    .epilog(epilog(exports));
+};
 
 export const commandHandler = async ({
   containerVersion,
@@ -51,17 +52,17 @@ export const commandHandler = async ({
   resetCache,
   sourceMapOutput,
 }: {
-  containerVersion?: string
-  descriptor?: AppVersionDescriptor
-  fullRegen?: boolean
-  resetCache?: boolean
-  sourceMapOutput?: string
+  containerVersion?: string;
+  descriptor?: AppVersionDescriptor;
+  fullRegen?: boolean;
+  resetCache?: boolean;
+  sourceMapOutput?: string;
 }) => {
   descriptor =
     descriptor ||
     (await askUserToChooseANapDescriptorFromCauldron({
       onlyNonReleasedVersions: true,
-    }))
+    }));
 
   await logErrorAndExitIfNotSatisfied({
     isNewerContainerVersion: containerVersion
@@ -77,22 +78,22 @@ export const commandHandler = async ({
       extraErrorMessage:
         'This command cannot work on a non existing native application version',
     },
-  })
+  });
 
-  const cauldron = await getActiveCauldron()
+  const cauldron = await getActiveCauldron();
 
   // Figure out the list of all git MiniApps that have been updated (new HEAD sha)
   const updatedGitMiniApps = await cauldron.getLatestShasForMiniAppsBranches(
-    descriptor
-  )
+    descriptor,
+  );
 
   if (updatedGitMiniApps.length === 0) {
-    log.info('No Changes ...')
+    log.info('No Changes ...');
     if (fullRegen) {
-      log.info('Performing regen anyway [--fullRegen]')
+      log.info('Performing regen anyway [--fullRegen]');
     } else {
-      log.info('Skipping regen. To regenerate use the --fullRegen option.')
-      return
+      log.info('Skipping regen. To regenerate use the --fullRegen option.');
+      return;
     }
   }
 
@@ -102,8 +103,8 @@ export const commandHandler = async ({
         await cauldron.updateMiniAppVersionInContainer(
           descriptor!,
           updatedGitMiniApp,
-          { keepBranch: true }
-        )
+          { keepBranch: true },
+        );
       }
     },
     descriptor,
@@ -112,9 +113,9 @@ export const commandHandler = async ({
       containerVersion,
       resetCache,
       sourceMapOutput,
-    }
-  )
-  log.info(`${descriptor} container was successfully regenerated`)
-}
+    },
+  );
+  log.info(`${descriptor} container was successfully regenerated`);
+};
 
-export const handler = tryCatchWrap(commandHandler)
+export const handler = tryCatchWrap(commandHandler);

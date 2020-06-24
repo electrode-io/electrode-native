@@ -1,13 +1,13 @@
-const shell = require('shelljs')
-const path = require('path')
+const shell = require('shelljs');
+const path = require('path');
 
 const pathToIndexProd = path.resolve(
   __dirname,
-  '../../../ern-local-cli/dist/index'
-)
+  '../../../ern-local-cli/dist/index',
+);
 
-const ern = `node ${pathToIndexProd}`
+const ern = `node ${pathToIndexProd}`;
 
-module.exports = function(command) {
-  return shell.exec(`${ern} ${command}`)
-}
+module.exports = function (command) {
+  return shell.exec(`${ern} ${command}`);
+};

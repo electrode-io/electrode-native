@@ -1,2 +1,2 @@
-export * from './RunnerGenerator'
-export * from './RunnerGeneratorConfig'
+export * from './RunnerGenerator';
+export * from './RunnerGeneratorConfig';

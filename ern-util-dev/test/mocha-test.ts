@@ -1,7 +1,7 @@
-import { expect } from 'chai'
+import { expect } from 'chai';
 
 describe('mocha', () => {
   it('should pass', () => {
-    expect(true).to.eql(true)
-  })
-})
+    expect(true).to.eql(true);
+  });
+});

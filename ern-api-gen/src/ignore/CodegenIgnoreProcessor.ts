@@ -1,49 +1,49 @@
-import { DirectoryRule } from './rules/DirectoryRule'
-import ruleCreate from './rules/create'
-import File from '../java/File'
-import { log } from 'ern-core'
-import { Rule } from './rules/Rule'
-import fs from 'fs'
+import { DirectoryRule } from './rules/DirectoryRule';
+import ruleCreate from './rules/create';
+import File from '../java/File';
+import { log } from 'ern-core';
+import { Rule } from './rules/Rule';
+import fs from 'fs';
 
-const { Operation } = Rule
+const { Operation } = Rule;
 export default class CodegenIgnoreProcessor {
-  public static IGNORE_FILE = '.swagger-codegen-ignore'
-  public exclusionRules: any[] = []
-  public inclusionRules: any[] = []
-  public outputPath
+  public static IGNORE_FILE = '.swagger-codegen-ignore';
+  public exclusionRules: any[] = [];
+  public inclusionRules: any[] = [];
+  public outputPath;
 
   constructor(outputPath) {
-    this.outputPath = outputPath
-    const directory = new File(outputPath)
+    this.outputPath = outputPath;
+    const directory = new File(outputPath);
     if (directory.exists() && directory.isDirectory()) {
       const codegenIgnore = new File(
         directory,
-        CodegenIgnoreProcessor.IGNORE_FILE
-      )
+        CodegenIgnoreProcessor.IGNORE_FILE,
+      );
       if (codegenIgnore.exists() && codegenIgnore.isFile()) {
         try {
-          this.loadCodegenRules(codegenIgnore.getAbsolutePath())
+          this.loadCodegenRules(codegenIgnore.getAbsolutePath());
         } catch (e) {
-          log.error(`Could not process .swagger-codegen-ignore. ${e.message}`)
+          log.error(`Could not process .swagger-codegen-ignore. ${e.message}`);
         }
       } else {
-        log.info('No .swagger-codegen-ignore file found.')
+        log.info('No .swagger-codegen-ignore file found.');
       }
     }
   }
 
   public loadCodegenRules(codegenIgnore) {
-    const lines = fs.readFileSync(codegenIgnore, 'utf8').split('\n')
+    const lines = fs.readFileSync(codegenIgnore, 'utf8').split('\n');
     for (const line of lines) {
       if (line.trim().length === 0) {
-        continue
+        continue;
       }
-      const rule = ruleCreate(line)
+      const rule = ruleCreate(line);
       if (rule != null) {
         if (rule.getNegated()) {
-          this.inclusionRules.push(rule)
+          this.inclusionRules.push(rule);
         } else {
-          this.exclusionRules.push(rule)
+          this.exclusionRules.push(rule);
         }
       }
     }
@@ -51,54 +51,54 @@ export default class CodegenIgnoreProcessor {
 
   public allowsFile(targetFile) {
     if (this.exclusionRules.length === 0 && this.inclusionRules.length === 0) {
-      return true
+      return true;
     }
     const file = new File(this.outputPath, targetFile).relativeTo(
-      this.outputPath
-    )
-    let directoryExcluded = false
-    let exclude = false
+      this.outputPath,
+    );
+    let directoryExcluded = false;
+    let exclude = false;
     EXCLUDE: for (const current of this.exclusionRules) {
-      const op = current.evaluate(file.getPath())
+      const op = current.evaluate(file.getPath());
       switch (op) {
         case Operation.EXCLUDE:
-          exclude = true
+          exclude = true;
           if (current != null && current instanceof DirectoryRule) {
-            directoryExcluded = true
+            directoryExcluded = true;
           }
-          break
+          break;
         case Operation.INCLUDE:
-          break
+          break;
         case Operation.NOOP:
-          break
+          break;
         case Operation.EXCLUDE_AND_TERMINATE:
-          break EXCLUDE
+          break EXCLUDE;
       }
     }
     if (exclude) {
       for (const current of this.inclusionRules) {
-        const op = current.evaluate(file.getPath())
+        const op = current.evaluate(file.getPath());
         if (op === Rule.Operation.INCLUDE) {
           if (
             current != null &&
             current instanceof DirectoryRule &&
             directoryExcluded
           ) {
-            exclude = false
+            exclude = false;
           } else if (!directoryExcluded) {
-            exclude = false
+            exclude = false;
           }
         }
       }
     }
-    return !exclude
+    return !exclude;
   }
 
   public getInclusionRules() {
-    return this.inclusionRules.concat()
+    return this.inclusionRules.concat();
   }
 
   public getExclusionRules() {
-    return this.exclusionRules.concat()
+    return this.exclusionRules.concat();
   }
 }

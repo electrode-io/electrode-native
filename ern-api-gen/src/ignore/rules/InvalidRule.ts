@@ -1,22 +1,22 @@
-import { Rule } from './Rule'
+import { Rule } from './Rule';
 
 export class InvalidRule extends Rule {
-  public reason
+  public reason;
 
   constructor(syntax, definition, reason) {
-    super(syntax, definition)
-    this.reason = reason
+    super(syntax, definition);
+    this.reason = reason;
   }
 
   public matches(relativePath) {
-    return false
+    return false;
   }
 
   public evaluate(relativePath) {
-    return Rule.Operation.NOOP
+    return Rule.Operation.NOOP;
   }
 
   public getReason() {
-    return this.reason
+    return this.reason;
   }
 }

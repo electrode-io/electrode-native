@@ -1,10 +1,10 @@
-import * as lockfile from '@yarnpkg/lockfile'
-import fs from 'fs-extra'
-import { PackagePath } from './PackagePath'
+import * as lockfile from '@yarnpkg/lockfile';
+import fs from 'fs-extra';
+import { PackagePath } from './PackagePath';
 
 export interface PackagePathWithResolvedVersion {
-  pkgPath: PackagePath
-  version: string
+  pkgPath: PackagePath;
+  version: string;
 }
 
 export class YarnLockParser {
@@ -15,9 +15,9 @@ export class YarnLockParser {
    */
   public static fromPath(yarnLockPath: string) {
     if (!fs.pathExistsSync(yarnLockPath)) {
-      throw new Error(`Path to yarn.lock ${yarnLockPath} does not exist`)
+      throw new Error(`Path to yarn.lock ${yarnLockPath} does not exist`);
     }
-    return new YarnLockParser(fs.readFileSync(yarnLockPath, 'utf8'))
+    return new YarnLockParser(fs.readFileSync(yarnLockPath, 'utf8'));
   }
 
   /**
@@ -26,22 +26,22 @@ export class YarnLockParser {
    * @param yarnLockContent yarn.lock file content
    */
   public static fromContent(yarnLockContent: string) {
-    return new YarnLockParser(yarnLockContent)
+    return new YarnLockParser(yarnLockContent);
   }
 
   /**
    * The yarn.lock file content
    */
-  public readonly content: string
+  public readonly content: string;
 
   /**
    * The parsed yarn.lock
    */
-  public readonly parsed: any
+  public readonly parsed: any;
 
   private constructor(yarnLockContent: string) {
-    this.content = yarnLockContent
-    this.parsed = lockfile.parse(yarnLockContent)
+    this.content = yarnLockContent;
+    this.parsed = lockfile.parse(yarnLockContent);
   }
 
   /**
@@ -54,17 +54,17 @@ export class YarnLockParser {
   public findPackage(pkg: PackagePath): PackagePathWithResolvedVersion[] {
     return pkg.version
       ? Object.keys(this.parsed.object)
-          .filter(k => k === pkg.fullPath)
-          .map(k => ({
+          .filter((k) => k === pkg.fullPath)
+          .map((k) => ({
             pkgPath: PackagePath.fromString(k),
             version: this.parsed.object[k]?.version,
           }))
       : Object.keys(this.parsed.object)
-          .filter(k => k.startsWith(`${pkg.basePath}@`))
-          .map(k => ({
+          .filter((k) => k.startsWith(`${pkg.basePath}@`))
+          .map((k) => ({
             pkgPath: PackagePath.fromString(k),
             version: this.parsed.object[k]?.version,
-          }))
+          }));
   }
 
   /**
@@ -75,19 +75,19 @@ export class YarnLockParser {
    * their resolved version.
    */
   public findPackagesWithDependency(
-    dependency: PackagePath
+    dependency: PackagePath,
   ): PackagePathWithResolvedVersion[] {
     return Object.entries(this.parsed.object)
       .filter(([key, value]: [string, any]) =>
         Object.entries(value.dependencies || []).some(
           ([k, v]: [string, string]) =>
-            k === dependency.basePath && v === dependency.version
-        )
+            k === dependency.basePath && v === dependency.version,
+        ),
       )
       .map(([k, v]: [string, any]) => ({
         pkgPath: PackagePath.fromString(k),
         version: this.parsed.object[k]?.version,
-      }))
+      }));
   }
 
   /**
@@ -103,32 +103,32 @@ export class YarnLockParser {
     dep: PackagePath,
     level: string = 'top',
     obj: any = {},
-    topLevel: boolean = true
+    topLevel: boolean = true,
   ) {
     if (level === 'top') {
-      const pkgs = this.findPackage(dep)
+      const pkgs = this.findPackage(dep);
       if (pkgs) {
         for (const pkg of pkgs) {
-          let o: any
+          let o: any;
           if (topLevel) {
-            const objKey = `${pkg.pkgPath.fullPath} [${pkg.version}]`
-            obj[objKey] = {}
-            o = obj[objKey]
+            const objKey = `${pkg.pkgPath.fullPath} [${pkg.version}]`;
+            obj[objKey] = {};
+            o = obj[objKey];
           }
-          this.buildDependencyTree(pkg.pkgPath, 'inside', o || obj, false)
+          this.buildDependencyTree(pkg.pkgPath, 'inside', o || obj, false);
         }
       }
     } else {
-      const pkgs = this.findPackagesWithDependency(dep)
+      const pkgs = this.findPackagesWithDependency(dep);
       if (pkgs) {
         for (const pkg of pkgs) {
-          const objKey = `${pkg.pkgPath.fullPath} [${pkg.version}]`
-          obj[objKey] = {}
-          const o = obj[objKey]
-          this.buildDependencyTree(pkg.pkgPath, 'top', o, false)
+          const objKey = `${pkg.pkgPath.fullPath} [${pkg.version}]`;
+          obj[objKey] = {};
+          const o = obj[objKey];
+          this.buildDependencyTree(pkg.pkgPath, 'top', o, false);
         }
       }
     }
-    return obj
+    return obj;
   }
 }

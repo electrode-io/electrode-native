@@ -1,5 +1,5 @@
-import { PackagePath } from 'ern-core'
-import _ from 'lodash'
+import { PackagePath } from 'ern-core';
+import _ from 'lodash';
 
 /**
  * Builds a regular expression matching a top level registry
@@ -15,9 +15,9 @@ import _ from 'lodash'
  * @param dep The dependency to build a Regular Expression for
  */
 export function getYarnLockTopLevelRegistryDependencyRe(
-  dep: PackagePath
+  dep: PackagePath,
 ): RegExp {
-  return new RegExp(`\n(${_.escapeRegExp(dep.basePath)})@(.+):`)
+  return new RegExp(`\n(${_.escapeRegExp(dep.basePath)})@(.+):`);
 }
 
 /**
@@ -34,11 +34,11 @@ export function getYarnLockTopLevelRegistryDependencyRe(
  * @param dep The dependency to build a Regular Expression for
  */
 export function getYarnLockTopLevelGitDependencyRe(dep: PackagePath): RegExp {
-  return new RegExp(`\n"(.+)@${_.escapeRegExp(dep.basePath)}#(.+)":`)
+  return new RegExp(`\n"(.+)@${_.escapeRegExp(dep.basePath)}#(.+)":`);
 }
 
 export function getYarnLockTopLevelDependencyRe(dep: PackagePath): RegExp {
   return dep.isGitPath
     ? getYarnLockTopLevelGitDependencyRe(dep)
-    : getYarnLockTopLevelRegistryDependencyRe(dep)
+    : getYarnLockTopLevelRegistryDependencyRe(dep);
 }

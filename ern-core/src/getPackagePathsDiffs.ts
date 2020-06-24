@@ -1,5 +1,5 @@
-import { PackagePath } from './PackagePath'
-import _ from 'lodash'
+import { PackagePath } from './PackagePath';
+import _ from 'lodash';
 
 export function getPackagePathsDiffs(a: PackagePath[], b: PackagePath[]) {
   return {
@@ -12,7 +12,7 @@ export function getPackagePathsDiffs(a: PackagePath[], b: PackagePath[]) {
       a,
       b,
       (aVal: PackagePath, bVal: PackagePath) =>
-        aVal.basePath === bVal.basePath && aVal.version !== bVal.version
+        aVal.basePath === bVal.basePath && aVal.version !== bVal.version,
     ),
-  }
+  };
 }

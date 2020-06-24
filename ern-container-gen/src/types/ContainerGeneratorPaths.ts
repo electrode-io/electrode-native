@@ -2,9 +2,9 @@ export interface ContainerGeneratorPaths {
   /**
    * Where we assemble the miniapps together
    */
-  compositeMiniApp: string
+  compositeMiniApp: string;
   /**
    * Where we output final generated container
    */
-  outDirectory: string
+  outDirectory: string;
 }
