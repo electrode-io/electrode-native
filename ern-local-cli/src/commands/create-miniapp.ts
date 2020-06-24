@@ -50,6 +50,11 @@ export const builder = (argv: Argv) => {
       alias: 's',
       describe: 'Scope to use for the MiniApp NPM package',
     })
+    .option('skipInstall', {
+      describe:
+        'Skip the installation of dependencies after project creation',
+      type: 'boolean',
+    })
     .option('skipNpmCheck', {
       describe:
         'Skip the check ensuring package does not already exists in npm registry',
@@ -77,6 +82,7 @@ export const commandHandler = async ({
   packageName,
   platformVersion,
   scope,
+  skipInstall,
   skipNpmCheck,
   template,
 }: {
@@ -88,6 +94,7 @@ export const commandHandler = async ({
   packageManager?: 'npm' | 'yarn'
   platformVersion: string
   scope?: string
+  skipInstall?: boolean
   skipNpmCheck?: boolean
   template?: string
 }) => {
@@ -155,6 +162,7 @@ export const commandHandler = async ({
       packageManager,
       platformVersion: platformVersion && platformVersion.replace('v', ''),
       scope,
+      skipInstall,
       template,
     })
   )
