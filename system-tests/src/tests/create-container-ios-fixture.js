@@ -32,5 +32,5 @@ if (process.platform === 'darwin') {
     'Generated IOS Container differ from reference fixture !'
   )
 } else {
-  run(command, { expectedExitCode: 1 })
+  run(command)
 }
