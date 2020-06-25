@@ -14,5 +14,6 @@ process.argv.push('-r', 'ts-node/register');
 process.argv.push('-r', 'tsconfig-paths/register');
 process.argv.push('-r', 'source-map-support/register');
 process.argv.push('--file', '../ern-core/test/mocha-root-level-hooks.ts');
+process.argv.push('--timeout', '5000');
 process.argv.push('test/**/*-test.{ts,js}');
 require('mocha/bin/_mocha');
