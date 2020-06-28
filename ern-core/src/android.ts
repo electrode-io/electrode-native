@@ -12,7 +12,7 @@ import semver from 'semver';
 // Default value for android build config
 // ==============================================================================
 
-export const DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION = '3.4.0';
+export const DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION = '3.4.2';
 export const DEFAULT_ANDROIDX_APPCOMPACT_VERSION = '1.1.0';
 export const DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION = '2.1.0';
 export const DEFAULT_BUILD_TOOLS_VERSION = '28.0.3';
