@@ -373,7 +373,7 @@ describe('ern-container-gen utils.js', () => {
         pathToYarnLock: pathToSampleYarnLock,
       });
       assert(yarnCliStub.install.calledOnce);
-      assert(yarnCliStub.add.calledThrice);
+      sinon.assert.callCount(yarnCliStub.add, 4);
       assert(yarnCliStub.install.calledBefore(yarnCliStub.add));
     });
 
@@ -416,7 +416,7 @@ describe('ern-container-gen utils.js', () => {
       ];
       yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.57.0'));
       await generateComposite({ miniApps, outDir: tmpOutDir });
-      assert(yarnCliStub.add.callCount === 4);
+      sinon.assert.callCount(yarnCliStub.add, 5);
     });
 
     it('should create index.js', async () => {
