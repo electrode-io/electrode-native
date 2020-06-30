@@ -23,10 +23,10 @@ module.exports = {
   ${projectRoot ? `projectRoot: "${projectRoot}",` : ''}
   ${
     watchFolders
-      ? `watchFolders: [ 
+      ? `watchFolders: [
         ${watchFolders
           .map((x) => `"${x.replace(/\\/g, '\\\\')}"`)
-          .join(`,${os.EOL}`)} 
+          .join(`,${os.EOL}`)}
       ],`
       : ''
   }
@@ -53,31 +53,31 @@ module.exports = {
       "jpeg",
       "png",
       "psd",
-      "svg",
-      "webp", 
+      "webp",
       // Video formats
       "m4v",
       "mov",
       "mp4",
       "mpeg",
       "mpg",
-      "webm", 
+      "webm",
       // Audio formats
       "aac",
       "aiff",
       "caf",
       "m4a",
       "mp3",
-      "wav", 
+      "wav",
       // Document formats
       "html",
       "pdf",
       // Font formats
       "otf",
-      "ttf", 
+      "ttf",
       // Archives (virtual files)
       "zip"
-    ]
+    ],
+    sourceExts: ["js", "json", "ts", "tsx", "svg"],
   },
   transformer: {
     getTransformOptions: async () => ({
@@ -87,6 +87,7 @@ module.exports = {
       },
     }),
     assetPlugins: ['ern-bundle-store-metro-asset-plugin'],
+    babelTransformerPath: require.resolve("react-native-svg-transformer"),
   },
 };
 `),
