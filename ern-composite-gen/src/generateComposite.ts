@@ -210,6 +210,7 @@ async function generateFullComposite(
         cwd: outDir,
         extraJsDependencies: [
           PackagePath.fromString('ern-bundle-store-metro-asset-plugin'),
+          PackagePath.fromString('react-native-svg-transformer'),
           ...extraJsDependencies,
         ],
       }),
