@@ -115,7 +115,7 @@ export class GeneratedComposite implements Composite {
       const ppKey = PackagePath.fromString(key);
 
       if (
-        ppValue.isFilePath ||
+        !ppValue.isFilePath &&
         this.config.miniApps.some((p) => p.basePath === ppValue.basePath)
       ) {
         result.push({
