@@ -31,7 +31,11 @@ export const commandHandler = async ({
   if (!isNaN(+value!)) {
     valueToset = +value!;
   } else {
-    valueToset = value === 'true' ? true : value === 'false' ? false : value;
+    try {
+      valueToset = JSON.parse(valueToset);
+    } catch (e) {
+      // swallow
+    }
   }
   ernConfig.set(key, valueToset);
   log.info(`Successfully set ${key} value to ${ernConfig.get(key)}`);
