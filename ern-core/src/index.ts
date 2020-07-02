@@ -55,6 +55,7 @@ export * from './config';
 export * from './gitApply';
 export * from './createProxyAgent';
 export * from './bugsnagUpload';
+export * from './sortObjectByKeys';
 
 export const config = _config;
 export const Platform = _Platform;

@@ -1,4 +1,4 @@
-import { config, Platform, shell } from 'ern-core';
+import { config, Platform, sortObjectByKeys, shell } from 'ern-core';
 import { CauldronRepository } from './types';
 
 export class CauldronRepositories {
@@ -29,7 +29,7 @@ https://[token]@[repourl]`);
 
     const cauldronRepositories = config.get('cauldronRepositories', {});
     cauldronRepositories[alias] = url;
-    config.set('cauldronRepositories', cauldronRepositories);
+    config.set('cauldronRepositories', sortObjectByKeys(cauldronRepositories));
     if (activate) {
       this.activate({ alias });
     }
@@ -46,7 +46,7 @@ https://[token]@[repourl]`);
     const cauldronRepositories = config.get('cauldronRepositories');
     const result = { alias, url: cauldronRepositories[alias] };
     delete cauldronRepositories[alias];
-    config.set('cauldronRepositories', cauldronRepositories);
+    config.set('cauldronRepositories', sortObjectByKeys(cauldronRepositories));
     const cauldronRepoInUse = config.get('cauldronRepoInUse');
     if (cauldronRepoInUse === alias) {
       config.set('cauldronRepoInUse', null);
