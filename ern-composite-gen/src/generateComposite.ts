@@ -151,11 +151,6 @@ async function generateFullComposite(
   const remoteMiniapps = miniApps.filter((p) => !p.isFilePath);
   const localMiniApps = miniApps.filter((p) => p.isFilePath);
   const localMiniAppsPaths = localMiniApps.map((m) => m.basePath);
-  const localMiniAppsPkgNames = [];
-  for (const x of localMiniApps) {
-    const pJson = await readPackageJson(x.basePath);
-    localMiniAppsPkgNames.push(pJson.name);
-  }
   const extraNodeModules: { [pkg: string]: string } = {};
 
   try {
@@ -201,7 +196,10 @@ async function generateFullComposite(
 
     await addRNStartScriptToPjson({ cwd: outDir });
 
-    await createIndexJs({ cwd: outDir, extraImports: localMiniAppsPkgNames });
+    await createIndexJs({
+      cwd: outDir,
+      miniApps,
+    });
 
     await createWatchmanConfig({ cwd: outDir });
 
