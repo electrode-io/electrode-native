@@ -18,9 +18,9 @@
 
 @interface ElectrodeBridgeDelegate ()
 @property (nonatomic, copy) NSURL *sourceURL;
-@property (nonatomic, strong) NSArray *extraModules;
-@property(nonatomic, strong) id<ElectrodePluginConfig> containerConfig;
-@property(nonatomic, strong) id<ElectrodePluginConfig> codePushConfig;
+@property (nonatomic, copy) NSArray *extraModules;
+@property (nonatomic, weak) id<ElectrodePluginConfig> containerConfig;
+@property (nonatomic, weak) id<ElectrodePluginConfig> codePushConfig;
 @end
 
 @implementation ElectrodeBridgeDelegate
