@@ -4,23 +4,40 @@ import { yarn } from './clients';
 import { PackagePath } from './PackagePath';
 import { spawnp } from './childProcess';
 import path from 'path';
+import fs from 'fs-extra';
+import semver from 'semver';
 
 export class HermesCli {
   public static async fromVersion(version: string): Promise<HermesCli> {
-    const workingDir = createTmpDir();
-    shell.pushd(workingDir);
+    this.workingDir = createTmpDir();
+    shell.pushd(this.workingDir);
     try {
       await yarn.init();
       await yarn.add(PackagePath.fromString(`hermes-engine@${version}`));
-      return new HermesCli(path.join(workingDir, HermesCli.hermesModulePath));
+      return new HermesCli(
+        path.join(this.workingDir, HermesCli.hermesModulePath),
+      );
     } finally {
       shell.popd();
     }
   }
 
+  private static workingDir: string;
+
+  public static get hermesVersion(): string {
+    const pJson = fs.readJSONSync(
+      path.join(this.workingDir, 'node_modules/hermes-engine/package.json'),
+    );
+    return pJson.version;
+  }
+
+  public static get hermesBinaryName(): string {
+    return semver.lt(this.hermesVersion, '0.5.0') ? 'hermes' : 'hermesc';
+  }
+
   public static get hermesModulePath(): string {
     return path.normalize(
-      `node_modules/hermes-engine/${HermesCli.platformDirectory}/hermes`,
+      `node_modules/hermes-engine/${HermesCli.platformDirectory}/${this.hermesBinaryName}`,
     );
   }
 
