@@ -437,6 +437,9 @@ export function getDefaultHermesVersion(
     return '~0.4.0';
   } else if (semver.gte(reactNativeVersion, '0.60.0')) {
     return '^0.2.1';
+  } else if (semver.gte(reactNativeVersion, '0.63.0')) {
+    // https://github.com/facebook/react-native/blob/v0.63.0/package.json#L98
+    return '~0.5.0';
   } else {
     throw new Error(
       'This function can only be called for versions of React Native >= 0.60.0',
