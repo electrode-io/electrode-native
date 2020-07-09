@@ -300,4 +300,40 @@ describe('android.js', () => {
       });
     });
   });
+
+  describe('getDefaultHermesVersion', () => {
+    it('should return ~0.5.0 for react native versions >= 0.63.0', () => {
+      ['0.63.0', '0.63.1'].forEach((rnVersion) => {
+        const hermesVersion = android.getDefaultHermesVersion(rnVersion);
+        expect(hermesVersion).eql(
+          '~0.5.0',
+          `Fail for react native version ${rnVersion}. ${hermesVersion} != '~0.5.0'`,
+        );
+      });
+    });
+
+    it('should return ~0.4.0 for react native versions >= 0.62.0 && < 0.63.0', () => {
+      ['0.62.0', '0.62.1', '0.62.2'].forEach((rnVersion) => {
+        const hermesVersion = android.getDefaultHermesVersion(rnVersion);
+        expect(hermesVersion).eql(
+          '~0.4.0',
+          `Fail for react native version ${rnVersion}. ${hermesVersion} != '~0.4.0'`,
+        );
+      });
+    });
+
+    it('should return ^0.2.1 for react native versions >= 0.60.0 && < 0.62.0', () => {
+      ['0.60.0', '0.60.1', '0.61.0', '0.61.1'].forEach((rnVersion) => {
+        const hermesVersion = android.getDefaultHermesVersion(rnVersion);
+        expect(hermesVersion).eql(
+          '^0.2.1',
+          `Fail for react native version ${rnVersion}. ${hermesVersion} != '^0.2.1'`,
+        );
+      });
+    });
+
+    it('should throw if react native version < 0.60.0', () => {
+      expect(() => android.getDefaultHermesVersion('0.59.0')).to.throw();
+    });
+  });
 });
