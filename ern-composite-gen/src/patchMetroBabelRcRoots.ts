@@ -1,3 +1,4 @@
+import { log } from 'ern-core';
 import fs from 'fs-extra';
 import path from 'path';
 import semver from 'semver';
@@ -28,14 +29,13 @@ export async function patchMetroBabelRcRoots({
   // this option will be released, to keep backward compatibility.
   // It will be deprecated at some point.
   const cwdNodeModules = path.join(cwd, 'node_modules');
+  const pathToFilesToPatch = [];
   if (semver.gte(rnVersion, '0.56.0') && babelRcRootsRe.length > 0) {
-    let pathToFileToPatch;
     if (semver.lt(metroVersion, '0.51.0')) {
       // For versions of metro < 0.51.0, we are patching the reactNativeTransformer.js file
       // https://github.com/facebook/metro/blob/v0.50.0/packages/metro/src/reactNativeTransformer.js#L120
-      pathToFileToPatch = path.join(
-        cwdNodeModules,
-        'metro/src/reactNativeTransformer.js',
+      pathToFilesToPatch.push(
+        path.join(cwdNodeModules, 'metro/src/reactNativeTransformer.js'),
       );
     } else {
       // For versions of metro >= 0.51.0, we are patching the index.js file
@@ -45,23 +45,28 @@ export async function patchMetroBabelRcRoots({
         '@react-native-community/cli/node_modules/metro-react-native-babel-transformer/src/index.js',
       );
       if (await fs.pathExists(pathInCommunityCli)) {
-        pathToFileToPatch = pathInCommunityCli;
-      } else {
-        pathToFileToPatch = path.join(
-          cwdNodeModules,
-          'metro-react-native-babel-transformer/src/index.js',
-        );
+        pathToFilesToPatch.push(pathInCommunityCli);
+      }
+      const pathInRoot = path.join(
+        cwdNodeModules,
+        'metro-react-native-babel-transformer/src/index.js',
+      );
+      if (await fs.pathExists(pathInRoot)) {
+        pathToFilesToPatch.push(pathInRoot);
       }
     }
 
-    const fileToPatch = await fs.readFile(pathToFileToPatch);
-    const lineToPatch = `let config = Object.assign({}, babelRC, extraConfig);`;
-    // Just add extra code line to inject babelrcRoots option
+    for (const pathToFileToPatch of pathToFilesToPatch) {
+      log.debug(`[patchMetroBabelRcRoots] Patching ${pathToFileToPatch}`);
+      const fileToPatch = await fs.readFile(pathToFileToPatch);
+      const lineToPatch = `let config = Object.assign({}, babelRC, extraConfig);`;
+      // Just add extra code line to inject babelrcRoots option
 
-    const patch = `extraConfig.babelrcRoots = [
-${babelRcRootsRe.map((b) => b.toString()).join(',')} ]
-${lineToPatch}`;
-    const patchedFile = fileToPatch.toString().replace(lineToPatch, patch);
-    await fs.writeFile(pathToFileToPatch, patchedFile);
+      const patch = `extraConfig.babelrcRoots = [
+  ${babelRcRootsRe.map((b) => b.toString()).join(',')} ]
+  ${lineToPatch}`;
+      const patchedFile = fileToPatch.toString().replace(lineToPatch, patch);
+      await fs.writeFile(pathToFileToPatch, patchedFile);
+    }
   }
 }
