@@ -225,6 +225,7 @@ Make sure to run these commands before building the container.`,
           ...dependencies.thirdPartyInManifest,
           ...dependencies.thirdPartyNotInManifest,
         ];
+
         const addDependencies: any = {};
         resDependencies.forEach((p) => {
           addDependencies[p.name!] = p.version;
@@ -253,7 +254,10 @@ Make sure to run these commands before building the container.`,
           );
           shell.mkdir('-p', containerNodeModulesPath);
           resDependencies.forEach((p) => {
-            shell.cp('-rf', p.basePath!, containerNodeModulesPath);
+            const depPath = p.basePath!.match(/node_modules\/(.+)/)![1];
+            const targetPath = path.join(containerNodeModulesPath, depPath);
+            shell.mkdir('-p', targetPath);
+            shell.cp('-rf', path.join(p.basePath!, '{.*,*}'), targetPath);
           });
         } else {
           shell.rm('-rf', 'node_modules');
