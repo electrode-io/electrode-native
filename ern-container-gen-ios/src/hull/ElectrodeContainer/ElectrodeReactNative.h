@@ -139,6 +139,18 @@ NS_ASSUME_NONNULL_BEGIN
                      properties:(NSDictionary *_Nullable)properties;
 
 /**
+Returns a react native miniapp (from a JSBundle).
+
+@param name The name of the mini app, preferably the same name as the jsbundle
+without the extension.
+@param overlay Boolean determines if view should be rendered as an overlay.
+@param properties Any configuration to set up the mini app with.
+@return a UIView of the miniapp.
+*/
+- (UIView *)miniAppViewWithName:(NSString *)name
+                     properties:(NSDictionary *_Nullable)properties
+                        overlay:(BOOL)overlay
+/**
  Returns a react native miniapp (from a JSBundle).
 
  @param name The name of the mini app, that is registered with the AppComponent.
