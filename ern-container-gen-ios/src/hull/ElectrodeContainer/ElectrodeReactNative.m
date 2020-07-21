@@ -201,14 +201,14 @@ static NSString *enableBundleStore = @"enableBundleStore";
 - (UIView *)miniAppViewWithName:(NSString *)name properties:(NSDictionary *_Nullable)properties {
     // Use the bridge to generate the view
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
-    rootView.backgroundColor = [self rootViewColor overlay:NO];
+    rootView.backgroundColor = [self rootViewColorWithOverlay:NO];
     return rootView;
 }
 
 - (UIView *)miniAppViewWithName:(NSString *)name properties:(NSDictionary *_Nullable)properties overlay:(BOOL)overlay {
     // Use the bridge to generate the view
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
-    rootView.backgroundColor = [self rootViewColor overlay:overlay];
+    rootView.backgroundColor = [self rootViewColorWithOverlay:overlay];
     return rootView;
 }
 
@@ -217,7 +217,7 @@ static NSString *enableBundleStore = @"enableBundleStore";
                 sizeFlexibility:(NSInteger)sizeFlexibilty {
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
     rootView.sizeFlexibility = (RCTRootViewSizeFlexibility)sizeFlexibilty;
-    rootView.backgroundColor = [self rootViewColor overlay:NO];
+    rootView.backgroundColor = [self rootViewColorWithOverlay:NO];
     return rootView;
 }
 
@@ -227,12 +227,12 @@ static NSString *enableBundleStore = @"enableBundleStore";
                        delegate:(id<MiniAppViewDelegate> _Nullable)delegate {
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
     rootView.sizeFlexibility = (RCTRootViewSizeFlexibility)sizeFlexibilty;
-    rootView.backgroundColor = [self rootViewColor overlay:NO];
+    rootView.backgroundColor = [self rootViewColorWithOverlay:NO];
     rootView.delegate = delegate;
     return rootView;
 }
 
-- (UIColor *)rootViewColor overlay:(BOOL)overlay {
+- (UIColor *)rootViewColorWithOverlay:(BOOL)overlay {
     if (overlay) {
         return [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:0.5];
     }
