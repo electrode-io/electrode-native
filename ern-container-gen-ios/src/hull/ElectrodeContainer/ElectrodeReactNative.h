@@ -149,7 +149,8 @@ without the extension.
 */
 - (UIView *)miniAppViewWithName:(NSString *)name
                      properties:(NSDictionary *_Nullable)properties
-                        overlay:(BOOL)overlay
+                        overlay:(BOOL)overlay;
+
 /**
  Returns a react native miniapp (from a JSBundle).
 
