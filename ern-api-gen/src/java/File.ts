@@ -1,7 +1,6 @@
 /* tslint:disable:variable-name */
 import fs from 'fs';
 import path from 'path';
-import { sync as mkdirsSync } from 'mkdirp';
 
 function canAccess(file) {
   try {
@@ -109,7 +108,7 @@ export default class File {
   }
 
   public mkdirs() {
-    return mkdirsSync(this._filename);
+    return fs.mkdirSync(this._filename, { recursive: true });
   }
 
   public toString() {
