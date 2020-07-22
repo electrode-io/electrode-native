@@ -2,10 +2,13 @@ import {
   findDirectoriesHavingRnConfig,
   handleCopyDirective,
   NativePlatform,
+  log,
 } from 'ern-core';
 import { getAssetsPath } from './getAssetsPath';
 import readDir from 'fs-readdir-recursive';
 import path from 'path';
+import fs from 'fs-extra';
+import semver from 'semver';
 
 export const supportedAssetsExts = ['.ttf', '.otf'];
 
@@ -28,6 +31,8 @@ export async function copyRnConfigAssets({
   outDir: string;
   platform: NativePlatform;
 }) {
+  const pJson = await fs.readJSON(path.join(compositePath, 'package.json'));
+  const rnVersion = pJson.dependencies['react-native'];
   const dirs = await findDirectoriesHavingRnConfig(compositePath);
 
   for (const dir of dirs) {
@@ -35,6 +40,15 @@ export async function copyRnConfigAssets({
     const assets =
       rnConfig.assets || (rnConfig.dependency && rnConfig.dependency.assets);
     if (assets) {
+      if (platform === 'ios' && semver.gte(rnVersion, '0.61.0')) {
+        const files = await fs.readdir(dir);
+        if (files.some((f) => f.endsWith('.podspec'))) {
+          log.debug(
+            `Skipping assets copy to container for ${dir} as it contains a podspec so the resources will be copied over by pod install`,
+          );
+          continue;
+        }
+      }
       for (const assetDir of assets) {
         const absDir = path.join(dir, assetDir);
         readDir(absDir)

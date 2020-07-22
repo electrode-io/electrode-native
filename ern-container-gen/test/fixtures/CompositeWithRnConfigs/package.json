@@ -1,4 +1,7 @@
 {
   "name": "composite",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "dependencies": {
+    "react-native": "0.63.1"
+  }
 }
