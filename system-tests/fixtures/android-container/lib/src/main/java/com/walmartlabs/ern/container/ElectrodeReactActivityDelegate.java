@@ -219,6 +219,11 @@ public class ElectrodeReactActivityDelegate extends ReactActivityDelegate {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
     }
