@@ -46,7 +46,7 @@
     "xcode-ern": "^1.0.12"
   },
   "devDependencies": {
-    "copyfiles": "^2.0.0",
+    "copyfiles": "^2.3.0",
     "ern-util-dev": "1000.0.0"
   },
   "engines": {

@@ -42,7 +42,7 @@
     "ern-api-gen": "1000.0.0",
     "ern-core": "1000.0.0",
     "fs-extra": "^8.1.0",
-    "lodash": "^4.17.14",
+    "lodash": "^4.17.19",
     "mustache": "^4.0.1",
     "semver": "5.5.0",
     "xcode": "^1.0.0",

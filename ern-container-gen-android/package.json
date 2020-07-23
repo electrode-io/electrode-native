@@ -40,11 +40,11 @@
     "ern-core": "1000.0.0",
     "fs-extra": "^8.1.0",
     "fs-readdir-recursive": "^1.1.0",
-    "lodash": "^4.17.14",
+    "lodash": "^4.17.19",
     "semver": "^6.0.0"
   },
   "devDependencies": {
-    "copyfiles": "^2.0.0",
+    "copyfiles": "^2.3.0",
     "ern-util-dev": "1000.0.0"
   },
   "engines": {
