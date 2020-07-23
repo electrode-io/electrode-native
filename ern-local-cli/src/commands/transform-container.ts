@@ -58,7 +58,12 @@ export const commandHandler = async ({
     },
   });
 
-  const extraObj = extra && (await parseJsonFromStringOrFile(extra));
+  let extraObj;
+  try {
+    extraObj = (extra && (await parseJsonFromStringOrFile(extra))) || {};
+  } catch (e) {
+    throw new Error('(--extra/-e option): Invalid input');
+  }
 
   if (
     transformer.isRegistryPath &&

@@ -158,7 +158,12 @@ Output directory should either not exist (it will be created) or should be empty
     );
   }
 
-  const extraObj = (extra && (await parseJsonFromStringOrFile(extra))) || {};
+  let extraObj;
+  try {
+    extraObj = (extra && (await parseJsonFromStringOrFile(extra))) || {};
+  } catch (e) {
+    throw new Error('(--extra/-e option): Invalid input');
+  }
 
   // Full native application selector was not provided.
   // Ask the user to select a completeNapDescriptor from a list
