@@ -95,11 +95,14 @@ export const commandHandler = async ({
   deviceConfig.updateDeviceConfig('android', usePreviousDevice);
 
   const miniAppPackageJson = await readPackageJson(process.cwd());
-  const extraObj =
-    (extra && (await parseJsonFromStringOrFile(extra))) ||
-    miniAppPackageJson.ern
-      ? miniAppPackageJson.ern
-      : {};
+
+  let extraObj;
+  try {
+    extraObj = (extra && (await parseJsonFromStringOrFile(extra))) || {};
+  } catch (e) {
+    throw new Error('(--extra/-e option): Invalid input');
+  }
+  extraObj = extraObj ?? (miniAppPackageJson.ern ? miniAppPackageJson.ern : {});
 
   await runMiniApp('android', {
     baseComposite,

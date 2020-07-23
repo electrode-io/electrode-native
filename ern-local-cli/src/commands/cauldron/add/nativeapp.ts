@@ -85,7 +85,11 @@ export const commandHandler = async ({
     }
   }
 
-  config = config && (await parseJsonFromStringOrFile(config));
+  try {
+    config = config && (await parseJsonFromStringOrFile(config));
+  } catch (e) {
+    throw new Error('(--config option): Invalid input');
+  }
 
   await kax.task(`Adding ${descriptor}`).run(
     cauldron.addNativeApplicationVersion(descriptor, {
