@@ -9,6 +9,7 @@ import log from './log';
 import kax from './kax';
 import util from 'util';
 import semver from 'semver';
+import os from 'os';
 
 const ex = util.promisify(exec);
 const sp = util.promisify(spawn);
@@ -125,7 +126,12 @@ ${resetCache ? '--reset-cache' : ''}`;
       args.push(`--reset-cache`);
     }
     spawn(
-      path.join(cwd, 'node_modules/.bin/react-native'),
+      path.join(
+        cwd,
+        `node_modules/.bin/react-native${
+          os.platform() === 'win32' ? '.cmd' : ''
+        }`,
+      ),
       ['start', ...args],
       {
         cwd,
