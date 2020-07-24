@@ -58,7 +58,7 @@
 {{/isPrimitiveType}}
 {{/isNotContainer}}
 {{^isNotContainer}}
-        if let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: Array<Any>.self, itemType: {{complexType}}.self),
+        if let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: Array<Any>.self, itemType: {{#items}}{{baseType}}{{/items}}.self),
              let {{baseName}}List = valid{{nameInCamelCase}} as? {{datatype}}  {
                  self.{{name}} = {{baseName}}List
              } else {
@@ -77,7 +77,7 @@
         }
 {{/isNotContainer}}
 {{^isNotContainer}}
-        if let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: [Any].self, itemType: {{complexType}}.self),
+        if let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: [Any].self, itemType: {{#items}}{{baseType}}{{/items}}.self),
             let {{baseName}}List = valid{{nameInCamelCase}} as? {{datatype}} {
             self.{{name}} = {{baseName}}List
         } else {
@@ -168,7 +168,7 @@ public class {{classname}}: ElectrodeObject, Bridgeable {
 {{/isPrimitiveType}}
 {{/isNotContainer}}
 {{^isNotContainer}}
-        if let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: [Any].self, itemType: {{complexType}}.self),
+        if let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: [Any].self, itemType: {{#items}}{{baseType}}{{/items}}.self),
              let {{baseName}}List = valid{{nameInCamelCase}} as? {{datatype}}  {
                  self.{{name}} = {{baseName}}List
              } else {
@@ -187,7 +187,7 @@ public class {{classname}}: ElectrodeObject, Bridgeable {
         }
 {{/isNotContainer}}
 {{^isNotContainer}}
-        if let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: [Any].self, itemType: {{complexType}}.self),
+        if let valid{{nameInCamelCase}} = try? NSObject.generateObject(data: dictionary["{{name}}"], classType: [Any].self, itemType: {{#items}}{{baseType}}{{/items}}.self),
             let {{baseName}}List = valid{{nameInCamelCase}} as? {{datatype}} {
             self.{{name}} = {{baseName}}List
         } else {
