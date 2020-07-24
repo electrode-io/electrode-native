@@ -22,8 +22,11 @@
      specify merge type
      */
     public let mergeType: Int?
+    public let stringArray: [String]?
+    public let integerArray: [Int]?
+    public let booleanArray: [Bool]?
 
-    public init(name: String, value: String?, domain: String?, path: String?, uri: String?, version: Double, expiry: Int64?, leftButton: NavBarButton?, rightButtons: [NavBarButton]?, isGuestUser: Bool?, mergeType: Int?) {
+    public init(name: String, value: String?, domain: String?, path: String?, uri: String?, version: Double, expiry: Int64?, leftButton: NavBarButton?, rightButtons: [NavBarButton]?, isGuestUser: Bool?, mergeType: Int?, stringArray: [String]?, integerArray: [Int]?, booleanArray: [Bool]?) {
         self.name = name
         self.value = value
         self.domain = domain
@@ -35,6 +38,9 @@
         self.rightButtons = rightButtons
         self.isGuestUser = isGuestUser
         self.mergeType = mergeType
+        self.stringArray = stringArray
+        self.integerArray = integerArray
+        self.booleanArray = booleanArray
         super.init()
     }
 
@@ -50,6 +56,9 @@
         self.rightButtons = nil
         self.isGuestUser = nil
         self.mergeType = nil
+        self.stringArray = nil
+        self.integerArray = nil
+        self.booleanArray = nil
         super.init()
     }
 
@@ -113,6 +122,24 @@
         } else {
             self.mergeType = nil
         }
+        if let validStringArray = try? NSObject.generateObject(data: dictionary["stringArray"], classType: [Any].self, itemType: String.self),
+            let stringArrayList = validStringArray as? [String] {
+            self.stringArray = stringArrayList
+        } else {
+            self.stringArray = nil
+        }
+        if let validIntegerArray = try? NSObject.generateObject(data: dictionary["integerArray"], classType: [Any].self, itemType: Int.self),
+            let integerArrayList = validIntegerArray as? [Int] {
+            self.integerArray = integerArrayList
+        } else {
+            self.integerArray = nil
+        }
+        if let validBooleanArray = try? NSObject.generateObject(data: dictionary["booleanArray"], classType: [Any].self, itemType: Bool.self),
+            let booleanArrayList = validBooleanArray as? [Bool] {
+            self.booleanArray = booleanArrayList
+        } else {
+            self.booleanArray = nil
+        }
 
         super.init(dictionary: dictionary)
     }
@@ -149,6 +176,15 @@
         }
         if let nonNullMergeType = self.mergeType {
             dict["mergeType"] = nonNullMergeType
+        }
+        if let nonNullStringArray = self.stringArray {
+            dict["stringArray"] = nonNullStringArray
+        }
+        if let nonNullIntegerArray = self.integerArray {
+            dict["integerArray"] = nonNullIntegerArray
+        }
+        if let nonNullBooleanArray = self.booleanArray {
+            dict["booleanArray"] = nonNullBooleanArray
         }
         return dict as NSDictionary
     }
@@ -179,8 +215,11 @@ public class ErnObject: ElectrodeObject, Bridgeable {
      specify merge type
      */
     public let mergeType: Int?
+    public let stringArray: [String]?
+    public let integerArray: [Int]?
+    public let booleanArray: [Bool]?
 
-    public init(name: String, value: String?, domain: String?, path: String?, uri: String?, version: Double, expiry: Int64?, leftButton: NavBarButton?, rightButtons: [NavBarButton]?, isGuestUser: Bool?, mergeType: Int?) {
+    public init(name: String, value: String?, domain: String?, path: String?, uri: String?, version: Double, expiry: Int64?, leftButton: NavBarButton?, rightButtons: [NavBarButton]?, isGuestUser: Bool?, mergeType: Int?, stringArray: [String]?, integerArray: [Int]?, booleanArray: [Bool]?) {
         self.name = name
         self.value = value
         self.domain = domain
@@ -192,6 +231,9 @@ public class ErnObject: ElectrodeObject, Bridgeable {
         self.rightButtons = rightButtons
         self.isGuestUser = isGuestUser
         self.mergeType = mergeType
+        self.stringArray = stringArray
+        self.integerArray = integerArray
+        self.booleanArray = booleanArray
         super.init()
     }
 
@@ -207,6 +249,9 @@ public class ErnObject: ElectrodeObject, Bridgeable {
         self.rightButtons = nil
         self.isGuestUser = nil
         self.mergeType = nil
+        self.stringArray = nil
+        self.integerArray = nil
+        self.booleanArray = nil
         super.init()
     }
 
@@ -270,6 +315,24 @@ public class ErnObject: ElectrodeObject, Bridgeable {
         } else {
             self.mergeType = nil
         }
+        if let validStringArray = try? NSObject.generateObject(data: dictionary["stringArray"], classType: [Any].self, itemType: String.self),
+            let stringArrayList = validStringArray as? [String] {
+            self.stringArray = stringArrayList
+        } else {
+            self.stringArray = nil
+        }
+        if let validIntegerArray = try? NSObject.generateObject(data: dictionary["integerArray"], classType: [Any].self, itemType: Int.self),
+            let integerArrayList = validIntegerArray as? [Int] {
+            self.integerArray = integerArrayList
+        } else {
+            self.integerArray = nil
+        }
+        if let validBooleanArray = try? NSObject.generateObject(data: dictionary["booleanArray"], classType: [Any].self, itemType: Bool.self),
+            let booleanArrayList = validBooleanArray as? [Bool] {
+            self.booleanArray = booleanArrayList
+        } else {
+            self.booleanArray = nil
+        }
 
         super.init(dictionary: dictionary)
     }
@@ -306,6 +369,15 @@ public class ErnObject: ElectrodeObject, Bridgeable {
         }
         if let nonNullMergeType = self.mergeType {
             dict["mergeType"] = nonNullMergeType
+        }
+        if let nonNullStringArray = self.stringArray {
+            dict["stringArray"] = nonNullStringArray
+        }
+        if let nonNullIntegerArray = self.integerArray {
+            dict["integerArray"] = nonNullIntegerArray
+        }
+        if let nonNullBooleanArray = self.booleanArray {
+            dict["booleanArray"] = nonNullBooleanArray
         }
         return dict as NSDictionary
     }

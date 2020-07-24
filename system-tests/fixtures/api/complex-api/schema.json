@@ -157,6 +157,24 @@
         "mergeType": {
           "type": "integer",
           "description": "specify merge type"
+        },
+        "stringArray": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "integerArray": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "booleanArray": {
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          }
         }
       },
       "required": [

@@ -52,6 +52,9 @@ public class ErnObject implements Parcelable, Bridgeable {
     private List<NavBarButton> rightButtons;
     private Boolean isGuestUser;
     private Integer mergeType;
+    private List<String> stringArray;
+    private List<Integer> integerArray;
+    private List<Boolean> booleanArray;
 
     private ErnObject() {
     }
@@ -68,6 +71,9 @@ public class ErnObject implements Parcelable, Bridgeable {
         this.rightButtons = builder.rightButtons;
         this.isGuestUser = builder.isGuestUser;
         this.mergeType = builder.mergeType;
+        this.stringArray = builder.stringArray;
+        this.integerArray = builder.integerArray;
+        this.booleanArray = builder.booleanArray;
     }
 
     private ErnObject(Parcel in) {
@@ -94,6 +100,9 @@ public class ErnObject implements Parcelable, Bridgeable {
         this.rightButtons = bundle.containsKey("rightButtons") ? getList(bundle.getParcelableArray("rightButtons"), NavBarButton.class) : null;
         this.isGuestUser = bundle.containsKey("isGuestUser") ? bundle.getBoolean("isGuestUser") : null;
         this.mergeType = getNumberValue(bundle, "mergeType") == null ? null : getNumberValue(bundle, "mergeType").intValue();
+        this.stringArray = bundle.containsKey("stringArray") ? getList(bundle.getStringArray("stringArray"), String.class) : null;
+        this.integerArray = bundle.containsKey("integerArray") ? getList(bundle.getIntArray("integerArray"), Integer.class) : null;
+        this.booleanArray = bundle.containsKey("booleanArray") ? getList(bundle.getBooleanArray("booleanArray"), Boolean.class) : null;
     }
 
     @NonNull
@@ -166,6 +175,21 @@ public class ErnObject implements Parcelable, Bridgeable {
         return mergeType;
     }
 
+    @Nullable
+    public List<String> getStringArray() {
+        return stringArray;
+    }
+
+    @Nullable
+    public List<Integer> getIntegerArray() {
+        return integerArray;
+    }
+
+    @Nullable
+    public List<Boolean> getBooleanArray() {
+        return booleanArray;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -209,6 +233,15 @@ public class ErnObject implements Parcelable, Bridgeable {
         if (this.mergeType != null) {
             bundle.putInt("mergeType", this.mergeType);
         }
+        if (this.stringArray != null) {
+            updateBundleWithList(this.stringArray, bundle, "stringArray");
+        }
+        if (this.integerArray != null) {
+            updateBundleWithList(this.integerArray, bundle, "integerArray");
+        }
+        if (this.booleanArray != null) {
+            updateBundleWithList(this.booleanArray, bundle, "booleanArray");
+        }
         return bundle;
     }
 
@@ -225,7 +258,10 @@ public class ErnObject implements Parcelable, Bridgeable {
                 + "leftButton:" + (leftButton != null ? leftButton.toString() : null) + ","
                 + "rightButtons:" + (rightButtons != null ? rightButtons.toString() : null) + ","
                 + "isGuestUser:" + isGuestUser + ","
-                + "mergeType:" + mergeType
+                + "mergeType:" + mergeType + ","
+                + "stringArray:" + (stringArray != null ? stringArray.toString() : null) + ","
+                + "integerArray:" + (integerArray != null ? integerArray.toString() : null) + ","
+                + "booleanArray:" + (booleanArray != null ? booleanArray.toString() : null)
                 + "}";
     }
 
@@ -241,6 +277,9 @@ public class ErnObject implements Parcelable, Bridgeable {
         private List<NavBarButton> rightButtons;
         private Boolean isGuestUser;
         private Integer mergeType;
+        private List<String> stringArray;
+        private List<Integer> integerArray;
+        private List<Boolean> booleanArray;
 
         public Builder(@NonNull String name, @NonNull Double version) {
             this.name = name;
@@ -298,6 +337,24 @@ public class ErnObject implements Parcelable, Bridgeable {
         @NonNull
         public Builder mergeType(@Nullable Integer mergeType) {
             this.mergeType = mergeType;
+            return this;
+        }
+
+        @NonNull
+        public Builder stringArray(@Nullable List<String> stringArray) {
+            this.stringArray = stringArray;
+            return this;
+        }
+
+        @NonNull
+        public Builder integerArray(@Nullable List<Integer> integerArray) {
+            this.integerArray = integerArray;
+            return this;
+        }
+
+        @NonNull
+        public Builder booleanArray(@Nullable List<Boolean> booleanArray) {
+            this.booleanArray = booleanArray;
             return this;
         }
 
