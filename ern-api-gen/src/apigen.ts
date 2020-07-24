@@ -128,7 +128,7 @@ export async function cleanGenerated(outFolder: string = process.cwd()) {
 
 async function validateApiNameAndGetPackageJson(message: string) {
   const pkg = await readPackage();
-  if (await !coreUtils.isDependencyApi(pkg.name)) {
+  if (!(await coreUtils.isDependencyApi(pkg.name))) {
     throw new Error(message);
   }
   return pkg;
