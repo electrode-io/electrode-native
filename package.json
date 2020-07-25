@@ -84,7 +84,7 @@
     "dirty-chai": "^2.0.1",
     "fs-readdir-recursive": "^1.1.0",
     "husky": "^2.1.0",
-    "inquirer": "^7.3.2",
+    "inquirer": "^7.3.3",
     "install": "^0.12.2",
     "jsonpath": "^1.0.1",
     "lerna": "^3.22.1",
