@@ -9,7 +9,6 @@ import {
   validateModuleName,
 } from 'ern-core';
 import {
-  askUserToInputPackageName,
   epilog,
   logErrorAndExitIfNotSatisfied,
   performPkgNameConflictCheck,
@@ -99,13 +98,11 @@ export const commandHandler = async ({
     );
   }
 
-  // Construct the package name
   if (!packageName) {
-    const defaultPackageName = coreUtils.getDefaultPackageNameForModule(
+    packageName = coreUtils.getDefaultPackageNameForModule(
       apiName,
       ModuleTypes.API,
     );
-    packageName = await askUserToInputPackageName({ defaultPackageName });
   }
 
   await logErrorAndExitIfNotSatisfied({

@@ -7,7 +7,6 @@ import {
   validateModuleName,
 } from 'ern-core';
 import {
-  askUserToInputPackageName,
   epilog,
   logErrorAndExitIfNotSatisfied,
   performPkgNameConflictCheck,
@@ -131,11 +130,10 @@ export const commandHandler = async ({
   }
 
   if (!packageName) {
-    const defaultPackageName = coreUtils.getDefaultPackageNameForModule(
+    packageName = coreUtils.getDefaultPackageNameForModule(
       appName,
       ModuleTypes.MINIAPP,
     );
-    packageName = await askUserToInputPackageName({ defaultPackageName });
   }
 
   if (packageManager === 'npm' || npm) {

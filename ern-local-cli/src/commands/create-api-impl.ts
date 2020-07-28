@@ -8,7 +8,6 @@ import {
 } from 'ern-core';
 import { generateApiImpl } from 'ern-api-impl-gen';
 import {
-  askUserToInputPackageName,
   askUserToSelectAnEnvironment,
   epilog,
   logErrorAndExitIfNotSatisfied,
@@ -168,11 +167,10 @@ export const commandHandler = async ({
 
   // If no package name is specified get default name from apiImplName
   if (!packageName) {
-    const defaultPackageName = (packageName = coreUtils.getDefaultPackageNameForModule(
+    packageName = coreUtils.getDefaultPackageNameForModule(
       apiImplName,
       moduleType,
-    ));
-    packageName = await askUserToInputPackageName({ defaultPackageName });
+    );
   }
 
   // Check if packageName is valid

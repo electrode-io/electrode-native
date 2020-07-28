@@ -10,7 +10,6 @@ export { askUserForCodePushDeploymentName } from './askUserForCodePushDeployment
 export { platformSupportedConfigAsString } from './platformSupportedConfigAsString';
 export { tryCatchWrap } from './tryCatchWrap';
 export { askUserToSelectAPlatform } from './askUserToSelectAPlatform';
-export { askUserToInputPackageName } from './askUserToInputPackageName';
 export { askUserToSelectAnEnvironment } from './askUserToSelectAnEnvironment';
 export { askUserConfirmation } from './askUserConfirmation';
 export { askUserForCodePushLabel } from './askUserForCodePushLabel';
