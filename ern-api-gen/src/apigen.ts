@@ -112,12 +112,12 @@ export async function cleanGenerated(outFolder: string = process.cwd()) {
     'This is not a properly named API directory. Naming convention is react-native-{name}-api',
   );
 
-  shell.rm('-rf', path.join(outFolder, 'javascript'));
-  shell.rm('-rf', path.join(outFolder, 'swift'));
-  shell.rm('-rf', path.join(outFolder, 'android'));
-  shell.rm('-rf', path.join(outFolder, 'IOS'));
   shell.rm('-rf', path.join(outFolder, FLOW_CONFIG_FILE));
   shell.rm('-rf', path.join(outFolder, PKG_FILE));
+  shell.rm('-rf', path.join(outFolder, 'android'));
+  shell.rm('-rf', path.join(outFolder, 'ios'));
+  shell.rm('-rf', path.join(outFolder, 'javascript'));
+  shell.rm('-rf', path.join(outFolder, 'swift'));
   return pkg;
 }
 

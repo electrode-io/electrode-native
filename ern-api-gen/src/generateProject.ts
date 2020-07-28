@@ -12,8 +12,8 @@ import {
 
 export const GENERATE = [
   ['android', 'ERNAndroid'],
+  ['ios', 'ERNSwift'],
   ['javascript', 'ERNES6'],
-  ['IOS', 'ERNSwift'],
 ];
 
 export async function generateSwagger(
