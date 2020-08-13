@@ -41,6 +41,7 @@ const PATH_TO_HULL_DIR = path.join(__dirname, 'hull');
 export interface AndroidDependencies {
   files: string[];
   transitive: string[];
+  raw: string[];
   regular: string[];
   annotationProcessor: string[];
 }
@@ -132,6 +133,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     const androidDependencies: AndroidDependencies = {
       annotationProcessor: [],
       files: [],
+      raw: [],
       regular: [],
       transitive: [],
     };
@@ -246,14 +248,31 @@ export default class AndroidGenerator implements ContainerGenerator {
               androidDependencies.transitive.push(
                 dependency.replace(transitivePrefix, ''),
               );
+              log.warn(
+                `Deprecation warning for ${plugin.name} manifest configuration.
+${transitivePrefix} dependency prefix has been deprecated and will be removed in a future release.
+You should replace "${transitivePrefix}:${dependency}" with "implementation ('${dependency}') { transitive = true }"`,
+              );
             } else if (dependency.startsWith(filesPrefix)) {
               androidDependencies.files.push(dependency);
+              log.warn(
+                `Deprecation warning for ${plugin.name} manifest configuration.
+${filesPrefix} dependency prefix has been deprecated and will be removed in a future release.
+You should replace "${dependency}" with "implementation ${dependency}"`,
+              );
             } else if (dependency.startsWith(annotationProcessorPrefix)) {
               androidDependencies.annotationProcessor.push(
                 dependency.replace(annotationProcessorPrefix, ''),
               );
-            } else {
+              log.warn(
+                `Deprecation warning for ${plugin.name} manifest configuration.
+${annotationProcessorPrefix} dependency prefix has been deprecated and will be removed in a future release.
+You should replace "${annotationProcessorPrefix}:${dependency}" with "annotationProcessor '${dependency}'"`,
+              );
+            } else if (/^[^:]+:[^:]+:[^:]+$/.test(dependency)) {
               androidDependencies.regular.push(dependency);
+            } else {
+              androidDependencies.raw.push(dependency);
             }
           }
         }
@@ -550,6 +569,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     // Dedupe dependencies with same version
     dependencies.regular = _.uniq(dependencies.regular);
     dependencies.files = _.uniq(dependencies.files);
+    dependencies.raw = _.uniq(dependencies.raw);
     dependencies.transitive = _.uniq(dependencies.transitive);
     dependencies.annotationProcessor = _.uniq(dependencies.annotationProcessor);
 
@@ -571,6 +591,9 @@ export default class AndroidGenerator implements ContainerGenerator {
     // Add dependencies to result
     dependencies.regular.forEach((d) => result.push(`implementation '${d}'`));
     dependencies.files.forEach((d) => result.push(`implementation ${d}`));
+    dependencies.raw.forEach((d) => {
+      result.push(d);
+    });
     dependencies.transitive.forEach((d) =>
       result.push(`implementation ('${d}') { transitive = true }`),
     );
