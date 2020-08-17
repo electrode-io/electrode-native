@@ -152,26 +152,26 @@ The root directory containing the Android module. By default, the plugin configu
 
 - `dependencies`
 
-An array of one or more dependencies used to add to the container when injecting this plugin. Some plugins might have dependencies on extra libraries that need to be included in the container. The container generation adds all of these extra dependencies as `compile` statements to its `build.gradle` file.
+An array of one or more dependencies (in format "<groupId>:<artifactId>:<version>") that the native module is dependent on. The container generator will add all of these extra dependencies as `implementation` statements in the container `build.gradle` file.
 
-If the `transitive` flag is needed for a given dependency, it is possible to use the prefix `transitive:` in front of the dependencies.
+For special dependency statements needs, not using default `implementation <groupId>:<artifactId>:<version>` format, it is possible to set the full dependency statement to be injected in the `build.gradle` as illustrated in the following example:
 
 **For example**
 
 ```json
 "dependencies": [
   "com.google.android.gms:play-services-base:10.0.1",
-  "com.google.android.gms:play-services-maps:10.0.1",
-  "transitive:com.crashlytics.sdk.android:crashlytics:2.9.2@aar"
+  "implementation('com.crashlytics.sdk.android:crashlytics:2.9.2@aar') { transitive = true }",
+  "implementation platform('com.foo:bar-pom:1.0.0')"
 ]
 ```
 
 **Will result in the following injection in build.gradle:**
 
 ```gradle
-compile 'com.google.android.gms:play-services-base:10.0.1'
-compile 'com.google.android.gms:play-services-maps:10.0.1'
-compile('com.crashlytics.sdk.android:crashlytics:2.9.2@aar') { transitive = true }
+implementation 'com.google.android.gms:play-services-base:10.0.1'
+implementation('com.crashlytics.sdk.android:crashlytics:2.9.2@aar') { transitive = true }
+implementation platform('com.foo:bar-pom:1.0.0')
 ```
 
 - `features`
