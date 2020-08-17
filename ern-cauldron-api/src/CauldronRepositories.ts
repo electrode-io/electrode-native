@@ -17,16 +17,6 @@ export class CauldronRepositories {
       this.throwIfAliasExist({ alias });
     }
 
-    const supportedGitHttpsSchemeRe = /(^https:\/\/.+:.+@.+$)|(^https:\/\/.+@.+$)/;
-    if (url.startsWith('https')) {
-      if (!supportedGitHttpsSchemeRe.test(url)) {
-        throw new Error(`Cauldron https urls have to be formatted as:
-https://[username]:[password]@[repourl]
-OR
-https://[token]@[repourl]`);
-      }
-    }
-
     const cauldronRepositories = config.get('cauldronRepositories', {});
     cauldronRepositories[alias] = url;
     config.set('cauldronRepositories', sortObjectByKeys(cauldronRepositories));
