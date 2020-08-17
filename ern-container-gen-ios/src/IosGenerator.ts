@@ -172,21 +172,6 @@ Make sure to run these commands before building the container.`,
           projectSpec,
         ),
       );
-    const { iosProject, projectPath } = await iosUtil.fillProjectHull(
-      pathSpec,
-      projectSpec,
-      config.plugins,
-      mustacheView,
-      config.composite,
-    );
-
-    await kax
-      .task('Adding Native Dependencies Hooks')
-      .run(
-        this.addiOSPluginHookClasses(iosProject, config.plugins, config.outDir),
-      );
-
-    fs.writeFileSync(projectPath, iosProject.writeSync());
 
     if (semver.gte(reactNativePlugin.version!, '0.61.0')) {
       shell.pushd(config.outDir);
@@ -265,7 +250,25 @@ Make sure to run these commands before building the container.`,
       } finally {
         shell.popd();
       }
+    }
 
+    const { iosProject, projectPath } = await iosUtil.fillProjectHull(
+      pathSpec,
+      projectSpec,
+      config.plugins,
+      mustacheView,
+      config.composite,
+    );
+
+    await kax
+      .task('Adding Native Dependencies Hooks')
+      .run(
+        this.addiOSPluginHookClasses(iosProject, config.plugins, config.outDir),
+      );
+
+    fs.writeFileSync(projectPath, iosProject.writeSync());
+
+    if (semver.gte(reactNativePlugin.version!, '0.61.0')) {
       // For full iOS container generation, run 'pod install'
       // and also add all essential node_modules (needed for the build)
       // to the container
