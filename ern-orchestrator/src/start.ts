@@ -111,7 +111,7 @@ export default async function start({
   );
   _.remove(miniapps, (m) => npmMiniAppsLinkedPkgNames.includes(m.name!));
   npmMiniAppsLinkedPkgNames.forEach((pkgName) =>
-    miniapps.push(miniAppsLinksObj[pkgName]),
+    miniapps.push(PackagePath.fromString(miniAppsLinksObj[pkgName])),
   );
 
   const composite = await kax.task('Generating MiniApps composite').run(
