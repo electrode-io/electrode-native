@@ -128,7 +128,7 @@ async function generateFullComposite(
   outDir: string,
   {
     extraJsDependencies = [],
-    jsApiImplDependencies,
+    jsApiImplDependencies = [],
     pathToYarnLock,
     resolutions,
   }: {
@@ -192,12 +192,14 @@ async function generateFullComposite(
       extraJsDependencies.push(
         PackagePath.fromString(`react-native-electrode-bridge`),
       );
+      extraJsDependencies = [...extraJsDependencies, ...jsApiImplDependencies];
     }
 
     await addRNStartScriptToPjson({ cwd: outDir });
 
     await createIndexJs({
       cwd: outDir,
+      jsApiImplDependencies,
       miniApps,
     });
 

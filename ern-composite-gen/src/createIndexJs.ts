@@ -4,28 +4,31 @@ import { readPackageJson, PackagePath } from 'ern-core';
 
 export async function createIndexJs({
   cwd,
+  jsApiImplDependencies = [],
   miniApps,
 }: {
   cwd: string;
+  jsApiImplDependencies: PackagePath[];
   miniApps: PackagePath[];
 }) {
   let entryIndexJsContent = '';
 
   const compositePackageJson = await readPackageJson(cwd);
-  for (const miniApp of miniApps) {
-    // Add miniapp imports strictly matching miniapps array order
-    // For git based miniapps we have to rely on some trickery to
+
+  for (const dependency of [...jsApiImplDependencies, ...miniApps]) {
+    // Add dependency imports strictly matching miniapps array order
+    // For git based dependencies we have to rely on some trickery to
     // find the package name, as it won't be set in the PackagePath
     // We just look in the composite package.json for a match on
     // the path, and get the package name from there.
     //
     // Sample git package in package.json:
     // "bar": "git+ssh://github.com/foo/bar.git#master"
-    const pkgName = miniApp.isGitPath
+    const pkgName = dependency.isGitPath
       ? Object.entries(compositePackageJson.dependencies).find(
-          ([, v]) => v === miniApp.fullPath,
+          ([, v]) => v === dependency.fullPath,
         )![0]
-      : miniApp.name;
+      : dependency.name;
     entryIndexJsContent += `import '${pkgName}'\n`;
   }
 
