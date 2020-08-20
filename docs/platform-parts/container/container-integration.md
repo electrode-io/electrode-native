@@ -187,14 +187,12 @@ To use [Hermes](https://hermesengine.dev/) engine rather than JavaScriptCore, yo
 
 #### iOS
 
-An Electrode Native container can be added as a dependency to an Xcode project in two ways:
+##### An Electrode Native container can be retrieved in a few ways:
 
 - Use a dependency manager such as Carthage (CocoaPods will be supported in the future) or,
-- Perform a manual installation
+- Perform a manual `git clone` of the container
 
-##### Using Carthage to add a container
-
-To add a container using Carthage:
+**Using Carthage**
 
 1. Create a Cartfile if you don't already have one, or open an existing Cartfile.
 2. Add the following line to your Cartfile.
@@ -216,18 +214,28 @@ To add a container using Carthage:
    carthage bootstrap --no-build --platform ios
    ```
 
-##### Manually adding a container
+**Use Git to clone container**
 
-To manually add a container:
-
-1. Clone the container to `<Your-WorkSpace>`.
+1. Clone the container.
 
    ```bash
-   git@github.com:username/myweatherapp-ios-container.git
+   git clone git@github.com:username/myweatherapp-ios-container.git
    ```
 
-2. Open your mobile application project file in Xcode.
-3. Right click your `<your project name>` in the project navigator. Select **Add Files** to `<your project name>`. Look for `ElectrodeContainer.xcodeproj` in the file directory where you cloned the repo above.
+##### Add Container to your mobile application
+
+**React Native >= 0.61**
+
+1. Check if your mobile application is using a workspace, (ie: you have an `.xcworkspace` file in your project directory). If not, open the `.xcodeproj` file of your mobile application in Xcode.
+2. In Xcode's menu bar, **File** -> **Save As Workspace**... You can use the same name as the `.xcodeproj` file for your workspace name. Save at the same level as the `.xcodeproj`.
+3. Close Xcode and re-open, this time selecting the workspace file.
+4. Make sure nothing is selected in the project navigator, In Xcode's menu bar, **File** -> **Add Files** to `<your workspace name>`. If you used Carthage, look for `ElectrodeContainer.xcodeproj` in the Carthage/Checkouts directory. If you cloned the container, find the `ElectrodeContainer.xcodeproj` in the cloned container directory.
+5. **Add Files** again, this time adding the `Pods.xcodeproj` that is located in the Pods directory of the container.
+
+**React Native < 0.61**
+
+1. Open your mobile application project file in Xcode.
+2. Right click your `<your project name>` in the project navigator. Select **Add Files** to `<your project name>`. If you used Carthage, look for `ElectrodeContainer.xcodeproj` in the Carthage/Checkouts directory. If you cloned the container, find the `ElectrodeContainer.xcodeproj` in the cloned container directory.
 
 **Additional Configuration**
 
