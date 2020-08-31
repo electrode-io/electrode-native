@@ -61,4 +61,12 @@ public interface RequestRegistrar<T> {
      */
     @Nullable
     UUID getRequestHandlerId(@NonNull String name);
+
+    /**
+     * Validates if the request handler is still registered
+     *
+     * @param requestHandlerUuid requestHandler id
+     * @return true | false
+     */
+    boolean isRegistered(@NonNull UUID requestHandlerUuid);
 }

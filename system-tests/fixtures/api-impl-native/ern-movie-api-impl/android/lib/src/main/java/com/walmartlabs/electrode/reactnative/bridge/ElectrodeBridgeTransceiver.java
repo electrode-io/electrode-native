@@ -152,6 +152,11 @@ class ElectrodeBridgeTransceiver extends ReactContextBaseJavaModule implements E
         return sRequestRegistrar.getRequestHandlerId(name);
     }
 
+    @Override
+    public boolean isRegistered(@NonNull UUID requestHandlerUuid) {
+        return sRequestRegistrar.isRegistered(requestHandlerUuid);
+    }
+
     @NonNull
     @Override
     public UUID getEventListenerId(@NonNull ElectrodeBridgeEventListener<ElectrodeBridgeEvent> eventListener) {

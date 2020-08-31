@@ -49,9 +49,8 @@ public class RequestRegistrarImpl<T> implements RequestRegistrar<T> {
         }
         mRequestHandlerByRequestName.put(name, requestHandler);
         mRequestNameByUUID.put(requestHandlerUuid, name);
-        isRegistered = true;
         Logger.d(TAG, "New request handler(id: %s) registered for request: %s", requestHandlerUuid, name);
-        return isRegistered;
+        return true;
     }
 
     /**
@@ -92,6 +91,11 @@ public class RequestRegistrarImpl<T> implements RequestRegistrar<T> {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean isRegistered(@NonNull UUID requestHandlerUuid) {
+        return mRequestNameByUUID.containsKey(requestHandlerUuid);
     }
 
     private void removeOldUuidMapping(@NonNull String name) {

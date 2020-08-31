@@ -44,6 +44,32 @@ public interface ElectrodeNativeBridge {
     boolean registerRequestHandler(@NonNull String name, @NonNull ElectrodeBridgeRequestHandler<ElectrodeBridgeRequest, Object> requestHandler, UUID uuid);
 
     /**
+     * Unregisters a request handler
+     *
+     * @param requestHandlerUuid {@link UUID} of registerRequestHandler
+     * @return registerRequestHandler unregistered
+     */
+    @SuppressWarnings("unused")
+    ElectrodeBridgeRequestHandler<ElectrodeBridgeRequest, Object> unregisterRequestHandler(@NonNull UUID requestHandlerUuid);
+
+    /**
+     * Query UUID of the request handler
+     *
+     * @param name
+     * @return {@link UUID} of the request handler
+     */
+    @Nullable
+    UUID getRequestHandlerId(@NonNull String name);
+
+    /**
+     * Validates if the request handler associated with the id is still in registered state.
+     *
+     * @param requestHandlerUuid requestHandlerId
+     * @return true | false
+     */
+    boolean isRegistered(@NonNull UUID requestHandlerUuid);
+
+    /**
      * Sends an event with some data to the all the even listeners.
      *
      * @param event {@link ElectrodeBridgeEvent} to emit
@@ -62,15 +88,6 @@ public interface ElectrodeNativeBridge {
     boolean addEventListener(@NonNull String name, @NonNull ElectrodeBridgeEventListener<ElectrodeBridgeEvent> eventListener, UUID uuid);
 
     /**
-     * Query UUID of the request handler
-     *
-     * @param name
-     * @return {@link UUID} of the request handler
-     */
-    @Nullable
-    UUID getRequestHandlerId(@NonNull String name);
-
-    /**
      * Query UUID of the event listener
      *
      * @param eventListener
@@ -86,14 +103,4 @@ public interface ElectrodeNativeBridge {
      * @return
      */
     ElectrodeBridgeEventListener<ElectrodeBridgeEvent> removeEventListener(@NonNull UUID eventListenerUuid);
-
-    /**
-     * Unregisters a request handler
-     *
-     * @param requestHandlerUuid {@link UUID} of registerRequestHandler
-     * @return registerRequestHandler unregistered
-     */
-    @SuppressWarnings("unused")
-    ElectrodeBridgeRequestHandler<ElectrodeBridgeRequest, Object> unregisterRequestHandler(@NonNull UUID requestHandlerUuid);
-
 }

@@ -23,9 +23,16 @@ package com.walmartlabs.electrode.reactnative.bridge;
  */
 public interface RequestHandlerHandle {
     /**
-     * Unregisters a request handler.
+     * Checks if the request handler associated to this handle is still the registered handler
      *
-     * @return
+     * @return true | false
+     */
+    boolean isRegistered();
+
+    /**
+     * Unregisters a request handler if present
+     *
+     * @return true if the request handler was unregistered. false if the handler was already removed
      */
     boolean unregister();
 }
