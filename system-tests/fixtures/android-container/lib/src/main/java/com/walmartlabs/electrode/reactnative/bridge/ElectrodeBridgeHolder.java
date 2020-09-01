@@ -223,6 +223,21 @@ public final class ElectrodeBridgeHolder {
         }
     }
 
+    public static boolean isRegistered(@NonNull UUID requestHandlerUuid) {
+        if (!isReactNativeReady) {
+            synchronized (mQueuedRequestHandlersRegistration) {
+                for (Map.Entry<String, RequestHandlerPlaceholder> entry : mQueuedRequestHandlersRegistration.entrySet()) {
+                    if (entry.getValue().getUUID() == requestHandlerUuid) {
+                        return true;
+                    }
+                }
+            }
+        } else {
+            return electrodeNativeBridge.isRegistered(requestHandlerUuid);
+        }
+        return false;
+    }
+
     private static void registerQueuedRequestHandlers() {
         for (Map.Entry<String, RequestHandlerPlaceholder> entry : mQueuedRequestHandlersRegistration.entrySet()) {
             electrodeNativeBridge.registerRequestHandler(
