@@ -16,6 +16,7 @@ import { getNativeDependencyPath } from './nativeDependenciesLookup';
 import { gitApply } from './gitApply';
 import semver from 'semver';
 import readDir = require('fs-readdir-recursive');
+import glob from 'glob';
 
 export async function fillProjectHull(
   pathSpec: {
@@ -138,6 +139,7 @@ export async function fillProjectHull(
         replaceInFile,
         requiresManualLinking,
         setBuildSettings,
+        ignorePodSpec,
       } = pluginConfig!;
 
       if (semver.lt(rnVersion, '0.61.0') || requiresManualLinking) {
@@ -392,6 +394,9 @@ export async function fillProjectHull(
       }
 
       if (semver.gte(rnVersion, '0.61.0')) {
+        const re = /.+node_modules\/(.+)/;
+        const reExec = re.exec(pluginSourcePath);
+
         if (podfile) {
           if (plugin.name !== 'react-native') {
             throw new Error(
@@ -404,8 +409,41 @@ export async function fillProjectHull(
 
         if (podspec) {
           const sourcePodspecPath = path.join(pluginConfig!.path!, podspec);
-          const destPodspecPath = path.join(pluginSourcePath, podspec);
+          let destPodspecPath;
+          if (reExec) {
+            destPodspecPath = path.join(
+              pathSpec.outputDir,
+              'node_modules',
+              reExec[1],
+              podspec,
+            );
+          } else {
+            destPodspecPath = path.join(pluginSourcePath, podspec);
+          }
           shell.cp(sourcePodspecPath, destPodspecPath);
+        }
+
+        if (ignorePodSpec && reExec) {
+          const podspecs: string[] = await new Promise((resolve, reject) => {
+            glob(
+              path.join(
+                pathSpec.outputDir,
+                'node_modules',
+                reExec[1],
+                '**/*.podspec',
+              ),
+              (err, files) => {
+                if (err) {
+                  reject(err);
+                } else {
+                  resolve(files.map(path.normalize));
+                }
+              },
+            );
+          });
+          for (const podspecFile of podspecs) {
+            fs.unlinkSync(podspecFile);
+          }
         }
 
         if (extraPods) {
