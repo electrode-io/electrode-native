@@ -376,14 +376,14 @@ export async function performCodePushOtaUpdate(
     }
 
     const miniAppsToBeCodePushed = _.unionBy(
-      miniApps,
       referenceMiniAppsToCodePush,
+      miniApps,
       (x) => x.basePath,
     );
 
     const jsApiImplsToBeCodePushed = _.unionBy(
-      jsApiImpls,
       referenceJsApiImplsToCodePush,
+      jsApiImpls,
       (x) => x.basePath,
     );
 
