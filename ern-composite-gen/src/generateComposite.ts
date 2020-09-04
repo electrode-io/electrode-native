@@ -184,16 +184,17 @@ async function generateFullComposite(
       extraJsDependencies.push(
         PackagePath.fromString(`react@${miniAppReactVersion}`),
       );
-      // Explicitly add react as an extra node module in metro config
-      // Because its not a native module, it will not be auto added
-      // later on as done for native modules
-      extraNodeModules.react = path.join(outDir, 'node_modules/react');
       // Also add latest version of the bridge
       extraJsDependencies.push(
         PackagePath.fromString(`react-native-electrode-bridge`),
       );
       extraJsDependencies = [...extraJsDependencies, ...jsApiImplDependencies];
     }
+
+    // Explicitly add react as an extra node module in metro config
+    // Because its not a native module, it will not be auto added
+    // later on as done for native modules
+    extraNodeModules.react = path.join(outDir, 'node_modules/react');
 
     await addRNStartScriptToPjson({ cwd: outDir });
 
