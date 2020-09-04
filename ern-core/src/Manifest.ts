@@ -210,6 +210,14 @@ export interface IosPluginConfig extends CommonPluginConfig {
    * will be processed
    */
   requiresManualLinking?: boolean;
+  /**
+   * Indicates whether to ignore the podspec
+   * This can be used in case of manually linking a plugin with
+   * requiresManualLinking, if the plugin has a podspec
+   * Otherwise the plugin will both be manually linked by ern
+   * but also auto linked by RN63 due to the precense of the podsepc
+   */
+  ignorePodSpec?: boolean;
 }
 
 /**
