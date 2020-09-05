@@ -279,7 +279,7 @@ Make sure to run these commands before building the container.`,
         try {
           await kax
             .task('Running pod install')
-            .run(childProcess.spawnp('pod', ['install']));
+            .run(childProcess.spawnp('pod', ['install', '--verbose']));
         } finally {
           shell.popd();
         }
