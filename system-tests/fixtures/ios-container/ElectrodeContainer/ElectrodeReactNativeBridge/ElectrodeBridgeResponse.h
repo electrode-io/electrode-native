@@ -26,7 +26,7 @@ extern NSString *const kElectrodeBridgeResponseUnknownErrorCode;
 
 @interface ElectrodeBridgeResponse : ElectrodeBridgeMessage
 
-@property(readonly, nonatomic, strong, nullable) id<ElectrodeFailureMessage>
+@property(readonly, nonatomic, weak, nullable) id<ElectrodeFailureMessage>
     failureMessage;
 
 + (nullable instancetype)createResponseWithData:(NSDictionary *)data;
