@@ -29,7 +29,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "485009E21E2FF23B009B6610"
-               BuildableName = "ElectrodeContainer.framework"
+               BuildableName = ".framework"
                BlueprintName = "ElectrodeContainer"
                ReferencedContainer = "container:ElectrodeContainer.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "485009E21E2FF23B009B6610"
-            BuildableName = "ElectrodeContainer.framework"
+            BuildableName = ".framework"
             BlueprintName = "ElectrodeContainer"
             ReferencedContainer = "container:ElectrodeContainer.xcodeproj">
          </BuildableReference>
@@ -77,7 +77,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "485009E21E2FF23B009B6610"
-            BuildableName = "ElectrodeContainer.framework"
+            BuildableName = ".framework"
             BlueprintName = "ElectrodeContainer"
             ReferencedContainer = "container:ElectrodeContainer.xcodeproj">
          </BuildableReference>
@@ -93,7 +93,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "485009E21E2FF23B009B6610"
-            BuildableName = "ElectrodeContainer.framework"
+            BuildableName = ".framework"
             BlueprintName = "ElectrodeContainer"
             ReferencedContainer = "container:ElectrodeContainer.xcodeproj">
          </BuildableReference>
