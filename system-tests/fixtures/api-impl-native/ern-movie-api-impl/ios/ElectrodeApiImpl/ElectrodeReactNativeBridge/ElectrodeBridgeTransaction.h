@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ElectrodeBridgeTransaction : NSObject
 
 @property(nonatomic, readonly, strong) ElectrodeBridgeRequest *request;
-@property(nonatomic, readonly, strong, nullable) ElectrodeBridgeResponseCompletionHandler completion;
+@property(nonatomic, readonly, copy, nullable) ElectrodeBridgeResponseCompletionHandler completion;
 // Note: response can be set
 @property(nonatomic, readwrite, strong, nullable)
     ElectrodeBridgeResponse *response;

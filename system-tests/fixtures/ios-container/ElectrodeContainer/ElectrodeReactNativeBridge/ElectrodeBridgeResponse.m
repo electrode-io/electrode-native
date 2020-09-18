@@ -24,7 +24,7 @@ NSString *const kElectrodeBridgeResponseUnknownErrorCode = @"EUNKNOWN";
 
 @interface ElectrodeBridgeResponse ()
 
-@property(nonatomic, strong, nullable) id<ElectrodeFailureMessage>
+@property(nonatomic, weak, nullable) id<ElectrodeFailureMessage>
     failureMessage;
 
 @end
