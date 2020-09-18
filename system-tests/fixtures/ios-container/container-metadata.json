@@ -7,7 +7,7 @@
   ],
   "nativeDeps": [
     "react-native@0.63.2",
-    "react-native-electrode-bridge@1.5.26",
+    "react-native-electrode-bridge@1.5.27",
     "react-native-ernmovie-api@0.0.11",
     "react-native-ernnavigation-api@0.0.5"
   ],
