@@ -9,7 +9,6 @@ import {
 import {
   epilog,
   logErrorAndExitIfNotSatisfied,
-  performPkgNameConflictCheck,
   promptUserToUseSuggestedModuleName,
   tryCatchWrap,
 } from '../lib';
@@ -54,6 +53,7 @@ export const builder = (argv: Argv) => {
       type: 'boolean',
     })
     .option('skipNpmCheck', {
+      deprecated: 'use "npm info" to check manually',
       describe:
         'Skip the check ensuring package does not already exists in npm registry',
       type: 'boolean',
@@ -148,8 +148,11 @@ export const commandHandler = async ({
     },
   });
 
-  if (!skipNpmCheck && !(await performPkgNameConflictCheck(packageName))) {
-    throw new Error(`Aborting command `);
+  if (skipNpmCheck) {
+    log.warn(
+      'Deprecated: --skipNpmCheck. create-miniapp no longer checks the npm' +
+        'registry. Use "npm info" to check manually.',
+    );
   }
 
   await kax.task('Creating MiniApp').run(

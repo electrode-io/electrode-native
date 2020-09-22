@@ -38,6 +38,7 @@ The `android` and `ios` directories are not created by this command. They will b
 
 `--packageManager <npm | yarn>`
 
+- **Deprecated:** Yarn is the default, use --npm to override
 - The package manager to be used with this MiniApp (`npm` or `yarn`)
 - This will set `ern.packageManager` in the MiniApp `package.json`.
 - This setting will only be used for `ern add` and `ern upgrade-miniapp` commands. It won't apply for creating the MiniApp. Electrode Native is internally running `react-native init` command which uses Yarn by default, if available on the machine, when creating an app. React Native does not offer this to be configured as of now. If you wish to use npm, you will have to manually remove `yarn.lock` and `node_modules/` in the MiniApp directory after creation, and run `npm install`.
@@ -62,6 +63,7 @@ The `android` and `ios` directories are not created by this command. They will b
 
 `--skipNpmCheck`
 
+- **Deprecated:** Use `npm info` to check manually
 - Skip the check ensuring package does not already exists in npm registry.
 - **Default** The value defaults to false.
 
