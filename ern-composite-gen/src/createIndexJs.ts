@@ -24,11 +24,21 @@ export async function createIndexJs({
     //
     // Sample git package in package.json:
     // "bar": "git+ssh://github.com/foo/bar.git#master"
-    const pkgName = dependency.isGitPath
-      ? Object.entries(compositePackageJson.dependencies).find(
-          ([, v]) => v === dependency.fullPath,
-        )![0]
-      : dependency.name;
+    let pkgName;
+    if (dependency.isGitPath) {
+      const dependencyKeyValuePair = Object.entries(
+        compositePackageJson.dependencies,
+      ).find(([, v]) => v === dependency.fullPath);
+      if (!dependencyKeyValuePair) {
+        throw new Error(
+          `Could not find ${dependency.fullPath} in composite package.json dependencies`,
+        );
+      }
+      pkgName = dependencyKeyValuePair[0];
+    } else {
+      pkgName = dependency.name;
+    }
+
     entryIndexJsContent += `import '${pkgName}'\n`;
   }
 
