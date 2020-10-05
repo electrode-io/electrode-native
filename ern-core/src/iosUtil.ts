@@ -349,12 +349,34 @@ export async function fillProjectHull(
                 projectAbsolutePath,
                 staticLibs: project.staticLibs,
               };
-              iosProject.addProject(
-                project.path,
-                project.group,
-                target,
-                options,
-              );
+              try {
+                iosProject.addProject(
+                  project.path,
+                  project.group,
+                  target,
+                  options,
+                );
+              } catch (e) {
+                if (
+                  e.message.includes(
+                    "Cannot read property 'productReference'",
+                  ) &&
+                  options.staticLibs?.length >= 1
+                ) {
+                  throw new Error(
+                    `Error when trying to inject ${
+                      plugin.name
+                    } in iOS container.
+This error is typically due to a plugin misconfiguration in the manifest.
+Please make sure that the following static lib(s) reference(s) (name and target) in your configuration ...
+${JSON.stringify(options.staticLibs, null, 2)}
+... are matching the values defined in the native module pbxproj located in ${projectAbsolutePath}.
+`,
+                  );
+                } else {
+                  throw e;
+                }
+              }
             }
           }
 
