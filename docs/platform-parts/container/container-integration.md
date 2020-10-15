@@ -262,5 +262,19 @@ To also generate such a container on MacOS, you can set the `skipInstall` flag t
     }
   }
 }
+```
 
 Alternatively, for containers that are not generated using a cauldron, you can set the `--skipInstall` option of the `create-container` command.
+
+##### Extra configuration
+
+You can override the iOS deployment target version to use by setting `iosConfig` in the cauldron as show below.
+
+```json
+{
+  "containerGenerator": {
+    "iosConfig": {
+      "deploymentTarget": "11.0"
+    }
+  }
+}

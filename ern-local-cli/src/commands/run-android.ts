@@ -19,12 +19,6 @@ export const builder = (argv: Argv) => {
       type: 'string',
     })
     .coerce('baseComposite', (d) => PackagePath.fromString(d))
-    .option('extra', {
-      alias: 'e',
-      describe:
-        'Optional extra run configuration (json string or local/cauldron path to config file)',
-      type: 'string',
-    })
     .option('descriptor', {
       alias: 'd',
       describe: 'Full native application descriptor',
@@ -35,6 +29,12 @@ export const builder = (argv: Argv) => {
       default: true,
       describe: 'Enable or disable React Native dev support',
       type: 'boolean',
+    })
+    .option('extra', {
+      alias: 'e',
+      describe:
+        'Optional extra run configuration (json string or local/cauldron path to config file)',
+      type: 'string',
     })
     .option('host', {
       default: 'localhost',
@@ -98,7 +98,7 @@ export const commandHandler = async ({
 
   let extraObj;
   try {
-    extraObj = (extra && (await parseJsonFromStringOrFile(extra))) || {};
+    extraObj = extra && (await parseJsonFromStringOrFile(extra));
   } catch (e) {
     throw new Error('(--extra/-e option): Invalid input');
   }

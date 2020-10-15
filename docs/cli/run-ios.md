@@ -20,6 +20,30 @@
 
 `--dev [true|false]`
 
+`--extra/-e`
+
+- Optional extra configuration specific to local container and runner
+- Override iOS configuration during local container generation and runner project by passing `iosConfig` attributes
+  - **As a json string**
+    For example `--extra '{"iosConfig": {"deploymentTarget": "11.0"}}'`
+  - **As a file path**
+    For example `--extra /home/user/my-container-config.json`
+    In that case, the configuration will be read from the file.
+  - **As a Cauldron file path**
+    For example `--extra cauldron://config/container/my-container-config.json`
+    In that case, the configuration will be read from the file stored in Cauldron.
+    For this way to work, the file must exist in Cauldron (you can add a file to the cauldron by using the [ern cauldron add file] command).
+
+Alternatively, it is also possible to provide this extra configuration in the `package.json` of the MiniApp, inside the `ern` object. For example:
+
+```json
+"ern": {
+  "iosConfig": {
+    "deploymentTarget": "11.0"
+  }
+}
+```
+
 - Enable or disable React Native dev support
 
 `--host`

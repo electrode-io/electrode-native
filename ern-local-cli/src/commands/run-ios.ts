@@ -5,8 +5,9 @@ import {
   getLocalIp,
   log,
   PackagePath,
+  readPackageJson,
 } from 'ern-core';
-import { runMiniApp } from 'ern-orchestrator';
+import { parseJsonFromStringOrFile, runMiniApp } from 'ern-orchestrator';
 import { Argv } from 'yargs';
 
 export const command = 'run-ios';
@@ -29,6 +30,12 @@ export const builder = (argv: Argv) => {
       default: true,
       describe: 'Enable or disable React Native dev support',
       type: 'boolean',
+    })
+    .option('extra', {
+      alias: 'e',
+      describe:
+        'Optional extra run configuration (json string or local/cauldron path to config file)',
+      type: 'string',
     })
     .option('host', {
       describe: 'Host/IP to use for the local packager',
@@ -70,6 +77,7 @@ export const commandHandler = async ({
   baseComposite,
   descriptor,
   dev,
+  extra,
   host,
   launchArgs,
   launchEnvVars,
@@ -81,6 +89,7 @@ export const commandHandler = async ({
   baseComposite?: PackagePath;
   descriptor?: AppVersionDescriptor;
   dev?: boolean;
+  extra?: string;
   host?: string;
   launchArgs?: string;
   launchEnvVars?: string;
@@ -103,10 +112,21 @@ export const commandHandler = async ({
     }
   }
 
+  const miniAppPackageJson = await readPackageJson(process.cwd());
+
+  let extraObj;
+  try {
+    extraObj = extra && (await parseJsonFromStringOrFile(extra));
+  } catch (e) {
+    throw new Error('(--extra/-e option): Invalid input');
+  }
+  extraObj = extraObj ?? (miniAppPackageJson.ern ? miniAppPackageJson.ern : {});
+
   await runMiniApp('ios', {
     baseComposite,
     descriptor,
     dev,
+    extra: extraObj,
     host: host || 'localhost',
     launchArgs,
     launchEnvVars,
