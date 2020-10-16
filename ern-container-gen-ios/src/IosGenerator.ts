@@ -136,10 +136,6 @@ Make sure to run these commands before building the container.`,
       rootDir: ROOT_DIR,
     };
 
-    const projectSpec = {
-      projectName: 'ElectrodeContainer',
-    };
-
     const reactNativePlugin = _.find(
       config.plugins,
       (p) => p.name === 'react-native',
@@ -153,10 +149,19 @@ Make sure to run these commands before building the container.`,
 
     const mustacheView: any = {};
     mustacheView.jsMainModuleName = config.jsMainModuleName || 'index';
+    mustacheView.iosDeploymentTarget =
+      config.iosConfig.deploymentTarget ??
+      getDefaultIosDeploymentTarget(reactNativePlugin.version);
+
     injectReactNativeVersionKeysInObject(
       mustacheView,
       reactNativePlugin.version,
     );
+
+    const projectSpec = {
+      deploymentTarget: mustacheView.iosDeploymentTarget,
+      projectName: 'ElectrodeContainer',
+    };
 
     await kax
       .task('Preparing Native Dependencies Injection')
@@ -474,3 +479,13 @@ Make sure to run these commands before building the container.`,
     }
   }
 }
+
+const getDefaultIosDeploymentTarget = (rnVersion: string): string | null => {
+  if (semver.gte(rnVersion, '0.63.0')) {
+    return '10.0';
+  } else if (semver.gte(rnVersion, '0.61.0')) {
+    return '9.0';
+  } else {
+    return null;
+  }
+};

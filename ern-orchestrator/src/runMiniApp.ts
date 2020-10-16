@@ -211,6 +211,7 @@ export async function runMiniApp(
     extra: {
       androidConfig: extra?.androidConfig ?? {},
       containerGenWorkingDir: Platform.containerGenDirectory,
+      iosConfig: extra?.iosConfig ?? {},
     },
     mainMiniAppName: entryMiniAppName,
     outDir: pathToRunner,

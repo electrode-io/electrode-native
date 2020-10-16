@@ -25,16 +25,27 @@
 `--extra/-e`
 
 - Optional extra configuration specific to local container and runner
-- Override the android build config during local container generation and runner project by passing `androidConfig` attributes
-  - **As a json string**  
+- Override the Android build config during local container generation and runner project by passing `androidConfig` attributes
+  - **As a json string**
     For example `--extra '{"androidConfig": {"androidGradlePlugin": "3.2.1","buildToolsVersion": "28.0.3","compileSdkVersion": "28","gradleDistributionVersion": "4.6","minSdkVersion": "19","sourceCompatibility": "VERSION_1_8","supportLibraryVersion": "28.0.0","targetCompatibility": "VERSION_1_8","targetSdkVersion": "28"}}'`
-  - **As a file path**  
-    For example `--extra /Users/username/my-container-config.json`  
+  - **As a file path**
+    For example `--extra /home/user/my-container-config.json`
     In that case, the configuration will be read from the file.
-  - **As a Cauldron file path**  
-    For example `--extra cauldron://config/container/my-container-config.json`  
-    In that case, the configuration will be read from the file stored in Cauldron.  
+  - **As a Cauldron file path**
+    For example `--extra cauldron://config/container/my-container-config.json`
+    In that case, the configuration will be read from the file stored in Cauldron.
     For this way to work, the file must exist in Cauldron (you can add a file to the cauldron by using the [ern cauldron add file] command).
+
+Alternatively, it is also possible to provide this extra configuration in the `package.json` of the MiniApp, inside the `ern` object. For example:
+
+```json
+"ern": {
+  "androidConfig": {
+    "minSdkVersion": "19",
+    "compileSdkVersion": "28"
+  }
+}
+```
 
 `--host`
 

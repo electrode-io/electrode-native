@@ -56,9 +56,11 @@
 `--extra/-e`
 
 - Optional extra configuration specific to creating container
-- Override the android build config during container generation by passing `androidConfig` attributes
+- Override some ios or android container generation configuration by passing `androidConfig` and/or `iosConfig` attributes
   - **As a json string**
     For example `--extra '{"androidConfig": {"androidGradlePlugin": "3.2.1","buildToolsVersion": "28.0.3","compileSdkVersion": "28","gradleDistributionVersion": "4.6","minSdkVersion": "19","sourceCompatibility": "VERSION_1_8","supportLibraryVersion": "28.0.0","targetCompatibility": "VERSION_1_8","targetSdkVersion": "28"}}'`
+    or
+    `--extra '{"iosConfig": {"deploymentTarget": "11.0"}}'`
   - **As a file path**
     For example `--extra /Users/username/my-container-config.json`
     In that case, the configuration will be read from the file.
