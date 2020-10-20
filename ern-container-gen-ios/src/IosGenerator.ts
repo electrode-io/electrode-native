@@ -150,7 +150,7 @@ Make sure to run these commands before building the container.`,
     const mustacheView: any = {};
     mustacheView.jsMainModuleName = config.jsMainModuleName || 'index';
     mustacheView.iosDeploymentTarget =
-      config.iosConfig.deploymentTarget ??
+      config.iosConfig?.deploymentTarget ??
       iosUtil.getDefaultIosDeploymentTarget(reactNativePlugin.version);
 
     injectReactNativeVersionKeysInObject(
