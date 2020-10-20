@@ -48,10 +48,15 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
   ) {
     log.debug(`Starting project generation for ${this.platform}`);
     this.regenerateApiImpl = regen;
-    await this.fillHull(paths, plugins, apis);
+    await this.fillHull(paths, plugins, apis, reactNativeVersion);
   }
 
-  public async fillHull(paths: any, plugins: PackagePath[], apis: any[]) {
+  public async fillHull(
+    paths: any,
+    plugins: PackagePath[],
+    apis: any[],
+    reactNativeVersion: string,
+  ) {
     try {
       const pathSpec = {
         outputDir: path.join(paths.outDirectory, 'ios'),
@@ -60,6 +65,9 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
       };
 
       const projectSpec = {
+        deploymentTarget: iosUtil.getDefaultIosDeploymentTarget(
+          reactNativeVersion,
+        ),
         nodeModulesRelativePath: '../node_modules',
         projectName: 'ElectrodeApiImpl',
       };

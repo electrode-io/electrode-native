@@ -151,7 +151,7 @@ Make sure to run these commands before building the container.`,
     mustacheView.jsMainModuleName = config.jsMainModuleName || 'index';
     mustacheView.iosDeploymentTarget =
       config.iosConfig.deploymentTarget ??
-      getDefaultIosDeploymentTarget(reactNativePlugin.version);
+      iosUtil.getDefaultIosDeploymentTarget(reactNativePlugin.version);
 
     injectReactNativeVersionKeysInObject(
       mustacheView,
@@ -479,13 +479,3 @@ Make sure to run these commands before building the container.`,
     }
   }
 }
-
-const getDefaultIosDeploymentTarget = (rnVersion: string): string | null => {
-  if (semver.gte(rnVersion, '0.63.0')) {
-    return '10.0';
-  } else if (semver.gte(rnVersion, '0.61.0')) {
-    return '9.0';
-  } else {
-    return null;
-  }
-};
