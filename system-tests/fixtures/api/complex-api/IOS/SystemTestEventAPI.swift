@@ -1,6 +1,6 @@
 #if swift(>=4.0)
 @objcMembers public class SystemTestEventAPI: NSObject {
-    static let kEventTestEvent = "com.complexapi.ern.api.event.testEvent"
+    static let kEventTestEvent = "com.complex.ern.api.event.testEvent"
 
     public lazy var events: SystemTestEventAPIEvents = {
         SystemTestEventEvents()
@@ -33,7 +33,7 @@
 #else
 
 public class SystemTestEventAPI: NSObject {
-    static let kEventTestEvent = "com.complexapi.ern.api.event.testEvent"
+    static let kEventTestEvent = "com.complex.ern.api.event.testEvent"
 
     public lazy var events: SystemTestEventAPIEvents = {
         SystemTestEventEvents()

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.complexapi.ern.api;
+package com.complex.ern.api;
 
 import android.support.annotation.NonNull;
 
@@ -28,17 +28,16 @@ import com.walmartlabs.electrode.reactnative.bridge.RequestHandlerHandle;
 import java.util.*;
 import java.util.UUID;
 
+import com.complex.ern.model.ErnObject;
 
-public final class SystemTestEventApi {
+public final class SystemTestsApi {
     private static final Requests REQUESTS;
-    private static final Events EVENTS;
 
     static {
-        REQUESTS = new SystemTestEventRequests();
-        EVENTS = new SystemTestEventEvents();
+        REQUESTS = new SystemTestsRequests();
     }
 
-    private SystemTestEventApi() {
+    private SystemTestsApi() {
     }
 
     @NonNull
@@ -46,23 +45,22 @@ public final class SystemTestEventApi {
         return REQUESTS;
     }
 
-    @NonNull
-    public static Events events() {
-        return EVENTS;
-    }
-
-    public interface Events {
-        String EVENT_TEST_EVENT = "com.complexapi.ern.api.event.testEvent";
-
-        UUID addTestEventEventListener(
-                @NonNull final ElectrodeBridgeEventListener<String> eventListener);
-
-        ElectrodeBridgeEventListener<ElectrodeBridgeEvent> removeTestEventEventListener(
-                @NonNull final UUID uuid);
-
-        void emitTestEvent(@NonNull String buttonId);
-    }
-
     public interface Requests {
+        String REQUEST_TEST_ARRAY_OF_STRINGS = "com.complex.ern.api.request.testArrayOfStrings";
+        String REQUEST_TEST_MULTI_ARGS = "com.complex.ern.api.request.testMultiArgs";
+
+        RequestHandlerHandle registerTestArrayOfStringsRequestHandler(
+                @NonNull final ElectrodeBridgeRequestHandler<List<String>, List<ErnObject>> handler);
+
+        RequestHandlerHandle registerTestMultiArgsRequestHandler(
+                @NonNull final ElectrodeBridgeRequestHandler<TestMultiArgsData, String> handler);
+
+        void testArrayOfStrings(
+                List<String> key,
+                @NonNull final ElectrodeBridgeResponseListener<List<ErnObject>> responseListener);
+
+        void testMultiArgs(
+                TestMultiArgsData testMultiArgsData,
+                @NonNull final ElectrodeBridgeResponseListener<String> responseListener);
     }
 }

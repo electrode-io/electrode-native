@@ -7,7 +7,7 @@ export default class SystemTestEventEvents {
 
   addTestEventEventListener(eventListener: Function): string {
     return this._bridge.registerEventListener(
-      'com.complexapi.ern.api.event.testEvent',
+      'com.complex.ern.api.event.testEvent',
       eventListener,
     );
   }
@@ -17,7 +17,7 @@ export default class SystemTestEventEvents {
   }
 
   emitTestEvent(buttonId: string): void {
-    return this._bridge.emitEvent('com.complexapi.ern.api.event.testEvent', {
+    return this._bridge.emitEvent('com.complex.ern.api.event.testEvent', {
       data: buttonId,
     });
   }

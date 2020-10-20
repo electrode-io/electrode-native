@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.testapi.ern.api;
+package com.test.ern.api;
 
 import android.support.annotation.NonNull;
 
@@ -28,7 +28,7 @@ import com.walmartlabs.electrode.reactnative.bridge.RequestProcessor;
 
 import java.util.*;
 
-import com.testapi.ern.model.Item;
+import com.test.ern.model.Item;
 
 final class WalmartItemRequests implements WalmartItemApi.Requests {
     WalmartItemRequests() {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.complexapi.ern.api;
+package com.test.ern.api;
 
 import android.support.annotation.NonNull;
 
@@ -28,24 +28,26 @@ import com.walmartlabs.electrode.reactnative.bridge.None;
 import java.util.*;
 import java.util.UUID;
 
-final class SystemTestEventEvents implements SystemTestEventApi.Events {
-    SystemTestEventEvents() {
+import com.test.ern.model.Item;
+
+final class WalmartItemEvents implements WalmartItemApi.Events {
+    WalmartItemEvents() {
     }
 
     @Override
-    public UUID addTestEventEventListener(
+    public UUID addItemAddedEventListener(
             @NonNull final ElectrodeBridgeEventListener<String> eventListener) {
-        return new EventListenerProcessor<>(EVENT_TEST_EVENT, String.class, eventListener).execute();
+        return new EventListenerProcessor<>(EVENT_ITEM_ADDED, String.class, eventListener).execute();
     }
 
     @Override
-    public ElectrodeBridgeEventListener<ElectrodeBridgeEvent> removeTestEventEventListener(
+    public ElectrodeBridgeEventListener<ElectrodeBridgeEvent> removeItemAddedEventListener(
             @NonNull final UUID uuid) {
         return ElectrodeBridgeHolder.removeEventListener(uuid);
     }
 
     @Override
-    public void emitTestEvent(String buttonId) {
-        new EventProcessor<>(EVENT_TEST_EVENT, buttonId).execute();
+    public void emitItemAdded(String itemId) {
+        new EventProcessor<>(EVENT_ITEM_ADDED, itemId).execute();
     }
 }

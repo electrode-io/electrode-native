@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.testapi.ern.model;
+package com.complex.ern.model;
 
 import android.os.Bundle;
 import android.os.Parcel;
@@ -27,64 +27,79 @@ import com.walmartlabs.electrode.reactnative.bridge.Bridgeable;
 
 import static com.walmartlabs.electrode.reactnative.bridge.util.BridgeArguments.*;
 
-public class Item implements Parcelable, Bridgeable {
-    public static final Creator<Item> CREATOR =
-            new Creator<Item>() {
+public class NavBarButton implements Parcelable, Bridgeable {
+    public static final Creator<NavBarButton> CREATOR =
+            new Creator<NavBarButton>() {
                 @Override
-                public Item createFromParcel(Parcel in) {
-                    return new Item(in);
+                public NavBarButton createFromParcel(Parcel in) {
+                    return new NavBarButton(in);
                 }
 
                 @Override
-                public Item[] newArray(int size) {
-                    return new Item[size];
+                public NavBarButton[] newArray(int size) {
+                    return new NavBarButton[size];
                 }
             };
 
-    private Long id;
     private String name;
-    private String desc;
+    private String identifier;
+    private Boolean showIcon;
 
-    private Item() {
+    private NavBarButton() {
     }
 
-    private Item(Builder builder) {
-        this.id = builder.id;
+    private NavBarButton(Builder builder) {
         this.name = builder.name;
-        this.desc = builder.desc;
+        this.identifier = builder.identifier;
+        this.showIcon = builder.showIcon;
     }
 
-    private Item(Parcel in) {
+    private NavBarButton(Parcel in) {
         this(in.readBundle());
     }
 
-    public Item(@NonNull Bundle bundle) {
-        if (!bundle.containsKey("id")) {
-            throw new IllegalArgumentException("id property is required");
-        }
-
+    public NavBarButton(@NonNull Bundle bundle) {
         if (!bundle.containsKey("name")) {
             throw new IllegalArgumentException("name property is required");
         }
 
-        this.id = getNumberValue(bundle, "id") == null ? null : getNumberValue(bundle, "id").longValue();
+        if (!bundle.containsKey("identifier")) {
+            throw new IllegalArgumentException("identifier property is required");
+        }
+
         this.name = bundle.getString("name");
-        this.desc = bundle.getString("desc");
+        this.identifier = bundle.getString("identifier");
+        this.showIcon = bundle.containsKey("showIcon") ? bundle.getBoolean("showIcon") : null;
     }
 
-    @NonNull
-    public Long getId() {
-        return id;
-    }
-
+    /**
+     * Name of button
+     *
+     * @return String
+     */
     @NonNull
     public String getName() {
         return name;
     }
 
+    /**
+     * Id of the button
+     *
+     * @return String
+     */
+    @NonNull
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    /**
+     * Set to true for showing icon
+     *
+     * @return Boolean
+     */
     @Nullable
-    public String getDesc() {
-        return desc;
+    public Boolean getShowIcon() {
+        return showIcon;
     }
 
     @Override
@@ -101,10 +116,10 @@ public class Item implements Parcelable, Bridgeable {
     @Override
     public Bundle toBundle() {
         Bundle bundle = new Bundle();
-        bundle.putLong("id", this.id);
         bundle.putString("name", this.name);
-        if (desc != null) {
-            bundle.putString("desc", this.desc);
+        bundle.putString("identifier", this.identifier);
+        if (this.showIcon != null) {
+            bundle.putBoolean("showIcon", this.showIcon);
         }
         return bundle;
     }
@@ -112,31 +127,31 @@ public class Item implements Parcelable, Bridgeable {
     @Override
     public String toString() {
         return "{"
-                + "id:" + id + ","
                 + "name:" + (name != null ? "\"" + name + "\"" : null) + ","
-                + "desc:" + (desc != null ? "\"" + desc + "\"" : null)
+                + "identifier:" + (identifier != null ? "\"" + identifier + "\"" : null) + ","
+                + "showIcon:" + showIcon
                 + "}";
     }
 
     public static class Builder {
-        private final Long id;
         private final String name;
-        private String desc;
+        private final String identifier;
+        private Boolean showIcon;
 
-        public Builder(@NonNull Long id, @NonNull String name) {
-            this.id = id;
+        public Builder(@NonNull String name, @NonNull String identifier) {
             this.name = name;
+            this.identifier = identifier;
         }
 
         @NonNull
-        public Builder desc(@Nullable String desc) {
-            this.desc = desc;
+        public Builder showIcon(@Nullable Boolean showIcon) {
+            this.showIcon = showIcon;
             return this;
         }
 
         @NonNull
-        public Item build() {
-            return new Item(this);
+        public NavBarButton build() {
+            return new NavBarButton(this);
         }
     }
 }

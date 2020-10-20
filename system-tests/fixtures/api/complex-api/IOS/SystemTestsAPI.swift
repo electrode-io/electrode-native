@@ -1,7 +1,7 @@
 #if swift(>=4.0)
 @objcMembers public class SystemTestsAPI: NSObject {
-    static let kRequestTestArrayOfStrings = "com.complexapi.ern.api.request.testArrayOfStrings"
-    static let kRequestTestMultiArgs = "com.complexapi.ern.api.request.testMultiArgs"
+    static let kRequestTestArrayOfStrings = "com.complex.ern.api.request.testArrayOfStrings"
+    static let kRequestTestMultiArgs = "com.complex.ern.api.request.testMultiArgs"
 
     public lazy var requests: SystemTestsAPIRequests = {
         SystemTestsRequests()
@@ -42,8 +42,8 @@
 #else
 
 public class SystemTestsAPI: NSObject {
-    static let kRequestTestArrayOfStrings = "com.complexapi.ern.api.request.testArrayOfStrings"
-    static let kRequestTestMultiArgs = "com.complexapi.ern.api.request.testMultiArgs"
+    static let kRequestTestArrayOfStrings = "com.complex.ern.api.request.testArrayOfStrings"
+    static let kRequestTestMultiArgs = "com.complex.ern.api.request.testMultiArgs"
 
     public lazy var requests: SystemTestsAPIRequests = {
         SystemTestsRequests()

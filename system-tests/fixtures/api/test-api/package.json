@@ -1,7 +1,7 @@
 {
   "name": "test-api",
   "version": "1.0.0",
-  "description": "ERN Generated API for testapi",
+  "description": "ERN Generated API for test",
   "main": "javascript/src/index.js",
   "scripts": {
     "flow": "flow"
@@ -18,10 +18,10 @@
   },
   "ern": {
     "message": {
-      "moduleName": "testapi",
-      "namespace": "com.testapi.ern",
+      "namespace": "com.test.ern",
+      "moduleName": "test",
       "apiSchemaPath": "schema.json",
-      "artifactId": "react-native-testapi-api"
+      "artifactId": "react-native-test-api"
     },
     "moduleType": "ern-api"
   }

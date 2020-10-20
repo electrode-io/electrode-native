@@ -114,6 +114,21 @@ export function getDefaultPackageNameForCamelCaseString(
   }
 }
 
+export function getModuleSuffix(moduleType: string): string {
+  switch (moduleType) {
+    case ModuleType.MINIAPP:
+      return 'miniapp';
+    case ModuleType.API:
+      return 'api';
+    case ModuleType.JS_API_IMPL:
+      return 'api-impl-js';
+    case ModuleType.NATIVE_API_IMPL:
+      return 'api-impl-native';
+    default:
+      throw new Error(`Unsupported module type : ${moduleType}`);
+  }
+}
+
 export function getDefaultPackageNameForModule(
   moduleName: string,
   moduleType: string,
@@ -122,18 +137,10 @@ export function getDefaultPackageNameForModule(
     moduleName,
     moduleType,
   );
-  switch (moduleType) {
-    case ModuleType.MINIAPP:
-      return basePackageName.concat('-miniapp');
-    case ModuleType.API:
-      return basePackageName.concat('-api');
-    case ModuleType.JS_API_IMPL:
-      return basePackageName.concat('-api-impl-js');
-    case ModuleType.NATIVE_API_IMPL:
-      return basePackageName.concat('-api-impl-native');
-    default:
-      throw new Error(`Unsupported module type : ${moduleType}`);
-  }
+  const suffix = getModuleSuffix(moduleType);
+  return basePackageName.endsWith(suffix)
+    ? basePackageName
+    : `${basePackageName}-${suffix}`;
 }
 
 export async function isDependencyApiOrApiImpl(
@@ -163,19 +170,19 @@ export async function isDependencyApi(
 
 /**
  *
- * @param dependencyName: Name of the dependency
- * @param forceYanInfo: if true, a yarn info command will be executed to determine the api implementation
+ * @param dependency: Name of the dependency
+ * @param forceYarnInfo: if true, a yarn info command will be executed to determine the api implementation
  * @param type: checks to see if a dependency is of a specific type(js|native) as well
  * @returns {Promise.<boolean>}
  */
 export async function isDependencyApiImpl(
   dependency: PackagePath,
-  forceYanInfo?: boolean,
+  forceYarnInfo?: boolean,
   type?: string,
 ): Promise<boolean> {
   const pkgName = await getPackageName(dependency);
 
-  if (!type && !forceYanInfo && /^.*react-native-.+-api-impl$/.test(pkgName)) {
+  if (!type && !forceYarnInfo && /^.*react-native-.+-api-impl$/.test(pkgName)) {
     return true;
   }
 
@@ -256,7 +263,7 @@ export async function reactNativeManifestVersion({
 }
 
 export function isValidElectrodeNativeModuleName(name: string): boolean {
-  return /^[A-Z][0-9A-Z_]*$/i.test(name);
+  return /^[A-Z_][0-9A-Z_-]*$/i.test(name);
 }
 
 /**

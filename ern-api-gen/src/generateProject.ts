@@ -21,12 +21,13 @@ export async function generateSwagger(
   outFolder: string,
 ) {
   const inputSpec = path.resolve(outFolder, apiSchemaPath);
+  const groupId = namespace.toLowerCase().replace(/[^a-z0-9._]/g, '');
   const shared = {
-    apiPackage: `${namespace}.api`,
+    apiPackage: `${groupId}.api`,
     description: optional.apiDescription,
-    groupId: namespace,
+    groupId,
     inputSpec,
-    modelPackage: `${namespace}.model`,
+    modelPackage: `${groupId}.model`,
     projectVersion: optional.apiVersion,
     version: optional.apiVersion,
     ...optional,
@@ -43,14 +44,15 @@ export async function generateSwagger(
     new DefaultGenerator().opts(opts).generate();
   }
 }
+
 export function generatePackageJson({
   npmScope,
   reactNativeVersion,
-  apiVersion = '1.0.0',
+  apiVersion,
   apiDescription,
   apiAuthor,
   apiLicense,
-  bridgeVersion = '',
+  bridgeVersion,
   packageName,
   ...conf
 }: {
@@ -61,17 +63,24 @@ export function generatePackageJson({
   apiAuthor?: string;
   apiLicense?: string;
   bridgeVersion?: string;
-  packageName?: string;
+  packageName: string;
   config?: any;
 }) {
   // Reset the apiSchemaPath to schema.json
   // if --schemaPath option is used to create the Api
   const options = { ...conf, apiSchemaPath: MODEL_FILE };
+  const dependencies = bridgeVersion
+    ? {
+        'react-native-electrode-bridge': `${bridgeVersion.split('.')[0]}.${
+          bridgeVersion.split('.')[1]
+        }.x`,
+      }
+    : undefined;
   // tslint:disable:object-literal-sort-keys
   return JSON.stringify(
     {
       name: npmScope ? `@${npmScope}/${packageName}` : packageName,
-      version: apiVersion,
+      version: apiVersion ?? '1.0.0',
       description: apiDescription,
       main: 'javascript/src/index.js',
       scripts: {
@@ -80,11 +89,7 @@ export function generatePackageJson({
       keywords: [`${ModuleTypes.API}`],
       author: apiAuthor,
       license: apiLicense,
-      dependencies: {
-        'react-native-electrode-bridge': `${bridgeVersion.split('.')[0]}.${
-          bridgeVersion.split('.')[1]
-        }.x`,
-      },
+      dependencies,
       devDependencies: {
         'flow-bin': FLOW_BIN_VERSION,
       },
@@ -99,10 +104,8 @@ export function generatePackageJson({
 }
 
 export async function generateInitialSchema({
-  namespace,
   apiSchemaPath,
 }: {
-  namespace?: string;
   apiSchemaPath: string;
 }) {
   const pathToSchemaFile =

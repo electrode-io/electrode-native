@@ -1,17 +1,15 @@
 import {
-  checkIfModuleNameContainsSuffix,
   kax,
   log,
   MiniApp,
   ModuleTypes,
-  utils as core,
+  utils as coreUtils,
+  validateModuleName,
 } from 'ern-core';
 import {
-  askUserToInputPackageName,
   epilog,
   logErrorAndExitIfNotSatisfied,
-  performPkgNameConflictCheck,
-  promptUserToUseSuffixModuleName,
+  promptUserToUseSuggestedModuleName,
   tryCatchWrap,
 } from '../lib';
 import chalk from 'chalk';
@@ -48,13 +46,14 @@ export const builder = (argv: Argv) => {
     })
     .option('scope', {
       alias: 's',
-      describe: 'Scope to use for the MiniApp NPM package',
+      describe: 'Scope to use for the MiniApp npm package',
     })
     .option('skipInstall', {
       describe: 'Skip the installation of dependencies after project creation',
       type: 'boolean',
     })
     .option('skipNpmCheck', {
+      deprecated: 'use "npm info" to check manually',
       describe:
         'Skip the check ensuring package does not already exists in npm registry',
       type: 'boolean',
@@ -123,19 +122,18 @@ export const commandHandler = async ({
     });
   }
 
-  if (!checkIfModuleNameContainsSuffix(appName, ModuleTypes.MINIAPP)) {
-    appName = await promptUserToUseSuffixModuleName(
+  if (!validateModuleName(appName, ModuleTypes.MINIAPP)) {
+    appName = await promptUserToUseSuggestedModuleName(
       appName,
       ModuleTypes.MINIAPP,
     );
   }
 
   if (!packageName) {
-    const defaultPackageName = core.getDefaultPackageNameForModule(
+    packageName = coreUtils.getDefaultPackageNameForModule(
       appName,
       ModuleTypes.MINIAPP,
     );
-    packageName = await askUserToInputPackageName({ defaultPackageName });
   }
 
   if (packageManager === 'npm' || npm) {
@@ -150,8 +148,11 @@ export const commandHandler = async ({
     },
   });
 
-  if (!skipNpmCheck && !(await performPkgNameConflictCheck(packageName))) {
-    throw new Error(`Aborting command `);
+  if (skipNpmCheck) {
+    log.warn(
+      'Deprecated: --skipNpmCheck. create-miniapp no longer checks the npm' +
+        'registry. Use "npm info" to check manually.',
+    );
   }
 
   await kax.task('Creating MiniApp').run(
@@ -166,10 +167,6 @@ export const commandHandler = async ({
     }),
   );
 
-  logSuccessFooter(appName);
-};
-
-function logSuccessFooter(appName: string) {
   log.info(`${appName} MiniApp was successfully created !`);
   log.info(`================================================`);
   log.info(chalk.bold.white('To run your MiniApp on Android :'));
@@ -181,6 +178,6 @@ function logSuccessFooter(appName: string) {
   log.info(chalk.white(`followed by :`));
   log.info(chalk.white(`    > ern run-ios`));
   log.info(`================================================`);
-}
+};
 
 export const handler = tryCatchWrap(commandHandler);

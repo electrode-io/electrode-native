@@ -33,7 +33,6 @@ describe('generatePackageJson', function () {
     const result = JSON.parse(
       generatePackageJson({
         packageName: 'test',
-        bridgeVersion: '1.2.3',
       }),
     );
     console.log(result);
@@ -45,9 +44,6 @@ describe('generatePackageJson', function () {
         flow: 'flow',
       },
       keywords: ['ern-api'],
-      dependencies: {
-        'react-native-electrode-bridge': '1.2.x',
-      },
       devDependencies: {
         'flow-bin': '^0.47.0',
       },

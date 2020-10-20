@@ -22,44 +22,15 @@ export const validElectrodeNativeModuleNames = [
   'helloworld',
   'MYAPIIMPLEMENTATION',
   'hell0w0rld',
+  '_my_app',
   'my_app',
+  'my-app',
+  'my-api',
 ];
 
 export const invalidElectrodeNativeModuleNames = [
-  'My-App',
+  '-invalid',
   '1nvalid',
   'my*app',
   'my$app',
-];
-
-export const miniAppNameWithSuffix = [
-  'MiniAppTest',
-  'TestMiniApp',
-  'testminiapp',
-  'miniappTest',
-  'thisMiniAppIsValid',
-];
-
-export const apiNameWithSuffix = [
-  'ApiTest',
-  'TestApi',
-  'testapi',
-  'apiTest',
-  'thisapiIsValid',
-];
-
-export const apiNativeImplNameWithSuffix = [
-  'ApiImplNativeTest',
-  'TestApiimplNative',
-  'testapiImplNative',
-  'apiImplNativeTest',
-  'thisapiImplNativeIsValid',
-];
-
-export const apiJsImplNameWithSuffix = [
-  'ApiImplJsTest',
-  'TestApiimplJs',
-  'testapiImplJs',
-  'apiImplJsTest',
-  'thisapiImplJsIsValid',
 ];

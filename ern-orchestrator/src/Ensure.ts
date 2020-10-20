@@ -36,7 +36,7 @@ export default class Ensure {
   ) {
     const validation = validateNpmPackageName(name);
     if (!validation.validForNewPackages) {
-      const errorMessage = `${name} is not a valid NPM package name\n`
+      const errorMessage = `${name} is not a valid npm package name\n`
         .concat(validation.errors ? validation.errors.join('\n') : '')
         .concat(`\n${extraErrorMessage}`);
       throw new Error(errorMessage);
@@ -150,7 +150,7 @@ export default class Ensure {
     for (const dependency of dependencies) {
       if (!(await coreUtils.isPublishedToNpm(dependency))) {
         throw new Error(
-          `${dependency} version is not published to NPM.\n${extraErrorMessage}`,
+          `${dependency} version is not published to npm.\n${extraErrorMessage}`,
         );
       }
     }

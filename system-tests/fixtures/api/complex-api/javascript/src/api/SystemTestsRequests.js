@@ -11,7 +11,7 @@ export default class SystemTestsRequests {
    */
   registerTestArrayOfStringsRequestHandler(handler: Function): Promise<any> {
     this._bridge.registerRequestHandler(
-      'com.complexapi.ern.api.request.testArrayOfStrings',
+      'com.complex.ern.api.request.testArrayOfStrings',
       handler,
     );
   }
@@ -22,7 +22,7 @@ export default class SystemTestsRequests {
    */
   registerTestMultiArgsRequestHandler(handler: Function): Promise<any> {
     this._bridge.registerRequestHandler(
-      'com.complexapi.ern.api.request.testMultiArgs',
+      'com.complex.ern.api.request.testMultiArgs',
       handler,
     );
   }
@@ -30,10 +30,10 @@ export default class SystemTestsRequests {
   /**
    * @param  key keys to get setting
    * @param timeout timeout in milliseconds
-   * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link Array.<module:com.complexapi.ern.model/ErnObject> }
+   * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link Array.<module:com.complex.ern.model/ErnObject> }
    */
   testArrayOfStrings(key: any, timeout: number): Promise<any> {
-    return this._bridge.sendRequest('com.complexapi.ern.api.request.testArrayOfStrings', {
+    return this._bridge.sendRequest('com.complex.ern.api.request.testArrayOfStrings', {
       data: key,
       timeout,
     });
@@ -58,7 +58,7 @@ export default class SystemTestsRequests {
     }
     data.key1 = key1;
     data.key2 = key2;
-    return this._bridge.sendRequest('com.complexapi.ern.api.request.testMultiArgs', {
+    return this._bridge.sendRequest('com.complex.ern.api.request.testMultiArgs', {
       data,
       timeout,
     });

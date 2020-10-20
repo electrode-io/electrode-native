@@ -14,7 +14,7 @@
 `<apiName>`
 
 - The package descriptor of the API for which to create an API implementation project
-- We recommend suffixing the name of API implementation with suffix `Impl`
+- We recommend suffixing the name of API implementation with suffix `-api-impl`
 
 `[apiImplName]`
 

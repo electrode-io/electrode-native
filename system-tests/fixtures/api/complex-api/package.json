@@ -1,7 +1,7 @@
 {
   "name": "complex-api",
   "version": "1.0.0",
-  "description": "ERN Generated API for complexapi",
+  "description": "ERN Generated API for complex",
   "main": "javascript/src/index.js",
   "scripts": {
     "flow": "flow"
@@ -18,10 +18,10 @@
   },
   "ern": {
     "message": {
-      "moduleName": "complexapi",
-      "namespace": "com.complexapi.ern",
+      "namespace": "com.complex.ern",
+      "moduleName": "complex",
       "apiSchemaPath": "schema.json",
-      "artifactId": "react-native-complexapi-api"
+      "artifactId": "react-native-complex-api"
     },
     "moduleType": "ern-api"
   }

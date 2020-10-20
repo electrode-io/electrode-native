@@ -172,6 +172,12 @@ CocoaPods is required starting from React Native 0.60 version.
 You can find instructions to install CocoaPods @ https://cocoapods.org`);
     }
 
+    // RN rejects standard kebab-case app/package names (most likely due to a
+    // former restriction in an old version of Xcode). Until this is fixed in
+    // RN, use a temporary RN-compatible name and rename the folder later
+    const rnProjectName = /^[$A-Z_][0-9A-Z_$]*$/i.test(miniAppName)
+      ? miniAppName
+      : utils.camelize(miniAppName);
     const typescriptTemplate = semver.gte(reactNativeVersion, '0.60.0')
       ? 'react-native-template-typescript'
       : 'typescript';
@@ -180,7 +186,7 @@ You can find instructions to install CocoaPods @ https://cocoapods.org`);
         `Creating ${miniAppName} project using react-native@${reactNativeVersion}`,
       )
       .run(
-        reactnative.init(miniAppName, reactNativeVersion, {
+        reactnative.init(rnProjectName, reactNativeVersion, {
           skipInstall,
           template: template
             ? template
@@ -189,6 +195,12 @@ You can find instructions to install CocoaPods @ https://cocoapods.org`);
             : undefined,
         }),
       );
+    if (rnProjectName !== miniAppName) {
+      fs.renameSync(
+        path.join(process.cwd(), rnProjectName),
+        path.join(process.cwd(), miniAppName),
+      );
+    }
 
     // Create .npmignore if it does not exist
     const npmIgnorePath = path.join(process.cwd(), miniAppName, '.npmignore');
@@ -200,7 +212,7 @@ You can find instructions to install CocoaPods @ https://cocoapods.org`);
     const pathToMiniApp = path.join(process.cwd(), miniAppName);
     const appPackageJson = await readPackageJson(pathToMiniApp);
     appPackageJson.ern = {
-      moduleName: miniAppName,
+      moduleName: rnProjectName,
       moduleType: ModuleTypes.MINIAPP,
       packageManager: packageManager
         ? packageManager

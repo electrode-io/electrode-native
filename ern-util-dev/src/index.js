@@ -13,26 +13,26 @@ require('colors');
 
 const CLI = path.resolve(__dirname, '../../ern-local-cli/src/index.dev.js');
 
-/**
- * Sets up an environment for tests.
- *
- * @param workingCwd - It tries to resolve your test directory.  You are better off passing __dirname from your test
- * so that it will work regardless of the directory it is invoked.  This is a best guess and should work most times.
- * @param - excludeFilter - a function that will pass in an object and exclude it if the function returns true.  Used when doing a compare
- * @param - log - a function for logging.
- * @returns {*}
- */
-const EMPTY_FUNC = () => {};
 const excludeFilterRe = /node_modules(\/|$)|yarn\.lock|gradle\.build|\.xcodeproj\.pbxproj|\.DS_Store|genapp-tvOS|npm-debug.log/;
+// a function that will pass in an object and exclude it if the function returns true.  Used when doing a compare
 const _excludeFilter = ({ name1, name2, relativePath }) =>
   excludeFilterRe.test(relativePath) ||
   excludeFilterRe.test(name2) ||
   excludeFilterRe.test(name1);
 
+/**
+ * Sets up an environment for tests.
+ *
+ * @param workingCwd It tries to resolve your test directory.  You are better off passing __dirname from your test
+ * so that it will work regardless of the directory it is invoked.  This is a best guess and should work most times.
+ * @param _dev development mode
+ * @param log a function for logging.
+ * @returns {*}
+ */
 export default function setup(
   workingCwd = path.join(process.cwd(), 'test'),
   _dev = false,
-  log = EMPTY_FUNC,
+  log = () => {},
 ) {
   let tmpDir = path.join(workingCwd, 'tmp');
   if (_dev) {
