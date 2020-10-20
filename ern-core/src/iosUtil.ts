@@ -480,10 +480,7 @@ ${JSON.stringify(options.staticLibs, null, 2)}
       await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
         destPodfilePath,
         {
-          extraPods: additionalPods.reduce(
-            (acc, cur) => `${acc}\n  ${cur}`,
-            '',
-          ),
+          extraPods: additionalPods,
           iosDeploymentTarget: projectSpec.deploymentTarget,
           nodeModulesRelativePath:
             projectSpec.nodeModulesRelativePath || './node_modules',
