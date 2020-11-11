@@ -58,6 +58,26 @@ Resolutions configuration can be done in the `compositeGenerator` config in the 
 
 Please note that this configuration will be ignored if you are using a custom composite. Because a custom composite offers full control of the Composite project, it is the responsibility of the custom composite project maintainer to manually add `resolutions` to the `package.json` of the custom composite.
 
+### Custom `extraNodeModules` in Metro config
+
+Custom entries to the `resolver.extraNodeModules` property in `metro.config.json` can be added via the
+`metroExtraNodeModules` field. It supports both relative and absolute paths. Relative paths will resolve to
+`node_modules` inside the Composite project.
+
+```json
+"config": {
+  "compositeGenerator": {
+    "metroExtraNodeModules": {
+      "pkg-a": "@scope/new-pkg-a",
+      "pkg-b": "/absolute/path/to/new-pkg-b"
+    }
+  }
+}
+```
+
+Similar to selective dependency resolutions described above, custom extraNodeModules are only supported for a full
+composite. When using a custom composite, `metro.config.json` should be modified directly.
+
 ## Note in regards to local `.npmrc`
 
 When generating a Composite, Electrode Native will not consider any local `.npmrc` file present in the root of a MiniApp.  
@@ -70,7 +90,7 @@ In the majority of cases, there is no need to create a custom composite, as Elec
 
 Setting up a custom Composite project (also known as a base Composite) for Electrode Native is relatively straightforward.
 
-This can be achived in two steps:
+This can be achieved in two steps:
 
 1. Create the Composite git repository
 2. Configure Electrode Native to use custom Composite rather than the one built-in
