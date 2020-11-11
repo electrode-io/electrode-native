@@ -17,6 +17,7 @@ export async function bundleMiniApps(
     baseComposite,
     jsApiImplDependencies,
     resolutions,
+    metroExtraNodeModules,
     extraJsDependencies,
     resetCache,
   }: {
@@ -27,6 +28,7 @@ export async function bundleMiniApps(
     baseComposite?: PackagePath;
     jsApiImplDependencies?: PackagePath[];
     resolutions?: { [pkg: string]: string };
+    metroExtraNodeModules?: { [pkg: string]: string };
     extraJsDependencies?: PackagePath[];
     resetCache?: boolean;
   } = {},
@@ -36,6 +38,7 @@ export async function bundleMiniApps(
       baseComposite,
       extraJsDependencies,
       jsApiImplDependencies,
+      metroExtraNodeModules,
       miniApps,
       outDir: compositeDir,
       pathToYarnLock,

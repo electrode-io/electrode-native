@@ -31,4 +31,10 @@ export interface CompositeGeneratorConfig {
    * Can be used to force the version of selected packages
    */
   resolutions?: { [pkg: string]: string };
+  /**
+   * Which other node_modules to include besides the ones relative to the
+   * project directory. This is keyed by dependency name.
+   * https://facebook.github.io/metro/docs/configuration/#extranodemodules
+   */
+  metroExtraNodeModules?: { [pkg: string]: string };
 }
