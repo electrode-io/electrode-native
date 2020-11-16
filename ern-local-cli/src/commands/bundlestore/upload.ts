@@ -138,6 +138,7 @@ export const commandHandler = async ({
 
     let pathToYarnLock;
     let resolutions;
+    let metroExtraNodeModules;
     if (descriptor) {
       await logErrorAndExitIfNotSatisfied({
         napDescriptorExistInCauldron: {
@@ -171,6 +172,8 @@ export const commandHandler = async ({
         (compositeGenConfig?.baseComposite &&
           PackagePath.fromString(compositeGenConfig.baseComposite));
       resolutions = compositeGenConfig && compositeGenConfig.resolutions;
+      metroExtraNodeModules =
+        compositeGenConfig && compositeGenConfig.metroExtraNodeModules;
     }
 
     const compositeDir = createTmpDir();
@@ -179,6 +182,7 @@ export const commandHandler = async ({
         baseComposite,
         extraJsDependencies,
         jsApiImplDependencies: jsApiImpls,
+        metroExtraNodeModules,
         miniApps: miniapps!,
         outDir: compositeDir,
         pathToYarnLock,

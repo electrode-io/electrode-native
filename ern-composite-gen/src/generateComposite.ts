@@ -66,6 +66,7 @@ export async function generateComposite(config: CompositeGeneratorConfig) {
     : generateFullComposite(config.miniApps, config.outDir, {
         extraJsDependencies: config.extraJsDependencies,
         jsApiImplDependencies: config.jsApiImplDependencies,
+        metroExtraNodeModules: config.metroExtraNodeModules,
         pathToYarnLock: config.pathToYarnLock,
         resolutions: config.resolutions,
       });
@@ -131,11 +132,13 @@ async function generateFullComposite(
     jsApiImplDependencies = [],
     pathToYarnLock,
     resolutions,
+    metroExtraNodeModules,
   }: {
     extraJsDependencies?: PackagePath[];
     jsApiImplDependencies?: PackagePath[];
     pathToYarnLock?: string;
     resolutions?: { [pkg: string]: string };
+    metroExtraNodeModules?: { [pkg: string]: string };
   } = {},
 ) {
   if (await fs.pathExists(outDir)) {
@@ -151,7 +154,12 @@ async function generateFullComposite(
   const remoteMiniapps = miniApps.filter((p) => !p.isFilePath);
   const localMiniApps = miniApps.filter((p) => p.isFilePath);
   const localMiniAppsPaths = localMiniApps.map((m) => m.basePath);
-  const extraNodeModules: { [pkg: string]: string } = {};
+  // Explicitly add react as an extra node module in metro config
+  // Because it's not a native module, it will not be auto added
+  // later on as done for native modules
+  const extraNodeModules: { [pkg: string]: string } = {
+    react: path.join(outDir, 'node_modules/react'),
+  };
 
   try {
     if (remoteMiniapps.length > 0) {
@@ -190,11 +198,6 @@ async function generateFullComposite(
       );
       extraJsDependencies = [...extraJsDependencies, ...jsApiImplDependencies];
     }
-
-    // Explicitly add react as an extra node module in metro config
-    // Because its not a native module, it will not be auto added
-    // later on as done for native modules
-    extraNodeModules.react = path.join(outDir, 'node_modules/react');
 
     await addRNStartScriptToPjson({ cwd: outDir });
 
@@ -292,6 +295,15 @@ You should resolve the following version mismatches prior to retrying.${os.EOL}`
                 : `${l}\/.*`,
             ),
         );
+    }
+
+    if (metroExtraNodeModules) {
+      Object.keys(metroExtraNodeModules).map((value) => {
+        const moduleValue = metroExtraNodeModules[value];
+        extraNodeModules[value] = path.isAbsolute(moduleValue)
+          ? moduleValue
+          : path.join(outDir, 'node_modules', moduleValue);
+      });
     }
 
     await patchCompositeBabelRcRoots({

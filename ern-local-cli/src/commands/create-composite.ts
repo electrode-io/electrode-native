@@ -110,6 +110,7 @@ Output directory should either not exist (it will be created) or should be empty
 
   let pathToYarnLock;
   let resolutions;
+  let metroExtraNodeModules;
   if (descriptor) {
     await logErrorAndExitIfNotSatisfied({
       napDescriptorExistInCauldron: {
@@ -143,6 +144,8 @@ Output directory should either not exist (it will be created) or should be empty
       (compositeGenConfig?.baseComposite &&
         PackagePath.fromString(compositeGenConfig.baseComposite));
     resolutions = compositeGenConfig && compositeGenConfig.resolutions;
+    metroExtraNodeModules =
+      compositeGenConfig && compositeGenConfig.metroExtraNodeModules;
   }
 
   await kax.task('Generating Composite').run(
@@ -150,6 +153,7 @@ Output directory should either not exist (it will be created) or should be empty
       baseComposite,
       extraJsDependencies,
       jsApiImplDependencies: jsApiImpls,
+      metroExtraNodeModules,
       miniApps: miniapps!,
       outDir,
       pathToYarnLock,

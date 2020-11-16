@@ -273,9 +273,7 @@ describe('ern-container-gen utils.js', () => {
     });
 
     it('should throw an exception if at least one of the MiniApp path is using a git scheme [1]', async () => {
-      const miniApps = [
-        PackagePath.fromString('git://github.com:user/MiniAppRepo'),
-      ];
+      const miniApps = [PackagePath.fromString('git://github.com:org/repo')];
       assert(
         await doesThrow(generateComposite, null, {
           miniApps,
@@ -289,7 +287,7 @@ describe('ern-container-gen utils.js', () => {
     it('should throw an exception if at least one of the MiniApp path is using a git scheme [2]', async () => {
       const miniApps = [
         PackagePath.fromString('MiniAppOne@1.0.0'),
-        PackagePath.fromString('git://github.com:user/MiniAppRepo'),
+        PackagePath.fromString('git://github.com:org/repo'),
       ];
       assert(
         await doesThrow(generateComposite, null, {
@@ -495,6 +493,54 @@ describe('ern-container-gen utils.js', () => {
       };
       await applyYarnResolutions({ cwd: tmpOutDir, resolutions });
       assert(yarnCliStub.install.calledOnce);
+    });
+  });
+
+  // ==========================================================
+  // generateComposite [with custom extraNodeModules]
+  // ==========================================================
+  describe('generateComposite [with custom extraNodeModules]', () => {
+    it('should create custom extraNodeModules in Metro config', async () => {
+      yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.57.0'));
+      await generateComposite({
+        metroExtraNodeModules: {
+          'pkg-a': '@scope/new-pkg-a',
+          'pkg-b': path.join('/absolute/path/to/new-pkg-b'),
+        },
+        miniApps: [PackagePath.fromString('test-miniapp@1.0.0')],
+        outDir: tmpOutDir,
+      });
+      fs.mkdirpSync(
+        path.join(tmpOutDir, 'node_modules/metro-config/src/defaults'),
+      );
+      fs.mkdirpSync(
+        path.join(tmpOutDir, 'node_modules/react-native-svg-transformer'),
+      );
+      fs.writeFileSync(
+        path.join(
+          tmpOutDir,
+          'node_modules/metro-config/src/defaults/blacklist',
+        ),
+        'module.exports = () => {};\n',
+      );
+      fs.writeFileSync(
+        path.join(
+          tmpOutDir,
+          'node_modules/react-native-svg-transformer/index.js',
+        ),
+        '',
+      );
+
+      assert(fs.existsSync(path.join(tmpOutDir, 'metro.config.js')));
+      const metroConfig = require(path.join(tmpOutDir, 'metro.config.js'));
+      expect(metroConfig.resolver).to.be.an('object');
+      expect(metroConfig.resolver.extraNodeModules).to.be.an('object');
+      expect(metroConfig.resolver.extraNodeModules)
+        .to.have.property('pkg-a')
+        .which.equals(path.join(tmpOutDir, 'node_modules', '@scope/new-pkg-a'));
+      expect(metroConfig.resolver.extraNodeModules)
+        .to.have.property('pkg-b')
+        .which.equals(path.join('/absolute/path/to/new-pkg-b'));
     });
   });
 });
