@@ -15,12 +15,14 @@ export async function runLocalCompositeGen(
   {
     baseComposite,
     jsApiImpls,
+    metroExtraNodeModules,
     miniApps,
     outDir,
     resolutions,
   }: {
     baseComposite?: PackagePath;
     jsApiImpls?: PackagePath[];
+    metroExtraNodeModules?: { [pkg: string]: string };
     miniApps: PackagePath[];
     outDir: string;
     resolutions?: { [pkg: string]: string };
@@ -31,6 +33,7 @@ export async function runLocalCompositeGen(
       GeneratedComposite.generate({
         baseComposite,
         jsApiImplDependencies: jsApiImpls,
+        metroExtraNodeModules,
         miniApps,
         outDir,
         resolutions,
