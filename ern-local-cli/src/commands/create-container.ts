@@ -202,9 +202,10 @@ Output directory should either not exist (it will be created) or should be empty
     }
 
     const composite = await kax.task('Generating Composite locally').run(
-      runLocalCompositeGen(miniapps, {
+      runLocalCompositeGen({
         baseComposite,
         jsApiImpls,
+        miniApps: miniapps,
         outDir: compositeDir,
       }),
     );

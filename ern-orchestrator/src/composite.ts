@@ -1,7 +1,6 @@
 import { Composite, GeneratedComposite } from 'ern-composite-gen';
 import {
   AppVersionDescriptor,
-  createTmpDir,
   kax,
   log,
   PackagePath,
@@ -13,16 +12,17 @@ import * as constants from './constants';
 import path from 'path';
 
 export async function runLocalCompositeGen(
-  miniappPackagesPaths: PackagePath[],
   {
     baseComposite,
     jsApiImpls,
+    miniApps,
     outDir,
     resolutions,
   }: {
     baseComposite?: PackagePath;
     jsApiImpls?: PackagePath[];
-    outDir?: string;
+    miniApps: PackagePath[];
+    outDir: string;
     resolutions?: { [pkg: string]: string };
   },
 ): Promise<GeneratedComposite> {
@@ -31,8 +31,8 @@ export async function runLocalCompositeGen(
       GeneratedComposite.generate({
         baseComposite,
         jsApiImplDependencies: jsApiImpls,
-        miniApps: miniappPackagesPaths,
-        outDir: outDir || createTmpDir(),
+        miniApps,
+        outDir,
         resolutions,
       }),
     );
@@ -55,9 +55,9 @@ export async function runCauldronCompositeGen(
     favorGitBranches,
   }: {
     baseComposite?: PackagePath;
-    outDir?: string;
+    outDir: string;
     favorGitBranches?: boolean;
-  } = {},
+  },
 ): Promise<GeneratedComposite> {
   try {
     const cauldron = await getActiveCauldron();
@@ -95,7 +95,7 @@ export async function runCauldronCompositeGen(
         baseComposite,
         jsApiImplDependencies: jsApiImpls,
         miniApps: miniapps,
-        outDir: outDir || createTmpDir(),
+        outDir,
         pathToYarnLock,
         resolutions: compositeGenConfig && compositeGenConfig.resolutions,
       }),

@@ -1,5 +1,6 @@
 import {
   AppVersionDescriptor,
+  createTmpDir,
   kax,
   NativePlatform,
   PackagePath,
@@ -32,6 +33,7 @@ export async function generateContainerForRunner(
     const composite = await kax.task('Generating Composite from Cauldron').run(
       runCauldronCompositeGen(napDescriptor, {
         baseComposite,
+        outDir: createTmpDir(),
       }),
     );
 
@@ -43,9 +45,11 @@ export async function generateContainerForRunner(
     );
   } else {
     const composite = await kax.task('Generating Composite locally').run(
-      runLocalCompositeGen(miniApps, {
+      runLocalCompositeGen({
         baseComposite,
         jsApiImpls,
+        miniApps,
+        outDir: createTmpDir(),
       }),
     );
 
