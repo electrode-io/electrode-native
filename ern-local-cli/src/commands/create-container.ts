@@ -183,14 +183,15 @@ Output directory should either not exist (it will be created) or should be empty
           'You cannot create a container for a non-existing native application version.',
       },
     });
-    const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
-      descriptor,
-    );
-    baseComposite =
-      baseComposite ||
-      (compositeGenConfig?.baseComposite &&
-        PackagePath.fromString(compositeGenConfig.baseComposite));
   }
+
+  const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
+    descriptor,
+  );
+  baseComposite =
+    baseComposite ||
+    (compositeGenConfig?.baseComposite &&
+      PackagePath.fromString(compositeGenConfig.baseComposite));
 
   if (!descriptor && miniapps) {
     platform = platform || (await askUserToSelectAPlatform());
@@ -202,9 +203,11 @@ Output directory should either not exist (it will be created) or should be empty
     }
 
     const composite = await kax.task('Generating Composite locally').run(
-      runLocalCompositeGen(miniapps, {
+      runLocalCompositeGen({
         baseComposite,
         jsApiImpls,
+        metroExtraNodeModules: compositeGenConfig?.metroExtraNodeModules,
+        miniApps: miniapps,
         outDir: compositeDir,
       }),
     );
