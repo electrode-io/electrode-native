@@ -148,8 +148,7 @@ Manifest.getOverrideManifestConfig = async (): Promise<OverrideManifestConfig | 
       silent: true,
       throwIfNoActiveCauldron: false,
     });
-    manifestConfig =
-      cauldronInstance && (await cauldronInstance.getManifestConfig());
+    manifestConfig = await cauldronInstance?.getManifestConfig();
     if (manifestConfig) {
       return {
         source: 'cauldron',
