@@ -76,7 +76,7 @@ export default async function start({
   }
 
   let resolutions;
-  if (descriptor) {
+  if (descriptor && cauldron) {
     miniapps = await cauldron.getContainerMiniApps(descriptor, {
       favorGitBranches: true,
     });
@@ -205,7 +205,7 @@ export default async function start({
     resetCache,
   });
 
-  if (descriptor && !disableBinaryStore) {
+  if (cauldron && descriptor && !disableBinaryStore) {
     const binaryStoreConfig = await cauldron.getBinaryStoreConfig();
     if (binaryStoreConfig) {
       const cauldronStartCommandConfig = await cauldron.getStartCommandConfig(

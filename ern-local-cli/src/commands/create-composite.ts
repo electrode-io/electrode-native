@@ -111,7 +111,7 @@ Output directory should either not exist (it will be created) or should be empty
   let pathToYarnLock;
   let resolutions;
   let metroExtraNodeModules;
-  if (descriptor) {
+  if (descriptor && cauldron) {
     await logErrorAndExitIfNotSatisfied({
       napDescriptorExistInCauldron: {
         descriptor,
