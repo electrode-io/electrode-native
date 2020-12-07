@@ -44,6 +44,7 @@ export const commandHandler = async ({
 }) => {
   const cauldron = await getActiveCauldron({
     ignoreRequiredErnVersionMismatch: true,
+    throwIfNoActiveCauldron: true,
   });
   let result: any;
   if (key && strict) {

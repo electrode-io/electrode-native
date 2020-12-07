@@ -185,7 +185,7 @@ Output directory should either not exist (it will be created) or should be empty
     });
   }
 
-  const compositeGenConfig = await cauldron.getCompositeGeneratorConfig(
+  const compositeGenConfig = await cauldron?.getCompositeGeneratorConfig(
     descriptor,
   );
   baseComposite =

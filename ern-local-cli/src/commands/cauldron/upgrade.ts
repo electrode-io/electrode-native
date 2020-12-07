@@ -12,6 +12,7 @@ export const commandHandler = async () => {
   const cauldron = await getActiveCauldron({
     ignoreRequiredErnVersionMismatch: true,
     ignoreSchemaVersionMismatch: true,
+    throwIfNoActiveCauldron: true,
   });
   await cauldron.upgradeCauldronSchema();
   log.info('Cauldron was successfully upgraded');
