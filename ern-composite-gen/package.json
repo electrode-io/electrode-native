@@ -38,7 +38,7 @@
     "ern-core": "1000.0.0",
     "fs-extra": "^8.1.0",
     "fs-readdir-recursive": "^1.1.0",
-    "js-beautify": "^1.11.0",
+    "js-beautify": "^1.13.0",
     "mustache": "^4.0.1",
     "semver": "^5.5.0",
     "uuid": "^3.3.2"
