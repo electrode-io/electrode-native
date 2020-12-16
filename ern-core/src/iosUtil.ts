@@ -530,9 +530,7 @@ function switchToOldDirectoryStructure(
   return false;
 }
 
-export const getDefaultIosDeploymentTarget = (
-  rnVersion: string,
-): string => {
+export const getDefaultIosDeploymentTarget = (rnVersion: string): string => {
   if (semver.gte(rnVersion, '0.63.0')) {
     return '10.0';
   } else if (semver.gte(rnVersion, '0.56.0')) {

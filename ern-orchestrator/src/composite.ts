@@ -11,23 +11,21 @@ import treeify from 'treeify';
 import * as constants from './constants';
 import path from 'path';
 
-export async function runLocalCompositeGen(
-  {
-    baseComposite,
-    jsApiImpls,
-    metroExtraNodeModules,
-    miniApps,
-    outDir,
-    resolutions,
-  }: {
-    baseComposite?: PackagePath;
-    jsApiImpls?: PackagePath[];
-    metroExtraNodeModules?: { [pkg: string]: string };
-    miniApps: PackagePath[];
-    outDir: string;
-    resolutions?: { [pkg: string]: string };
-  },
-): Promise<GeneratedComposite> {
+export async function runLocalCompositeGen({
+  baseComposite,
+  jsApiImpls,
+  metroExtraNodeModules,
+  miniApps,
+  outDir,
+  resolutions,
+}: {
+  baseComposite?: PackagePath;
+  jsApiImpls?: PackagePath[];
+  metroExtraNodeModules?: { [pkg: string]: string };
+  miniApps: PackagePath[];
+  outDir: string;
+  resolutions?: { [pkg: string]: string };
+}): Promise<GeneratedComposite> {
   try {
     const composite = await kax.task('Generating Composite').run(
       GeneratedComposite.generate({
