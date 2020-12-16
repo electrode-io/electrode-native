@@ -4,7 +4,8 @@ import path from 'path';
 import { shell } from 'ern-core';
 import { ICauldronFileStore } from './types';
 
-export default class GitFileStore extends BaseGit
+export default class GitFileStore
+  extends BaseGit
   implements ICauldronFileStore {
   private readonly prefix: string;
 
