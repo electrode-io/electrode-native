@@ -133,7 +133,7 @@ export function killAllRunningSimulators() {
 }
 
 export async function launchSimulator(deviceUdid: string) {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     const xcrunProc = spawn('xcrun', ['instruments', '-w', deviceUdid]);
     xcrunProc.stdout.on('data', (data) => {
       log.debug(data.toString());

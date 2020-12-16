@@ -406,7 +406,7 @@ export default class Ensure {
     p: fs.PathLike,
     extraErrorMessage: string = '',
   ) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       fs.exists(p, (exists) =>
         exists
           ? resolve()
@@ -421,7 +421,7 @@ export default class Ensure {
     p: fs.PathLike,
     extraErrorMessage: string = '',
   ) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       fs.stat(p, (err, stats) => {
         if (err) {
           reject(new Error(`${p} path does not exist.\n${extraErrorMessage}`));
@@ -440,7 +440,7 @@ export default class Ensure {
     p: fs.PathLike,
     extraErrorMessage: string = '',
   ) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       fs.stat(p, (err, stats) => {
         if (err) {
           reject(new Error(`${p} path does not exist.\n${extraErrorMessage}`));
