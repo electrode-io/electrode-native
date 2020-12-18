@@ -195,6 +195,39 @@ describe('runMiniApp', () => {
     });
   });
 
+  it('should prepend local path to relative extraNodeModules passed to composite generator', async () => {
+    prepareStubs();
+    const cwd = process.cwd();
+    await runMiniApp('android', {
+      cwd,
+      extra: {
+        compositeGenerator: {
+          metroExtraNodeModules: [
+            'dependency-a',
+            '/home/user/path/to/dependency-b',
+          ],
+        },
+      },
+    });
+    sandbox.assert.calledWith(generateContainerForRunnerStub, 'android', {
+      baseComposite: undefined,
+      extra: {
+        androidConfig: sinon.match.object,
+        compositeGenerator: {
+          metroExtraNodeModules: [
+            path.join(cwd, 'node_modules', 'dependency-a'),
+            '/home/user/path/to/dependency-b',
+          ],
+        },
+      },
+      jsApiImpls: undefined,
+      jsMainModuleName: 'index.android',
+      miniApps: sinon.match.array,
+      napDescriptor: undefined,
+      outDir: sinon.match.string,
+    });
+  });
+
   it('should publish the container to maven local [local single miniapp - android]', async () => {
     prepareStubs();
     await runMiniApp('android');

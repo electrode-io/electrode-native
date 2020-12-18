@@ -155,6 +155,17 @@ export async function runMiniApp(
       [];
   }
 
+  if (extra?.compositeGenerator?.metroExtraNodeModules) {
+    Object.keys(extra.compositeGenerator.metroExtraNodeModules).map((value) => {
+      const moduleValue = extra.compositeGenerator.metroExtraNodeModules[value];
+      extra.compositeGenerator.metroExtraNodeModules[value] = path.isAbsolute(
+        moduleValue,
+      )
+        ? moduleValue
+        : path.join(cwd!!, 'node_modules', moduleValue);
+    });
+  }
+
   const outDir = Platform.getContainerGenOutDirectory(platform);
   const containerGenResult = await generateContainerForRunner(platform, {
     baseComposite,

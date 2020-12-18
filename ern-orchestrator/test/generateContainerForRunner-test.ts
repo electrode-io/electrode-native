@@ -82,4 +82,27 @@ describe('generateContainerForRunner', () => {
       },
     );
   });
+
+  it('should call runLocalCompositeGen with extra arguments if no descriptor is provided', async () => {
+    const metroExtraNodeModules = [
+      'dependency-a',
+      '/home/user/path/to/dependency-b',
+    ];
+    const extra = { androidConfig: { compileSdkVersion: '28' } };
+    await generateContainerForRunner('android', {
+      extra: {
+        compositeGenerator: {
+          metroExtraNodeModules,
+        },
+      },
+      outDir: '/home/user/test',
+    });
+    sinon.assert.calledWith(compositeStub.runLocalCompositeGen, {
+      baseComposite: undefined,
+      jsApiImpls: sinon.match.array,
+      metroExtraNodeModules,
+      miniApps: sinon.match.array,
+      outDir: sinon.match.string,
+    });
+  });
 });
