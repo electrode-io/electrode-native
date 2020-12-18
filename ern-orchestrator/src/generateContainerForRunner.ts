@@ -48,6 +48,7 @@ export async function generateContainerForRunner(
       runLocalCompositeGen({
         baseComposite,
         jsApiImpls,
+        metroExtraNodeModules: extra?.compositeGenerator?.metroExtraNodeModules,
         miniApps,
         outDir: createTmpDir(),
       }),
