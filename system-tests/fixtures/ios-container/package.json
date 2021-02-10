@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "react-native": "0.63.3",
+    "react-native": "0.63.4",
     "react-native-electrode-bridge": "1.5.27"
   },
   "name": "container",
