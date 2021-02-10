@@ -189,8 +189,71 @@ To use [Hermes](https://hermesengine.dev/) engine rather than JavaScriptCore, yo
 
 ##### An Electrode Native container can be retrieved in a few ways:
 
-- Use a dependency manager such as Carthage (CocoaPods will be supported in the future) or,
+- Use a dependency manager such as Carthage or Cocoapods or,
 - Perform a manual `git clone` of the container
+
+**Using CocoaPods (RN >= 0.61, XCode >= 11.0)**
+
+If the client application is using CocoaPods to manage its dependencies, it is possible to package and distribute the container in a way that it can be added as a pod dependency *(in the Podfile)* of the client application.
+
+One thing to note here though, is that due to the fact that the container itself is using CocoaPods and is depending on third-party pods, it is not possible *(as far as we know)* to add it 'as-is' to the client application.\
+One way to work around this, is to distribute the container as a pre-compiled binary instead of as its raw source code.\
+One advantage of such an approach is that it will reduce build time of the client application *(as it doesn't have to build the container during application build)*.\
+One inconvenient of this approach is that the source code of the container will not be visible/accessible in the client app which can make debugging issues a bit more complex.
+
+The high level steps are to build & package the container as an XCFramework, and to publish it along with an associated podpsec file, to a git repository. The client application can then add the container as a pod depenndency in its Podfile.
+
+1. Build & Package the container as an XCFramework
+
+After the container is generated *(via create-container command or other way)* the [XCFramework container transformer](1) can be used to build & package the container as an XCFramework.
+
+One way to achieve this is to use the [transform-container] command as follow:
+
+```
+ern transform-container -p ios -t xcframework
+```
+
+This can also be achieved through cauldron by adding the following step in container generation pipeline config:
+
+```json
+{
+  "name": "ern-container-transformer-xcframework",
+}
+```
+
+2. Publish the container XCFramework as a pod to a git repository
+
+After an XCFramework has been generated for the container, the [CocoaPod git publisher](2) can be used to publish the container XCFramework to a git repository, along with its associated podspec.
+
+One way to achieve this is to use the [publish-container] command as follow:
+
+```
+ern publish-container --platform ios -p cocoapod-git -u [ssh_or_https_url_to_git_repo] -v [container_version]
+```
+
+This can also be achieved through cauldron by adding the follwing step in container generation pipeline config:
+
+```json
+{
+  "name": "ern-container-publisher-cocoapod-git",
+  "url": "[ssh_or_https_url_to_git_repo]",
+}
+```
+
+This publisher will only upload the pre-compiled XCFramework to the repository, along with an adequatly generated ElectrodeContainer.podspec file. It will also create a git tag matching the container version.
+
+3. Add the container pod dependency to client application Podfile
+
+The container can then be added as a one line entry to the Podfile of the client application as follow:
+
+```
+pod 'ElectrodeContainer', :git => '[ssh_or_https_url_to_git_repo]', :tag => '[container_version]'
+```
+
+The `tag` can be omitted in case the client application prefer to always pull the latest container version from default branch of the repository.\
+`:branch` can be used in place of `:tag`, to always pull the latest container from a specific branch.
+
+Then, running `pod install` from the client application, will properly retrieve the container as a pod dependency.
 
 **Using Carthage**
 
@@ -278,3 +341,9 @@ You can override the iOS deployment target version to use by setting `iosConfig`
     }
   }
 }
+```
+
+[1]: https://github.com/electrode-io/ern-container-transformer-xcframework
+[2]: https://github.com/electrode-io/ern-container-publisher-cocoapod-git
+[transform-container]: ../../cli/transform-container
+[publish-container]: ../../cli/publish-container
