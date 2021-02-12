@@ -2,7 +2,7 @@ Electrode Native supports some popular native modules such as `react-native-vect
 
 If the Electrode Native version you are using does not yet support a native module that you would like to use, you can add support for it to Electrode Native by creating a plugin configuration in the manifest--this would be your override manifest in the case of a private native module or the master manifest for an open source native module.
 
-**Why does Electrode Native require a plugin configuration?**  
+**Why does Electrode Native require a plugin configuration?**
 In a pure React Native mobile application, you can use the `react-native link` command (formerly the `rnpm` command) to add a React Native plugin (native module) to your React Native application. However, Electrode Native requires that you add the native modules to a container library--not directly to a mobile application.
 
 **Note**
@@ -38,7 +38,7 @@ The plugin configuration file is located within these sub-directories.
 
 #### Configuration example
 
-The following example shows the configuration files for the `react-native-code-push` plugin.  
+The following example shows the configuration files for the `react-native-code-push` plugin.
 The directory is located [here](https://github.com/electrode-io/electrode-native-manifest/tree/master/plugins/ern_v0.13.0%2B/react-native-code-push_v1.17.0%2B)
 
 ```
@@ -69,8 +69,8 @@ The platform-agnostic directives are described in this section.
 
 - `copy`
 
-Used to copy one or more files or directories to the target container directory.  
-The `copy` directive is an array of objects, each containing a specific copy statement.  
+Used to copy one or more files or directories to the target container directory.
+The `copy` directive is an array of objects, each containing a specific copy statement.
 The objects contain a `source` property and a `dest` property:
 
 - `source` : A single file path or directory glob indicating the files to copy
@@ -89,13 +89,13 @@ The objects contain a `source` property and a `dest` property:
 
 The example above shows how to copy the entire content (files and directories) of the plugin `ios` directory to the container `/Libraries/CodePush` directory.
 
-All plugin code needs to be injected in the container--therefore they will have at least one `copy` statement in the `config.json` file. For the most part, in iOS, the `dest` will be `"{{{projectName}}}/Libraries/{PLUGIN_NAME}"`.  
+All plugin code needs to be injected in the container--therefore they will have at least one `copy` statement in the `config.json` file. For the most part, in iOS, the `dest` will be `"{{{projectName}}}/Libraries/{PLUGIN_NAME}"`.
 `projectName` will be replaced during Container generation by the name of the project (`ElectrodeContainer` in the case of container generation), while `PLUGIN_NAME` should be the name of the plugin itself.
 
 - `replaceInFile`
 
-Used to perform string replacements in specified files. This is useful for the iOS platform as some plugins are sometimes needed to replace the way imports are performed.  
-The `replaceInFile` directive is an array of objects, each containing a specific replacement statement.  
+Used to perform string replacements in specified files. This is useful for the iOS platform as some plugins are sometimes needed to replace the way imports are performed.
+The `replaceInFile` directive is an array of objects, each containing a specific replacement statement.
 The objects contain a `path` property, a `string` property and a `replaceWith` property:
 
 - `path` : Path to the file that contains a string to be replaced
@@ -116,7 +116,7 @@ This example shows how to replace the string `"RCTBridgeModule.h"` with `<React/
 
 - `applyPatch`
 
-Apply a given patch file, by running `git apply` command, from a specific directory.  
+Apply a given patch file, by running `git apply` command, from a specific directory.
 The value of this property should be a single object containing the following two properties :
 
 - `patch` : Path to the patch file to apply, relative to the directory containing the pluging configuration file (`config.json`).
@@ -353,6 +353,20 @@ Can be used in case a native module doesn't have yet an available podspec file o
 - `extraPods`
 
 Array of extra pod statements that will be injected in the Container Podfile.
+
+- `extraPodspecsSources`
+
+Array of extra [pod specs sources](https://guides.cocoapods.org/syntax/podfile.html#source) to inject in the Container Podfile.\
+**Only the repositories urls should be provided in the array, not the full source statements.**\
+For example:
+
+```json
+{
+  "extraPodspecsSources": [
+    "https://github.com/artsy/Specs.git"
+  ]
+}
+```
 
 - `requiresManualLinking`
 
