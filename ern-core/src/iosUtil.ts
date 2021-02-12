@@ -81,6 +81,7 @@ export async function fillProjectHull(
     const injectPluginsKaxTask = kax.task(injectPluginsTaskMsg);
     const rnVersion = plugins.find((p) => p.name === 'react-native')?.version!;
     const additionalPods = [];
+    const additionalPodspecsSources = [];
     const destPodfilePath = path.join(pathSpec.outputDir, 'Podfile');
 
     for (const plugin of plugins) {
@@ -135,6 +136,7 @@ export async function fillProjectHull(
         applyPatch,
         copy,
         extraPods,
+        extraPodspecsSources,
         pbxproj,
         podfile,
         podspec,
@@ -473,14 +475,29 @@ ${JSON.stringify(options.staticLibs, null, 2)}
         if (extraPods) {
           additionalPods.push(...extraPods);
         }
+
+        if (extraPodspecsSources) {
+          additionalPodspecsSources.push(...extraPodspecsSources);
+        }
       }
     }
 
     if (semver.gte(rnVersion, '0.61.0')) {
+      // Dedupe additional specs sources and add CocoaPods master spec repository
+      const finalPodspecsSources = _.uniq(
+        additionalPodspecsSources.map((s) => `source '${s}'`),
+      );
+      // Add master pod spec repository only if there is at least a custom pod spec source
+      if (finalPodspecsSources.length > 0) {
+        finalPodspecsSources.push(
+          `source 'https://github.com/CocoaPods/Specs.git'`,
+        );
+      }
       await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
         destPodfilePath,
         {
           extraPods: additionalPods,
+          extraPodspecsSources: finalPodspecsSources,
           iosDeploymentTarget: projectSpec.deploymentTarget,
           nodeModulesRelativePath:
             projectSpec.nodeModulesRelativePath || './node_modules',
