@@ -21,6 +21,7 @@ import {
   IntegerProperty,
   LongProperty,
   MapProperty,
+  ObjectProperty,
   RefProperty,
   StringProperty,
   UUIDProperty,
@@ -1504,6 +1505,9 @@ export default class DefaultCodegen {
       property.isDate = true;
     } else if (p instanceof DateTimeProperty) {
       property.isDateTime = true;
+    } else if (p instanceof ObjectProperty) {
+      property.isObject = true;
+      property.isPrimitive = true;
     }
     if (p.getEnum() != null) {
       const _enum = p.getEnum();
@@ -2921,6 +2925,9 @@ Renamed to auto-generated operationId: ${operationId}`,
       parameter.isPrimitiveType = true;
     } else if (property.isDateTime) {
       parameter.isDateTime = true;
+      parameter.isPrimitiveType = true;
+    } else if (property.isObject) {
+      parameter.isObject = true;
       parameter.isPrimitiveType = true;
     } else {
       log.debug('Property type is not primitive: ' + property.datatype);

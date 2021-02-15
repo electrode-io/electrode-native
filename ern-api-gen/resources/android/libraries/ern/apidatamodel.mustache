@@ -103,6 +103,9 @@ public class {{requestDataType}} implements Parcelable, Bridgeable {
 {{#isBoolean}}
         this.{{baseName}} = bundle.containsKey("{{baseName}}") ? bundle.getBoolean("{{baseName}}") : null;
 {{/isBoolean}}
+{{#isObject}}
+        this.{{baseName}} = bundle.containsKey("{{baseName}}") ? bundle.getBundle("{{baseName}}") : null;
+{{/isObject}}
 {{^isPrimitiveType}}
         this.{{baseName}} = bundle.containsKey("{{baseName}}") ? new {{{dataType}}}(bundle.getBundle("{{baseName}}")) : null;
 {{/isPrimitiveType}}

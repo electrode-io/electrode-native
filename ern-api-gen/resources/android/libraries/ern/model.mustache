@@ -105,6 +105,9 @@ public class {{classname}} implements Parcelable, Bridgeable {
 {{#isFloat}}
         this.{{name}} = getNumberValue(bundle, "{{name}}") == null ? null : getNumberValue(bundle, "{{name}}").floatValue();
 {{/isFloat}}
+{{#isObject}}
+        this.{{name}} = bundle.containsKey("{{name}}") ? bundle.getBundle("{{name}}") : null;
+{{/isObject}}
 {{^isPrimitiveType}}
         this.{{name}} = bundle.containsKey("{{name}}") ? new {{{datatype}}}(bundle.getBundle("{{name}}")) : null;
 {{/isPrimitiveType}}
