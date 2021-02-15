@@ -37,7 +37,7 @@ export default class AndroidClientCodegen extends DefaultCodegen {
     'Long',
     'Float',
     'byte[]',
-    'Object',
+    'Bundle',
   );
   public __apiPackage = 'io.swagger.client.api';
   public __modelPackage = 'io.swagger.client.model';
@@ -126,6 +126,7 @@ export default class AndroidClientCodegen extends DefaultCodegen {
     this.__instantiationTypes.put('map', 'HashMap');
     this.__typeMapping.put('date', 'Date');
     this.__typeMapping.put('file', 'File');
+    this.__typeMapping.put('object', 'Bundle');
   }
 
   public initalizeCliOptions() {
