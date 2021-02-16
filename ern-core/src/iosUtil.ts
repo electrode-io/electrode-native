@@ -82,6 +82,7 @@ export async function fillProjectHull(
     const rnVersion = plugins.find((p) => p.name === 'react-native')?.version!;
     const additionalPods = [];
     const additionalPodspecsSources = [];
+    const additionalPodfileStatements = [];
     const destPodfilePath = path.join(pathSpec.outputDir, 'Podfile');
 
     for (const plugin of plugins) {
@@ -137,6 +138,7 @@ export async function fillProjectHull(
         copy,
         extraPods,
         extraPodspecsSources,
+        extraPodfileStatements,
         pbxproj,
         podfile,
         podspec,
@@ -479,6 +481,10 @@ ${JSON.stringify(options.staticLibs, null, 2)}
         if (extraPodspecsSources) {
           additionalPodspecsSources.push(...extraPodspecsSources);
         }
+
+        if (extraPodfileStatements) {
+          additionalPodfileStatements.push(...extraPodfileStatements);
+        }
       }
     }
 
@@ -487,6 +493,8 @@ ${JSON.stringify(options.staticLibs, null, 2)}
       const finalPodspecsSources = _.uniq(
         additionalPodspecsSources.map((s) => `source '${s}'`),
       );
+      // Dedupe extra Podfile statements
+      const finalExtraPodfileStatements = _.uniq(additionalPodfileStatements);
       // Add master pod spec repository only if there is at least a custom pod spec source
       if (finalPodspecsSources.length > 0) {
         finalPodspecsSources.push(
@@ -496,6 +504,7 @@ ${JSON.stringify(options.staticLibs, null, 2)}
       await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
         destPodfilePath,
         {
+          extraPodfileStatements: finalExtraPodfileStatements,
           extraPods: additionalPods,
           extraPodspecsSources: finalPodspecsSources,
           iosDeploymentTarget: projectSpec.deploymentTarget,
