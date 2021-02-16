@@ -368,6 +368,11 @@ For example:
 }
 ```
 
+- `extraPodfileStatements`
+
+Array of extra statements to inject in the Container Podfile.\
+The strings provided in this array will be injected as-is in the Podfile.
+
 - `requiresManualLinking`
 
 Boolean flag that indicates whether this plugin requires manual linking.\
