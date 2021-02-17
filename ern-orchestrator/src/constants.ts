@@ -87,4 +87,10 @@ export const availableUserConfigKeys = [
     name: 'manifest',
     values: ['object'],
   },
+  {
+    desc:
+      'Version of CocoaPods to use for iOS container generation (version must be available locally)',
+    name: 'podVersion',
+    values: ['string'],
+  },
 ];

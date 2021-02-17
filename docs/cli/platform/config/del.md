@@ -26,6 +26,7 @@
 - `manifest`
 - `max-package-cache-size`
 - `package-cache-enabled`
+- `podVersion`
 - `retain-tmp-dir`
 - `showBanner`
 - `sourceMapStoreProxy`

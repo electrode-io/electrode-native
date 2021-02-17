@@ -20,62 +20,67 @@
 
 **Configurable properties**
 
-- `codePushAccessKey` [string]  
+- `codePushAccessKey` [string]\
   Code push access key associated with your account
 
-- `codePushCustomHeaders`
+- `codePushCustomHeaders` [string]\
   CodePush custom extra http headers.
 
-- `codePushCustomServerUrl` [string]  
+- `codePushCustomServerUrl` [string]\
   CodePush custom server url, in case you are not using the Microsoft CodePush server.
 
-- `codePushProxy`
+- `codePushProxy` [string]\
   CodePush proxy server url.
 
-- `ignore-required-ern-version` [boolean]
-  Indicates whether any Cauldron ern version requirement should be ignored.
-  This is mostly used for Electrode Native development and should not be set to true otherwise.
+- `ignore-required-ern-version` [boolean]\
+  Indicates whether any Cauldron ern version requirement should be ignored.\
+  This is mostly used for Electrode Native development and should not be set to true otherwise.\
   **default** : false
 
-- `logLevel` [trace|debug|info|error|fatal]  
-  Set the log level to use for all commands.  
+- `logLevel` [trace|debug|info|error|fatal]\
+  Set the log level to use for all commands.\
   **default** : info
 
-- `max-package-cache-size` [number]
-  The maximum disk space to use for the package cache, in Bytes.  
-  Only apply if the package cache is enabled (`package-cache-enabled` configuration key set to `true`).
+- `max-package-cache-size` [number]\
+  The maximum disk space to use for the package cache, in Bytes.\
+  Only apply if the package cache is enabled (`package-cache-enabled` configuration key set to `true`).\
   **default** : 2GB
 
-- `package-cache-enabled` [boolean]
-  Indicates whether the package cache should be enabled.  
-  Enabling the package cache will lead to faster Containers generation, given that all packages versions used for a Container generation, will be retrieved from the cache if available rather than being downloaded upon every generation.
+- `package-cache-enabled` [boolean]\
+  Indicates whether the package cache should be enabled.\
+  Enabling the package cache will lead to faster Containers generation, given that all packages versions used for a Container generation, will be retrieved from the cache if available rather than being downloaded upon every generation.\
   **default** : true
 
-- `retain-tmp-dir` [boolean]  
-  If set to `true`, the temporary directories created during some commands execution, won't be destroyed after the command execution.  
+- `podVersion` [string]\
+  Version of CocoaPods (pod command) to use for iOS container generation.\
+  **The version must be available (installed) locally**\
+  **default** : default CocoaPods version for environment
+
+- `retain-tmp-dir` [boolean]\
+  If set to `true`, the temporary directories created during some commands execution, won't be destroyed after the command execution.\
   **default** : false
 
-- `showBanner` [boolean]  
-  Show the Electrode Native ASCII banner for all commands.  
+- `showBanner` [boolean]\
+  Show the Electrode Native ASCII banner for all commands.\
   **default** : true
 
-- `tmp-dir` [string]
-  Temporary directory to use during commands execution.  
+- `tmp-dir` [string]\
+  Temporary directory to use during commands execution.\
   **default** : system default
 
-- `bundleStoreProxy` [string]  
-  HTTP/HTTPS proxy to use to connect to the bundle store server.  
-  Should be the full url to the proxy, including the port. For example `http://10.0.0.0:9089`.  
+- `bundleStoreProxy` [string]\
+  HTTP/HTTPS proxy to use to connect to the bundle store server.\
+  Should be the full url to the proxy, including the port. For example `http://10.0.0.0:9089`.\
   **default** : no proxy
 
-- `sourceMapStoreProxy` [string]
-  HTTP/HTTPS proxy to use to connect to the source map store server.  
-  Should be the full url to the proxy, including the port. For example `http://10.0.0.0:9089`.  
+- `sourceMapStoreProxy` [string]\
+  HTTP/HTTPS proxy to use to connect to the source map store server.\
+  Should be the full url to the proxy, including the port. For example `http://10.0.0.0:9089`.\
   **default** : no proxy
 
-- `binaryStoreProxy` [string]  
-  HTTP/HTTPS proxy to use to connect to the binary store server.  
-  Should be the full url to the proxy, including the port. For example `http://10.0.0.0:9089`.  
+- `binaryStoreProxy` [string]
+  HTTP/HTTPS proxy to use to connect to the binary store server.\
+  Should be the full url to the proxy, including the port. For example `http://10.0.0.0:9089`.\
   **default** : no proxy
 
 - `manifest` [object]\
