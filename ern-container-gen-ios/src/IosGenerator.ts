@@ -13,6 +13,7 @@ import {
   utils,
   writePackageJson,
   yarn,
+  config as ernConfig,
 } from 'ern-core';
 import {
   ContainerGenerator,
@@ -278,13 +279,20 @@ Make sure to run these commands before building the container.`,
       // and also add all essential node_modules (needed for the build)
       // to the container
       if (!config?.iosConfig?.skipInstall) {
-        //
-        // Run pod install
+        const podVersionArg = ernConfig.get('podVersion')
+          ? `_${ernConfig.get('podVersion')}_`
+          : '';
+
+        const podCmdArgs = [podVersionArg, 'install', '--verbose'].filter(
+          (x: string) => x !== '',
+        );
+
         shell.pushd(config.outDir);
+
         try {
           await kax
-            .task('Running pod install')
-            .run(childProcess.spawnp('pod', ['install', '--verbose']));
+            .task(`Running pod ${podCmdArgs.join(' ')}`)
+            .run(childProcess.spawnp('pod', podCmdArgs));
         } finally {
           shell.popd();
         }
