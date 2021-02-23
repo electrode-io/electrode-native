@@ -32,7 +32,7 @@ export class AndroidPluginConfigGenerator {
   private readonly excludedDirectoriesRe = new RegExp(/sample|demo|example/i);
   private readonly exclusions: string[] = [
     'com.facebook.react:react-native',
-    'fileTree(include',
+    'fileTree(',
   ];
 
   private constructor(p: string) {
@@ -94,7 +94,7 @@ export class AndroidPluginConfigGenerator {
         .filter((x: any) => !this.exclusions.some((y) => x.name.includes(y)))
         .map(async (x: any) => {
           if (x.group) {
-            return `${x.group}:${x.name}:${x.version}`;
+            return `${x.type} '${x.group}:${x.name}:${x.version}'`;
           } else {
             // Handle this kind of string where version is dynamically retrieved
             // "com.android.support:exifinterface:${safeExtGet('supportLibVersion', '28.0.0')}"
@@ -103,14 +103,14 @@ export class AndroidPluginConfigGenerator {
               const [, group, name, version] = match;
               const versionMatch = version.match(/\d+.\d+.\d+/);
               if (versionMatch) {
-                return `${group}:${name}:${versionMatch[0]}`;
+                return `${x.type} '${group}:${name}:${versionMatch[0]}'`;
               } else {
                 // Handle this kind of string where version cannot be found inline
                 // com.google.android.gms:play-services-vision:$googlePlayServicesVisionVersion
                 const resolvedVersion = await resolveDependencyVersion(
                   `${group}:${name}`,
                 );
-                return `${group}:${name}:${resolvedVersion}`;
+                return `${x.type} '${group}:${name}:${resolvedVersion}'`;
               }
             }
             log.debug(`Ignoring ${x.name}`);

@@ -5,9 +5,6 @@ def safeExtGet(prop, fallback) {
 buildscript {
   repositories {
     google()
-    maven {
-      url 'https://maven.google.com'
-    }
     jcenter()
   }
 
@@ -21,12 +18,10 @@ apply plugin: 'com.android.library'
 android {
   compileSdkVersion safeExtGet('compileSdkVersion', 28)
   buildToolsVersion safeExtGet('buildToolsVersion', '28.0.3')
-
   defaultConfig {
     minSdkVersion safeExtGet('minSdkVersion', 16)
     targetSdkVersion safeExtGet('targetSdkVersion', 28)
   }
-
   lintOptions {
     abortOnError false
     warning 'InvalidPackage'
@@ -36,9 +31,6 @@ android {
 repositories {
   google()
   jcenter()
-  maven {
-   url 'https://maven.google.com'
-  }
   maven { url "https://jitpack.io" }
   maven {
     // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
@@ -47,12 +39,12 @@ repositories {
 }
 
 dependencies {
-  def googlePlayServicesVisionVersion = safeExtGet('googlePlayServicesVisionVersion', safeExtGet('googlePlayServicesVersion', '17.0.2'))
-
+  implementation fileTree(include: ['*.jar'], dir: 'libs1')
+  implementation fileTree(dir: 'libs2', include: ['*.jar'])
   implementation 'com.facebook.react:react-native:+'
-  implementation "com.google.zxing:core:3.3.3"
-  implementation "com.drewnoakes:metadata-extractor:2.11.0"
-  implementation "com.android.support:exifinterface:${safeExtGet('supportLibVersion', '28.0.0')}"
-  implementation "com.android.support:support-annotations:${safeExtGet('supportLibVersion', '28.0.0')}"
   implementation "com.android.support:support-v4:${safeExtGet('supportLibVersion', '28.0.0')}"
+  annotationProcessor 'com.example:annotation-processor:1.0.0'
+  api 'com.example:api:1.0.0'
+  compileOnly 'com.example:compile-only:1.0.0'
+  implementation('com.example:aar-dep:1.0.0@aar') { transitive = true }
 }
