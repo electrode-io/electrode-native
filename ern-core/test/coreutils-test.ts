@@ -5,22 +5,12 @@ import * as utils from '../src/utils';
 import { PackagePath } from '../src/PackagePath';
 import { afterTest, beforeTest } from 'ern-util-dev';
 import * as fixtures from './fixtures/common';
-import { MINIAPP, API, JS_API_IMPL, NATIVE_API_IMPL } from '../src/ModuleTypes';
+import { API, JS_API_IMPL, MINIAPP, NATIVE_API_IMPL } from '../src/ModuleTypes';
 import path from 'path';
 
 const sandbox = sinon.createSandbox();
 
-// fixtures
-// tslint:disable-next-line:no-var-requires
-const yarnInfo = require('./fixtures/yarn_info.json');
-// tslint:disable-next-line:no-var-requires
-const yarnInfoErnApi = require('./fixtures/yarn_info_ern_api.json');
-// tslint:disable-next-line:no-var-requires
-const yarnInfoErnApiImpl = require('./fixtures/yarn_info_ern_api_impl.json');
-// tslint:disable-next-line:no-var-requires
-const yarnInfoErnJsApiImpl = require('./fixtures/yarn_info_ern_js_api_impl.json');
-// tslint:disable-next-line:no-var-requires
-const yarnInfoError = require('./fixtures/yarn_info_error.json');
+const versionsArray = ['1.0.0', '2.0.0', '3.0.0', '4.0.0-canary.1'];
 
 // stub
 let pathStub: any;
@@ -42,14 +32,14 @@ describe('utils.js', () => {
   describe('isPublishedToNpm', () => {
     it('pkgName published in npm return true', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfo);
+      yarnStub.resolves(versionsArray);
       expect(await utils.isPublishedToNpm(fixtures.pkgName)).to.eql(true);
       yarnStub.restore();
     });
 
     it('dependencyPath in npm return true', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfo);
+      yarnStub.resolves(versionsArray);
       expect(
         await utils.isPublishedToNpm(new PackagePath(fixtures.pkgName)),
       ).to.eql(true);
@@ -58,22 +48,18 @@ describe('utils.js', () => {
 
     it('dependencyPath in npm with version return true', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfo);
-      expect(
-        await utils.isPublishedToNpm(
-          new PackagePath(fixtures.pkgNameWithVersion),
-        ),
-      ).to.eql(true);
+      yarnStub.resolves(versionsArray);
+      expect(await utils.isPublishedToNpm(new PackagePath('dep@1.0.0'))).to.eql(
+        true,
+      );
       yarnStub.restore();
     });
 
     it('dependencyPath in npm with invalid version return false', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfo);
+      yarnStub.resolves(versionsArray);
       expect(
-        await utils.isPublishedToNpm(
-          new PackagePath(fixtures.pkgNameWithInvalidVersion),
-        ),
+        await utils.isPublishedToNpm(new PackagePath('dep@1000.1000.0')),
       ).to.eql(false);
       yarnStub.restore();
     });
@@ -81,9 +67,7 @@ describe('utils.js', () => {
     it('pkgName not published in npm return false', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
       yarnStub.rejects(new Error('Received invalid response from npm.'));
-      expect(await utils.isPublishedToNpm(fixtures.pkgNameUnpublished)).to.eql(
-        false,
-      );
+      expect(await utils.isPublishedToNpm('dep')).to.eql(false);
       yarnStub.restore();
     });
   });
@@ -323,28 +307,20 @@ describe('utils.js', () => {
   // isDependencyApiImpl
   // ==========================================================
   describe('isDependencyApiImpl', () => {
-    it('return true if regex matches', async () => {
-      expect(
-        await utils.isDependencyApiImpl(
-          PackagePath.fromString('react-native-header-api-impl'),
-        ),
-      ).to.eql(true);
-    });
-
     it('return true if ern object resolves for native api impl', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfoErnApiImpl);
+      yarnStub.resolves({ moduleType: NATIVE_API_IMPL });
       expect(
-        await utils.isDependencyApiImpl(PackagePath.fromString('react-header')),
+        await utils.isDependencyApiImpl(PackagePath.fromString('dep')),
       ).to.eql(true);
       yarnStub.restore();
     });
 
     it('return true if ern object resolves for js api impl', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfoErnJsApiImpl);
+      yarnStub.resolves({ moduleType: JS_API_IMPL });
       expect(
-        await utils.isDependencyApiImpl(PackagePath.fromString('react-header')),
+        await utils.isDependencyApiImpl(PackagePath.fromString('dep')),
       ).to.eql(true);
       yarnStub.restore();
     });
@@ -354,20 +330,12 @@ describe('utils.js', () => {
   // isDependencyApi
   // ==========================================================
   describe('isDependencyApi', () => {
-    it('return true if regex matches', async () => {
-      expect(
-        await utils.isDependencyApi(
-          PackagePath.fromString('react-native-header-api'),
-        ),
-      ).to.eql(true);
-    });
-
-    it('return true if ern object resolves for api', async () => {
+    it('returns true if ern module type is set to ern-api', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfoErnApi);
-      expect(
-        await utils.isDependencyApi(PackagePath.fromString('react-header')),
-      ).to.eql(true);
+      yarnStub.resolves({ moduleType: API });
+      expect(await utils.isDependencyApi(PackagePath.fromString('dep'))).to.eql(
+        true,
+      );
       yarnStub.restore();
     });
   });
@@ -376,54 +344,29 @@ describe('utils.js', () => {
   // isDependencyApiOrApiImpl
   // ==========================================================
   describe('isDependencyApiOrApiImpl', () => {
-    it('return true if regex matches', async () => {
-      expect(
-        await utils.isDependencyApiOrApiImpl(
-          PackagePath.fromString('react-native-header-api'),
-        ),
-      ).to.eql(true);
-    });
-
     it('return true if ern object resolves for api', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfoErnApi);
+      yarnStub.resolves({ moduleType: API });
       expect(
-        await utils.isDependencyApiOrApiImpl(
-          PackagePath.fromString('react-header'),
-        ),
-      ).to.eql(true);
-      yarnStub.restore();
-    });
-
-    it('return true if regex matches', async () => {
-      const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfoErnApi);
-      expect(
-        await utils.isDependencyApiOrApiImpl(
-          PackagePath.fromString('react-native-header-api-impl'),
-        ),
+        await utils.isDependencyApiOrApiImpl(PackagePath.fromString('dep')),
       ).to.eql(true);
       yarnStub.restore();
     });
 
     it('return true if ern object resolves for native api impl', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfoErnApiImpl);
+      yarnStub.resolves({ moduleType: NATIVE_API_IMPL });
       expect(
-        await utils.isDependencyApiOrApiImpl(
-          PackagePath.fromString('react-header'),
-        ),
+        await utils.isDependencyApiOrApiImpl(PackagePath.fromString('dep')),
       ).to.eql(true);
       yarnStub.restore();
     });
 
     it('return true if ern object resolves for js api impl', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfoErnJsApiImpl);
+      yarnStub.resolves({ moduleType: JS_API_IMPL });
       expect(
-        await utils.isDependencyApiOrApiImpl(
-          PackagePath.fromString('react-header'),
-        ),
+        await utils.isDependencyApiOrApiImpl(PackagePath.fromString('dep')),
       ).to.eql(true);
       yarnStub.restore();
     });

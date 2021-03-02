@@ -143,56 +143,34 @@ export function getDefaultPackageNameForModule(
     : `${basePackageName}-${suffix}`;
 }
 
+export async function isDependencyOfType(
+  dependency: PackagePath,
+  types: string | string[],
+): Promise<boolean> {
+  let a: string[] = [];
+  a = a.concat(types);
+  const ernField = await yarn.info(dependency, {
+    field: 'ern',
+  });
+  return a.indexOf(ernField?.moduleType) > -1;
+}
+
 export async function isDependencyApiOrApiImpl(
   dependency: PackagePath,
 ): Promise<boolean> {
-  const isApi = await isDependencyApi(dependency);
-  const isApiImpl = !isApi ? await isDependencyApiImpl(dependency) : false;
-  // Note: using constants as using await in return statement was not satisfying standard checks
-  return isApi || isApiImpl;
+  return isDependencyOfType(dependency, [API, JS_API_IMPL, NATIVE_API_IMPL]);
 }
 
 export async function isDependencyApi(
   dependency: PackagePath,
 ): Promise<boolean> {
-  const pkgName = await getPackageName(dependency);
-
-  if (/^.*react-native-.+-api$/.test(pkgName)) {
-    return true;
-  }
-
-  const depInfo = await yarn.info(dependency, {
-    field: 'ern',
-  });
-
-  return API === depInfo?.moduleType;
+  return isDependencyOfType(dependency, API);
 }
 
-/**
- *
- * @param dependency: Name of the dependency
- * @param forceYarnInfo: if true, a yarn info command will be executed to determine the api implementation
- * @param type: checks to see if a dependency is of a specific type(js|native) as well
- * @returns {Promise.<boolean>}
- */
 export async function isDependencyApiImpl(
   dependency: PackagePath,
-  forceYarnInfo?: boolean,
-  type?: string,
 ): Promise<boolean> {
-  const pkgName = await getPackageName(dependency);
-
-  if (!type && !forceYarnInfo && /^.*react-native-.+-api-impl$/.test(pkgName)) {
-    return true;
-  }
-
-  const modulesTypes = type ? [type] : [NATIVE_API_IMPL, JS_API_IMPL];
-
-  const depInfo = await yarn.info(dependency, {
-    field: 'ern',
-  });
-
-  return modulesTypes.indexOf(depInfo?.moduleType) > -1;
+  return isDependencyOfType(dependency, [JS_API_IMPL, NATIVE_API_IMPL]);
 }
 
 export async function getPackageName(pkg: PackagePath) {
@@ -204,23 +182,11 @@ export async function getPackageName(pkg: PackagePath) {
   return pkg.name!;
 }
 
-export async function isDependencyJsApiImpl(
-  dependency: PackagePath,
-): Promise<boolean> {
-  return isDependencyApiImpl(dependency, true, JS_API_IMPL);
-}
-
-export async function isDependencyNativeApiImpl(
-  dependency: PackagePath,
-): Promise<boolean> {
-  return isDependencyApiImpl(dependency, true, NATIVE_API_IMPL);
-}
-
 export async function isDependencyPathApiImpl(
   dependencyPath: string,
   type?: string,
 ): Promise<boolean> {
-  const modulesTypes = type ? [type] : [NATIVE_API_IMPL, JS_API_IMPL];
+  const modulesTypes = type ? [type] : [JS_API_IMPL, NATIVE_API_IMPL];
 
   const packageJson = await readPackageJson(dependencyPath);
   return modulesTypes.indexOf(packageJson.ern?.moduleType) > -1;
@@ -309,7 +275,7 @@ export function getDownloadedPluginPath(pluginOrigin: any) {
 export async function extractJsApiImplementations(plugins: PackagePath[]) {
   const jsApiImplDependencies: PackagePath[] = [];
   for (const dependency of plugins) {
-    if (await isDependencyJsApiImpl(dependency)) {
+    if (await isDependencyOfType(dependency, JS_API_IMPL)) {
       jsApiImplDependencies.push(dependency);
     }
   }
