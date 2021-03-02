@@ -5,7 +5,8 @@ import shell from './shell';
 import { manifest, PluginConfig } from './Manifest';
 import handleCopyDirective from './handleCopyDirective';
 import log from './log';
-import { isDependencyJsApiImpl, isDependencyPathNativeApiImpl } from './utils';
+import { isDependencyOfType, isDependencyPathNativeApiImpl } from './utils';
+import { JS_API_IMPL } from './ModuleTypes';
 import path from 'path';
 import xcode from 'xcode-ern';
 import fs from 'fs-extra';
@@ -98,7 +99,7 @@ export async function fillProjectHull(
 
       const localPluginPackage = PackagePath.fromString(pluginSourcePath);
 
-      if (await isDependencyJsApiImpl(localPluginPackage)) {
+      if (await isDependencyOfType(localPluginPackage, JS_API_IMPL)) {
         log.debug('JS api implementation identified, skipping fill hull.');
         continue;
       }

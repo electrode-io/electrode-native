@@ -1,7 +1,0 @@
-{
-  "moduleType": "ern-native-api-impl",
-  "containerGen": {
-    "moduleName": "ReactNativeErnmovieApiImpl",
-    "apiNames": ["Movies"]
-  }
-}

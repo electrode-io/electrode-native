@@ -5,22 +5,12 @@ import * as utils from '../src/utils';
 import { PackagePath } from '../src/PackagePath';
 import { afterTest, beforeTest } from 'ern-util-dev';
 import * as fixtures from './fixtures/common';
-import * as ModuleTypes from '../src/ModuleTypes';
+import { API, JS_API_IMPL, MINIAPP, NATIVE_API_IMPL } from '../src/ModuleTypes';
 import path from 'path';
 
 const sandbox = sinon.createSandbox();
 
-// fixtures
-// tslint:disable-next-line:no-var-requires
-const yarnInfo = require('./fixtures/yarn_info.json');
-// tslint:disable-next-line:no-var-requires
-const yarnInfoErnApi = require('./fixtures/yarn_info_ern_api.json');
-// tslint:disable-next-line:no-var-requires
-const yarnInfoErnApiImpl = require('./fixtures/yarn_info_ern_api_impl.json');
-// tslint:disable-next-line:no-var-requires
-const yarnInfoErnJsApiImpl = require('./fixtures/yarn_info_ern_js_api_impl.json');
-// tslint:disable-next-line:no-var-requires
-const yarnInfoError = require('./fixtures/yarn_info_error.json');
+const versionsArray = ['1.0.0', '2.0.0', '3.0.0', '4.0.0-canary.1'];
 
 // stub
 let pathStub: any;
@@ -42,14 +32,14 @@ describe('utils.js', () => {
   describe('isPublishedToNpm', () => {
     it('pkgName published in npm return true', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfo);
+      yarnStub.resolves(versionsArray);
       expect(await utils.isPublishedToNpm(fixtures.pkgName)).to.eql(true);
       yarnStub.restore();
     });
 
     it('dependencyPath in npm return true', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfo);
+      yarnStub.resolves(versionsArray);
       expect(
         await utils.isPublishedToNpm(new PackagePath(fixtures.pkgName)),
       ).to.eql(true);
@@ -58,22 +48,18 @@ describe('utils.js', () => {
 
     it('dependencyPath in npm with version return true', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfo);
-      expect(
-        await utils.isPublishedToNpm(
-          new PackagePath(fixtures.pkgNameWithVersion),
-        ),
-      ).to.eql(true);
+      yarnStub.resolves(versionsArray);
+      expect(await utils.isPublishedToNpm(new PackagePath('dep@1.0.0'))).to.eql(
+        true,
+      );
       yarnStub.restore();
     });
 
     it('dependencyPath in npm with invalid version return false', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfo);
+      yarnStub.resolves(versionsArray);
       expect(
-        await utils.isPublishedToNpm(
-          new PackagePath(fixtures.pkgNameWithInvalidVersion),
-        ),
+        await utils.isPublishedToNpm(new PackagePath('dep@1000.1000.0')),
       ).to.eql(false);
       yarnStub.restore();
     });
@@ -81,9 +67,7 @@ describe('utils.js', () => {
     it('pkgName not published in npm return false', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
       yarnStub.rejects(new Error('Received invalid response from npm.'));
-      expect(await utils.isPublishedToNpm(fixtures.pkgNameUnpublished)).to.eql(
-        false,
-      );
+      expect(await utils.isPublishedToNpm('dep')).to.eql(false);
       yarnStub.restore();
     });
   });
@@ -133,198 +117,85 @@ describe('utils.js', () => {
   // ==========================================================
   describe('getDefaultPackageNameForCamelCaseString', () => {
     it('get default package name no module type', () => {
-      expect(utils.getDefaultPackageNameForCamelCaseString('foobar')).to.eql(
-        'foobar',
-      );
-      expect(utils.getDefaultPackageNameForCamelCaseString('fooBar')).to.eql(
-        'foo-bar',
-      );
-      expect(utils.getDefaultPackageNameForCamelCaseString('FooBar')).to.eql(
-        'foo-bar',
-      );
-      expect(utils.getDefaultPackageNameForCamelCaseString('Foobar')).to.eql(
-        'foobar',
-      );
+      const tests = [
+        { name: 'foobar', expected: 'foobar' },
+        { name: 'fooBar', expected: 'foo-bar' },
+        { name: 'FooBar', expected: 'foo-bar' },
+        { name: 'Foobar', expected: 'foobar' },
+      ];
+      tests.forEach(({ name, expected }) => {
+        expect(utils.getDefaultPackageNameForCamelCaseString(name)).to.eql(
+          expected,
+        );
+      });
     });
 
     it('get default package name for MINIAPP module type', () => {
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'foobar',
-          ModuleTypes.MINIAPP,
-        ),
-      ).to.eql('foobar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'fooBar',
-          ModuleTypes.MINIAPP,
-        ),
-      ).to.eql('foo-bar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'FooBar',
-          ModuleTypes.MINIAPP,
-        ),
-      ).to.eql('foo-bar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'Foobar',
-          ModuleTypes.MINIAPP,
-        ),
-      ).to.eql('foobar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'FoobarMini',
-          ModuleTypes.MINIAPP,
-        ),
-      ).to.eql('foobar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'FoobarMiniApp',
-          ModuleTypes.MINIAPP,
-        ),
-      ).to.eql('foobar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'miniFoobarApp',
-          ModuleTypes.MINIAPP,
-        ),
-      ).to.eql('foobar');
+      const tests = [
+        { name: 'foobar', expected: 'foobar' },
+        { name: 'fooBar', expected: 'foo-bar' },
+        { name: 'FooBar', expected: 'foo-bar' },
+        { name: 'Foobar', expected: 'foobar' },
+        { name: 'FoobarMini', expected: 'foobar' },
+        { name: 'FoobarMiniApp', expected: 'foobar' },
+        { name: 'miniFoobarApp', expected: 'foobar' },
+      ];
+      tests.forEach(({ name, expected }) => {
+        expect(
+          utils.getDefaultPackageNameForCamelCaseString(name, MINIAPP),
+        ).to.eql(expected);
+      });
     });
 
     it('get default package name for API module type', () => {
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'foobar',
-          ModuleTypes.API,
-        ),
-      ).to.eql('foobar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'fooBar',
-          ModuleTypes.API,
-        ),
-      ).to.eql('foo-bar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'FooBar',
-          ModuleTypes.API,
-        ),
-      ).to.eql('foo-bar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'Foobar',
-          ModuleTypes.API,
-        ),
-      ).to.eql('foobar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'FoobarApi',
-          ModuleTypes.API,
-        ),
-      ).to.eql('foobar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'apiFoobar',
-          ModuleTypes.API,
-        ),
-      ).to.eql('foobar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'ApiFoobar',
-          ModuleTypes.API,
-        ),
-      ).to.eql('foobar');
+      const tests = [
+        { name: 'foobar', expected: 'foobar' },
+        { name: 'fooBar', expected: 'foo-bar' },
+        { name: 'FooBar', expected: 'foo-bar' },
+        { name: 'Foobar', expected: 'foobar' },
+        { name: 'FoobarApi', expected: 'foobar' },
+        { name: 'apiFoobar', expected: 'foobar' },
+        { name: 'ApiFoobar', expected: 'foobar' },
+      ];
+      tests.forEach(({ name, expected }) => {
+        expect(utils.getDefaultPackageNameForCamelCaseString(name, API)).to.eql(
+          expected,
+        );
+      });
     });
 
     it('get default package name for JS_API_IMPL module type', () => {
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'foobar',
-          ModuleTypes.JS_API_IMPL,
-        ),
-      ).to.eql('foobar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'fooBar',
-          ModuleTypes.JS_API_IMPL,
-        ),
-      ).to.eql('foo-bar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'FooBar',
-          ModuleTypes.JS_API_IMPL,
-        ),
-      ).to.eql('foo-bar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'implFoobar',
-          ModuleTypes.JS_API_IMPL,
-        ),
-      ).to.eql('foobar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'FoobarApi',
-          ModuleTypes.JS_API_IMPL,
-        ),
-      ).to.eql('foobar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'apiFoobarImpl',
-          ModuleTypes.JS_API_IMPL,
-        ),
-      ).to.eql('foobar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'ImplApiFoobar',
-          ModuleTypes.JS_API_IMPL,
-        ),
-      ).to.eql('foobar');
+      const tests = [
+        { name: 'foobar', expected: 'foobar' },
+        { name: 'fooBar', expected: 'foo-bar' },
+        { name: 'FooBar', expected: 'foo-bar' },
+        { name: 'implFoobar', expected: 'foobar' },
+        { name: 'FoobarApi', expected: 'foobar' },
+        { name: 'apiFoobarImpl', expected: 'foobar' },
+        { name: 'ImplApiFoobar', expected: 'foobar' },
+      ];
+      tests.forEach(({ name, expected }) => {
+        expect(
+          utils.getDefaultPackageNameForCamelCaseString(name, JS_API_IMPL),
+        ).to.eql(expected);
+      });
     });
 
     it('get default package name for NATIVE_API_IMPL module type', () => {
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'foobar',
-          ModuleTypes.NATIVE_API_IMPL,
-        ),
-      ).to.eql('foobar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'fooBar',
-          ModuleTypes.NATIVE_API_IMPL,
-        ),
-      ).to.eql('foo-bar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'FooBar',
-          ModuleTypes.NATIVE_API_IMPL,
-        ),
-      ).to.eql('foo-bar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'implFoobar',
-          ModuleTypes.NATIVE_API_IMPL,
-        ),
-      ).to.eql('foobar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'FoobarApi',
-          ModuleTypes.NATIVE_API_IMPL,
-        ),
-      ).to.eql('foobar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'apiFoobarImpl',
-          ModuleTypes.NATIVE_API_IMPL,
-        ),
-      ).to.eql('foobar');
-      expect(
-        utils.getDefaultPackageNameForCamelCaseString(
-          'ImplApiFoobar',
-          ModuleTypes.NATIVE_API_IMPL,
-        ),
-      ).to.eql('foobar');
+      const tests = [
+        { name: 'foobar', expected: 'foobar' },
+        { name: 'fooBar', expected: 'foo-bar' },
+        { name: 'FooBar', expected: 'foo-bar' },
+        { name: 'implFoobar', expected: 'foobar' },
+        { name: 'FoobarApi', expected: 'foobar' },
+        { name: 'apiFoobarImpl', expected: 'foobar' },
+        { name: 'ImplApiFoobar', expected: 'foobar' },
+      ];
+      tests.forEach(({ name, expected }) => {
+        expect(
+          utils.getDefaultPackageNameForCamelCaseString(name, NATIVE_API_IMPL),
+        ).to.eql(expected);
+      });
     });
   });
 
@@ -333,23 +204,17 @@ describe('utils.js', () => {
   // ==========================================================
   describe('getModuleSuffix', () => {
     it('returns the correct suffixes', () => {
-      expect(utils.getModuleSuffix(ModuleTypes.MINIAPP)).to.eql('miniapp');
-      expect(utils.getModuleSuffix(ModuleTypes.API)).to.eql('api');
-      expect(utils.getModuleSuffix(ModuleTypes.JS_API_IMPL)).to.eql(
-        'api-impl-js',
-      );
-      expect(utils.getModuleSuffix(ModuleTypes.NATIVE_API_IMPL)).to.eql(
-        'api-impl-native',
-      );
+      expect(utils.getModuleSuffix(MINIAPP)).to.eql('miniapp');
+      expect(utils.getModuleSuffix(API)).to.eql('api');
+      expect(utils.getModuleSuffix(JS_API_IMPL)).to.eql('api-impl-js');
+      expect(utils.getModuleSuffix(NATIVE_API_IMPL)).to.eql('api-impl-native');
     });
 
     it('throws exception for unsupported module type', () => {
       try {
-        utils.getModuleSuffix(fixtures.moduleTypeNotSupported);
+        utils.getModuleSuffix('unsupported');
       } catch (e) {
-        expect(e.message).to.eql(
-          `Unsupported module type : ${fixtures.moduleTypeNotSupported}`,
-        );
+        expect(e.message).to.eql(`Unsupported module type : unsupported`);
       }
     });
   });
@@ -358,151 +223,82 @@ describe('utils.js', () => {
   // getDefaultPackageNameForModule
   // ==========================================================
   describe('getDefaultPackageNameForModule', () => {
-    it('get default package name MINIAPP', () => {
-      expect(
-        utils.getDefaultPackageNameForModule('foobar', ModuleTypes.MINIAPP),
-      ).to.eql('foobar-miniapp');
-      expect(
-        utils.getDefaultPackageNameForModule('fooBar', ModuleTypes.MINIAPP),
-      ).to.eql('foo-bar-miniapp');
-      expect(
-        utils.getDefaultPackageNameForModule('FooBar', ModuleTypes.MINIAPP),
-      ).to.eql('foo-bar-miniapp');
-      expect(
-        utils.getDefaultPackageNameForModule('Foobar', ModuleTypes.MINIAPP),
-      ).to.eql('foobar-miniapp');
-      expect(
-        utils.getDefaultPackageNameForModule('FoobarMini', ModuleTypes.MINIAPP),
-      ).to.eql('foobar-miniapp');
-      expect(
-        utils.getDefaultPackageNameForModule(
-          'FoobarMiniApp',
-          ModuleTypes.MINIAPP,
-        ),
-      ).to.eql('foobar-miniapp');
-      expect(
-        utils.getDefaultPackageNameForModule(
-          'miniFoobarApp',
-          ModuleTypes.MINIAPP,
-        ),
-      ).to.eql('foobar-miniapp');
-    });
+    const tests = {
+      api: [
+        { name: 'foobar', expected: 'foobar-api' },
+        { name: 'fooBar', expected: 'foo-bar-api' },
+        { name: 'FooBar', expected: 'foo-bar-api' },
+        { name: 'Foobar', expected: 'foobar-api' },
+        { name: 'FoobarApi', expected: 'foobar-api' },
+        { name: 'apiFoobar', expected: 'foobar-api' },
+        { name: 'ApiFoobar', expected: 'foobar-api' },
+      ],
+      jsApiImpl: [
+        { name: 'foobar', expected: 'foobar-api-impl-js' },
+        { name: 'fooBar', expected: 'foo-bar-api-impl-js' },
+        { name: 'FooBar', expected: 'foo-bar-api-impl-js' },
+        { name: 'Foobar', expected: 'foobar-api-impl-js' },
+        { name: 'FoobarApi', expected: 'foobar-api-impl-js' },
+        { name: 'apiFoobar', expected: 'foobar-api-impl-js' },
+        { name: 'ApiFoobar', expected: 'foobar-api-impl-js' },
+      ],
+      miniapp: [
+        { name: 'foobar', expected: 'foobar-miniapp' },
+        { name: 'fooBar', expected: 'foo-bar-miniapp' },
+        { name: 'FooBar', expected: 'foo-bar-miniapp' },
+        { name: 'Foobar', expected: 'foobar-miniapp' },
+        { name: 'FoobarMini', expected: 'foobar-miniapp' },
+        { name: 'FoobarMiniApp', expected: 'foobar-miniapp' },
+        { name: 'miniFoobarApp', expected: 'foobar-miniapp' },
+      ],
+      nativeApiImpl: [
+        { name: 'foobar', expected: 'foobar-api-impl-native' },
+        { name: 'fooBar', expected: 'foo-bar-api-impl-native' },
+        { name: 'FooBar', expected: 'foo-bar-api-impl-native' },
+        { name: 'Foobar', expected: 'foobar-api-impl-native' },
+        { name: 'FoobarApi', expected: 'foobar-api-impl-native' },
+        { name: 'apiFoobar', expected: 'foobar-api-impl-native' },
+        { name: 'ApiFoobar', expected: 'foobar-api-impl-native' },
+      ],
+    };
 
     it('get default package name API', () => {
-      expect(
-        utils.getDefaultPackageNameForModule('foobar', ModuleTypes.API),
-      ).to.eql('foobar-api');
-      expect(
-        utils.getDefaultPackageNameForModule('fooBar', ModuleTypes.API),
-      ).to.eql('foo-bar-api');
-      expect(
-        utils.getDefaultPackageNameForModule('FooBar', ModuleTypes.API),
-      ).to.eql('foo-bar-api');
-      expect(
-        utils.getDefaultPackageNameForModule('Foobar', ModuleTypes.API),
-      ).to.eql('foobar-api');
-      expect(
-        utils.getDefaultPackageNameForModule('FoobarApi', ModuleTypes.API),
-      ).to.eql('foobar-api');
-      expect(
-        utils.getDefaultPackageNameForModule('apiFoobar', ModuleTypes.API),
-      ).to.eql('foobar-api');
-      expect(
-        utils.getDefaultPackageNameForModule('ApiFoobar', ModuleTypes.API),
-      ).to.eql('foobar-api');
+      tests.api.forEach(({ name, expected }) => {
+        expect(utils.getDefaultPackageNameForModule(name, API)).to.eql(
+          expected,
+        );
+      });
     });
 
     it('get default package name JS_API_IMPL', () => {
-      expect(
-        utils.getDefaultPackageNameForModule('foobar', ModuleTypes.JS_API_IMPL),
-      ).to.eql('foobar-api-impl-js');
-      expect(
-        utils.getDefaultPackageNameForModule('fooBar', ModuleTypes.JS_API_IMPL),
-      ).to.eql('foo-bar-api-impl-js');
-      expect(
-        utils.getDefaultPackageNameForModule('FooBar', ModuleTypes.JS_API_IMPL),
-      ).to.eql('foo-bar-api-impl-js');
-      expect(
-        utils.getDefaultPackageNameForModule(
-          'implFoobar',
-          ModuleTypes.JS_API_IMPL,
-        ),
-      ).to.eql('foobar-api-impl-js');
-      expect(
-        utils.getDefaultPackageNameForModule(
-          'FoobarApi',
-          ModuleTypes.JS_API_IMPL,
-        ),
-      ).to.eql('foobar-api-impl-js');
-      expect(
-        utils.getDefaultPackageNameForModule(
-          'apiFoobarImpl',
-          ModuleTypes.JS_API_IMPL,
-        ),
-      ).to.eql('foobar-api-impl-js');
-      expect(
-        utils.getDefaultPackageNameForModule(
-          'ImplApiFoobar',
-          ModuleTypes.JS_API_IMPL,
-        ),
-      ).to.eql('foobar-api-impl-js');
+      tests.jsApiImpl.forEach(({ name, expected }) => {
+        expect(utils.getDefaultPackageNameForModule(name, JS_API_IMPL)).to.eql(
+          expected,
+        );
+      });
+    });
+
+    it('get default package name MINIAPP', () => {
+      tests.miniapp.forEach(({ name, expected }) => {
+        expect(utils.getDefaultPackageNameForModule(name, MINIAPP)).to.eql(
+          expected,
+        );
+      });
     });
 
     it('get default package name NATIVE_API_IMPL', () => {
-      expect(
-        utils.getDefaultPackageNameForModule(
-          'foobar',
-          ModuleTypes.NATIVE_API_IMPL,
-        ),
-      ).to.eql('foobar-api-impl-native');
-      expect(
-        utils.getDefaultPackageNameForModule(
-          'fooBar',
-          ModuleTypes.NATIVE_API_IMPL,
-        ),
-      ).to.eql('foo-bar-api-impl-native');
-      expect(
-        utils.getDefaultPackageNameForModule(
-          'FooBar',
-          ModuleTypes.NATIVE_API_IMPL,
-        ),
-      ).to.eql('foo-bar-api-impl-native');
-      expect(
-        utils.getDefaultPackageNameForModule(
-          'implFoobar',
-          ModuleTypes.NATIVE_API_IMPL,
-        ),
-      ).to.eql('foobar-api-impl-native');
-      expect(
-        utils.getDefaultPackageNameForModule(
-          'FoobarApi',
-          ModuleTypes.NATIVE_API_IMPL,
-        ),
-      ).to.eql('foobar-api-impl-native');
-      expect(
-        utils.getDefaultPackageNameForModule(
-          'apiFoobarImpl',
-          ModuleTypes.NATIVE_API_IMPL,
-        ),
-      ).to.eql('foobar-api-impl-native');
-      expect(
-        utils.getDefaultPackageNameForModule(
-          'ImplApiFoobar',
-          ModuleTypes.NATIVE_API_IMPL,
-        ),
-      ).to.eql('foobar-api-impl-native');
+      tests.nativeApiImpl.forEach(({ name, expected }) => {
+        expect(
+          utils.getDefaultPackageNameForModule(name, NATIVE_API_IMPL),
+        ).to.eql(expected);
+      });
     });
 
-    it('get default package name NATIVE_API_IMPL', () => {
+    it('throws exception for unsupported module type', () => {
       try {
-        utils.getDefaultPackageNameForModule(
-          'foobar',
-          fixtures.moduleTypeNotSupported,
-        );
+        utils.getDefaultPackageNameForModule('foobar', 'unsupported');
       } catch (e) {
-        expect(e.message).to.eql(
-          'Unsupported module type : moduleTypeNotSupported',
-        );
+        expect(e.message).to.eql('Unsupported module type : unsupported');
       }
     });
   });
@@ -511,28 +307,20 @@ describe('utils.js', () => {
   // isDependencyApiImpl
   // ==========================================================
   describe('isDependencyApiImpl', () => {
-    it('return true if regex matches', async () => {
-      expect(
-        await utils.isDependencyApiImpl(
-          PackagePath.fromString('react-native-header-api-impl'),
-        ),
-      ).to.eql(true);
-    });
-
     it('return true if ern object resolves for native api impl', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfoErnApiImpl);
+      yarnStub.resolves({ moduleType: NATIVE_API_IMPL });
       expect(
-        await utils.isDependencyApiImpl(PackagePath.fromString('react-header')),
+        await utils.isDependencyApiImpl(PackagePath.fromString('dep')),
       ).to.eql(true);
       yarnStub.restore();
     });
 
     it('return true if ern object resolves for js api impl', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfoErnJsApiImpl);
+      yarnStub.resolves({ moduleType: JS_API_IMPL });
       expect(
-        await utils.isDependencyApiImpl(PackagePath.fromString('react-header')),
+        await utils.isDependencyApiImpl(PackagePath.fromString('dep')),
       ).to.eql(true);
       yarnStub.restore();
     });
@@ -542,20 +330,12 @@ describe('utils.js', () => {
   // isDependencyApi
   // ==========================================================
   describe('isDependencyApi', () => {
-    it('return true if regex matches', async () => {
-      expect(
-        await utils.isDependencyApi(
-          PackagePath.fromString('react-native-header-api'),
-        ),
-      ).to.eql(true);
-    });
-
-    it('return true if ern object resolves for api', async () => {
+    it('returns true if ern module type is set to ern-api', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfoErnApi);
-      expect(
-        await utils.isDependencyApi(PackagePath.fromString('react-header')),
-      ).to.eql(true);
+      yarnStub.resolves({ moduleType: API });
+      expect(await utils.isDependencyApi(PackagePath.fromString('dep'))).to.eql(
+        true,
+      );
       yarnStub.restore();
     });
   });
@@ -564,54 +344,29 @@ describe('utils.js', () => {
   // isDependencyApiOrApiImpl
   // ==========================================================
   describe('isDependencyApiOrApiImpl', () => {
-    it('return true if regex matches', async () => {
-      expect(
-        await utils.isDependencyApiOrApiImpl(
-          PackagePath.fromString('react-native-header-api'),
-        ),
-      ).to.eql(true);
-    });
-
     it('return true if ern object resolves for api', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfoErnApi);
+      yarnStub.resolves({ moduleType: API });
       expect(
-        await utils.isDependencyApiOrApiImpl(
-          PackagePath.fromString('react-header'),
-        ),
-      ).to.eql(true);
-      yarnStub.restore();
-    });
-
-    it('return true if regex matches', async () => {
-      const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfoErnApi);
-      expect(
-        await utils.isDependencyApiOrApiImpl(
-          PackagePath.fromString('react-native-header-api-impl'),
-        ),
+        await utils.isDependencyApiOrApiImpl(PackagePath.fromString('dep')),
       ).to.eql(true);
       yarnStub.restore();
     });
 
     it('return true if ern object resolves for native api impl', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfoErnApiImpl);
+      yarnStub.resolves({ moduleType: NATIVE_API_IMPL });
       expect(
-        await utils.isDependencyApiOrApiImpl(
-          PackagePath.fromString('react-header'),
-        ),
+        await utils.isDependencyApiOrApiImpl(PackagePath.fromString('dep')),
       ).to.eql(true);
       yarnStub.restore();
     });
 
     it('return true if ern object resolves for js api impl', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
-      yarnStub.resolves(yarnInfoErnJsApiImpl);
+      yarnStub.resolves({ moduleType: JS_API_IMPL });
       expect(
-        await utils.isDependencyApiOrApiImpl(
-          PackagePath.fromString('react-header'),
-        ),
+        await utils.isDependencyApiOrApiImpl(PackagePath.fromString('dep')),
       ).to.eql(true);
       yarnStub.restore();
     });
