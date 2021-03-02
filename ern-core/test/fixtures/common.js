@@ -5,7 +5,6 @@ export const pkgNamePublished = 'lodash';
 export const pkgName = 'chai';
 export const pkgNameWithVersion = 'chai@4.1.2';
 export const pkgNameWithInvalidVersion = 'chai@1000.1000.0';
-export const moduleTypeNotSupported = 'moduleTypeNotSupported';
 export const deviceOne = 'emulator-5554\tdevice';
 export const deviceTwo = '8XV7N16516003608\tdevice';
 export const multipleAvdList = ['Nexus6API23M', 'Nexus_5X_API_24'];

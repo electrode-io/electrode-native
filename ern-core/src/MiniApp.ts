@@ -3,7 +3,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import semver from 'semver';
 import { manifest } from './Manifest';
-import * as ModuleTypes from './ModuleTypes';
+import { MINIAPP } from './ModuleTypes';
 import { PackagePath } from './PackagePath';
 import Platform from './Platform';
 import { reactnative, yarn } from './clients';
@@ -213,7 +213,7 @@ You can find instructions to install CocoaPods @ https://cocoapods.org`);
     const appPackageJson = await readPackageJson(pathToMiniApp);
     appPackageJson.ern = {
       moduleName: rnProjectName,
-      moduleType: ModuleTypes.MINIAPP,
+      moduleType: MINIAPP,
       packageManager: packageManager
         ? packageManager
         : Platform.isYarnInstalled()
@@ -223,8 +223,8 @@ You can find instructions to install CocoaPods @ https://cocoapods.org`);
     };
     appPackageJson.private = false;
     appPackageJson.keywords
-      ? appPackageJson.keywords.push(ModuleTypes.MINIAPP)
-      : (appPackageJson.keywords = [ModuleTypes.MINIAPP]);
+      ? appPackageJson.keywords.push(MINIAPP)
+      : (appPackageJson.keywords = [MINIAPP]);
 
     if (scope) {
       appPackageJson.name = `@${scope}/${packageName}`;

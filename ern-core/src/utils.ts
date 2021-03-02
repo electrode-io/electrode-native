@@ -4,7 +4,7 @@ import { gitCli } from './gitCli';
 import http from 'http';
 import _ from 'lodash';
 import { manifest } from './Manifest';
-import * as ModuleType from './ModuleTypes';
+import { API, JS_API_IMPL, MINIAPP, NATIVE_API_IMPL } from './ModuleTypes';
 import path from 'path';
 import log from './log';
 import { readPackageJson } from './packageJsonFileUtils';
@@ -94,17 +94,17 @@ export function getDefaultPackageNameForCamelCaseString(
 ): string {
   const splitArray = splitCamelCaseString(moduleName);
   switch (moduleType) {
-    case ModuleType.MINIAPP:
+    case API:
+      return _.filter(splitArray, (token) => !['api'].includes(token)).join(
+        '-',
+      );
+    case MINIAPP:
       return _.filter(
         splitArray,
         (token) => !['mini', 'app'].includes(token),
       ).join('-');
-    case ModuleType.API:
-      return _.filter(splitArray, (token) => !['api'].includes(token)).join(
-        '-',
-      );
-    case ModuleType.JS_API_IMPL:
-    case ModuleType.NATIVE_API_IMPL:
+    case JS_API_IMPL:
+    case NATIVE_API_IMPL:
       return _.filter(
         splitArray,
         (token) => !['api', 'impl'].includes(token),
@@ -116,13 +116,13 @@ export function getDefaultPackageNameForCamelCaseString(
 
 export function getModuleSuffix(moduleType: string): string {
   switch (moduleType) {
-    case ModuleType.MINIAPP:
-      return 'miniapp';
-    case ModuleType.API:
+    case API:
       return 'api';
-    case ModuleType.JS_API_IMPL:
+    case JS_API_IMPL:
       return 'api-impl-js';
-    case ModuleType.NATIVE_API_IMPL:
+    case MINIAPP:
+      return 'miniapp';
+    case NATIVE_API_IMPL:
       return 'api-impl-native';
     default:
       throw new Error(`Unsupported module type : ${moduleType}`);
@@ -165,7 +165,7 @@ export async function isDependencyApi(
     field: 'ern',
   });
 
-  return ModuleType.API === depInfo?.moduleType;
+  return API === depInfo?.moduleType;
 }
 
 /**
@@ -186,9 +186,7 @@ export async function isDependencyApiImpl(
     return true;
   }
 
-  const modulesTypes = type
-    ? [type]
-    : [ModuleType.NATIVE_API_IMPL, ModuleType.JS_API_IMPL];
+  const modulesTypes = type ? [type] : [NATIVE_API_IMPL, JS_API_IMPL];
 
   const depInfo = await yarn.info(dependency, {
     field: 'ern',
@@ -209,22 +207,20 @@ export async function getPackageName(pkg: PackagePath) {
 export async function isDependencyJsApiImpl(
   dependency: PackagePath,
 ): Promise<boolean> {
-  return isDependencyApiImpl(dependency, true, ModuleType.JS_API_IMPL);
+  return isDependencyApiImpl(dependency, true, JS_API_IMPL);
 }
 
 export async function isDependencyNativeApiImpl(
   dependency: PackagePath,
 ): Promise<boolean> {
-  return isDependencyApiImpl(dependency, true, ModuleType.NATIVE_API_IMPL);
+  return isDependencyApiImpl(dependency, true, NATIVE_API_IMPL);
 }
 
 export async function isDependencyPathApiImpl(
   dependencyPath: string,
   type?: string,
 ): Promise<boolean> {
-  const modulesTypes = type
-    ? [type]
-    : [ModuleType.NATIVE_API_IMPL, ModuleType.JS_API_IMPL];
+  const modulesTypes = type ? [type] : [NATIVE_API_IMPL, JS_API_IMPL];
 
   const packageJson = await readPackageJson(dependencyPath);
   return modulesTypes.indexOf(packageJson.ern?.moduleType) > -1;
@@ -233,14 +229,14 @@ export async function isDependencyPathApiImpl(
 export async function isDependencyPathJsApiImpl(
   dependencyPath: string,
 ): Promise<boolean> {
-  return isDependencyPathApiImpl(dependencyPath, ModuleType.JS_API_IMPL);
+  return isDependencyPathApiImpl(dependencyPath, JS_API_IMPL);
 }
 
 export async function isDependencyPathNativeApiImpl(
   dependencyPath: string,
   type?: string,
 ): Promise<boolean> {
-  return isDependencyPathApiImpl(dependencyPath, ModuleType.NATIVE_API_IMPL);
+  return isDependencyPathApiImpl(dependencyPath, NATIVE_API_IMPL);
 }
 
 /**
