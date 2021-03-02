@@ -1,11 +1,9 @@
 import { yarn } from './clients';
 import { PackagePath } from './PackagePath';
 import { gitCli } from './gitCli';
-import http from 'http';
 import _ from 'lodash';
 import { manifest } from './Manifest';
 import { API, JS_API_IMPL, MINIAPP, NATIVE_API_IMPL } from './ModuleTypes';
-import path from 'path';
 import log from './log';
 import { readPackageJson } from './packageJsonFileUtils';
 import {
@@ -43,18 +41,6 @@ export async function isPublishedToNpm(
   }
 
   return false;
-}
-
-export async function httpGet(url: string): Promise<any> {
-  return new Promise((resolve, reject) => {
-    http
-      .get(url, (res) => {
-        resolve(res);
-      })
-      .on('error', (e) => {
-        reject(e);
-      });
-  });
 }
 
 /**
@@ -228,60 +214,6 @@ export function isValidElectrodeNativeModuleName(name: string): boolean {
   return /^[A-Z_][0-9A-Z_-]*$/i.test(name);
 }
 
-/**
- * Sample plugin origin objects :
- * {
- *  "type": "git",
- *  "url": "https://github.com/aoriani/ReactNative-StackTracer.git",
- *  "version": "0.1.1"
- * }
- *
- * {
- *  "type": "npm",
- *  "name": "react-native-code-push",
- *  "version": "1.16.1-beta"
- * }
- * @param pluginOrigin
- */
-export function getDownloadedPluginPath(pluginOrigin: any) {
-  let downloadPath;
-  if (pluginOrigin.type === 'npm') {
-    if (pluginOrigin.scope) {
-      downloadPath = path.join(
-        'node_modules',
-        `@${pluginOrigin.scope}`,
-        pluginOrigin.name,
-      );
-    } else {
-      downloadPath = path.join('node_modules', pluginOrigin.name);
-    }
-  } else if (pluginOrigin.type === 'git') {
-    if (pluginOrigin.version && gitDirectoryRe.test(pluginOrigin.url)) {
-      downloadPath = gitDirectoryRe.exec(pluginOrigin.url)![1];
-    }
-  }
-
-  if (!downloadPath) {
-    throw new Error(`Unsupported plugin origin type : ${pluginOrigin.type}`);
-  }
-  return downloadPath;
-}
-
-/**
- * Extracts all the js api implementation dependencies from the plugin array.
- * @param plugins
- * @returns {Promise.<Array.<Dependency>>}
- */
-export async function extractJsApiImplementations(plugins: PackagePath[]) {
-  const jsApiImplDependencies: PackagePath[] = [];
-  for (const dependency of plugins) {
-    if (await isDependencyOfType(dependency, JS_API_IMPL)) {
-      jsApiImplDependencies.push(dependency);
-    }
-  }
-  return jsApiImplDependencies;
-}
-
 export function logErrorAndExitProcess(e: any, code: number = 1) {
   if (e instanceof Error) {
     log.error(`An error occurred: ${e.message && e.message.trimRight()}`);
@@ -416,50 +348,4 @@ export async function getCommitShaOfGitPackage(p: PackagePath) {
     return getCommitShaOfGitBranchOrTag(p);
   }
   return p.version;
-}
-
-export async function areSamePackagePathsAndVersions(
-  a: PackagePath[],
-  b: PackagePath[],
-) {
-  // If lengths are different then it cannot be same
-  if (a.length !== b.length) {
-    return false;
-  }
-
-  // If full package paths are matching then it means
-  // all package paths are using the same versions
-  if (_.xorBy(a, b, 'fullPath').length === 0) {
-    return true;
-  }
-
-  // If one non git package path is using a different
-  // version then return false
-  if (
-    _.xorBy(
-      a.filter((p) => !p.isGitPath),
-      b.filter((p) => !p.isGitPath),
-      'fullPath',
-    ).length !== 0
-  ) {
-    return false;
-  }
-
-  // Otherwise there is only one possible case where PackagePath that
-  // uses different versions are in fact pointing to identical version
-  // This happens if the version is a git branch/tag or SHA
-  // In that case even though the version string is different, it is
-  // possible that they point to the same commit SHA
-  const aGit: PackagePath[] = a.filter((p) => p.isGitPath);
-  const bGit: PackagePath[] = b.filter((p) => p.isGitPath);
-  for (const p of aGit) {
-    const other = bGit.find((x) => x.basePath === p.basePath);
-    const aSha = await getCommitShaOfGitPackage(p);
-    const bSha = await getCommitShaOfGitPackage(other!);
-    if (aSha !== bSha) {
-      return false;
-    }
-  }
-
-  return true;
 }

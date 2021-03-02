@@ -1,24 +1,26 @@
-import { expect } from 'chai';
-import { yarn } from '../src/clients';
+import { assert, expect } from 'chai';
+import { rejects } from 'assert';
 import sinon from 'sinon';
 import * as utils from '../src/utils';
-import { PackagePath } from '../src/PackagePath';
+import { AppVersionDescriptor, PackagePath, yarn } from 'ern-core';
 import { afterTest, beforeTest } from 'ern-util-dev';
 import * as fixtures from './fixtures/common';
 import { API, JS_API_IMPL, MINIAPP, NATIVE_API_IMPL } from '../src/ModuleTypes';
-import path from 'path';
+import log from '../src/log';
+import * as git from '../src/gitCli';
+import * as coreUtils from '../src/utils';
 
 const sandbox = sinon.createSandbox();
+let processExitStub: any;
+let logStub: any;
 
 const versionsArray = ['1.0.0', '2.0.0', '3.0.0', '4.0.0-canary.1'];
-
-// stub
-let pathStub: any;
 
 describe('utils.js', () => {
   beforeEach(() => {
     beforeTest();
-    pathStub = sandbox.stub(path, 'join');
+    processExitStub = sandbox.stub(process, 'exit');
+    logStub = sandbox.stub(log);
   });
 
   afterEach(() => {
@@ -359,56 +361,231 @@ describe('utils.js', () => {
     });
   });
 
-  describe('getDownloadedPluginPath', () => {
-    it('return download plugin path for npm plugin', () => {
-      const pluginPath = 'node_modules/react-native-code-push';
-      const npmPlugin = {
-        name: 'react-native-code-push',
-        type: 'npm',
-        version: '1.16.1-beta',
-      };
-      pathStub.returns(pluginPath);
-      expect(utils.getDownloadedPluginPath(npmPlugin)).to.eql(pluginPath);
+  describe('logErrorAndExitProcess', () => {
+    it('test logErrorAndExitProcess', () => {
+      utils.logErrorAndExitProcess(new Error('test error'), 1);
+      sinon.assert.calledOnce(logStub.error);
+      sinon.assert.calledWith(logStub.error, 'An error occurred: test error');
+      sinon.assert.calledOnce(processExitStub);
+      sinon.assert.calledWith(processExitStub, 1);
     });
 
-    it('return download plugin path for npm plugin', () => {
-      const pluginPath = 'node_modules/@msft/react-native-code-push';
-      const npmPluginWithScope = {
-        name: '@msft/react-native-code-push',
-        type: 'npm',
-        version: '1.16.1-beta',
-      };
-      pathStub.returns(pluginPath);
-      expect(utils.getDownloadedPluginPath(npmPluginWithScope)).to.eql(
-        pluginPath,
+    it('test logErrorAndExitProcess with arguments', () => {
+      utils.logErrorAndExitProcess(new Error('test error'), 1);
+      sinon.assert.calledWith(logStub.error, 'An error occurred: test error');
+      sinon.assert.calledWith(processExitStub, 1);
+    });
+  });
+
+  describe('coerceToAppVersionDescriptor', () => {
+    it('should coerce a string to a AppVersionDescriptor', () => {
+      expect(utils.coerceToAppVersionDescriptor('test:android:1.0.0')).eql(
+        AppVersionDescriptor.fromString('test:android:1.0.0'),
       );
     });
 
-    it('return download plugin path for git plugin', () => {
-      const pluginPath =
-        'https://github.com/aoriani/ReactNative-StackTracer.git';
-      const gitPlugin = {
-        type: 'git',
-        url: 'https://github.com/aoriani/ReactNative-StackTracer.git',
-        version: '0.1.1',
-      };
-      pathStub.returns(pluginPath);
-      expect(utils.getDownloadedPluginPath(gitPlugin)).to.eql(
-        'ReactNative-StackTracer',
+    it('should coerce an AppVersionDescriptor to a AppVersionDescriptor (noop)', () => {
+      const descriptor = AppVersionDescriptor.fromString('test:android:1.0.0');
+      expect(utils.coerceToAppVersionDescriptor(descriptor)).eql(descriptor);
+    });
+  });
+
+  describe('coerceToAppVersionDescriptorArray', () => {
+    it('should coerce a string to a AppVersionDescriptor array', () => {
+      const descriptor = AppVersionDescriptor.fromString('test:android:1.0.0');
+      const result = utils.coerceToAppVersionDescriptorArray(
+        'test:android:1.0.0',
+      );
+      expect(result).is.an('array').of.length(1);
+      expect(result[0]).eql(descriptor);
+    });
+
+    it('should coerce a AppVersionDescriptor to a AppVersionDescriptor array', () => {
+      const descriptor = AppVersionDescriptor.fromString('test:android:1.0.0');
+      const result = utils.coerceToAppVersionDescriptorArray(descriptor);
+      expect(result).is.an('array').of.length(1);
+      expect(result[0]).eql(descriptor);
+    });
+
+    it('should coerce a string|AppVersionDescriptor descriptor mixed array to a AppVersionDescriptor arry', () => {
+      const descriptorA = AppVersionDescriptor.fromString('test:android:1.0.0');
+      const descriptorB = AppVersionDescriptor.fromString('test:android:2.0.0');
+      const result = utils.coerceToAppVersionDescriptorArray([
+        'test:android:1.0.0',
+        descriptorB,
+      ]);
+      expect(result).is.an('array').of.length(2);
+      expect(result[0]).eql(descriptorA);
+      expect(result[1]).eql(descriptorB);
+    });
+  });
+
+  describe('coerceToPackagePath', () => {
+    it('should coerce a string to a PackagePath', () => {
+      expect(utils.coerceToPackagePath('dep@1.0.0')).eql(
+        PackagePath.fromString('dep@1.0.0'),
       );
     });
 
-    it('throw error if plugin path cannot be resolved', () => {
-      const unknown = {
-        type: 'unknown',
-        url: 'https://github.com/aoriani/ReactNative-StackTracer.git',
-        version: '0.1.1',
-      };
-      try {
-        utils.getDownloadedPluginPath(unknown);
-      } catch (e) {
-        expect(e.message).to.include('Unsupported plugin origin type');
-      }
+    it('should coerce a PackagePath to a PackagePath (noop)', () => {
+      const dep = PackagePath.fromString('dep@1.0.0');
+      expect(utils.coerceToPackagePath(dep)).eql(dep);
+    });
+  });
+
+  describe('coerceToPackagePathArray', () => {
+    it('should coerce a string to a PackagePath array', () => {
+      const dep = PackagePath.fromString('dep@1.0.0');
+      const result = utils.coerceToPackagePathArray('dep@1.0.0');
+      expect(result).is.an('array').of.length(1);
+      expect(result[0]).eql(dep);
+    });
+
+    it('should coerce a PackagePath to a PackagePath array', () => {
+      const dep = PackagePath.fromString('dep@1.0.0');
+      const result = utils.coerceToPackagePathArray(dep);
+      expect(result).is.an('array').of.length(1);
+      expect(result[0]).eql(dep);
+    });
+
+    it('should coerce a string|PackagePath mixed array to a PackagePath array', () => {
+      const depA = PackagePath.fromString('dep-a@1.0.0');
+      const depB = PackagePath.fromString('dep-b@1.0.0');
+      const result = utils.coerceToPackagePathArray(['dep-a@1.0.0', depB]);
+      expect(result).is.an('array').of.length(2);
+      expect(result[0]).eql(depA);
+      expect(result[1]).eql(depB);
+    });
+  });
+
+  describe('isGitBranch', () => {
+    const sampleHeadsRefs = `
+31d04959d8786113bfeaee997a1d1eaa8cb6c5f5        refs/heads/master
+6319d9ef0c237907c784a8c472b000d5ff83b49a        refs/heads/v0.10
+81ac6c5ef280e46a1d643f86f47c66b11aa1f8b4        refs/heads/v0.11`;
+
+    it('should return false if the package path is not a git path', async () => {
+      const result = await utils.isGitBranch(
+        PackagePath.fromString('registry-package@1.2.3'),
+      );
+      expect(result).false;
+    });
+
+    it('should return true if the package path does not include a branch [as it corresponds to default branch]', async () => {
+      const result = await utils.isGitBranch(
+        PackagePath.fromString('https://github.com/org/repo.git'),
+      );
+      expect(result).true;
+    });
+
+    it('should return true if the branch exist', async () => {
+      sandbox.stub(git, 'gitCli').returns({
+        listRemote: async () => {
+          return sampleHeadsRefs;
+        },
+      });
+      const result = await utils.isGitBranch(
+        PackagePath.fromString('https://github.com/org/repo.git#v0.10'),
+      );
+      expect(result).true;
+    });
+
+    it('should return false if the branch does not exist', async () => {
+      sandbox.stub(git, 'gitCli').returns({
+        listRemote: async () => {
+          return sampleHeadsRefs;
+        },
+      });
+      const result = await utils.isGitBranch(
+        PackagePath.fromString('https://github.com/org/repo.git#foo'),
+      );
+      expect(result).false;
+    });
+  });
+
+  describe('isGitTag', () => {
+    const sampleTagsRefs = `
+c4191b97e0f77f8cd128275977e7f284277131e0        refs/tags/v0.1.0
+4cc7a6f041ebd9a7f4ec267cdc2e57cf0ddc61fa        refs/tags/v0.1.1
+d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`;
+
+    it('should return false if the package path is not a git path', async () => {
+      const result = await utils.isGitTag(
+        PackagePath.fromString('registry-package@1.2.3'),
+      );
+      expect(result).false;
+    });
+
+    it('should return false if the package path does not include a tag', async () => {
+      const result = await utils.isGitTag(
+        PackagePath.fromString('https://github.com/org/repo.git'),
+      );
+      expect(result).false;
+    });
+
+    it('should return true if the tag exist', async () => {
+      sandbox.stub(git, 'gitCli').returns({
+        listRemote: async () => {
+          return sampleTagsRefs;
+        },
+      });
+      const result = await utils.isGitTag(
+        PackagePath.fromString('https://github.com/org/repo.git#v0.1.2'),
+      );
+      expect(result).true;
+    });
+
+    it('should return false if the tag does not exist', async () => {
+      sandbox.stub(git, 'gitCli').returns({
+        listRemote: async () => {
+          return sampleTagsRefs;
+        },
+      });
+      const result = await utils.isGitBranch(
+        PackagePath.fromString('https://github.com/org/repo.git#foo'),
+      );
+      expect(result).false;
+    });
+  });
+
+  describe('getCommitShaOfGitBranchOrTag', () => {
+    it('should throw if the package path is not a git path', async () => {
+      await rejects(
+        utils.getCommitShaOfGitBranchOrTag(PackagePath.fromString('dep@1.2.3')),
+      );
+    });
+
+    it('should throw if the package path does not include a branch', async () => {
+      await rejects(
+        utils.getCommitShaOfGitBranchOrTag(
+          PackagePath.fromString('https://github.com/org/repo.git'),
+        ),
+      );
+    });
+
+    it('should throw if the branch was not found', async () => {
+      sandbox.stub(git, 'gitCli').returns({
+        listRemote: async () => {
+          return '';
+        },
+      });
+      await rejects(
+        utils.getCommitShaOfGitBranchOrTag(
+          PackagePath.fromString('https://github.com/org/repo.git#foo'),
+        ),
+      );
+    });
+
+    it('should return the commit SHA of the branch HEAD', async () => {
+      sandbox.stub(git, 'gitCli').returns({
+        listRemote: async () => {
+          return '31d04959d8786113bfeaee997a1d1eaa8cb6c5f5        refs/heads/master';
+        },
+      });
+      const result = await utils.getCommitShaOfGitBranchOrTag(
+        PackagePath.fromString('https://github.com/org/repo.git#master'),
+      );
+      expect(result).eql('31d04959d8786113bfeaee997a1d1eaa8cb6c5f5');
     });
   });
 });
