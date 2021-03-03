@@ -34,7 +34,7 @@ export interface CacheManifestEntry {
   id: string;
   /**
    * Absolute path to the entry
-   * ex : /Users/blemair/.ern/cache/78c40fda-d5bb-4681-9bd2-a5fba9df1f70
+   * ex : /home/user/.ern/cache/78c40fda-d5bb-4681-9bd2-a5fba9df1f70
    */
   path: string;
   /**

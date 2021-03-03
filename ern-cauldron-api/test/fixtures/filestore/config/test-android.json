@@ -4,11 +4,11 @@
     "publishers": [
       {
         "name": "git",
-        "url": "git@gecgithub01.test.com:react-native/test-react-container-android.git"
+        "url": "https://github.com:org/test-react-container-android.git"
       },
       {
         "name": "maven",
-        "url": "http://mobilebuild.homeoffice.test.com:8081/nexus/content/repositories/hosted",
+        "url": "https://repo.example.org/content/repositories/hosted",
         "disabled": false
       },
       {

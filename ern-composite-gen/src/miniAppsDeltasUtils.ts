@@ -66,7 +66,7 @@ export function getPackageJsonDependenciesUsingMiniAppDeltas(
     for (const m of miniAppsDeltas.same) {
       if (m.isRegistryPath) {
         // Sample package.json entry :
-        // "my-miniapp": "0.8.3"
+        // "test-miniapp": "0.8.3"
         result[m.basePath] = m.version!;
       } else if (m.isGitPath) {
         // For a git based dependency, the name of the dependency as
@@ -77,7 +77,7 @@ export function getPackageJsonDependenciesUsingMiniAppDeltas(
           yarnlock,
         )![1 /*name*/];
         // Sample package.json entry :
-        // "my-miniapp": "https://github.com/org/MyMiniApp.git#master"
+        // "test-miniapp": "https://github.com/org/test-miniapp.git#master"
         result[name] = m.fullPath;
       }
     }

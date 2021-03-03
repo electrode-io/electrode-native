@@ -24,13 +24,13 @@ describe('launchRunner', () => {
   it('should call runAndroidProject to launch the Android runner [android]', async () => {
     await launchRunner({
       extra: { packageName: 'com.walmartlabs.ern' },
-      pathToRunner: '/Users/foo/test',
+      pathToRunner: '/home/user/test',
       platform: 'android',
     });
     sandbox.assert.calledWith(runAndroidProjectStub, {
       launchFlags: undefined,
       packageName: 'com.walmartlabs.ern',
-      projectPath: '/Users/foo/test',
+      projectPath: '/home/user/test',
     });
   });
 
@@ -43,17 +43,17 @@ describe('launchRunner', () => {
       },
     ];
     sandbox.stub(core.ios, 'getiPhoneRealDevices').returns(iosDevices);
-    await launchRunner({ platform: 'ios', pathToRunner: '/Users/foo/test' });
+    await launchRunner({ platform: 'ios', pathToRunner: '/home/user/test' });
     sandbox.assert.calledWith(
       launchOnDeviceStub as any,
-      '/Users/foo/test',
+      '/home/user/test',
       iosDevices,
     );
   });
 
   it('should call launchOnSimulator if there are no iOS device connected [iOS]', async () => {
     sandbox.stub(core.ios, 'getiPhoneRealDevices').returns([]);
-    await launchRunner({ platform: 'ios', pathToRunner: '/Users/foo/test' });
-    sandbox.assert.calledWith(launchOnSimulatorStub as any, '/Users/foo/test');
+    await launchRunner({ platform: 'ios', pathToRunner: '/home/user/test' });
+    sandbox.assert.calledWith(launchOnSimulatorStub as any, '/home/user/test');
   });
 });

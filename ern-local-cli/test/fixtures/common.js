@@ -4,16 +4,16 @@ export const withoutGitOrFileSystemPath = [
 ];
 
 export const withGitOrFileSystemPath = [
-  'git+ssh://github.com:electrode/react-native.git#master',
-  'file:/Users/username',
+  'git+ssh://github.com:org/repo.git#master',
+  'file:/home/user',
 ];
 
 export const withoutFileSystemPath = [
-  'git+ssh://github.com:electrode/react-native.git#master',
+  'git+ssh://github.com:org/repo.git#master',
   'package@1.2.3',
 ];
 
-export const withFileSystemPath = ['file:/Users/username'];
+export const withFileSystemPath = ['file:/home/user'];
 
 export const differentNativeApplicationPlatformDescriptors = [
   'testapp:android:1.0.0',

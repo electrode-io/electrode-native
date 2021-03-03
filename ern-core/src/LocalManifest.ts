@@ -51,17 +51,17 @@ export class LocalManifest {
    *
    * For example, given the following directories :
    *
-   *  /Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.5.0+
-   *  /Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.10.0+
-   *  /Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.13.0+
+   *  /home/user/.ern/ern-override-manifest/plugins/ern_v0.5.0+
+   *  /home/user/.ern/ern-override-manifest/plugins/ern_v0.10.0+
+   *  /home/user/.ern/ern-override-manifest/plugins/ern_v0.13.0+
    *
    * And maxVersion='0.10.0'
    *
    * The function would return :
    *
    *  [
-   *   '/Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.5.0+',
-   *   '/Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.10.0+'
+   *   '/home/user/.ern/ern-override-manifest/plugins/ern_v0.5.0+',
+   *   '/home/user/.ern/ern-override-manifest/plugins/ern_v0.10.0+'
    *  ]
    * @param maxVersion The upper bound Electrode Native version.
    *                   Only plugin configuration directories lower than this
@@ -136,8 +136,8 @@ export class LocalManifest {
     // Electrode Native version
     // For example :
     // [
-    //   '/Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.10.0+',
-    //   '/Users/blemair/.ern/ern-override-manifest/plugins/ern_v0.5.0+'
+    //   '/home/user/.ern/ern-override-manifest/plugins/ern_v0.10.0+',
+    //   '/home/user/.ern/ern-override-manifest/plugins/ern_v0.5.0+'
     // ]
     const orderedPluginsConfigurationDirectories = this.getPluginsConfigurationDirectories(
       platformVersion,

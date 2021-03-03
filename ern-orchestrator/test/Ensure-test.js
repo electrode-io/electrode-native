@@ -194,7 +194,7 @@ describe('Ensure.js', () => {
         await doesThrow(
           Ensure.dependencyIsOrphaned,
           null,
-          'DependencyB',
+          'dep-b',
           'testapp:android:1.0.0',
         ),
       );
@@ -208,7 +208,7 @@ describe('Ensure.js', () => {
         await doesNotThrow(
           Ensure.dependencyIsOrphaned,
           null,
-          'DependencyD',
+          'dep-d',
           'testapp:android:1.0.0',
         ),
       );
@@ -222,7 +222,7 @@ describe('Ensure.js', () => {
         await doesNotThrow(
           Ensure.dependencyIsOrphaned,
           null,
-          'DependencyOutOfLockFile',
+          'dep-x',
           'testapp:android:1.0.0',
         ),
       );
@@ -251,7 +251,7 @@ describe('Ensure.js', () => {
   describe('dependencyIsInNativeApplicationVersionContainer', () => {
     it('should not throw if dependency is in native application version Container', async () => {
       cauldronHelperStub.getContainerNativeDependency.resolves(
-        PackagePath.fromString('depA@1.0.0'),
+        PackagePath.fromString('dep-a@1.0.0'),
       );
       assert(
         await doesNotThrow(
@@ -388,13 +388,13 @@ describe('Ensure.js', () => {
   describe('dependencyIsInNativeApplicationVersionContainerWithDifferentVersion', () => {
     it('should not throw if dependency is in native application version Container with different version', async () => {
       cauldronHelperStub.getContainerNativeDependency.resolves(
-        PackagePath.fromString('depA@2.0.0'),
+        PackagePath.fromString('dep-a@2.0.0'),
       );
       assert(
         await doesNotThrow(
           Ensure.dependencyIsInNativeApplicationVersionContainerWithDifferentVersion,
           null,
-          'depA@1.0.0',
+          'dep-a@1.0.0',
           'testapp:android:1.0.0',
         ),
       );
@@ -402,7 +402,7 @@ describe('Ensure.js', () => {
 
     it('should not throw if dependency is undefined', async () => {
       cauldronHelperStub.getContainerNativeDependency.resolves(
-        PackagePath.fromString('depA@2.0.0'),
+        PackagePath.fromString('dep-a@2.0.0'),
       );
       assert(
         await doesNotThrow(
@@ -416,13 +416,13 @@ describe('Ensure.js', () => {
 
     it('should throw if dependency is in native application version Container with same version', async () => {
       cauldronHelperStub.getContainerNativeDependency.resolves(
-        PackagePath.fromString('depA@1.0.0'),
+        PackagePath.fromString('dep-a@1.0.0'),
       );
       assert(
         await doesThrow(
           Ensure.dependencyIsInNativeApplicationVersionContainerWithDifferentVersion,
           null,
-          'depA@1.0.0',
+          'dep-a@1.0.0',
           'testapp:android:1.0.0',
         ),
       );

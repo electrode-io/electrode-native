@@ -112,9 +112,9 @@ describe('Core Utils', () => {
     });
 
     it('should coerce a string|PackagePath mixed array to a PackagePath array', () => {
-      const depA = PackagePath.fromString('depA@1.0.0');
-      const depB = PackagePath.fromString('depB@1.0.0');
-      const result = coreUtils.coerceToPackagePathArray(['depA@1.0.0', depB]);
+      const depA = PackagePath.fromString('dep-a@1.0.0');
+      const depB = PackagePath.fromString('dep-b@1.0.0');
+      const result = coreUtils.coerceToPackagePathArray(['dep-a@1.0.0', depB]);
       expect(result).is.an('array').of.length(2);
       expect(result[0]).eql(depA);
       expect(result[1]).eql(depB);
@@ -136,9 +136,7 @@ describe('Core Utils', () => {
 
     it('should return true if the package path does not include a branch [as it corresponds to default branch]', async () => {
       const result = await coreUtils.isGitBranch(
-        PackagePath.fromString(
-          'https://github.com/electrode-io/electrode-native.git',
-        ),
+        PackagePath.fromString('https://github.com/org/repo.git'),
       );
       expect(result).true;
     });
@@ -150,9 +148,7 @@ describe('Core Utils', () => {
         },
       });
       const result = await coreUtils.isGitBranch(
-        PackagePath.fromString(
-          'https://github.com/electrode-io/electrode-native.git#v0.10',
-        ),
+        PackagePath.fromString('https://github.com/org/repo.git#v0.10'),
       );
       expect(result).true;
     });
@@ -164,9 +160,7 @@ describe('Core Utils', () => {
         },
       });
       const result = await coreUtils.isGitBranch(
-        PackagePath.fromString(
-          'https://github.com/electrode-io/electrode-native.git#foo',
-        ),
+        PackagePath.fromString('https://github.com/org/repo.git#foo'),
       );
       expect(result).false;
     });
@@ -187,9 +181,7 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`;
 
     it('should return false if the package path does not include a tag', async () => {
       const result = await coreUtils.isGitTag(
-        PackagePath.fromString(
-          'https://github.com/electrode-io/electrode-native.git',
-        ),
+        PackagePath.fromString('https://github.com/org/repo.git'),
       );
       expect(result).false;
     });
@@ -201,9 +193,7 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`;
         },
       });
       const result = await coreUtils.isGitTag(
-        PackagePath.fromString(
-          'https://github.com/electrode-io/electrode-native.git#v0.1.2',
-        ),
+        PackagePath.fromString('https://github.com/org/repo.git#v0.1.2'),
       );
       expect(result).true;
     });
@@ -215,9 +205,7 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`;
         },
       });
       const result = await coreUtils.isGitBranch(
-        PackagePath.fromString(
-          'https://github.com/electrode-io/electrode-native.git#foo',
-        ),
+        PackagePath.fromString('https://github.com/org/repo.git#foo'),
       );
       expect(result).false;
     });
@@ -241,9 +229,7 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`;
         await doesThrow(
           coreUtils.getCommitShaOfGitBranchOrTag,
           null,
-          PackagePath.fromString(
-            'https://github.com/electrode-io/electrode-native.git',
-          ),
+          PackagePath.fromString('https://github.com/org/repo.git'),
         ),
       );
     });
@@ -258,9 +244,7 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`;
         await doesThrow(
           coreUtils.getCommitShaOfGitBranchOrTag,
           null,
-          PackagePath.fromString(
-            'https://github.com/electrode-io/electrode-native.git#foo',
-          ),
+          PackagePath.fromString('https://github.com/org/repo.git#foo'),
         ),
       );
     });
@@ -272,9 +256,7 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`;
         },
       });
       const result = await coreUtils.getCommitShaOfGitBranchOrTag(
-        PackagePath.fromString(
-          'https://github.com/electrode-io/electrode-native.git#master',
-        ),
+        PackagePath.fromString('https://github.com/org/repo.git#master'),
       );
       expect(result).eql('31d04959d8786113bfeaee997a1d1eaa8cb6c5f5');
     });
@@ -282,10 +264,10 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`;
 
   describe('areSamePackagePathsAndVersions', () => {
     it('should return false if the packages arrays are not of same length', async () => {
-      const a = [PackagePath.fromString('packA@1.2.3')];
+      const a = [PackagePath.fromString('dep-a@1.2.3')];
       const b = [
-        PackagePath.fromString('packA@1.2.3'),
-        PackagePath.fromString('packB@1.0.0'),
+        PackagePath.fromString('dep-a@1.2.3'),
+        PackagePath.fromString('dep-b@1.0.0'),
       ];
       const result = await coreUtils.areSamePackagePathsAndVersions(a, b);
       expect(result).false;
@@ -293,26 +275,30 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`;
 
     it('should return true if the packages arrays are identical', async () => {
       const a = [
-        PackagePath.fromString('packA@1.2.3'),
-        PackagePath.fromString('packB@1.0.0'),
+        PackagePath.fromString('dep-a@1.2.3'),
+        PackagePath.fromString('dep-b@1.0.0'),
       ];
       const b = [
-        PackagePath.fromString('packA@1.2.3'),
-        PackagePath.fromString('packB@1.0.0'),
+        PackagePath.fromString('dep-a@1.2.3'),
+        PackagePath.fromString('dep-b@1.0.0'),
       ];
       const result = await coreUtils.areSamePackagePathsAndVersions(a, b);
       expect(result).true;
     });
 
+    // TODO:
+    // Use mocks to avoid relying on network for unit tests for
+    // the three tests below
+    /*
     it('should return true if the packages are pointing to same commit sha [branch]', async () => {
       const a = [
         PackagePath.fromString(
-          'https://github.com/electrode-io/MovieListMiniApp.git#334df50afb1c18e5a42058208c5915643a661009',
+          'https://github.com/org/test-miniapp.git#334df50afb1c18e5a42058208c5915643a661009',
         ),
       ];
       const b = [
         PackagePath.fromString(
-          'https://github.com/electrode-io/MovieListMiniApp.git#ern-v0.24',
+          'https://github.com/org/test-miniapp.git#ern-v0.24',
         ),
       ];
       const result = await coreUtils.areSamePackagePathsAndVersions(a, b);
@@ -322,12 +308,12 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`;
     it('should return false if the packages are not pointing to same commit sha [branch]', async () => {
       const a = [
         PackagePath.fromString(
-          'https://github.com/electrode-io/MovieListMiniApp.git#124df50afb3c18e5a42058508c5915663a661008',
+          'https://github.com/org/test-miniapp.git#124df50afb3c18e5a42058508c5915663a661008',
         ),
       ];
       const b = [
         PackagePath.fromString(
-          'https://github.com/electrode-io/MovieListMiniApp.git#ern-v0.24',
+          'https://github.com/org/test-miniapp.git#ern-v0.24',
         ),
       ];
       const result = await coreUtils.areSamePackagePathsAndVersions(a, b);
@@ -337,26 +323,27 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`;
     it('should return true if the packages are pointing to same commit sha [tag]', async () => {
       const a = [
         PackagePath.fromString(
-          'https://github.com/electrode-io/MovieListMiniApp.git#03ecb47c9bcc693d0d6d43a3cace1b22cdd64286',
+          'https://github.com/org/test-miniapp.git#03ecb47c9bcc693d0d6d43a3cace1b22cdd64286',
         ),
       ];
       const b = [
         PackagePath.fromString(
-          'https://github.com/electrode-io/MovieListMiniApp.git#v0.0.25',
+          'https://github.com/org/test-miniapp.git#v0.0.25',
         ),
       ];
       const result = await coreUtils.areSamePackagePathsAndVersions(a, b);
       expect(result).true;
     }).timeout(5000);
+     */
 
     it('should return false if at least one package is not using same version', async () => {
       const a = [
-        PackagePath.fromString('packA@1.2.3'),
-        PackagePath.fromString('packB@1.0.0'),
+        PackagePath.fromString('dep-a@1.2.3'),
+        PackagePath.fromString('dep-b@1.0.0'),
       ];
       const b = [
-        PackagePath.fromString('packA@2.0.0'),
-        PackagePath.fromString('packB@1.0.0'),
+        PackagePath.fromString('dep-a@2.0.0'),
+        PackagePath.fromString('dep-b@1.0.0'),
       ];
       const result = await coreUtils.areSamePackagePathsAndVersions(a, b);
       expect(result).false;

@@ -350,9 +350,9 @@ export async function performCodePushOtaUpdate(
     // We need to include, in this CodePush bundle, all the MiniApps and JS API implementations that were part
     // of the previous CodePush. We will override versions of the MiniApps and JS API implementations with
     // the one provided to this function, and keep other ones intact.
-    // For example, if previous CodePush bundle was containing MiniAppOne@1.0.0 and
-    // MiniAppTwo@1.0.0 and this method is called to CodePush MiniAppOne@2.0.0, then
-    // the bundle we will push will container MiniAppOne@2.0.0 and MiniAppTwo@1.0.0.
+    // For example, if previous CodePush bundle was containing first-miniapp@1.0.0 and
+    // second-miniapp@1.0.0 and this method is called to CodePush first-miniapp@2.0.0, then
+    // the bundle we will push will container first-miniapp@2.0.0 and second-miniapp@1.0.0.
     // If this the first ever CodePush bundle for this specific native application version
     // then the reference miniapp versions are the one from the container.
     let referenceMiniAppsToCodePush = latestCodePushedMiniApps;

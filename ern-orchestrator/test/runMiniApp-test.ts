@@ -52,10 +52,8 @@ describe('runMiniApp', () => {
     sandbox
       .stub(cauldronApi, 'getActiveCauldron')
       .resolves(createCauldronHelper(fixtures.defaultCauldron));
-    sandbox
-      .stub(core.MiniApp, 'fromCurrentPath')
-      .returns({ name: 'myMiniApp' });
-    sandbox.stub(core.MiniApp, 'fromPath').returns({ name: 'myMiniApp' });
+    sandbox.stub(core.MiniApp, 'fromCurrentPath').returns({ name: 'test' });
+    sandbox.stub(core.MiniApp, 'fromPath').returns({ name: 'test' });
     startPackagerStub = sandbox.stub(
       core.reactnative,
       'startPackagerInNewWindow',
@@ -118,8 +116,8 @@ describe('runMiniApp', () => {
     assert(
       await doesThrow(runMiniApp, null, 'android', {
         miniapps: [
-          PackagePath.fromString('myMiniAppA@1.0.0'),
-          PackagePath.fromString('myMiniAppB@1.0.0'),
+          PackagePath.fromString('first-miniapp@1.0.0'),
+          PackagePath.fromString('second-miniapp@1.0.0'),
         ],
       }),
     );
@@ -140,10 +138,10 @@ describe('runMiniApp', () => {
     assert(
       await doesThrow(runMiniApp, null, 'android', {
         descriptor: testAndroid1770Descriptor,
-        mainMiniAppName: 'myMiniAppA',
+        mainMiniAppName: 'first-miniapp',
         miniapps: [
-          PackagePath.fromString('myMiniAppA@1.0.0'),
-          PackagePath.fromString('myMiniAppB@1.0.0'),
+          PackagePath.fromString('first-miniapp@1.0.0'),
+          PackagePath.fromString('second-miniapp@1.0.0'),
         ],
       }),
     );
@@ -202,10 +200,7 @@ describe('runMiniApp', () => {
       cwd,
       extra: {
         compositeGenerator: {
-          metroExtraNodeModules: [
-            'dependency-a',
-            '/home/user/path/to/dependency-b',
-          ],
+          metroExtraNodeModules: ['dep-a', '/home/user/path/to/dep-b'],
         },
       },
     });
@@ -215,8 +210,8 @@ describe('runMiniApp', () => {
         androidConfig: sinon.match.object,
         compositeGenerator: {
           metroExtraNodeModules: [
-            path.join(cwd, 'node_modules', 'dependency-a'),
-            '/home/user/path/to/dependency-b',
+            path.join(cwd, 'node_modules', 'dep-a'),
+            '/home/user/path/to/dep-b',
           ],
         },
       },
@@ -235,10 +230,10 @@ describe('runMiniApp', () => {
       containerPath: sinon.match.string,
       containerVersion: '1.0.0',
       extra: {
-        artifactId: 'runner-ern-container-myminiapp',
+        artifactId: 'runner-ern-container-test',
         groupId: 'com.walmartlabs.ern',
-        packageFilePath: 'com/walmartlabs/ern/myminiapp',
-        packageName: 'com.walmartlabs.ern.myminiapp',
+        packageFilePath: 'com/walmartlabs/ern/test',
+        packageName: 'com.walmartlabs.ern.test',
       },
       platform: 'android',
       publisher: sinon.match.any,
@@ -252,15 +247,15 @@ describe('runMiniApp', () => {
     sandbox.assert.calledWith(androidRunnerGenStub.regenerateRunnerConfig, {
       extra: {
         androidConfig: {
-          artifactId: 'runner-ern-container-myminiapp',
+          artifactId: 'runner-ern-container-test',
           groupId: 'com.walmartlabs.ern',
-          packageFilePath: 'com/walmartlabs/ern/myminiapp',
-          packageName: 'com.walmartlabs.ern.myminiapp',
+          packageFilePath: 'com/walmartlabs/ern/test',
+          packageName: 'com.walmartlabs.ern.test',
         },
         containerGenWorkingDir: Platform.containerGenDirectory,
         iosConfig: {},
       },
-      mainMiniAppName: 'myMiniApp',
+      mainMiniAppName: 'test',
       outDir: sinon.match.string,
       reactNativeDevSupportEnabled: undefined,
       reactNativePackagerHost: undefined,
@@ -275,27 +270,27 @@ describe('runMiniApp', () => {
     await runMiniApp('android', {
       extra: {
         androidConfig: {
-          artifactId: 'runner-ern-container-myminiapp',
+          artifactId: 'runner-ern-container-test',
           compileSdkVersion: '28',
           groupId: 'com.walmartlabs.ern',
-          packageFilePath: 'com/walmartlabs/ern/myminiapp',
-          packageName: 'com.walmartlabs.ern.myminiapp',
+          packageFilePath: 'com/walmartlabs/ern/test',
+          packageName: 'com.walmartlabs.ern.test',
         },
       },
     });
     sandbox.assert.calledWith(androidRunnerGenStub.regenerateRunnerConfig, {
       extra: {
         androidConfig: {
-          artifactId: 'runner-ern-container-myminiapp',
+          artifactId: 'runner-ern-container-test',
           compileSdkVersion: '28',
           groupId: 'com.walmartlabs.ern',
-          packageFilePath: 'com/walmartlabs/ern/myminiapp',
-          packageName: 'com.walmartlabs.ern.myminiapp',
+          packageFilePath: 'com/walmartlabs/ern/test',
+          packageName: 'com.walmartlabs.ern.test',
         },
         containerGenWorkingDir: Platform.containerGenDirectory,
         iosConfig: {},
       },
-      mainMiniAppName: 'myMiniApp',
+      mainMiniAppName: 'test',
       outDir: sinon.match.string,
       reactNativeDevSupportEnabled: undefined,
       reactNativePackagerHost: undefined,
@@ -310,25 +305,25 @@ describe('runMiniApp', () => {
 
     await runMiniApp('android', {
       dev: true,
-      mainMiniAppName: 'myMiniAppA',
+      mainMiniAppName: 'first-miniapp',
       miniapps: [
-        PackagePath.fromString('myMiniAppA@1.0.0'),
-        PackagePath.fromString('myMiniAppB@1.0.0'),
+        PackagePath.fromString('first-miniapp@1.0.0'),
+        PackagePath.fromString('second-miniapp@1.0.0'),
       ],
     });
 
     sandbox.assert.calledWith(androidRunnerGenStub.regenerateRunnerConfig, {
       extra: {
         androidConfig: {
-          artifactId: 'runner-ern-container-myminiappa',
+          artifactId: 'runner-ern-container-first-miniapp',
           groupId: 'com.walmartlabs.ern',
-          packageFilePath: 'com/walmartlabs/ern/myminiappa',
-          packageName: 'com.walmartlabs.ern.myminiappa',
+          packageFilePath: 'com/walmartlabs/ern/first-miniapp',
+          packageName: 'com.walmartlabs.ern.first-miniapp',
         },
         containerGenWorkingDir: Platform.containerGenDirectory,
         iosConfig: {},
       },
-      mainMiniAppName: 'myMiniAppA',
+      mainMiniAppName: 'first-miniapp',
       outDir: sinon.match.string,
       reactNativeDevSupportEnabled: false,
       reactNativePackagerHost: undefined,
@@ -343,23 +338,23 @@ describe('runMiniApp', () => {
 
     await runMiniApp('android', {
       miniapps: [
-        PackagePath.fromString('myMiniAppA@1.0.0'),
-        PackagePath.fromString('myMiniAppB@1.0.0'),
+        PackagePath.fromString('first-miniapp@1.0.0'),
+        PackagePath.fromString('second-miniapp@1.0.0'),
       ],
     });
 
     sandbox.assert.calledWith(androidRunnerGenStub.regenerateRunnerConfig, {
       extra: {
         androidConfig: {
-          artifactId: 'runner-ern-container-myminiapp',
+          artifactId: 'runner-ern-container-test',
           groupId: 'com.walmartlabs.ern',
-          packageFilePath: 'com/walmartlabs/ern/myminiapp',
-          packageName: 'com.walmartlabs.ern.myminiapp',
+          packageFilePath: 'com/walmartlabs/ern/test',
+          packageName: 'com.walmartlabs.ern.test',
         },
         containerGenWorkingDir: Platform.containerGenDirectory,
         iosConfig: {},
       },
-      mainMiniAppName: 'myMiniApp',
+      mainMiniAppName: 'test',
       outDir: sinon.match.string,
       reactNativeDevSupportEnabled: undefined,
       reactNativePackagerHost: undefined,

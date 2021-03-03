@@ -31,16 +31,16 @@ describe('launchOnDevice', () => {
 
   it('should ask the user to select an iOS device', async () => {
     spawnStub = sandbox.stub(childProcess, 'spawnSync').returns({});
-    await launchOnDevice('/Users/foo/test', devices);
+    await launchOnDevice('/home/user/test', devices);
     sandbox.assert.calledWith(askUserDeviceStub, devices);
   });
 
   it('should call ios-deploy with correct arguments', async () => {
     sandbox.stub(childProcess, 'spawnSync').returns({});
-    await launchOnDevice('/Users/foo/test', devices);
+    await launchOnDevice('/home/user/test', devices);
     const expectedIosDeployArgs = [
       '--bundle',
-      '/Users/foo/test/build/Debug-iphoneos/ErnRunner.app',
+      '/home/user/test/build/Debug-iphoneos/ErnRunner.app',
       '--id',
       'DB3D6BC0-BB08-4340-8D03-A87D69E5BEA6',
       '--justlaunch',
@@ -55,6 +55,6 @@ describe('launchOnDevice', () => {
 
   it('should throw if ios-deploy fails', async () => {
     sandbox.stub(childProcess, 'spawnSync').throws(new Error('fail'));
-    assert(await doesThrow(launchOnDevice, '/Users/foo/test', devices));
+    assert(await doesThrow(launchOnDevice, '/home/user/test', devices));
   });
 });

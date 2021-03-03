@@ -104,12 +104,14 @@
                   "react-native@0.42.0",
                   "react-native-code-push@1.17.1-beta"
                 ],
-                "miniAppsBranches": ["https://github.com/foo/foo.git#master"],
+                "miniAppsBranches": [
+                  "https://github.com/org/foo-miniapp.git#master"
+                ],
                 "miniApps": [
                   "@test/react-native-foo@5.0.0",
                   "react-native-bar@3.0.0",
-                  "git+ssh://git@github.com:electrode-io/gitMiniApp.git#0.0.9",
-                  "https://github.com/foo/foo.git#6319d9ef0c237907c784a8c472b000d5ff83b49a"
+                  "git+ssh://git@github.com:org/test-miniapp.git#0.0.9",
+                  "https://github.com/org/foo-miniapp.git#6319d9ef0c237907c784a8c472b000d5ff83b49a"
                 ],
                 "jsApiImpls": ["react-native-my-api-impl@1.0.0"],
                 "ernVersion": "1000.0.0"

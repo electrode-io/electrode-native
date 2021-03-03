@@ -23,8 +23,8 @@ import * as constants from './constants';
 // The string used to represent a miniapp package can be anything supported by `yarn add` command
 // For example, the following miniapp strings are all valid
 // FROM NPM => react-native-miniapp@1.2.3
-// FROM GIT => git@github.com:username/MiniAppp.git
-// FROM FS  => file:/Users/username/Code/MiniApp
+// FROM GIT => git@github.com:org/test-miniapp.git
+// FROM FS  => file:/home/user/test-miniapp
 export async function runLocalContainerGen(
   platform: NativePlatform,
   composite: Composite,

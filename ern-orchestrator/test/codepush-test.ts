@@ -863,7 +863,7 @@ describe('codepush', () => {
 
     it('should use the app name from config if any', async () => {
       const result = await sut.getCodePushAppName(testAndroid1780Descriptor);
-      expect(result).equal('walmart-android');
+      expect(result).equal('app-android');
     });
   });
 });
