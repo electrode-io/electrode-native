@@ -1,7 +1,7 @@
 import * as core from 'ern-core';
 import childProcess from 'child_process';
 import * as build from '../src/buildIosRunner';
-import { doesThrow } from 'ern-util-dev';
+import { rejects } from 'assert';
 import { launchOnDevice } from '../src/launchOnDevice';
 import { assert } from 'chai';
 import sinon from 'sinon';
@@ -55,6 +55,6 @@ describe('launchOnDevice', () => {
 
   it('should throw if ios-deploy fails', async () => {
     sandbox.stub(childProcess, 'spawnSync').throws(new Error('fail'));
-    assert(await doesThrow(launchOnDevice, '/home/user/test', devices));
+    assert(rejects(launchOnDevice('/home/user/test', devices)));
   });
 });

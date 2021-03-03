@@ -10,7 +10,8 @@ import { AppVersionDescriptor, PackagePath, Platform } from 'ern-core';
 import * as publisher from 'ern-container-publisher';
 import * as launch from '../src/launchRunner';
 import * as getRun from '../src/getRunnerGeneratorForPlatform';
-import { doesThrow, fixtures } from 'ern-util-dev';
+import { rejects } from 'assert';
+import { fixtures } from 'ern-util-dev';
 import * as gen from '../src/generateContainerForRunner';
 import { AndroidRunnerGenerator } from 'ern-runner-gen-android';
 import { runMiniApp } from '../src/runMiniApp';
@@ -113,38 +114,35 @@ describe('runMiniApp', () => {
 
   it('should throw if miniapps are provided but not the name of the main miniapp to launch [no local miniapp]', async () => {
     prepareStubs({ miniAppExistInPath: false });
-    assert(
-      await doesThrow(runMiniApp, null, 'android', {
-        miniapps: [
-          PackagePath.fromString('first-miniapp@1.0.0'),
-          PackagePath.fromString('second-miniapp@1.0.0'),
-        ],
-      }),
-    );
+    const args = {
+      miniapps: [
+        PackagePath.fromString('first-miniapp@1.0.0'),
+        PackagePath.fromString('second-miniapp@1.0.0'),
+      ],
+    };
+    assert(rejects(runMiniApp('android', args)));
   });
 
   it('should throw if js api implementations are provided along with a descriptor', async () => {
     prepareStubs();
-    assert(
-      await doesThrow(runMiniApp, null, 'android', {
-        descriptor: testAndroid1770Descriptor,
-        jsApiImpls: [PackagePath.fromString('jsapiimpl@1.0.0')],
-      }),
-    );
+    const args = {
+      descriptor: testAndroid1770Descriptor,
+      jsApiImpls: [PackagePath.fromString('jsapiimpl@1.0.0')],
+    };
+    assert(rejects(runMiniApp('android', args)));
   });
 
   it('should throw if miniapps are provided along with a descriptor', async () => {
     prepareStubs();
-    assert(
-      await doesThrow(runMiniApp, null, 'android', {
-        descriptor: testAndroid1770Descriptor,
-        mainMiniAppName: 'first-miniapp',
-        miniapps: [
-          PackagePath.fromString('first-miniapp@1.0.0'),
-          PackagePath.fromString('second-miniapp@1.0.0'),
-        ],
-      }),
-    );
+    const args = {
+      descriptor: testAndroid1770Descriptor,
+      mainMiniAppName: 'myMiniAppA',
+      miniapps: [
+        PackagePath.fromString('first-miniapp@1.0.0'),
+        PackagePath.fromString('second-miniapp@1.0.0'),
+      ],
+    };
+    assert(rejects(runMiniApp('android', args)));
   });
 
   it('should not start react native packager if dev mode is disabled [local single miniapp]', async () => {

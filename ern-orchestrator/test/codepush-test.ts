@@ -12,7 +12,8 @@ import {
 } from 'ern-cauldron-api';
 import * as compositeGen from 'ern-composite-gen';
 import { GeneratedComposite } from 'ern-composite-gen';
-import { doesNotThrow, doesThrow, fixtures } from 'ern-util-dev';
+import { rejects } from 'assert';
+import { fixtures } from 'ern-util-dev';
 import * as sut from '../src/codepush';
 import * as compatibility from '../src/compatibility';
 import path from 'path';
@@ -69,7 +70,7 @@ describe('codepush', () => {
   });
 
   describe('performCodePushPatch', () => {
-    it('should call code push sdk patch metdod to patch isMandatory flag', async () => {
+    it('should call code push sdk patch method to patch isMandatory flag', async () => {
       const codePushSdkStub = sinon.createStubInstance(CodePushSdk);
       sandbox.stub(core, 'getCodePushSdk').returns(codePushSdkStub);
 
@@ -115,7 +116,7 @@ describe('codepush', () => {
       expect(codePushEntry.metadata.isMandatory).true;
     });
 
-    it('should call code push sdk patch metdod to patch isDisabled flag', async () => {
+    it('should call code push sdk patch method to patch isDisabled flag', async () => {
       const codePushSdkStub = sinon.createStubInstance(CodePushSdk);
       sandbox.stub(core, 'getCodePushSdk').returns(codePushSdkStub);
 
@@ -240,15 +241,15 @@ describe('codepush', () => {
         .returns({ patch: async () => Promise.reject(new Error('Fail')) });
 
       assert(
-        await doesThrow(
-          sut.performCodePushPatch,
-          sut,
-          testAndroid1770Descriptor,
-          'Production',
-          'v17',
-          {
-            rollout: 50,
-          },
+        rejects(
+          sut.performCodePushPatch(
+            testAndroid1770Descriptor,
+            'Production',
+            'v17',
+            {
+              rollout: 50,
+            },
+          ),
         ),
       );
     });
@@ -282,99 +283,87 @@ describe('codepush', () => {
     it('should throw if no matching source code push entry is not found in Cauldron', async () => {
       prepareStubs();
       assert(
-        await doesThrow(
-          sut.performCodePushPromote,
-          sut,
-          testAndroid1770Descriptor,
-          [testAndroid1770Descriptor],
-          'QA',
-          'Production',
-          {
-            label: 'v50',
-          },
+        rejects(
+          sut.performCodePushPromote(
+            testAndroid1770Descriptor,
+            [testAndroid1770Descriptor],
+            'QA',
+            'Production',
+            {
+              label: 'v50',
+            },
+          ),
         ),
       );
     });
 
-    it('should skip native dependencies compatiblity check if source and target version promoted are same', async () => {
+    it('should skip native dependencies compatibility check if source and target version promoted are same', async () => {
+      prepareStubs({
+        compatibility_areCompatible: false,
+      });
+
+      await sut.performCodePushPromote(
+        testAndroid1770Descriptor,
+        [testAndroid1770Descriptor],
+        'QA',
+        'Production',
+        {
+          label: 'v18',
+        },
+      );
+    });
+
+    it('should skip native dependencies compatibility check if skipNativeDependenciesVersionAlignedCheck is set to true', async () => {
+      prepareStubs({
+        compatibility_areCompatible: false,
+      });
+
+      await sut.performCodePushPromote(
+        testAndroid1770Descriptor,
+        [testAndroid1780Descriptor],
+        'QA',
+        'Production',
+        {
+          label: 'v18',
+          skipNativeDependenciesVersionAlignedCheck: true,
+        },
+      );
+    });
+
+    it('should throw if some MiniApps include incompatible native dependencies with target native application version and force flag is false', async () => {
       prepareStubs({
         compatibility_areCompatible: false,
       });
 
       assert(
-        await doesNotThrow(
-          sut.performCodePushPromote,
-          sut,
-          testAndroid1770Descriptor,
-          [testAndroid1770Descriptor],
-          'QA',
-          'Production',
-          {
-            label: 'v18',
-          },
+        rejects(
+          sut.performCodePushPromote(
+            testAndroid1770Descriptor,
+            [testAndroid1780Descriptor],
+            'QA',
+            'Production',
+            {
+              label: 'v18',
+            },
+          ),
         ),
       );
     });
 
-    it('should skip native dependencies compatiblity check if skipNativeDependenciesVersionAlignedCheck is set to true', async () => {
+    it('should not throw if some MiniApps include incompatible native dependencies with target native application version and force flag is true', async () => {
       prepareStubs({
         compatibility_areCompatible: false,
       });
 
-      assert(
-        await doesNotThrow(
-          sut.performCodePushPromote,
-          sut,
-          testAndroid1770Descriptor,
-          [testAndroid1780Descriptor],
-          'QA',
-          'Production',
-          {
-            label: 'v18',
-            skipNativeDependenciesVersionAlignedCheck: true,
-          },
-        ),
-      );
-    });
-
-    it('should throw if some MiniApps include imcompatible native dependencies with target native application version and force flag is false', async () => {
-      prepareStubs({
-        compatibility_areCompatible: false,
-      });
-
-      assert(
-        await doesThrow(
-          sut.performCodePushPromote,
-          sut,
-          testAndroid1770Descriptor,
-          [testAndroid1780Descriptor],
-          'QA',
-          'Production',
-          {
-            label: 'v18',
-          },
-        ),
-      );
-    });
-
-    it('should not throw if some MiniApps include imcompatible native dependencies with target native application version and force flag is true', async () => {
-      prepareStubs({
-        compatibility_areCompatible: false,
-      });
-
-      assert(
-        await doesNotThrow(
-          sut.performCodePushPromote,
-          sut,
-          testAndroid1770Descriptor,
-          [testAndroid1780Descriptor],
-          'QA',
-          'Production',
-          {
-            force: true,
-            label: 'v18',
-          },
-        ),
+      await sut.performCodePushPromote(
+        testAndroid1770Descriptor,
+        [testAndroid1780Descriptor],
+        'QA',
+        'Production',
+        {
+          force: true,
+          label: 'v18',
+        },
       );
     });
 
@@ -536,19 +525,19 @@ describe('codepush', () => {
       codePushSdkStub.promote.rejects(new Error('fail'));
 
       assert(
-        await doesThrow(
-          sut.performCodePushPromote,
-          sut,
-          testAndroid1770Descriptor,
-          [testAndroid1770Descriptor],
-          'QA',
-          'Production',
-          {
-            label: 'v18',
-            reuseReleaseBinaryVersion: true,
-            rollout: 100,
-            targetBinaryVersion: '17.7.0',
-          },
+        rejects(
+          sut.performCodePushPromote(
+            testAndroid1770Descriptor,
+            [testAndroid1770Descriptor],
+            'QA',
+            'Production',
+            {
+              label: 'v18',
+              reuseReleaseBinaryVersion: true,
+              rollout: 100,
+              targetBinaryVersion: '17.7.0',
+            },
+          ),
         ),
       );
     });
@@ -606,17 +595,17 @@ describe('codepush', () => {
       codePushSdkStub.promote.rejects(new Error('fail'));
 
       assert(
-        await doesThrow(
-          sut.performCodePushPromote,
-          sut,
-          testAndroid1770Descriptor,
-          [testAndroid1770Descriptor],
-          'QA',
-          'Production',
-          {
-            label: 'v18',
-            rollout: 100,
-          },
+        rejects(
+          sut.performCodePushPromote(
+            testAndroid1770Descriptor,
+            [testAndroid1770Descriptor],
+            'QA',
+            'Production',
+            {
+              label: 'v18',
+              rollout: 100,
+            },
+          ),
         ),
       );
     });
@@ -652,44 +641,40 @@ describe('codepush', () => {
       });
     }
 
-    it('should throw if some MiniApps include imcompatible native dependencies with target native application version and force flag is false', async () => {
+    it('should throw if some MiniApps include incompatible native dependencies with target native application version and force flag is false', async () => {
       prepareStubs({
         compatibility_areCompatible: false,
       });
 
       assert(
-        await doesThrow(
-          sut.performCodePushOtaUpdate,
-          sut,
-          testAndroid1770Descriptor,
-          'Production',
-          [PackagePath.fromString('react-native-bar@2.0.3')],
-          [],
-          {
-            codePushRolloutPercentage: 100,
-          },
+        rejects(
+          sut.performCodePushOtaUpdate(
+            testAndroid1770Descriptor,
+            'Production',
+            [PackagePath.fromString('react-native-bar@2.0.3')],
+            [],
+            {
+              codePushRolloutPercentage: 100,
+            },
+          ),
         ),
       );
     });
 
-    it('should not throw if some MiniApps include imcompatible native dependencies with target native application version and force flag is true', async () => {
+    it('should not throw if some MiniApps include incompatible native dependencies with target native application version and force flag is true', async () => {
       prepareStubs({
         compatibility_areCompatible: false,
       });
 
-      assert(
-        await doesNotThrow(
-          sut.performCodePushOtaUpdate,
-          sut,
-          testAndroid1770Descriptor,
-          'Production',
-          [PackagePath.fromString('react-native-bar@2.0.3')],
-          [],
-          {
-            codePushRolloutPercentage: 100,
-            force: true,
-          },
-        ),
+      await sut.performCodePushOtaUpdate(
+        testAndroid1770Descriptor,
+        'Production',
+        [PackagePath.fromString('react-native-bar@2.0.3')],
+        [],
+        {
+          codePushRolloutPercentage: 100,
+          force: true,
+        },
       );
     });
 
@@ -775,16 +760,16 @@ describe('codepush', () => {
       codePushSdkStub.releaseReact.rejects(new Error('fail'));
 
       assert(
-        await doesThrow(
-          sut.performCodePushOtaUpdate,
-          sut,
-          testAndroid1770Descriptor,
-          'Production',
-          [PackagePath.fromString('react-native-bar@2.0.3')],
-          [],
-          {
-            codePushRolloutPercentage: 100,
-          },
+        rejects(
+          sut.performCodePushOtaUpdate(
+            testAndroid1770Descriptor,
+            'Production',
+            [PackagePath.fromString('react-native-bar@2.0.3')],
+            [],
+            {
+              codePushRolloutPercentage: 100,
+            },
+          ),
         ),
       );
     });

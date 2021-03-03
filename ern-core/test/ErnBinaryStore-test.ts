@@ -1,6 +1,6 @@
 import { ErnBinaryStore } from '../src/ErnBinaryStore';
 import { AppVersionDescriptor } from '../src/descriptors';
-import { doesThrow } from 'ern-util-dev';
+import { rejects } from 'assert';
 import path from 'path';
 import sinon from 'sinon';
 import { assert, expect } from 'chai';
@@ -65,7 +65,7 @@ describe('ErnBinaryStore', () => {
     it('should throw if the server returns an error status code', async () => {
       nock(binaryStoreUrl).head(`/${testDescriptorFile}`).reply(500);
       const sut = createBinaryStore();
-      assert(await doesThrow(sut.hasBinary, sut, testDescriptor));
+      assert(rejects(sut.hasBinary(testDescriptor)));
     });
   });
 
@@ -105,14 +105,14 @@ describe('ErnBinaryStore', () => {
       nock(binaryStoreUrl).head(`/${testDescriptorFile}`).reply(200);
       nock(binaryStoreUrl).delete(`/${testDescriptorFile}`).reply(500);
       const sut = createBinaryStore();
-      assert(await doesThrow(sut.removeBinary, sut, testDescriptor));
+      assert(rejects(sut.removeBinary(testDescriptor)));
     });
 
     it('should throw if the server does not have the specified binary', async () => {
       nock(binaryStoreUrl).head(`/${testDescriptorFile}`).reply(404);
       nock(binaryStoreUrl).delete(`/${testDescriptorFile}`).reply(200);
       const sut = createBinaryStore();
-      assert(await doesThrow(sut.removeBinary, sut, testDescriptor));
+      assert(rejects(sut.removeBinary(testDescriptor)));
     });
   });
 

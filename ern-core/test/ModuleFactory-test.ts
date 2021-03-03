@@ -2,9 +2,9 @@ import path from 'path';
 import sinon from 'sinon';
 import shell from 'shelljs';
 import fs from 'fs-extra';
+import { rejects } from 'assert';
 import { assert, expect } from 'chai';
 import { ModuleFactory } from '../src/ModuleFactory';
-import { doesThrow } from 'ern-util-dev';
 import { PackagePath } from '../src/PackagePath';
 import { YarnCli } from '../src/YarnCli';
 
@@ -42,13 +42,12 @@ describe('ModuleFactory', () => {
 
   describe('constructor', () => {
     it('should successfully instantiate a ModuleFactory', () => {
-      assert.doesNotThrow(
+      expect(
         () =>
           new ModuleFactory(PACKAGE_CACHE_PATH, {
             packagePrefix: PACKAGE_PREFIX,
           }),
-        Error,
-      );
+      ).to.not.throw();
     });
   });
 
@@ -57,13 +56,8 @@ describe('ModuleFactory', () => {
       const sut = new ModuleFactory(PACKAGE_CACHE_PATH, {
         packagePrefix: PACKAGE_PREFIX,
       });
-      assert(
-        await doesThrow(
-          sut.getModuleInstance,
-          sut,
-          PackagePath.fromString('git+ssh://gihub.com/user/repo.git'),
-        ),
-      );
+      const p = PackagePath.fromString('https://github.com/org/repo.git');
+      assert(rejects(sut.getModuleInstance(p)));
     });
 
     it('should properly instantiate a local package module [without src directory]', async () => {

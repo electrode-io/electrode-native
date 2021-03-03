@@ -7,7 +7,8 @@ import {
   PackagePath,
   utils,
 } from 'ern-core';
-import { doesNotThrow, doesThrow, fixtures } from 'ern-util-dev';
+import { fixtures } from 'ern-util-dev';
+import { doesNotReject, rejects } from 'assert';
 import {
   CauldronCodePushEntry,
   ICauldronDocumentStore,
@@ -229,13 +230,7 @@ describe('CauldronApi.js', () => {
 
     it('should throw if the application name is not found', async () => {
       const api = cauldronApi();
-      assert(
-        await doesThrow(
-          api.getNativeApplication,
-          api,
-          'unexisting'.toAppDescriptor(),
-        ),
-      );
+      assert(rejects(api.getNativeApplication('missing'.toAppDescriptor())));
     });
   });
 
@@ -249,9 +244,7 @@ describe('CauldronApi.js', () => {
 
     it('should throw if the application name is not found', async () => {
       const api = cauldronApi();
-      assert(
-        await doesThrow(api.getPlatforms, api, 'unexisting'.toAppDescriptor()),
-      );
+      assert(rejects(api.getPlatforms('missing'.toAppDescriptor())));
     });
   });
 
@@ -270,21 +263,15 @@ describe('CauldronApi.js', () => {
     it('should throw if the platform is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getPlatform,
-          api,
-          AppPlatformDescriptor.fromString('test:ios'),
-        ),
+        rejects(api.getPlatform(AppPlatformDescriptor.fromString('test:ios'))),
       );
     });
 
     it('should throw if the native application is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getPlatform,
-          api,
-          AppPlatformDescriptor.fromString('unexisting:android'),
+        rejects(
+          api.getPlatform(AppPlatformDescriptor.fromString('missing:android')),
         ),
       );
     });
@@ -305,21 +292,15 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application platform does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getVersions,
-          api,
-          AppPlatformDescriptor.fromString('test:ios'),
-        ),
+        rejects(api.getVersions(AppPlatformDescriptor.fromString('test:ios'))),
       );
     });
 
     it('should throw if the native application name does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getVersions,
-          api,
-          AppPlatformDescriptor.fromString('unexisting:android'),
+        rejects(
+          api.getVersions(AppPlatformDescriptor.fromString('missing:android')),
         ),
       );
     });
@@ -340,10 +321,8 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getVersion,
-          api,
-          AppVersionDescriptor.fromString('test:android:0.1.0'),
+        rejects(
+          api.getVersion(AppVersionDescriptor.fromString('test:android:0.1.0')),
         ),
       );
     });
@@ -351,10 +330,8 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application platform does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getVersion,
-          api,
-          AppVersionDescriptor.fromString('test:ios:0.1.0'),
+        rejects(
+          api.getVersion(AppVersionDescriptor.fromString('test:ios:0.1.0')),
         ),
       );
     });
@@ -362,10 +339,10 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application name does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getVersion,
-          api,
-          AppVersionDescriptor.fromString('unexisting:android:17.7.0'),
+        rejects(
+          api.getVersion(
+            AppVersionDescriptor.fromString('missing:android:17.7.0'),
+          ),
         ),
       );
     });
@@ -391,11 +368,11 @@ describe('CauldronApi.js', () => {
     it('should throw if native application version is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getCodePushEntries,
-          api,
-          AppVersionDescriptor.fromString('test:android:1.0.0'),
-          'QA',
+        rejects(
+          api.getCodePushEntries(
+            AppVersionDescriptor.fromString('test:android:1.0.0'),
+            'QA',
+          ),
         ),
       );
     });
@@ -403,11 +380,11 @@ describe('CauldronApi.js', () => {
     it('should throw if native application platform does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getCodePushEntries,
-          api,
-          AppVersionDescriptor.fromString('test:ios:1.0.0'),
-          'QA',
+        rejects(
+          api.getCodePushEntries(
+            AppVersionDescriptor.fromString('test:ios:1.0.0'),
+            'QA',
+          ),
         ),
       );
     });
@@ -415,11 +392,11 @@ describe('CauldronApi.js', () => {
     it('should throw if native application name does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getCodePushEntries,
-          api,
-          AppVersionDescriptor.fromString('unexisting:android:17.7.0'),
-          'QA',
+        rejects(
+          api.getCodePushEntries(
+            AppVersionDescriptor.fromString('missing:android:17.7.0'),
+            'QA',
+          ),
         ),
       );
     });
@@ -445,12 +422,12 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version does not exists', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.setCodePushEntries,
-          api,
-          AppVersionDescriptor.fromString('test:android:1.0.0'),
-          'QA',
-          [codePushNewEntryFixture],
+        rejects(
+          api.setCodePushEntries(
+            AppVersionDescriptor.fromString('test:android:1.0.0'),
+            'QA',
+            [codePushNewEntryFixture],
+          ),
         ),
       );
     });
@@ -467,10 +444,10 @@ describe('CauldronApi.js', () => {
     it('should throw if native application version does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getContainerMiniApps,
-          api,
-          AppVersionDescriptor.fromString('test:android:1.0.0'),
+        rejects(
+          api.getContainerMiniApps(
+            AppVersionDescriptor.fromString('test:android:1.0.0'),
+          ),
         ),
       );
     });
@@ -478,10 +455,10 @@ describe('CauldronApi.js', () => {
     it('should throw if native application platform does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getContainerMiniApps,
-          api,
-          AppVersionDescriptor.fromString('test:ios:17.7.0'),
+        rejects(
+          api.getContainerMiniApps(
+            AppVersionDescriptor.fromString('test:ios:17.7.0'),
+          ),
         ),
       );
     });
@@ -489,10 +466,10 @@ describe('CauldronApi.js', () => {
     it('should throw if native application name does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getContainerMiniApps,
-          api,
-          AppVersionDescriptor.fromString('unexisting:android:17.7.0'),
+        rejects(
+          api.getContainerMiniApps(
+            AppVersionDescriptor.fromString('missing:android:17.7.0'),
+          ),
         ),
       );
     });
@@ -509,10 +486,10 @@ describe('CauldronApi.js', () => {
     it('should throw if native application version does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getNativeDependencies,
-          api,
-          AppVersionDescriptor.fromString('test:android:1.0.0'),
+        rejects(
+          api.getNativeDependencies(
+            AppVersionDescriptor.fromString('test:android:1.0.0'),
+          ),
         ),
       );
     });
@@ -520,10 +497,10 @@ describe('CauldronApi.js', () => {
     it('should throw if native application platform does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getNativeDependencies,
-          api,
-          AppVersionDescriptor.fromString('test:ios:17.7.0'),
+        rejects(
+          api.getNativeDependencies(
+            AppVersionDescriptor.fromString('test:ios:17.7.0'),
+          ),
         ),
       );
     });
@@ -531,10 +508,10 @@ describe('CauldronApi.js', () => {
     it('should throw if native application name does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getNativeDependencies,
-          api,
-          AppVersionDescriptor.fromString('unexisting:android:17.7.0'),
+        rejects(
+          api.getNativeDependencies(
+            AppVersionDescriptor.fromString('missing:android:17.7.0'),
+          ),
         ),
       );
     });
@@ -544,10 +521,10 @@ describe('CauldronApi.js', () => {
     it('should throw an error if the native application version does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getContainerJsApiImpls,
-          api,
-          AppVersionDescriptor.fromString('test:android:1.0.0'),
+        rejects(
+          api.getContainerJsApiImpls(
+            AppVersionDescriptor.fromString('test:android:1.0.0'),
+          ),
         ),
       );
     });
@@ -565,11 +542,11 @@ describe('CauldronApi.js', () => {
     it('should throw an error if the native application version does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getContainerJsApiImpl,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.10.0'),
-          'react-native-my-api-impl',
+        rejects(
+          api.getContainerJsApiImpl(
+            AppVersionDescriptor.fromString('test:android:17.10.0'),
+            'react-native-my-api-impl',
+          ),
         ),
       );
     });
@@ -611,11 +588,11 @@ describe('CauldronApi.js', () => {
     it('should throw if incorrect version is provided', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getContainerNativeDependency,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          'react-native-electrode-bridge@0.1.0',
+        rejects(
+          api.getContainerNativeDependency(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            'react-native-electrode-bridge@0.1.0',
+          ),
         ),
       );
     });
@@ -623,11 +600,11 @@ describe('CauldronApi.js', () => {
     it('should throw if dependency does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getContainerNativeDependency,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          'unexisting',
+        rejects(
+          api.getContainerNativeDependency(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            'missing',
+          ),
         ),
       );
     });
@@ -635,11 +612,11 @@ describe('CauldronApi.js', () => {
     it('should throw if native application version does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getContainerNativeDependency,
-          api,
-          AppVersionDescriptor.fromString('test:android:0.1.0'),
-          'react-native-electrode-bridge',
+        rejects(
+          api.getContainerNativeDependency(
+            AppVersionDescriptor.fromString('test:android:0.1.0'),
+            'react-native-electrode-bridge',
+          ),
         ),
       );
     });
@@ -647,11 +624,11 @@ describe('CauldronApi.js', () => {
     it('should throw if native application platform does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getContainerNativeDependency,
-          api,
-          AppVersionDescriptor.fromString('test:ios:17.7.0'),
-          'react-native-electrode-bridge',
+        rejects(
+          api.getContainerNativeDependency(
+            AppVersionDescriptor.fromString('test:ios:17.7.0'),
+            'react-native-electrode-bridge',
+          ),
         ),
       );
     });
@@ -659,11 +636,11 @@ describe('CauldronApi.js', () => {
     it('should throw if native application name does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getContainerNativeDependency,
-          api,
-          AppVersionDescriptor.fromString('unexisting:android:17.7.0'),
-          'react-native-electrode-bridge',
+        rejects(
+          api.getContainerNativeDependency(
+            AppVersionDescriptor.fromString('missing:android:17.7.0'),
+            'react-native-electrode-bridge',
+          ),
         ),
       );
     });
@@ -683,10 +660,8 @@ describe('CauldronApi.js', () => {
     it('[get application version config] should throw if the native application version does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getConfig,
-          api,
-          AppVersionDescriptor.fromString('test:android:1.0.0'),
+        rejects(
+          api.getConfig(AppVersionDescriptor.fromString('test:android:1.0.0')),
         ),
       );
     });
@@ -704,11 +679,7 @@ describe('CauldronApi.js', () => {
     it('[get application platform config] should throw if the native application platform does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getConfig,
-          api,
-          AppPlatformDescriptor.fromString('test:ios'),
-        ),
+        rejects(api.getConfig(AppPlatformDescriptor.fromString('test:ios'))),
       );
     });
 
@@ -724,13 +695,7 @@ describe('CauldronApi.js', () => {
 
     it('[get application config] should throw if native application does not exist', async () => {
       const api = cauldronApi();
-      assert(
-        await doesThrow(
-          api.getConfig,
-          api,
-          AppNameDescriptor.fromString('unexisting'),
-        ),
-      );
+      assert(rejects(api.getConfig(AppNameDescriptor.fromString('missing'))));
     });
   });
 
@@ -833,9 +798,7 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application name already exists', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
       const api = cauldronApi({ cauldronDocument: tmpFixture });
-      assert(
-        await doesThrow(api.createNativeApplication, api, { name: 'test' }),
-      );
+      assert(rejects(api.createNativeApplication({ name: 'test' })));
     });
   });
 
@@ -863,10 +826,8 @@ describe('CauldronApi.js', () => {
     it('should throw if the application name does not exists', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.removeNativeApplication,
-          api,
-          AppNameDescriptor.fromString('unexisting'),
+        rejects(
+          api.removeNativeApplication(AppNameDescriptor.fromString('missing')),
         ),
       );
     });
@@ -898,11 +859,10 @@ describe('CauldronApi.js', () => {
     it('should throw if the application platform already exists', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.createPlatform,
-          api,
-          AppNameDescriptor.fromString('test'),
-          { name: 'android' },
+        rejects(
+          api.createPlatform(AppNameDescriptor.fromString('test'), {
+            name: 'android',
+          }),
         ),
       );
     });
@@ -934,10 +894,10 @@ describe('CauldronApi.js', () => {
     it('should throw if the application name does not exists', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.removePlatform,
-          api,
-          AppPlatformDescriptor.fromString('unexisting:android'),
+        rejects(
+          api.removePlatform(
+            AppPlatformDescriptor.fromString('missing:android'),
+          ),
         ),
       );
     });
@@ -945,10 +905,8 @@ describe('CauldronApi.js', () => {
     it('should throw if the application platform does not exists', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.removePlatform,
-          api,
-          AppPlatformDescriptor.fromString('test:ios'),
+        rejects(
+          api.removePlatform(AppPlatformDescriptor.fromString('test:ios')),
         ),
       );
     });
@@ -983,11 +941,10 @@ describe('CauldronApi.js', () => {
     it('should throw if the platform does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.createVersion,
-          api,
-          AppPlatformDescriptor.fromString('test:ios'),
-          { name: '17.20.0' },
+        rejects(
+          api.createVersion(AppPlatformDescriptor.fromString('test:ios'), {
+            name: '17.20.0',
+          }),
         ),
       );
     });
@@ -995,11 +952,10 @@ describe('CauldronApi.js', () => {
     it('should throw if the version already exists', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.createVersion,
-          api,
-          AppPlatformDescriptor.fromString('test:android'),
-          { name: '17.7.0' },
+        rejects(
+          api.createVersion(AppPlatformDescriptor.fromString('test:android'), {
+            name: '17.7.0',
+          }),
         ),
       );
     });
@@ -1031,10 +987,8 @@ describe('CauldronApi.js', () => {
     it('should throw if the platform name does not exists', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.removeVersion,
-          api,
-          AppVersionDescriptor.fromString('test:ios:17.7.0'),
+        rejects(
+          api.removeVersion(AppVersionDescriptor.fromString('test:ios:17.7.0')),
         ),
       );
     });
@@ -1042,10 +996,10 @@ describe('CauldronApi.js', () => {
     it('should throw if the version does not exists', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.removeVersion,
-          api,
-          AppVersionDescriptor.fromString('test:android:1.0.0'),
+        rejects(
+          api.removeVersion(
+            AppVersionDescriptor.fromString('test:android:1.0.0'),
+          ),
         ),
       );
     });
@@ -1080,16 +1034,15 @@ describe('CauldronApi.js', () => {
     it('should throw if the version does not exists', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.updateVersion,
-          api,
-          AppVersionDescriptor.fromString('test:android:0.1.0'),
-          { isReleased: false },
+        rejects(
+          api.updateVersion(
+            AppVersionDescriptor.fromString('test:android:0.1.0'),
+            { isReleased: false },
+          ),
         ),
       );
     });
   });
-
 
   describe('addOrUpdateDescription', () => {
     it('should add a description if it does not exist yet', async () => {
@@ -1135,26 +1088,14 @@ describe('CauldronApi.js', () => {
       sinon.assert.calledOnce(commitStub);
     });
 
-    it('should throw if the descriptor is partial', async () => {
-      const api = cauldronApi();
-      assert(
-        await doesThrow(
-          api.addOrUpdateDescription,
-          api,
-          AppPlatformDescriptor.fromString('test:android'),
-          'new description',
-        ),
-      );
-    });
-
     it('should throw if the version does not exists', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.addOrUpdateDescription,
-          api,
-          AppVersionDescriptor.fromString('test:android:0.1.0'),
-          'new description',
+        rejects(
+          api.addOrUpdateDescription(
+            AppVersionDescriptor.fromString('test:android:0.1.0'),
+            'new description',
+          ),
         ),
       );
     });
@@ -1193,12 +1134,12 @@ describe('CauldronApi.js', () => {
     it('should throw if the dependency is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.removePackageFromContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('unexisting'),
-          'nativeDeps',
+        rejects(
+          api.removePackageFromContainer(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            PackagePath.fromString('missing'),
+            'nativeDeps',
+          ),
         ),
       );
     });
@@ -1206,12 +1147,12 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.removePackageFromContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          'react-native-electrode-bridge',
-          'nativeDeps',
+        rejects(
+          api.removePackageFromContainer(
+            AppVersionDescriptor.fromString('test:android:17.20.0'),
+            PackagePath.fromString('react-native-electrode-bridge'),
+            'nativeDeps',
+          ),
         ),
       );
     });
@@ -1250,12 +1191,12 @@ describe('CauldronApi.js', () => {
     it('should throw if the miniapp is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.updatePackageInContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('react-native-foo@3.0.0'),
-          'miniApps',
+        rejects(
+          api.updatePackageInContainer(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            PackagePath.fromString('react-native-foo@3.0.0'),
+            'miniApps',
+          ),
         ),
       );
     });
@@ -1263,12 +1204,12 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.updatePackageInContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          PackagePath.fromString('react-native-bar@3.0.0'),
-          'miniApps',
+        rejects(
+          api.updatePackageInContainer(
+            AppVersionDescriptor.fromString('test:android:17.20.0'),
+            PackagePath.fromString('react-native-bar@3.0.0'),
+            'miniApps',
+          ),
         ),
       );
     });
@@ -1332,11 +1273,11 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.updateContainerVersion,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          '2.0.0',
+        rejects(
+          api.updateContainerVersion(
+            AppVersionDescriptor.fromString('test:android:17.20.0'),
+            '2.0.0',
+          ),
         ),
       );
     });
@@ -1362,10 +1303,10 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getContainerVersion,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
+        rejects(
+          api.getContainerVersion(
+            AppVersionDescriptor.fromString('test:android:17.20.0'),
+          ),
         ),
       );
     });
@@ -1403,12 +1344,12 @@ describe('CauldronApi.js', () => {
     it('should throw if the MiniApp is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.removePackageFromContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('unexisting'),
-          'miniApps',
+        rejects(
+          api.removePackageFromContainer(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            PackagePath.fromString('missing'),
+            'miniApps',
+          ),
         ),
       );
     });
@@ -1416,12 +1357,12 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.removePackageFromContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          PackagePath.fromString('react-native-bar'),
-          'miniApps',
+        rejects(
+          api.removePackageFromContainer(
+            AppVersionDescriptor.fromString('test:android:17.20.0'),
+            PackagePath.fromString('react-native-bar'),
+            'miniApps',
+          ),
         ),
       );
     });
@@ -1457,12 +1398,12 @@ describe('CauldronApi.js', () => {
     it('should throw if the MiniApp already exists', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.addPackageToContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('react-native-bar@2.0.0'),
-          'miniApps',
+        rejects(
+          api.addPackageToContainer(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            PackagePath.fromString('react-native-bar@2.0.0'),
+            'miniApps',
+          ),
         ),
       );
     });
@@ -1470,12 +1411,12 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.addPackageToContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          PackagePath.fromString('newMiniApp@1.0.0'),
-          'miniApps',
+        rejects(
+          api.addPackageToContainer(
+            AppVersionDescriptor.fromString('test:android:17.20.0'),
+            PackagePath.fromString('newMiniApp@1.0.0'),
+            'miniApps',
+          ),
         ),
       );
     });
@@ -1513,12 +1454,12 @@ describe('CauldronApi.js', () => {
     it('should throw if the dependency already exists', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.addPackageToContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('react-native-electrode-bridge@1.4.9'),
-          'nativeDeps',
+        rejects(
+          api.addPackageToContainer(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            PackagePath.fromString('react-native-electrode-bridge@1.4.9'),
+            'nativeDeps',
+          ),
         ),
       );
     });
@@ -1526,12 +1467,12 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.addPackageToContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          PackagePath.fromString('testDep@1.0.0'),
-          'nativeDeps',
+        rejects(
+          api.addPackageToContainer(
+            AppVersionDescriptor.fromString('test:android:17.20.0'),
+            PackagePath.fromString('testDep@1.0.0'),
+            'nativeDeps',
+          ),
         ),
       );
     });
@@ -1541,12 +1482,12 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.addPackageToContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          PackagePath.fromString('react-native-new-js-api-impl@1.0.0'),
-          'jsApiImpls',
+        rejects(
+          api.addPackageToContainer(
+            AppVersionDescriptor.fromString('test:android:17.20.0'),
+            PackagePath.fromString('react-native-new-js-api-impl@1.0.0'),
+            'jsApiImpls',
+          ),
         ),
       );
     });
@@ -1554,12 +1495,12 @@ describe('CauldronApi.js', () => {
     it('should throw if the js api impl already exists', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.addPackageToContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('react-native-my-api-impl@1.0.0'),
-          'jsApiImpls',
+        rejects(
+          api.addPackageToContainer(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            PackagePath.fromString('react-native-my-api-impl@1.0.0'),
+            'jsApiImpls',
+          ),
         ),
       );
     });
@@ -1598,12 +1539,12 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.removePackageFromContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          PackagePath.fromString('react-native-my-api-impl@1.0.0'),
-          'jsApiImpls',
+        rejects(
+          api.removePackageFromContainer(
+            AppVersionDescriptor.fromString('test:android:17.20.0'),
+            PackagePath.fromString('react-native-my-api-impl@1.0.0'),
+            'jsApiImpls',
+          ),
         ),
       );
     });
@@ -1611,12 +1552,12 @@ describe('CauldronApi.js', () => {
     it('should throw if the js api impl is not found [1]', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.removePackageFromContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('react-native-unknown-api-impl'),
-          'jsApiImpls',
+        rejects(
+          api.removePackageFromContainer(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            PackagePath.fromString('react-native-unknown-api-impl'),
+            'jsApiImpls',
+          ),
         ),
       );
     });
@@ -1624,12 +1565,12 @@ describe('CauldronApi.js', () => {
     it('should throw if the js api impl is not found [2]', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.removePackageFromContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('react-native-unknown-api-impl@1.0.0'),
-          'jsApiImpls',
+        rejects(
+          api.removePackageFromContainer(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            PackagePath.fromString('react-native-unknown-api-impl@1.0.0'),
+            'jsApiImpls',
+          ),
         ),
       );
     });
@@ -1683,12 +1624,12 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.updatePackageInContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          PackagePath.fromString('react-native-my-api-impl@2.0.0'),
-          'jsApiImpls',
+        rejects(
+          api.updatePackageInContainer(
+            AppVersionDescriptor.fromString('test:android:17.20.0'),
+            PackagePath.fromString('react-native-my-api-impl@2.0.0'),
+            'jsApiImpls',
+          ),
         ),
       );
     });
@@ -1696,12 +1637,12 @@ describe('CauldronApi.js', () => {
     it('should throw if the js api impl is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.updatePackageInContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('react-native-unknown-api-impl@1.0.0'),
-          'jsApiImpls',
+        rejects(
+          api.updatePackageInContainer(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            PackagePath.fromString('react-native-unknown-api-impl@1.0.0'),
+            'jsApiImpls',
+          ),
         ),
       );
     });
@@ -1781,11 +1722,11 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.addCodePushEntry,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          codePushNewEntryFixture,
+        rejects(
+          api.addCodePushEntry(
+            AppVersionDescriptor.fromString('test:android:17.20.0'),
+            codePushNewEntryFixture,
+          ),
         ),
       );
     });
@@ -1794,14 +1735,12 @@ describe('CauldronApi.js', () => {
   describe('addFile', () => {
     it('should throw if cauldronFilePath is undefined', async () => {
       const api = cauldronApi();
-      assert(await doesThrow(api.addFile, api, { fileContent: 'content' }));
+      assert(rejects(api.addFile({ fileContent: 'content' })));
     });
 
     it('should throw if fileContent is undefined', async () => {
       const api = cauldronApi();
-      assert(
-        await doesThrow(api.addFile, api, { cauldronFilePath: 'dir/file' }),
-      );
+      assert(rejects(api.addFile({ cauldronFilePath: 'dir/file' })));
     });
 
     it('should throw if file already exist', async () => {
@@ -1811,20 +1750,24 @@ describe('CauldronApi.js', () => {
         fileContent: 'content',
       });
       assert(
-        await doesThrow(api.addFile, api, {
-          cauldronFilePath: 'dir/file',
-          fileContent: 'newcontent',
-        }),
+        rejects(
+          api.addFile({
+            cauldronFilePath: 'dir/file',
+            fileContent: 'newcontent',
+          }),
+        ),
       );
     });
 
     it('should not throw in nominal proper use case', async () => {
       const api = cauldronApi();
       assert(
-        await doesNotThrow(api.addFile, api, {
-          cauldronFilePath: 'dir/file',
-          fileContent: 'content',
-        }),
+        doesNotReject(
+          api.addFile({
+            cauldronFilePath: 'dir/file',
+            fileContent: 'content',
+          }),
+        ),
       );
     });
 
@@ -1850,23 +1793,23 @@ describe('CauldronApi.js', () => {
   describe('updateFile', () => {
     it('should throw if cauldronFilePath is undefined', async () => {
       const api = cauldronApi();
-      assert(await doesThrow(api.updateFile, api, { fileContent: 'content' }));
+      assert(rejects(api.updateFile({ fileContent: 'content' })));
     });
 
     it('should throw if fileContent is undefined', async () => {
       const api = cauldronApi();
-      assert(
-        await doesThrow(api.updateFile, api, { cauldronFilePath: 'dir/file' }),
-      );
+      assert(rejects(api.updateFile({ cauldronFilePath: 'dir/file' })));
     });
 
     it('should throw if file does not already exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(api.updateFile, api, {
-          cauldronFilePath: 'dir/file',
-          fileContent: 'newcontent',
-        }),
+        rejects(
+          api.updateFile({
+            cauldronFilePath: 'dir/file',
+            fileContent: 'newcontent',
+          }),
+        ),
       );
     });
 
@@ -1877,10 +1820,12 @@ describe('CauldronApi.js', () => {
         fileContent: 'content',
       });
       assert(
-        await doesNotThrow(api.updateFile, api, {
-          cauldronFilePath: 'dir/file',
-          fileContent: 'content',
-        }),
+        doesNotReject(
+          api.updateFile({
+            cauldronFilePath: 'dir/file',
+            fileContent: 'content',
+          }),
+        ),
       );
     });
 
@@ -1891,10 +1836,12 @@ describe('CauldronApi.js', () => {
         fileContent: 'content',
       });
       assert(
-        await doesNotThrow(api.updateFile, api, {
-          cauldronFilePath: 'dir/file',
-          fileContent: 'content',
-        }),
+        doesNotReject(
+          api.updateFile({
+            cauldronFilePath: 'dir/file',
+            fileContent: 'content',
+          }),
+        ),
       );
     });
 
@@ -1905,10 +1852,12 @@ describe('CauldronApi.js', () => {
         fileContent: 'content',
       });
       assert(
-        await doesNotThrow(api.updateFile, api, {
-          cauldronFilePath: 'cauldron://dir/file',
-          fileContent: 'content',
-        }),
+        doesNotReject(
+          api.updateFile({
+            cauldronFilePath: 'cauldron://dir/file',
+            fileContent: 'content',
+          }),
+        ),
       );
     });
   });
@@ -1916,15 +1865,17 @@ describe('CauldronApi.js', () => {
   describe('removeFile', () => {
     it('should throw if cauldronFilePath is undefined', async () => {
       const api = cauldronApi();
-      assert(await doesThrow(api.removeFile, api, {}));
+      assert(rejects(api.removeFile({})));
     });
 
     it('should throw if file does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(api.removeFile, api, {
-          cauldronFilePath: 'dir/file',
-        }),
+        rejects(
+          api.removeFile({
+            cauldronFilePath: 'dir/file',
+          }),
+        ),
       );
     });
 
@@ -1935,9 +1886,11 @@ describe('CauldronApi.js', () => {
         fileContent: 'content',
       });
       assert(
-        await doesNotThrow(api.removeFile, api, {
-          cauldronFilePath: 'dir/file',
-        }),
+        doesNotReject(
+          api.removeFile({
+            cauldronFilePath: 'dir/file',
+          }),
+        ),
       );
     });
 
@@ -1969,15 +1922,17 @@ describe('CauldronApi.js', () => {
   describe('getFile', () => {
     it('should throw if cauldronFilePath is undefined', async () => {
       const api = cauldronApi();
-      assert(await doesThrow(api.getFile, api, {}));
+      assert(rejects(api.getFile({})));
     });
 
     it('should throw if file does not exist', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(api.getFile, api, {
-          cauldronFilePath: 'dir/file',
-        }),
+        rejects(
+          api.getFile({
+            cauldronFilePath: 'dir/file',
+          }),
+        ),
       );
     });
 
@@ -1988,9 +1943,11 @@ describe('CauldronApi.js', () => {
         fileContent: 'content',
       });
       assert(
-        await doesNotThrow(api.getFile, api, {
-          cauldronFilePath: 'dir/file',
-        }),
+        doesNotReject(
+          api.getFile({
+            cauldronFilePath: 'dir/file',
+          }),
+        ),
       );
     });
 
@@ -2037,12 +1994,11 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.hasYarnLock,
-          api,
-          'test',
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          'Production',
+        rejects(
+          api.hasYarnLock(
+            AppVersionDescriptor.fromString('test:android:17.20.0'),
+            'Production',
+          ),
         ),
       );
     });
@@ -2078,12 +2034,12 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.addYarnLock,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          'YARN_LOCK_KEY',
-          'YARN_LOCK_CONTENT',
+        rejects(
+          api.addYarnLock(
+            AppVersionDescriptor.fromString('test:android:17.20.0'),
+            'YARN_LOCK_KEY',
+            'YARN_LOCK_CONTENT',
+          ),
         ),
       );
     });
@@ -2109,11 +2065,11 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getYarnLockId,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          'Production',
+        rejects(
+          api.getYarnLockId(
+            AppVersionDescriptor.fromString('test:android:17.20.0'),
+            'Production',
+          ),
         ),
       );
     });
@@ -2124,11 +2080,11 @@ describe('CauldronApi.js', () => {
       const newId = '30bf4eff61586d71fe5d52e31a2cfabcbb31e33e';
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getYarnLock,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          'Production',
+        rejects(
+          api.getYarnLock(
+            AppVersionDescriptor.fromString('test:android:17.20.0'),
+            'Production',
+          ),
         ),
       );
     });
@@ -2138,11 +2094,11 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.getPathToYarnLock,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          'Production',
+        rejects(
+          api.getPathToYarnLock(
+            AppVersionDescriptor.fromString('test:android:17.20.0'),
+            'Production',
+          ),
         ),
       );
     });
@@ -2152,11 +2108,11 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.removeYarnLock,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          'Production',
+        rejects(
+          api.removeYarnLock(
+            AppVersionDescriptor.fromString('test:android:17.20.0'),
+            'Production',
+          ),
         ),
       );
     });
@@ -2166,12 +2122,12 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.updateYarnLock,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          'Production',
-          'NewLock',
+        rejects(
+          api.updateYarnLock(
+            AppVersionDescriptor.fromString('test:android:17.20.0'),
+            'Production',
+            'NewLock',
+          ),
         ),
       );
     });
@@ -2212,11 +2168,12 @@ describe('CauldronApi.js', () => {
       const newId = '30bf4eff61586d71fe5d52e31a2cfabcbb31e33e';
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.updateYarnLockId,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          'NewKey',
+        rejects(
+          api.updateYarnLockId(
+            AppVersionDescriptor.fromString('test:android:17.20.0'),
+            'NewKey',
+            newId,
+          ),
         ),
       );
     });
@@ -2252,11 +2209,11 @@ describe('CauldronApi.js', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.setYarnLocks,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.20.0'),
-          { Test: '30bf4eff61586d71fe5d52e31a2cfabcbb31e33e' },
+        rejects(
+          api.setYarnLocks(
+            AppVersionDescriptor.fromString('test:android:17.20.0'),
+            { Test: '30bf4eff61586d71fe5d52e31a2cfabcbb31e33e' },
+          ),
         ),
       );
     });
@@ -2299,25 +2256,12 @@ describe('CauldronApi.js', () => {
   });
 
   describe('getBundle', () => {
-    it('should throw if the native application descriptor is partial', async () => {
-      const api = cauldronApi();
-      assert(
-        await doesThrow(
-          api.getBundle,
-          api,
-          AppPlatformDescriptor.fromString('test:android'),
-        ),
-      );
-    });
-
     it('should throw if there is no stored bundle for the given native application descriptor', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
       const api = cauldronApi({ cauldronDocument: tmpFixture });
       assert(
-        await doesThrow(
-          api.getBundle,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
+        rejects(
+          api.getBundle(AppVersionDescriptor.fromString('test:android:17.7.0')),
         ),
       );
     });
@@ -2337,28 +2281,15 @@ describe('CauldronApi.js', () => {
   });
 
   describe('addPackageToContainer [MiniApp Branch]', () => {
-    it('should throw if the native application descriptor is partial', async () => {
-      const api = cauldronApi();
-      assert(
-        await doesThrow(
-          api.addPackageToContainer,
-          api,
-          AppPlatformDescriptor.fromString('test:android'),
-          PackagePath.fromString('https://github.com/foo/MiniApp.git#master'),
-          'miniAppsBranches',
-        ),
-      );
-    });
-
     it('should throw if the MiniApp path does not include a branch', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.addPackageToContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('https://github.com/foo/MiniApp.git'),
-          'miniAppsBranches',
+        rejects(
+          api.addPackageToContainer(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            PackagePath.fromString('https://github.com/org/repo.git'),
+            'miniAppsBranches',
+          ),
         ),
       );
     });
@@ -2369,14 +2300,14 @@ describe('CauldronApi.js', () => {
         cauldronDocument: tmpFixture,
       }).addPackageToContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/MiniApp.git#master'),
+        PackagePath.fromString('https://github.com/org/repo.git#master'),
         'miniAppsBranches',
       );
       const miniAppsArr = jp.query(
         tmpFixture,
         '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.miniAppsBranches',
       )[0];
-      expect(miniAppsArr.includes('https://github.com/foo/MiniApp.git#master'))
+      expect(miniAppsArr.includes('https://github.com/org/repo.git#master'))
         .true;
     });
 
@@ -2385,46 +2316,31 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi({ cauldronDocument: tmpFixture });
       await api.addPackageToContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/MiniApp.git#master'),
+        PackagePath.fromString('https://github.com/org/repo.git#master'),
         'miniAppsBranches',
       );
       assert(
-        await doesThrow(
-          api.addPackageToContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString(
-            'https://github.com/foo/MiniApp.git#development',
+        rejects(
+          api.addPackageToContainer(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            PackagePath.fromString('https://github.com/org/repo.git#dev'),
+            'miniAppsBranches',
           ),
-          'miniAppsBranches',
         ),
       );
     });
   });
 
   describe('addPackageToContainer [JS API Implementation branch]', () => {
-    it('should throw if the native application descriptor is partial', async () => {
-      const api = cauldronApi();
-      assert(
-        await doesThrow(
-          api.addPackageToContainer,
-          api,
-          AppPlatformDescriptor.fromString('test:android'),
-          PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master'),
-          'jsApiImplsBranches',
-        ),
-      );
-    });
-
     it('should throw if the JS API Impl path does not include a branch', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.addPackageToContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('https://github.com/foo/JsApiImpl.git'),
-          'jsApiImplsBranches',
+        rejects(
+          api.addPackageToContainer(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            PackagePath.fromString('https://github.com/org/repo.git'),
+            'jsApiImplsBranches',
+          ),
         ),
       );
     });
@@ -2435,7 +2351,7 @@ describe('CauldronApi.js', () => {
         cauldronDocument: tmpFixture,
       }).addPackageToContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master'),
+        PackagePath.fromString('https://github.com/org/repo.git#master'),
         'jsApiImplsBranches',
       );
       const jsApiImplsBranchesArr = jp.query(
@@ -2444,7 +2360,7 @@ describe('CauldronApi.js', () => {
       )[0];
       expect(
         jsApiImplsBranchesArr.includes(
-          'https://github.com/foo/JsApiImpl.git#master',
+          'https://github.com/org/repo.git#master',
         ),
       ).true;
     });
@@ -2454,46 +2370,31 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi({ cauldronDocument: tmpFixture });
       await api.addPackageToContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master'),
+        PackagePath.fromString('https://github.com/org/repo.git#master'),
         'jsApiImplsBranches',
       );
       assert(
-        await doesThrow(
-          api.addPackageToContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString(
-            'https://github.com/foo/JsApiImpl.git#development',
+        rejects(
+          api.addPackageToContainer(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            PackagePath.fromString('https://github.com/org/repo.git#dev'),
+            'jsApiImplsBranches',
           ),
-          'jsApiImplsBranches',
         ),
       );
     });
   });
 
   describe('updatePackageInContainer [MiniApp branch]', () => {
-    it('should throw if the native application descriptor is partial', async () => {
-      const api = cauldronApi();
-      assert(
-        await doesThrow(
-          api.updatePackageInContainer,
-          api,
-          AppPlatformDescriptor.fromString('test:android'),
-          PackagePath.fromString('https://github.com/foo/MiniApp.git#master'),
-          'miniAppsBranches',
-        ),
-      );
-    });
-
     it('should throw if the MiniApp path does not include a branch', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.updatePackageInContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('https://github.com/foo/MiniApp.git'),
-          'miniAppsBranches',
+        rejects(
+          api.updatePackageInContainer(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            PackagePath.fromString('https://github.com/org/repo.git'),
+            'miniAppsBranches',
+          ),
         ),
       );
     });
@@ -2504,51 +2405,34 @@ describe('CauldronApi.js', () => {
         cauldronDocument: tmpFixture,
       }).addPackageToContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/MiniApp.git#master'),
+        PackagePath.fromString('https://github.com/org/repo.git#master'),
         'miniAppsBranches',
       );
       await cauldronApi({
         cauldronDocument: tmpFixture,
       }).updatePackageInContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString(
-          'https://github.com/foo/MiniApp.git#development',
-        ),
+        PackagePath.fromString('https://github.com/org/repo.git#dev'),
         'miniAppsBranches',
       );
       const miniAppsArr = jp.query(
         tmpFixture,
         '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.miniAppsBranches',
       )[0];
-      expect(
-        miniAppsArr.includes('https://github.com/foo/MiniApp.git#development'),
-      ).true;
+      expect(miniAppsArr.includes('https://github.com/org/repo.git#dev')).true;
     });
   });
 
   describe('updateJsApiImplBranchInContainer', () => {
-    it('should throw if the native application descriptor is partial', async () => {
-      const api = cauldronApi();
-      assert(
-        await doesThrow(
-          api.updatePackageInContainer,
-          api,
-          AppPlatformDescriptor.fromString('test:android'),
-          PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master'),
-          'jsApiImplsBranches',
-        ),
-      );
-    });
-
     it('should throw if the JS API Impl path does not include a branch', async () => {
       const api = cauldronApi();
       assert(
-        await doesThrow(
-          api.updatePackageInContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('https://github.com/foo/JsApiImpl.git'),
-          'jsApiImplsBranches',
+        rejects(
+          api.updatePackageInContainer(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            PackagePath.fromString('https://github.com/org/repo.git'),
+            'jsApiImplsBranches',
+          ),
         ),
       );
     });
@@ -2559,16 +2443,14 @@ describe('CauldronApi.js', () => {
         cauldronDocument: tmpFixture,
       }).addPackageToContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master'),
+        PackagePath.fromString('https://github.com/org/repo.git#master'),
         'jsApiImplsBranches',
       );
       await cauldronApi({
         cauldronDocument: tmpFixture,
       }).updatePackageInContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString(
-          'https://github.com/foo/JsApiImpl.git#development',
-        ),
+        PackagePath.fromString('https://github.com/org/repo.git#dev'),
         'jsApiImplsBranches',
       );
       const jsApiImplsBranchesArr = jp.query(
@@ -2576,33 +2458,12 @@ describe('CauldronApi.js', () => {
         '$.nativeApps[?(@.name=="test")].platforms[?(@.name=="android")].versions[?(@.name=="17.7.0")].container.jsApiImplsBranches',
       )[0];
       expect(
-        jsApiImplsBranchesArr.includes(
-          'https://github.com/foo/JsApiImpl.git#development',
-        ),
+        jsApiImplsBranchesArr.includes('https://github.com/org/repo.git#dev'),
       ).true;
     });
   });
 
   describe('removePackageFromContainer [MiniApp branch]', () => {
-    it('should throw if the native application descriptor is partial', async () => {
-      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
-      const api = cauldronApi({ cauldronDocument: tmpFixture });
-      await api.addPackageToContainer(
-        AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/MiniApp.git#master'),
-        'miniAppsBranches',
-      );
-      assert(
-        await doesThrow(
-          api.removePackageFromContainer,
-          api,
-          AppPlatformDescriptor.fromString('test:android'),
-          PackagePath.fromString('https://github.com/foo/MiniApp.git#master'),
-          'miniAppsBranches',
-        ),
-      );
-    });
-
     it('should throw if the MiniApp does not exist in the miniAppsBranches array', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
       const api = cauldronApi({ cauldronDocument: tmpFixture });
@@ -2610,16 +2471,16 @@ describe('CauldronApi.js', () => {
         cauldronDocument: tmpFixture,
       }).addPackageToContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/MiniApp.git#master'),
+        PackagePath.fromString('https://github.com/org/repo.git#master'),
         'miniAppsBranches',
       );
       assert(
-        await doesThrow(
-          api.removePackageFromContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('https://github.com/foo/foo.git'),
-          'miniAppsBranches',
+        rejects(
+          api.removePackageFromContainer(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            PackagePath.fromString('https://github.com/foo/foo.git'),
+            'miniAppsBranches',
+          ),
         ),
       );
     });
@@ -2630,14 +2491,14 @@ describe('CauldronApi.js', () => {
         cauldronDocument: tmpFixture,
       }).addPackageToContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/MiniApp.git#master'),
+        PackagePath.fromString('https://github.com/org/repo.git#master'),
         'miniAppsBranches',
       );
       await cauldronApi({
         cauldronDocument: tmpFixture,
       }).removePackageFromContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/MiniApp.git#master'),
+        PackagePath.fromString('https://github.com/org/repo.git#master'),
         'miniAppsBranches',
       );
       const miniAppsArr = jp.query(
@@ -2653,14 +2514,14 @@ describe('CauldronApi.js', () => {
         cauldronDocument: tmpFixture,
       }).addPackageToContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/MiniApp.git#master'),
+        PackagePath.fromString('https://github.com/org/repo.git#master'),
         'miniAppsBranches',
       );
       await cauldronApi({
         cauldronDocument: tmpFixture,
       }).removePackageFromContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/MiniApp.git'),
+        PackagePath.fromString('https://github.com/org/repo.git'),
         'miniAppsBranches',
       );
       const miniAppsArr = jp.query(
@@ -2672,25 +2533,6 @@ describe('CauldronApi.js', () => {
   });
 
   describe('removePackageFromContainer [JS API Implementation branch]', () => {
-    it('should throw if the native application descriptor is partial', async () => {
-      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
-      const api = cauldronApi({ cauldronDocument: tmpFixture });
-      await api.addPackageToContainer(
-        AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master'),
-        'jsApiImplsBranches',
-      );
-      assert(
-        await doesThrow(
-          api.removePackageFromContainer,
-          api,
-          AppPlatformDescriptor.fromString('test:android'),
-          PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master'),
-          'jsApiImplsBranches',
-        ),
-      );
-    });
-
     it('should throw if the JS API Impl does not exist in the jsApiImplsBranches array', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
       const api = cauldronApi({ cauldronDocument: tmpFixture });
@@ -2698,16 +2540,16 @@ describe('CauldronApi.js', () => {
         cauldronDocument: tmpFixture,
       }).addPackageToContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master'),
+        PackagePath.fromString('https://github.com/org/repo.git#master'),
         'jsApiImplsBranches',
       );
       assert(
-        await doesThrow(
-          api.removePackageFromContainer,
-          api,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('https://github.com/foo/foo.git'),
-          'jsApiImplsBranches',
+        rejects(
+          api.removePackageFromContainer(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            PackagePath.fromString('https://github.com/foo/foo.git'),
+            'jsApiImplsBranches',
+          ),
         ),
       );
     });
@@ -2718,14 +2560,14 @@ describe('CauldronApi.js', () => {
         cauldronDocument: tmpFixture,
       }).addPackageToContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master'),
+        PackagePath.fromString('https://github.com/org/repo.git#master'),
         'jsApiImplsBranches',
       );
       await cauldronApi({
         cauldronDocument: tmpFixture,
       }).removePackageFromContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master'),
+        PackagePath.fromString('https://github.com/org/repo.git#master'),
         'jsApiImplsBranches',
       );
       const jsApiImplBranchesArr = jp.query(
@@ -2741,14 +2583,14 @@ describe('CauldronApi.js', () => {
         cauldronDocument: tmpFixture,
       }).addPackageToContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master'),
+        PackagePath.fromString('https://github.com/org/repo.git#master'),
         'jsApiImplsBranches',
       );
       await cauldronApi({
         cauldronDocument: tmpFixture,
       }).removePackageFromContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/JsApiImpl.git'),
+        PackagePath.fromString('https://github.com/org/repo.git'),
         'jsApiImplsBranches',
       );
       const jsApiImplBranchesArr = jp.query(
@@ -2760,31 +2602,12 @@ describe('CauldronApi.js', () => {
   });
 
   describe('hasJsPackageBranchInContainer [JS API Implementation branch]', () => {
-    it('should throw if the native application descriptor is partial', async () => {
-      const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
-      const api = cauldronApi({ cauldronDocument: tmpFixture });
-      await api.addPackageToContainer(
-        AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master'),
-        'jsApiImplsBranches',
-      );
-      assert(
-        await doesThrow(
-          api.hasJsPackageBranchInContainer,
-          api,
-          AppPlatformDescriptor.fromString('test:android'),
-          PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master'),
-          'jsApiImplsBranches',
-        ),
-      );
-    });
-
     it('should return false if there is not git branch for the js api impl', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
       const api = cauldronApi({ cauldronDocument: tmpFixture });
       const result = await api.hasJsPackageBranchInContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master'),
+        PackagePath.fromString('https://github.com/org/repo.git#master'),
         'jsApiImplsBranches',
       );
       expect(result).false;
@@ -2795,12 +2618,12 @@ describe('CauldronApi.js', () => {
       const api = cauldronApi({ cauldronDocument: tmpFixture });
       await api.addPackageToContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master'),
+        PackagePath.fromString('https://github.com/org/repo.git#master'),
         'jsApiImplsBranches',
       );
       const result = await api.hasJsPackageBranchInContainer(
         AppVersionDescriptor.fromString('test:android:17.7.0'),
-        PackagePath.fromString('https://github.com/foo/JsApiImpl.git#master'),
+        PackagePath.fromString('https://github.com/org/repo.git#master'),
         'jsApiImplsBranches',
       );
       expect(result).true;
@@ -2837,17 +2660,6 @@ describe('CauldronApi.js', () => {
   });
 
   describe('emptyContainer', () => {
-    it('should throw if provided a partial native application desscriptor', async () => {
-      const cauldron = cauldronApi();
-      assert(
-        await doesThrow(
-          cauldron.emptyContainer,
-          cauldron,
-          AppPlatformDescriptor.fromString('test:android'),
-        ),
-      );
-    });
-
     it('should remove all MiniApps from Container of target native application version', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
       const cauldron = cauldronApi({ cauldronDocument: tmpFixture });

@@ -1,12 +1,8 @@
 import { assert, expect } from 'chai';
 import { AppVersionDescriptor, yarn } from 'ern-core';
 import * as cauldron from 'ern-cauldron-api';
-import {
-  afterTest,
-  beforeTest,
-  doesThrow,
-  fixtures as utilFixtures,
-} from 'ern-util-dev';
+import { afterTest, beforeTest, fixtures as utilFixtures } from 'ern-util-dev';
+import { rejects } from 'assert';
 import * as container from '../src/container';
 import * as composite from '../src/composite';
 import * as pipeline from '../src/runContainerPipelineForDescriptor';
@@ -236,7 +232,7 @@ describe('utils.js', () => {
 
   describe('parseJsonFromStringOrFile', () => {
     it('should throw if the passed string is not valid json', async () => {
-      assert(await doesThrow(parseJsonFromStringOrFile, null, 'invalidjson'));
+      assert(rejects(parseJsonFromStringOrFile('invalidjson')));
     });
 
     it('should return parsed json if string is a patch to a cauldron file', async () => {

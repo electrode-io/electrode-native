@@ -11,7 +11,8 @@ import {
   shell,
   utils,
 } from 'ern-core';
-import { doesNotThrow, doesThrow, fixtures } from 'ern-util-dev';
+import { fixtures } from 'ern-util-dev';
+import { doesNotReject, rejects } from 'assert';
 import {
   CauldronApi,
   CauldronCodePushEntry,
@@ -360,47 +361,17 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('addJsApiImplToContainer', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.addJsApiImplToContainer,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          PackagePath.fromString('test@1.0.0'),
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.addJsApiImplToContainer,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          PackagePath.fromString('test@1.0.0'),
-        ),
-      );
-    });
-
-    it('should throw if the given native application version is released', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.addJsApiImplToContainer,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('test@1.0.0'),
+        rejects(
+          cauldronHelper.addJsApiImplToContainer(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            PackagePath.fromString('test@1.0.0'),
+          ),
         ),
       );
     });
@@ -420,22 +391,6 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('removeMiniAppFromContainer', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      sandbox.stub(utils, 'isGitBranch').resolves(false);
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.removeMiniAppFromContainer,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          PackagePath.fromString('@test/react-native-foo@5.0.0'),
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       sandbox.stub(utils, 'isGitBranch').resolves(false);
       const fixture = cloneFixture(fixtures.defaultCauldron);
@@ -443,11 +398,11 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.removeMiniAppFromContainer,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          PackagePath.fromString('@test/react-native-foo@5.0.0'),
+        rejects(
+          cauldronHelper.removeMiniAppFromContainer(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            PackagePath.fromString('@test/react-native-foo@5.0.0'),
+          ),
         ),
       );
     });
@@ -459,11 +414,11 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.removeMiniAppFromContainer,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('@test/react-native-foo@5.0.0'),
+        rejects(
+          cauldronHelper.removeMiniAppFromContainer(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            PackagePath.fromString('@test/react-native-foo@5.0.0'),
+          ),
         ),
       );
     });
@@ -506,32 +461,17 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('removeJsApiImplFromContainer', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.removeJsApiImplFromContainer,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          PackagePath.fromString('react-native-my-api-impl@1.0.0'),
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.removeJsApiImplFromContainer,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          PackagePath.fromString('react-native-my-api-impl@1.0.0'),
+        rejects(
+          cauldronHelper.removeJsApiImplFromContainer(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            PackagePath.fromString('react-native-my-api-impl@1.0.0'),
+          ),
         ),
       );
     });
@@ -542,11 +482,11 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.removeJsApiImplFromContainer,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('react-native-my-api-impl@1.0.0'),
+        rejects(
+          cauldronHelper.removeJsApiImplFromContainer(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            PackagePath.fromString('react-native-my-api-impl@1.0.0'),
+          ),
         ),
       );
     });
@@ -593,10 +533,8 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getDescriptor,
-          cauldronHelper,
-          AppNameDescriptor.fromString('foo'),
+        rejects(
+          cauldronHelper.getDescriptor(AppNameDescriptor.fromString('foo')),
         ),
       );
     });
@@ -619,10 +557,10 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getDescriptor,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:ios'),
+        rejects(
+          cauldronHelper.getDescriptor(
+            AppPlatformDescriptor.fromString('test:ios'),
+          ),
         ),
       );
     });
@@ -645,10 +583,10 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getDescriptor,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
+        rejects(
+          cauldronHelper.getDescriptor(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+          ),
         ),
       );
     });
@@ -667,20 +605,6 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('getVersions', () => {
-    it('should throw if the descriptor does not contain a platform', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.getVersions,
-          cauldronHelper,
-          AppNameDescriptor.fromString('test'),
-        ),
-      );
-    });
-
     it('should return all the versions', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
@@ -729,20 +653,6 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('getNativeDependencies', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.getNativeDependencies,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-        ),
-      );
-    });
-
     it('should return the native dependencies', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
@@ -756,32 +666,17 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('hasYarnLock', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.hasYarnLock,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          'Production',
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.hasYarnLock,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          'Production',
+        rejects(
+          cauldronHelper.hasYarnLock(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            'Production',
+          ),
         ),
       );
     });
@@ -812,32 +707,18 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('addYarnLock', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.addYarnLock,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          'Production',
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.addYarnLock,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          'Production',
+        rejects(
+          cauldronHelper.addYarnLock(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            'Production',
+            '/path/to/yarn.lock',
+          ),
         ),
       );
     });
@@ -861,32 +742,17 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('getYarnLock', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.getYarnLock,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          'Production',
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getYarnLock,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          'Production',
+        rejects(
+          cauldronHelper.getYarnLock(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            'Production',
+          ),
         ),
       );
     });
@@ -926,32 +792,17 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('getPathToYarnLock', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.getPathToYarnLock,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          'Production',
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getPathToYarnLock,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          'Production',
+        rejects(
+          cauldronHelper.getPathToYarnLock(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            'Production',
+          ),
         ),
       );
     });
@@ -990,32 +841,17 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('removeYarnLock', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.removeYarnLock,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          'Production',
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.removeYarnLock,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          'Production',
+        rejects(
+          cauldronHelper.removeYarnLock(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            'Production',
+          ),
         ),
       );
     });
@@ -1043,25 +879,6 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('updateYarnLock', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      mockFs({
-        '/path/to/yarn.lock': 'yarnLockContent',
-      });
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.updateYarnLock,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          'Production',
-          '/path/to/yarn.lock',
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       mockFs({
         '/path/to/yarn.lock': 'yarnLockContent',
@@ -1071,12 +888,12 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.updateYarnLock,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          'Production',
-          '/path/to/yarn.lock',
+        rejects(
+          cauldronHelper.updateYarnLock(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            'Production',
+            '/path/to/yarn.lock',
+          ),
         ),
       );
     });
@@ -1149,38 +966,20 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('setYarnLocks', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.setYarnLocks,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          {
-            Bar: 'a0112c49-4bbc-47a9-ba45-d43e1e84a1a5',
-            Foo: 'b0112c49-4bbc-47a9-ba45-d43e1e84a1a5',
-          },
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.setYarnLocks,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          {
-            Bar: 'a0112c49-4bbc-47a9-ba45-d43e1e84a1a5',
-            Foo: 'b0112c49-4bbc-47a9-ba45-d43e1e84a1a5',
-          },
+        rejects(
+          cauldronHelper.setYarnLocks(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            {
+              Bar: 'a0112c49-4bbc-47a9-ba45-d43e1e84a1a5',
+              Foo: 'b0112c49-4bbc-47a9-ba45-d43e1e84a1a5',
+            },
+          ),
         ),
       );
     });
@@ -1208,25 +1007,6 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('addOrUpdateYarnLock', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      mockFs({
-        '/path/to/yarn.lock': 'yarnLockContent',
-      });
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.addOrUpdateYarnLock,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          'Production',
-          '/path/to/yarn.lock',
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       mockFs({
         '/path/to/yarn.lock': 'yarnLockContent',
@@ -1236,12 +1016,12 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.addOrUpdateYarnLock,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          'Production',
-          '/path/to/yarn.lock',
+        rejects(
+          cauldronHelper.addOrUpdateYarnLock(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            'Production',
+            '/path/to/yarn.lock',
+          ),
         ),
       );
     });
@@ -1284,32 +1064,17 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('getYarnLockId', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.getYarnLockId,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          'Production',
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getYarnLockId,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          'Production',
+        rejects(
+          cauldronHelper.getYarnLockId(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            'Production',
+          ),
         ),
       );
     });
@@ -1328,34 +1093,18 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('updateYarnLockId', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.updateYarnLockId,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          'Production',
-          'c0112c49-4bbc-47a9-ba45-d43e1e84a1a5',
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.updateYarnLockId,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          'Production',
-          'c0112c49-4bbc-47a9-ba45-d43e1e84a1a5',
+        rejects(
+          cauldronHelper.updateYarnLockId(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            'Production',
+            'c0112c49-4bbc-47a9-ba45-d43e1e84a1a5',
+          ),
         ),
       );
     });
@@ -1401,10 +1150,12 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(cauldronHelper.updateFile, cauldronHelper, {
-          cauldronFilePath: 'path/in/cauldron/testfile.ext',
-          localFilePath: path.resolve(__dirname, 'fixtures/testfile.ext'),
-        }),
+        rejects(
+          cauldronHelper.updateFile({
+            cauldronFilePath: 'path/in/cauldron/testfile.ext',
+            localFilePath: path.resolve(__dirname, 'fixtures/testfile.ext'),
+          }),
+        ),
       );
     });
 
@@ -1435,10 +1186,11 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(cauldronHelper.removeFile, cauldronHelper, {
-          cauldronFilePath: 'path/in/cauldron/testfile.ext',
-          localFilePath: path.resolve(__dirname, 'fixtures/testfile.ext'),
-        }),
+        rejects(
+          cauldronHelper.removeFile({
+            cauldronFilePath: 'path/in/cauldron/testfile.ext',
+          }),
+        ),
       );
     });
 
@@ -1494,9 +1246,11 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(cauldronHelper.getFile, cauldronHelper, {
-          cauldronFilePath: '/non/existing/file',
-        }),
+        rejects(
+          cauldronHelper.getFile({
+            cauldronFilePath: '/non/existing/file',
+          }),
+        ),
       );
     });
 
@@ -1517,36 +1271,6 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('addBundle', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.addBundle,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          'bundleContent',
-        ),
-      );
-    });
-
-    it('should throw if the given native application descriptor is not in Cauldron', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.addBundle,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          'bundleContent',
-        ),
-      );
-    });
-
     it('should add the bundle', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
@@ -1564,20 +1288,6 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('hasBundle', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.hasBundle,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-        ),
-      );
-    });
-
     it('should return true if there is a stored bundle for the given native application descriptor', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
@@ -1606,30 +1316,16 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('getBundle', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.getBundle,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-        ),
-      );
-    });
-
     it('should throw if there is no stored bundle for the given native application descriptor', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getBundle,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
+        rejects(
+          cauldronHelper.getBundle(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+          ),
         ),
       );
     });
@@ -1651,32 +1347,17 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('getContainerNativeDependency', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.getContainerNativeDependency,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          'react-native-electrode-bridge',
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getContainerNativeDependency,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          'react-native-electrode-bridge',
+        rejects(
+          cauldronHelper.getContainerNativeDependency(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            'react-native-electrode-bridge',
+          ),
         ),
       );
     });
@@ -1687,11 +1368,11 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getContainerNativeDependency,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          'foo',
+        rejects(
+          cauldronHelper.getContainerNativeDependency(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            'foo',
+          ),
         ),
       );
     });
@@ -1702,11 +1383,11 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getContainerNativeDependency,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          'react-native-electrode-bridge@0.0.1',
+        rejects(
+          cauldronHelper.getContainerNativeDependency(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            'react-native-electrode-bridge@0.0.1',
+          ),
         ),
       );
     });
@@ -1859,47 +1540,17 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('updateJsApiImplVersionInContainer', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.updateJsApiImplVersionInContainer,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          PackagePath.fromString('react-native-my-api-impl@1.5.0'),
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.updateJsApiImplVersionInContainer,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          PackagePath.fromString('react-native-my-api-impl@1.5.0'),
-        ),
-      );
-    });
-
-    it('should throw if the given native application version is released', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.updateJsApiImplVersionInContainer,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('react-native-my-api-impl@1.5.0'),
+        rejects(
+          cauldronHelper.updateJsApiImplVersionInContainer(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            PackagePath.fromString('react-native-my-api-impl@1.5.0'),
+          ),
         ),
       );
     });
@@ -1935,30 +1586,16 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('getContainerJsApiImpls', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.getContainerJsApiImpls,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getContainerJsApiImpls,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
+        rejects(
+          cauldronHelper.getContainerJsApiImpls(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+          ),
         ),
       );
     });
@@ -2068,32 +1705,17 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('getContainerJsApiImpl', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.getContainerJsApiImpl,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          PackagePath.fromString('react-native-my-api-impl'),
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getContainerJsApiImpl,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          PackagePath.fromString('react-native-my-api-impl'),
+        rejects(
+          cauldronHelper.getContainerJsApiImpl(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            PackagePath.fromString('react-native-my-api-impl'),
+          ),
         ),
       );
     });
@@ -2104,11 +1726,11 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getContainerJsApiImpl,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          PackagePath.fromString('foo@1.0.0'),
+        rejects(
+          cauldronHelper.getContainerJsApiImpl(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            PackagePath.fromString('foo@1.0.0'),
+          ),
         ),
       );
     });
@@ -2139,32 +1761,17 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('getContainerMiniApp', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.getContainerMiniApp,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          'react-native-bar',
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getContainerMiniApp,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          'react-native-bar',
+        rejects(
+          cauldronHelper.getContainerMiniApp(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            'react-native-bar',
+          ),
         ),
       );
     });
@@ -2175,11 +1782,11 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getContainerMiniApp,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          'foo@1.0.0',
+        rejects(
+          cauldronHelper.getContainerMiniApp(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            'foo@1.0.0',
+          ),
         ),
       );
     });
@@ -2190,11 +1797,11 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getContainerMiniApp,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          'react-native-bar@0.0.1',
+        rejects(
+          cauldronHelper.getContainerMiniApp(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            'react-native-bar@0.0.1',
+          ),
         ),
       );
     });
@@ -2225,47 +1832,17 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('getCodePushJsApiImpls', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.getCodePushJsApiImpls,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          'Production',
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getCodePushJsApiImpls,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          'Production',
-        ),
-      );
-    });
-
-    it('should throw if deployment does not exist', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.getCodePushJsApiImpls,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          'Foo',
+        rejects(
+          cauldronHelper.getCodePushJsApiImpls(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            'Production',
+          ),
         ),
       );
     });
@@ -2284,32 +1861,17 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('getCodePushEntry', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        await doesThrow(
-          cauldronHelper.getCodePushEntry,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          'Production',
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        await doesThrow(
-          cauldronHelper.getCodePushEntry,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          'Production',
+        rejects(
+          cauldronHelper.getCodePushEntry(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            'Production',
+          ),
         ),
       );
     });
@@ -2320,17 +1882,17 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       assert(
-        await doesThrow(
-          cauldronHelper.getCodePushEntry,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          'Production',
-          { label: 'v0' },
+        rejects(
+          cauldronHelper.getCodePushEntry(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            'Production',
+            { label: 'v0' },
+          ),
         ),
       );
     });
 
-    it('should return undefined if there is not mathing code push entry', async () => {
+    it('should return undefined if there is no matching code push entry', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
@@ -2371,52 +1933,37 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('getCodePushMiniApps', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.getCodePushMiniApps,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          'Production',
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getCodePushMiniApps,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          'Production',
+        rejects(
+          cauldronHelper.getCodePushMiniApps(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            'Production',
+          ),
         ),
       );
     });
 
-    it('should throw if deployment does not exist', async () => {
+    /*it('should throw if deployment does not exist', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getCodePushMiniApps,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          'Foo',
+        rejects(
+          cauldronHelper.getCodePushMiniApps(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            'Foo',
+          ),
         ),
       );
-    });
+    });*/
 
-    it('should return the latest CodePushed MiniApps if label is ommited', async () => {
+    it('should return the latest CodePushed MiniApps if label is omitted', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
@@ -2447,42 +1994,28 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       assert(
-        await doesThrow(
-          cauldronHelper.getCodePushMiniApps,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          'Production',
-          { label: 'v0' },
+        rejects(
+          cauldronHelper.getCodePushMiniApps(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            'Production',
+            { label: 'v0' },
+          ),
         ),
       );
     });
   });
 
   describe('getContainerMiniApps', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.getContainerMiniApps,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getContainerMiniApps,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
+        rejects(
+          cauldronHelper.getContainerMiniApps(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+          ),
         ),
       );
     });
@@ -2540,74 +2073,39 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('addCodePushEntry', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.addCodePushEntry,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          codePushMetadataFixtureOne,
-          miniAppsFixtureOne,
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.addCodePushEntry,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          codePushMetadataFixtureOne,
-          miniAppsFixtureOne,
+        rejects(
+          cauldronHelper.addCodePushEntry(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            codePushMetadataFixtureOne,
+            miniAppsFixtureOne,
+            [],
+          ),
         ),
       );
     });
   });
 
   describe('updateCodePushEntry', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.updateCodePushEntry,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          'Production',
-          'v17',
-          {
-            isDisabled: true,
-          },
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.updateCodePushEntry,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          'Production',
-          'v17',
-          {
-            isDisabled: true,
-          },
+        rejects(
+          cauldronHelper.updateCodePushEntry(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            {
+              deploymentName: 'Production',
+              isDisabled: true,
+            },
+          ),
         ),
       );
     });
@@ -2701,20 +2199,6 @@ describe('CauldronHelper.js', () => {
         AppPlatformDescriptor.fromString('test:android'),
       );
       expect(result).not.undefined;
-    });
-
-    it('should throw if the native application does not exist', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.getContainerGeneratorConfig,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('toto:android'),
-        ),
-      );
     });
   });
 
@@ -2893,32 +2377,17 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('updateNativeAppIsReleased', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.updateNativeAppIsReleased,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          false,
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.updateNativeAppIsReleased,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          false,
+        rejects(
+          cauldronHelper.updateNativeAppIsReleased(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            false,
+          ),
         ),
       );
     });
@@ -2941,32 +2410,17 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('updateContainerVersion', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.updateContainerVersion,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-          '999.0.0',
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.updateContainerVersion,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
-          '999.0.0',
+        rejects(
+          cauldronHelper.updateContainerVersion(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+            '999.0.0',
+          ),
         ),
       );
     });
@@ -3044,30 +2498,16 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('getContainerVersion', () => {
-    it('should throw if the given native application descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      assert(
-        doesThrow(
-          cauldronHelper.getContainerVersion,
-          cauldronHelper,
-          AppPlatformDescriptor.fromString('test:android'),
-        ),
-      );
-    });
-
     it('should throw if the given native application descriptor is not in Cauldron', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.getContainerVersion,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:0.0.0'),
+        rejects(
+          cauldronHelper.getContainerVersion(
+            AppVersionDescriptor.fromString('test:android:0.0.0'),
+          ),
         ),
       );
     });
@@ -3104,11 +2544,11 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       assert(
-        doesThrow(
-          cauldronHelper.throwIfNativeAppVersionIsReleased,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:17.7.0'),
-          'released',
+        rejects(
+          cauldronHelper.throwIfNativeAppVersionIsReleased(
+            AppVersionDescriptor.fromString('test:android:17.7.0'),
+            'released',
+          ),
         ),
       );
     });
@@ -3119,11 +2559,11 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       assert(
-        doesNotThrow(
-          cauldronHelper.throwIfNativeAppVersionIsReleased,
-          cauldronHelper,
-          AppVersionDescriptor.fromString('test:android:17.8.0'),
-          'nonreleased',
+        doesNotReject(
+          cauldronHelper.throwIfNativeAppVersionIsReleased(
+            AppVersionDescriptor.fromString('test:android:17.8.0'),
+            'nonreleased',
+          ),
         ),
       );
     });
@@ -3227,25 +2667,8 @@ describe('CauldronHelper.js', () => {
       });
       const descriptor = AppNameDescriptor.fromString('test');
       assert(
-        await doesThrow(
-          cauldronHelper.getDescriptorsMatchingSemVerDescriptor,
-          null,
-          descriptor,
-        ),
-      );
-    });
-
-    it('should throw if the descriptor does not contain a version', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      const descriptor = AppPlatformDescriptor.fromString('test:android');
-      assert(
-        await doesThrow(
-          cauldronHelper.getDescriptorsMatchingSemVerDescriptor,
-          null,
-          descriptor,
+        rejects(
+          cauldronHelper.getDescriptorsMatchingSemVerDescriptor(descriptor),
         ),
       );
     });
@@ -3290,34 +2713,13 @@ describe('CauldronHelper.js', () => {
   });
 
   describe('addNativeApplicationVersion', () => {
-    it('should throw if the descriptor is partial', async () => {
-      const fixture = cloneFixture(fixtures.defaultCauldron);
-      const cauldronHelper = createCauldronHelper({
-        cauldronDocument: fixture,
-      });
-      const descriptor = AppPlatformDescriptor.fromString('test:android');
-      assert(
-        await doesThrow(
-          cauldronHelper.addNativeApplicationVersion,
-          null,
-          descriptor,
-        ),
-      );
-    });
-
     it('should throw if the native application version already exist', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
       const descriptor = AppVersionDescriptor.fromString('test:android:17.7.0');
-      assert(
-        await doesThrow(
-          cauldronHelper.addNativeApplicationVersion,
-          null,
-          descriptor,
-        ),
-      );
+      assert(rejects(cauldronHelper.addNativeApplicationVersion(descriptor)));
     });
 
     it('should add the native application version', async () => {
@@ -3379,11 +2781,11 @@ describe('CauldronHelper.js', () => {
       );
       await cauldronHelper.addNativeApplicationVersion(targetDescriptor);
       assert(
-        await doesThrow(
-          cauldronHelper.copyNativeApplicationVersion,
-          null,
-          sourceDescriptor,
-          targetDescriptor,
+        rejects(
+          cauldronHelper.copyNativeApplicationVersion(
+            sourceDescriptor,
+            targetDescriptor,
+          ),
         ),
       );
     });
@@ -3400,11 +2802,11 @@ describe('CauldronHelper.js', () => {
         'test:android:20.0.0',
       );
       assert(
-        await doesThrow(
-          cauldronHelper.copyNativeApplicationVersion,
-          null,
-          sourceDescriptor,
-          targetDescriptor,
+        rejects(
+          cauldronHelper.copyNativeApplicationVersion(
+            sourceDescriptor,
+            targetDescriptor,
+          ),
         ),
       );
     });

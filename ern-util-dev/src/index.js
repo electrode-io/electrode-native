@@ -246,26 +246,6 @@ ${diffOut}
   return api;
 }
 
-export async function doesThrow(asyncFn, thisArg, ...args) {
-  let threwError = false;
-  try {
-    await asyncFn.call(thisArg, ...args);
-  } catch (e) {
-    threwError = true;
-  }
-  return threwError === true;
-}
-
-export async function doesNotThrow(asyncFn, thisArg, ...args) {
-  let threwError = false;
-  try {
-    await asyncFn.call(thisArg, ...args);
-  } catch (e) {
-    threwError = true;
-  }
-  return threwError === false;
-}
-
 let logErrorStub;
 let logInfoStub;
 let logDebugStub;
