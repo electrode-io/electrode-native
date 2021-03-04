@@ -1,5 +1,5 @@
 import { assert, expect } from 'chai';
-import { doesThrow } from 'ern-util-dev';
+import { rejects } from 'assert';
 import sinon from 'sinon';
 import path from 'path';
 import fs from 'fs-extra';
@@ -236,12 +236,13 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString(path.join(__dirname, 'fixtures', 'miniapp')),
       ];
       assert(
-        await doesThrow(generateComposite, null, {
-          miniApps,
-          outDir: tmpOutDir,
-          pathToYarnLock: 'hello',
-        }),
-        'No exception was thrown !',
+        rejects(
+          generateComposite({
+            miniApps,
+            outDir: tmpOutDir,
+            pathToYarnLock: 'hello',
+          }),
+        ),
       );
     });
 
@@ -251,24 +252,26 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString(path.join(__dirname, 'fixtures', 'miniapp')),
       ];
       assert(
-        await doesThrow(generateComposite, null, {
-          miniApps,
-          outDir: tmpOutDir,
-          pathToYarnLock: 'hello',
-        }),
-        'No exception was thrown !',
+        rejects(
+          generateComposite({
+            miniApps,
+            outDir: tmpOutDir,
+            pathToYarnLock: 'hello',
+          }),
+        ),
       );
     });
 
     it('should throw an exception if at least one of the MiniApp path is using a git scheme [1]', async () => {
       const miniApps = [PackagePath.fromString('git://github.com:org/repo')];
       assert(
-        await doesThrow(generateComposite, null, {
-          miniApps,
-          outDir: tmpOutDir,
-          pathToYarnLock: 'hello',
-        }),
-        'No exception was thrown !',
+        rejects(
+          generateComposite({
+            miniApps,
+            outDir: tmpOutDir,
+            pathToYarnLock: 'hello',
+          }),
+        ),
       );
     });
 
@@ -278,24 +281,26 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('git://github.com:org/repo'),
       ];
       assert(
-        await doesThrow(generateComposite, null, {
-          miniApps,
-          outDir: tmpOutDir,
-          pathToYarnLock: 'hello',
-        }),
-        'No exception was thrown !',
+        rejects(
+          generateComposite({
+            miniApps,
+            outDir: tmpOutDir,
+            pathToYarnLock: 'hello',
+          }),
+        ),
       );
     });
 
     it('should throw an exception if one of the MiniApp is not using an explicit version [1]', async () => {
       const miniApps = [PackagePath.fromString('first-miniapp')];
       assert(
-        await doesThrow(generateComposite, null, {
-          miniApps,
-          outDir: tmpOutDir,
-          pathToYarnLock: 'hello',
-        }),
-        'No exception was thrown !',
+        rejects(
+          generateComposite({
+            miniApps,
+            outDir: tmpOutDir,
+            pathToYarnLock: 'hello',
+          }),
+        ),
       );
     });
 
@@ -305,12 +310,13 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('second-miniapp@1.0.0'),
       ];
       assert(
-        await doesThrow(generateComposite, null, {
-          miniApps,
-          outDir: tmpOutDir,
-          pathToYarnLock: 'hello',
-        }),
-        'No exception was thrown !',
+        rejects(
+          generateComposite({
+            miniApps,
+            outDir: tmpOutDir,
+            pathToYarnLock: 'hello',
+          }),
+        ),
       );
     });
 
@@ -320,12 +326,13 @@ describe('ern-container-gen utils.js', () => {
         PackagePath.fromString('second-miniapp@1.0.0'),
       ];
       assert(
-        await doesThrow(generateComposite, null, {
-          miniApps,
-          outDir: tmpOutDir,
-          pathToYarnLock: path.join(tmpOutDir, 'yarn.lock'),
-        }),
-        'No exception was thrown !',
+        rejects(
+          generateComposite({
+            miniApps,
+            outDir: tmpOutDir,
+            pathToYarnLock: path.join(tmpOutDir, 'yarn.lock'),
+          }),
+        ),
       );
     });
 
@@ -335,11 +342,13 @@ describe('ern-container-gen utils.js', () => {
       );
       const miniApps: PackagePath[] = [];
       assert(
-        await doesThrow(generateComposite, null, {
-          miniApps,
-          outDir: tmpOutDir,
-          pathToYarnLock: pathToSampleYarnLock,
-        }),
+        rejects(
+          generateComposite({
+            miniApps,
+            outDir: tmpOutDir,
+            pathToYarnLock: pathToSampleYarnLock,
+          }),
+        ),
       );
     });
 

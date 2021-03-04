@@ -6,6 +6,7 @@ import { PackagePath } from '../src/PackagePath';
 import { assert, expect } from 'chai';
 import { doesThrow } from 'ern-util-dev';
 import * as git from '../src/gitCli';
+import { rejects } from 'assert';
 
 const sandbox = sinon.createSandbox();
 
@@ -216,20 +217,20 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`;
 
     it('should throw if the package path is not a git path', async () => {
       assert(
-        await doesThrow(
-          coreUtils.getCommitShaOfGitBranchOrTag,
-          null,
-          PackagePath.fromString('registry-package@1.2.3'),
+        rejects(
+          coreUtils.getCommitShaOfGitBranchOrTag(
+            PackagePath.fromString('registry-package@1.2.3'),
+          ),
         ),
       );
     });
 
     it('should throw if the package path does not include a branch', async () => {
       assert(
-        await doesThrow(
-          coreUtils.getCommitShaOfGitBranchOrTag,
-          null,
-          PackagePath.fromString('https://github.com/org/repo.git'),
+        rejects(
+          coreUtils.getCommitShaOfGitBranchOrTag(
+            PackagePath.fromString('https://github.com/org/repo.git'),
+          ),
         ),
       );
     });
@@ -241,10 +242,10 @@ d9fa903349bbb9e7f86535cb69256e064d0fba65        refs/tags/v0.1.2`;
         },
       });
       assert(
-        await doesThrow(
-          coreUtils.getCommitShaOfGitBranchOrTag,
-          null,
-          PackagePath.fromString('https://github.com/org/repo.git#foo'),
+        rejects(
+          coreUtils.getCommitShaOfGitBranchOrTag(
+            PackagePath.fromString('https://github.com/org/repo.git#foo'),
+          ),
         ),
       );
     });

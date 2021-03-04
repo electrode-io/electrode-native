@@ -1,6 +1,6 @@
 import { assert, expect } from 'chai';
 import { FsCache, maxDefaultCacheSize } from '../src/FsCache';
-import { doesThrow } from 'ern-util-dev';
+import { rejects } from 'assert';
 import shell from '../src/shell';
 import path from 'path';
 import fs from 'fs';
@@ -17,7 +17,7 @@ describe('FsCache', () => {
   });
 
   describe('constructor', () => {
-    it('should succesfully create a new instance given valid parameters', () => {
+    it('should successfully create a new instance given valid parameters', () => {
       const sut = new FsCache<string>({
         addObjectToCacheDirectory: async (obj: string, dirPath: string) =>
           Promise.resolve(),
@@ -103,7 +103,7 @@ describe('FsCache', () => {
         rootCachePath: testRootCachePath,
       });
       await sut.addToCache('AString');
-      assert(await doesThrow(sut.addToCache, sut, 'AString'));
+      assert(rejects(sut.addToCache('AString')));
     });
 
     it('should add the object to the cache', async () => {
