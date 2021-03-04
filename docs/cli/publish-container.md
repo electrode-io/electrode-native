@@ -59,10 +59,10 @@
   - **As a json string**  
     For example `--extra '{"configKey": "configValue"}'`
   - **As a file path**  
-    For example `--extra /Users/username/my-publisher-config.json`  
+    For example `--extra <path>/publisher-config.json`  
     In that case, the configuration will be read from the file.
   - **As a Cauldron file path**  
-    For example `--extra cauldron://config/publishers/my-publisher-config.json`  
+    For example `--extra cauldron://config/publishers/publisher-config.json`  
     In that case, the configuration will be read from the file stored in Cauldron.  
     For this way to work, the file must exist in Cauldron (you can add a file to the cauldron by using the [ern cauldron add file] command).
 

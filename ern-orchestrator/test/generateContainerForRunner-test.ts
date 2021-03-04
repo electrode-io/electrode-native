@@ -21,7 +21,7 @@ describe('generateContainerForRunner', () => {
 
   it('should call runCauldronContainerGen with proper arguments if a descriptor is provided', async () => {
     const descriptor = AppVersionDescriptor.fromString('test:android:1.0.0');
-    const outDir = '/Users/foo/test';
+    const outDir = '/home/user/test';
     await generateContainerForRunner('android', {
       napDescriptor: descriptor,
       outDir,
@@ -38,7 +38,7 @@ describe('generateContainerForRunner', () => {
   });
 
   it('should call runLocalContainerGen with proper arguments if no descriptor is provided', async () => {
-    const outDir = '/Users/foo/test';
+    const outDir = '/home/user/test';
     const miniApps = [PackagePath.fromString('a@1.0.0')];
     const jsApiImpls = [PackagePath.fromString('b@1.0.0')];
     const dependencies = [PackagePath.fromString('c@1.0.0')];
@@ -60,7 +60,7 @@ describe('generateContainerForRunner', () => {
   });
 
   it('should call runLocalContainerGen with extra arguments if no descriptor is provided', async () => {
-    const outDir = '/Users/foo/test';
+    const outDir = '/home/user/test';
     const miniApps = [PackagePath.fromString('a@1.0.0')];
     const jsApiImpls = [PackagePath.fromString('b@1.0.0')];
     const dependencies = [PackagePath.fromString('c@1.0.0')];
@@ -84,10 +84,7 @@ describe('generateContainerForRunner', () => {
   });
 
   it('should call runLocalCompositeGen with extra arguments if no descriptor is provided', async () => {
-    const metroExtraNodeModules = [
-      'dependency-a',
-      '/home/user/path/to/dependency-b',
-    ];
+    const metroExtraNodeModules = ['dep-a', '/home/user/path/to/dep-b'];
     const extra = { androidConfig: { compileSdkVersion: '28' } };
     await generateContainerForRunner('android', {
       extra: {

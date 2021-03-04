@@ -62,10 +62,10 @@
     or
     `--extra '{"iosConfig": {"deploymentTarget": "11.0"}}'`
   - **As a file path**
-    For example `--extra /Users/username/my-container-config.json`
+    For example `--extra <path>/container-config.json`
     In that case, the configuration will be read from the file.
   - **As a Cauldron file path**
-    For example `--extra cauldron://config/container/my-container-config.json`
+    For example `--extra cauldron://config/container/container-config.json`
     In that case, the configuration will be read from the file stored in Cauldron.
     For this way to work, the file must exist in Cauldron (you can add a file to the cauldron by using the [ern cauldron add file] command).
 

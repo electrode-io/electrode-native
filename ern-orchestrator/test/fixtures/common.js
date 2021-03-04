@@ -6,34 +6,34 @@ export const withoutGitOrFileSystemPath = [
 ];
 
 export const withGitOrFileSystemPath = [
-  'git+ssh://github.com:electrode/react-native.git#master',
-  'file:/Users/username',
+  'git+ssh://github.com:org/repo.git#master',
+  'file:/home/user',
 ];
 
 export const withoutFileSystemPath = [
-  'git+ssh://github.com:electrode/react-native.git#master',
+  'git+ssh://github.com:org/repo.git#master',
   'package@1.2.3',
 ];
 
 export const supportedCauldronMiniAppsVersions = [
-  'git+ssh://github.com/MiniApp.git#master',
-  'git+ssh://github.com/MiniApp.git#v1.0.0',
-  'git+ssh://github.com/MiniApp.git#ea2e2d248c6af5eb14d76e4108ec922febd096f5',
-  'https://github.com/MiniApp.git#master',
-  'https://github.com/MiniApp.git#v1.0.0',
-  'https://github.com/MiniApp.git#ea2e2d248c6af5eb14d76e4108ec922febd096f5',
-  'MiniApp@1.0.0',
-  'MiniApp@1.0.0-beta',
+  'git+ssh://github.com/org/test-miniapp.git#master',
+  'git+ssh://github.com/org/test-miniapp.git#v1.0.0',
+  'git+ssh://github.com/org/test-miniapp.git#ea2e2d248c6af5eb14d76e4108ec922febd096f5',
+  'https://github.com/org/test-miniapp.git#master',
+  'https://github.com/org/test-miniapp.git#v1.0.0',
+  'https://github.com/org/test-miniapp.git#ea2e2d248c6af5eb14d76e4108ec922febd096f5',
+  'test-miniapp@1.0.0',
+  'test-miniapp@1.0.0-beta',
 ];
 
 export const unSupportedCauldronMiniAppsVersions = [
-  'git+ssh://github.com/MiniApp.git',
-  'https://github.com/MiniApp.git',
-  'MiniApp@^1.0.0',
-  'MiniApp@~1.0.0',
+  'git+ssh://github.com/org/test-miniapp.git',
+  'https://github.com/org/test-miniapp.git',
+  'test-miniapp@^1.0.0',
+  'test-miniapp@~1.0.0',
 ];
 
-export const withFileSystemPath = ['file:/Users/username'];
+export const withFileSystemPath = ['file:/home/user'];
 
 export const validNpmPackageNames = ['hello-world', '@hello/world'];
 

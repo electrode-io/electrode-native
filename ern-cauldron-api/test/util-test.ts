@@ -40,17 +40,13 @@ describe('util.js', () => {
 
   describe('buildNativeBinaryFileName', () => {
     it('should return the correct file name of Android binary', () => {
-      const result = util.buildNativeBinaryFileName(
-        'walmart',
-        'android',
-        '17.7.0',
-      );
-      expect(result).eql('walmart-android@17.7.0.apk');
+      const result = util.buildNativeBinaryFileName('app', 'android', '17.7.0');
+      expect(result).eql('app-android@17.7.0.apk');
     });
 
     it('should return the correct file name of iOS binary', () => {
-      const result = util.buildNativeBinaryFileName('walmart', 'ios', '17.7.0');
-      expect(result).eql('walmart-ios@17.7.0.app');
+      const result = util.buildNativeBinaryFileName('app', 'ios', '17.7.0');
+      expect(result).eql('app-ios@17.7.0.app');
     });
   });
 

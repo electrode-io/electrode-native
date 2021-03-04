@@ -50,7 +50,7 @@ The following illustrate such a configuration:
       },
       {
          "name":"ern-container-publisher-maven",
-         "url": "http://repository.example.com:8081/nexus/content/repositories"
+         "url": "https://repo.example.org/content/repositories"
       },
       {
          "name":"ern-container-publisher-jcenter"

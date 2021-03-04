@@ -146,7 +146,7 @@ At this time there is no way to set or update configuration through commands. Co
       },
       {
         "name": "maven",
-        "url": "http://repository.example.com:8081/nexus/content/repositories"
+        "url": "https://repo.example.org/content/repositories"
       }
     ]
   }

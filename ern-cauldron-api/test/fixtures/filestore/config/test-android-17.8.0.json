@@ -1,6 +1,6 @@
 {
   "codePush": {
-    "appName": "walmart-android",
+    "appName": "app-android",
     "versionModifiers": [
       {
         "deploymentName": "QA",

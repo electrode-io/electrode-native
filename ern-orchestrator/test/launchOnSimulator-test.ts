@@ -41,17 +41,17 @@ describe('launchOnSimulator', () => {
   });
 
   it('should ask the user to select an iOS device', async () => {
-    await launchOnSimulator('/Users/foo/test');
+    await launchOnSimulator('/home/user/test');
     sandbox.assert.calledOnce(askUserDeviceStub);
   });
 
   it('should kill all running simulators', async () => {
-    await launchOnSimulator('/Users/foo/test');
+    await launchOnSimulator('/home/user/test');
     sandbox.assert.calledOnce(killAllRunningSimulatorsStub);
   });
 
   it('should launch the simulator', async () => {
-    await launchOnSimulator('/Users/foo/test');
+    await launchOnSimulator('/home/user/test');
     sandbox.assert.calledWith(
       launchSimulatorStub,
       'DB3D6BC0-BB08-4340-8D03-A87D69E5BEA6',
@@ -59,25 +59,25 @@ describe('launchOnSimulator', () => {
   });
 
   it('should build the iOS runner', async () => {
-    await launchOnSimulator('/Users/foo/test');
+    await launchOnSimulator('/home/user/test');
     sandbox.assert.calledWith(
       buildIosRunnerStub,
-      '/Users/foo/test',
+      '/home/user/test',
       'DB3D6BC0-BB08-4340-8D03-A87D69E5BEA6',
     );
   });
 
   it('should install the iOS runner on the simulator', async () => {
-    await launchOnSimulator('/Users/foo/test');
+    await launchOnSimulator('/home/user/test');
     sandbox.assert.calledWith(
       installApplicationOnSimulatorStub,
       'DB3D6BC0-BB08-4340-8D03-A87D69E5BEA6',
-      '/Users/foo/test/build/Debug-iphonesimulator/ErnRunner.app',
+      '/home/user/test/build/Debug-iphonesimulator/ErnRunner.app',
     );
   });
 
   it('should launch the iOS runner on the simulator', async () => {
-    await launchOnSimulator('/Users/foo/test');
+    await launchOnSimulator('/home/user/test');
     sandbox.assert.calledWith(
       launchApplicationStub,
       'DB3D6BC0-BB08-4340-8D03-A87D69E5BEA6',

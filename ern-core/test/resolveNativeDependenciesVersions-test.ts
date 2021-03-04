@@ -53,29 +53,29 @@ describe('containsVersionMismatch', () => {
 describe('retainHighestVersion', () => {
   it('should work as expected', () => {
     const arrA = [
-      PackagePath.fromString('dependencyA@1.0.0'),
-      PackagePath.fromString('dependencyB@2.0.1'),
-      PackagePath.fromString('dependencyC@1.0.0'),
-      PackagePath.fromString('dependencyD@1.0.0'),
+      PackagePath.fromString('dep-a@1.0.0'),
+      PackagePath.fromString('dep-b@2.0.1'),
+      PackagePath.fromString('dep-c@1.0.0'),
+      PackagePath.fromString('dep-d@1.0.0'),
     ];
 
     const arrB = [
-      PackagePath.fromString('dependencyA@2.0.0'),
-      PackagePath.fromString('dependencyB@2.0.0'),
-      PackagePath.fromString('dependencyC@1.1.0'),
-      PackagePath.fromString('dependencyE@1.0.0'),
-      PackagePath.fromString('dependencyF@3.0.0'),
+      PackagePath.fromString('dep-a@2.0.0'),
+      PackagePath.fromString('dep-b@2.0.0'),
+      PackagePath.fromString('dep-c@1.1.0'),
+      PackagePath.fromString('dep-e@1.0.0'),
+      PackagePath.fromString('dep-f@3.0.0'),
     ];
 
     const result = retainHighestVersions(arrA, arrB);
     const stringifedResult = result.map((p) => p.toString());
     expect(stringifedResult).length(6);
-    expect(stringifedResult).includes('dependencyA@2.0.0');
-    expect(stringifedResult).includes('dependencyB@2.0.1');
-    expect(stringifedResult).includes('dependencyC@1.1.0');
-    expect(stringifedResult).includes('dependencyD@1.0.0');
-    expect(stringifedResult).includes('dependencyE@1.0.0');
-    expect(stringifedResult).includes('dependencyF@3.0.0');
+    expect(stringifedResult).includes('dep-a@2.0.0');
+    expect(stringifedResult).includes('dep-b@2.0.1');
+    expect(stringifedResult).includes('dep-c@1.1.0');
+    expect(stringifedResult).includes('dep-d@1.0.0');
+    expect(stringifedResult).includes('dep-e@1.0.0');
+    expect(stringifedResult).includes('dep-f@3.0.0');
   });
 });
 

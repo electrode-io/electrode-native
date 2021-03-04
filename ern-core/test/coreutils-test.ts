@@ -26,9 +26,6 @@ describe('utils.js', () => {
     afterTest();
   });
 
-  // ==========================================================
-  // isPublishedToNpm
-  // ==========================================================
   describe('isPublishedToNpm', () => {
     it('pkgName published in npm return true', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
@@ -72,9 +69,6 @@ describe('utils.js', () => {
     });
   });
 
-  // ==========================================================
-  // camelize
-  // ==========================================================
   describe('camelize', () => {
     it('camelcase word with lowercaseFirstLetter true', () => {
       expect(utils.camelize('Foo Bar', true)).to.eql('fooBar');
@@ -96,9 +90,6 @@ describe('utils.js', () => {
     });
   });
 
-  // ==========================================================
-  // splitCamelCaseString
-  // ==========================================================
   describe('splitCamelCaseString', () => {
     it('split camel case string', () => {
       expect(utils.splitCamelCaseString('')).to.eql(['']);
@@ -112,9 +103,6 @@ describe('utils.js', () => {
     });
   });
 
-  // ==========================================================
-  // getDefaultPackageNameForCamelCaseString
-  // ==========================================================
   describe('getDefaultPackageNameForCamelCaseString', () => {
     it('get default package name no module type', () => {
       const tests = [
@@ -199,9 +187,6 @@ describe('utils.js', () => {
     });
   });
 
-  // ==========================================================
-  // getModuleSuffix
-  // ==========================================================
   describe('getModuleSuffix', () => {
     it('returns the correct suffixes', () => {
       expect(utils.getModuleSuffix(MINIAPP)).to.eql('miniapp');
@@ -219,9 +204,6 @@ describe('utils.js', () => {
     });
   });
 
-  // ==========================================================
-  // getDefaultPackageNameForModule
-  // ==========================================================
   describe('getDefaultPackageNameForModule', () => {
     const tests = {
       api: [
@@ -303,9 +285,6 @@ describe('utils.js', () => {
     });
   });
 
-  // ==========================================================
-  // isDependencyApiImpl
-  // ==========================================================
   describe('isDependencyApiImpl', () => {
     it('return true if ern object resolves for native api impl', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
@@ -326,9 +305,6 @@ describe('utils.js', () => {
     });
   });
 
-  // ==========================================================
-  // isDependencyApi
-  // ==========================================================
   describe('isDependencyApi', () => {
     it('returns true if ern module type is set to ern-api', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
@@ -340,9 +316,6 @@ describe('utils.js', () => {
     });
   });
 
-  // ==========================================================
-  // isDependencyApiOrApiImpl
-  // ==========================================================
   describe('isDependencyApiOrApiImpl', () => {
     it('return true if ern object resolves for api', async () => {
       const yarnStub = sinon.stub(yarn, 'info');
@@ -372,9 +345,6 @@ describe('utils.js', () => {
     });
   });
 
-  // ==========================================================
-  // isValidElectrodeNativeModuleName
-  // ==========================================================
   describe('isValidElectrodeNativeModuleName', () => {
     fixtures.validElectrodeNativeModuleNames.forEach((name) => {
       it('should return true if valid electrode native module name', () => {
@@ -389,9 +359,6 @@ describe('utils.js', () => {
     });
   });
 
-  // ==========================================================
-  // getDownloadedPluginPath
-  // ==========================================================
   describe('getDownloadedPluginPath', () => {
     it('return download plugin path for npm plugin', () => {
       const pluginPath = 'node_modules/react-native-code-push';

@@ -199,12 +199,12 @@ describe('CauldronHelper.js', () => {
       sandbox.stub(utils, 'isGitBranch').resolves(false);
       await cauldronHelper.addMiniAppToContainer(
         AppVersionDescriptor.fromString('test:android:17.8.0'),
-        PackagePath.fromString('https://github.com/foo/test-miniapp.git#tag'),
+        PackagePath.fromString('https://github.com/org/test-miniapp.git#tag'),
       );
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0];
       expect(
         nativeAppVersion.container.miniApps.includes(
-          'https://github.com/foo/test-miniapp.git#tag',
+          'https://github.com/org/test-miniapp.git#tag',
         ),
       ).true;
     });
@@ -217,12 +217,12 @@ describe('CauldronHelper.js', () => {
       sandbox.stub(utils, 'isGitBranch').resolves(false);
       await cauldronHelper.addMiniAppToContainer(
         AppVersionDescriptor.fromString('test:android:17.8.0'),
-        PackagePath.fromString('https://github.com/foo/test-miniapp.git#tag'),
+        PackagePath.fromString('https://github.com/org/test-miniapp.git#tag'),
       );
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0];
       expect(
         nativeAppVersion.container.miniAppsBranches.includes(
-          'https://github.com/foo/test-miniapp.git#tag',
+          'https://github.com/org/test-miniapp.git#tag',
         ),
       ).false;
     });
@@ -239,13 +239,13 @@ describe('CauldronHelper.js', () => {
       await cauldronHelper.addMiniAppToContainer(
         AppVersionDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString(
-          'https://github.com/foo/test-miniapp.git#master',
+          'https://github.com/org/test-miniapp.git#master',
         ),
       );
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0];
       expect(
         nativeAppVersion.container.miniApps.includes(
-          'https://github.com/foo/test-miniapp.git#6319d9ef0c237907c784a8c472b000d5ff83b49a',
+          'https://github.com/org/test-miniapp.git#6319d9ef0c237907c784a8c472b000d5ff83b49a',
         ),
       ).true;
     });
@@ -262,13 +262,13 @@ describe('CauldronHelper.js', () => {
       await cauldronHelper.addMiniAppToContainer(
         AppVersionDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString(
-          'https://github.com/foo/test-miniapp.git#master',
+          'https://github.com/org/test-miniapp.git#master',
         ),
       );
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0];
       expect(
         nativeAppVersion.container.miniAppsBranches.includes(
-          'https://github.com/foo/test-miniapp.git#master',
+          'https://github.com/org/test-miniapp.git#master',
         ),
       ).true;
     });
@@ -301,13 +301,13 @@ describe('CauldronHelper.js', () => {
       await cauldronHelper.updateMiniAppVersionInContainer(
         AppVersionDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString(
-          'git+ssh://git@github.com:electrode-io/gitMiniApp.git#0.0.10',
+          'git+ssh://git@github.com:org/test-miniapp.git#0.0.10',
         ),
       );
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0];
       expect(
         nativeAppVersion.container.miniApps.includes(
-          'git+ssh://git@github.com:electrode-io/gitMiniApp.git#0.0.10',
+          'git+ssh://git@github.com:org/test-miniapp.git#0.0.10',
         ),
       ).true;
     });
@@ -324,13 +324,13 @@ describe('CauldronHelper.js', () => {
       await cauldronHelper.updateMiniAppVersionInContainer(
         AppVersionDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString(
-          'git+ssh://git@github.com:electrode-io/gitMiniApp.git#master',
+          'git+ssh://git@github.com:org/test-miniapp.git#master',
         ),
       );
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0];
       expect(
         nativeAppVersion.container.miniApps.includes(
-          'git+ssh://git@github.com:electrode-io/gitMiniApp.git#6319d9ef0c237907c784a8c472b000d5ff83b49a',
+          'git+ssh://git@github.com:org/test-miniapp.git#6319d9ef0c237907c784a8c472b000d5ff83b49a',
         ),
       ).true;
     });
@@ -347,13 +347,13 @@ describe('CauldronHelper.js', () => {
       await cauldronHelper.updateMiniAppVersionInContainer(
         AppVersionDescriptor.fromString('test:android:17.8.0'),
         PackagePath.fromString(
-          'git+ssh://git@github.com:electrode-io/gitMiniApp.git#master',
+          'git+ssh://git@github.com:org/test-miniapp.git#master',
         ),
       );
       const nativeAppVersion = jp.query(fixture, testAndroid1780Path)[0];
       expect(
         nativeAppVersion.container.miniAppsBranches.includes(
-          'git+ssh://git@github.com:electrode-io/gitMiniApp.git#master',
+          'git+ssh://git@github.com:org/test-miniapp.git#master',
         ),
       ).true;
     });
@@ -1737,6 +1737,7 @@ describe('CauldronHelper.js', () => {
       expect(result.basePath).eql('react-native-electrode-bridge');
     });
   });
+
   describe('syncContainerMiniApps', () => {
     it('should not update anything if miniapps versions are the same', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);
@@ -1749,7 +1750,7 @@ describe('CauldronHelper.js', () => {
           PackagePath.fromString('@test/react-native-foo@5.0.0'),
           PackagePath.fromString('react-native-bar@3.0.0'),
           PackagePath.fromString(
-            'git+ssh://git@github.com:electrode-io/gitMiniApp.git#0.0.9',
+            'git+ssh://git@github.com:org/test-miniapp.git#0.0.9',
           ),
         ],
       );
@@ -1762,7 +1763,7 @@ describe('CauldronHelper.js', () => {
         'react-native-bar@3.0.0',
       );
       expect(nativeAppVersion.container.miniApps).includes(
-        'git+ssh://git@github.com:electrode-io/gitMiniApp.git#0.0.9',
+        'git+ssh://git@github.com:org/test-miniapp.git#0.0.9',
       );
     });
 
@@ -1777,7 +1778,7 @@ describe('CauldronHelper.js', () => {
           PackagePath.fromString('@test/react-native-foo@5.0.0'),
           PackagePath.fromString('react-native-bar@3.0.0'),
           PackagePath.fromString(
-            'git+ssh://git@github.com:electrode-io/gitMiniApp.git#0.0.9',
+            'git+ssh://git@github.com:org/test-miniapp.git#0.0.9',
           ),
           PackagePath.fromString('new-miniapp@0.0.1'),
         ],
@@ -1791,7 +1792,7 @@ describe('CauldronHelper.js', () => {
         'react-native-bar@3.0.0',
       );
       expect(nativeAppVersion.container.miniApps).includes(
-        'git+ssh://git@github.com:electrode-io/gitMiniApp.git#0.0.9',
+        'git+ssh://git@github.com:org/test-miniapp.git#0.0.9',
       );
       expect(nativeAppVersion.container.miniApps).includes('new-miniapp@0.0.1');
     });
@@ -1808,7 +1809,7 @@ describe('CauldronHelper.js', () => {
           PackagePath.fromString('@test/react-native-foo@6.0.0'),
           PackagePath.fromString('react-native-bar@3.0.0'),
           PackagePath.fromString(
-            'git+ssh://git@github.com:electrode-io/gitMiniApp.git#1.0.0',
+            'git+ssh://git@github.com:org/test-miniapp.git#1.0.0',
           ),
         ],
       );
@@ -1821,7 +1822,7 @@ describe('CauldronHelper.js', () => {
         'react-native-bar@3.0.0',
       );
       expect(nativeAppVersion.container.miniApps).includes(
-        'git+ssh://git@github.com:electrode-io/gitMiniApp.git#1.0.0',
+        'git+ssh://git@github.com:org/test-miniapp.git#1.0.0',
       );
     });
 
@@ -1837,7 +1838,7 @@ describe('CauldronHelper.js', () => {
           PackagePath.fromString('@test/react-native-foo@6.0.0'),
           PackagePath.fromString('react-native-bar@3.0.0'),
           PackagePath.fromString(
-            'git+ssh://git@github.com:electrode-io/gitMiniApp.git#1.0.0',
+            'git+ssh://git@github.com:org/test-miniapp.git#1.0.0',
           ),
           PackagePath.fromString('new-miniapp@0.0.1'),
         ],
@@ -1851,7 +1852,7 @@ describe('CauldronHelper.js', () => {
         'react-native-bar@3.0.0',
       );
       expect(nativeAppVersion.container.miniApps).includes(
-        'git+ssh://git@github.com:electrode-io/gitMiniApp.git#1.0.0',
+        'git+ssh://git@github.com:org/test-miniapp.git#1.0.0',
       );
       expect(nativeAppVersion.container.miniApps).includes('new-miniapp@0.0.1');
     });
@@ -2518,7 +2519,7 @@ describe('CauldronHelper.js', () => {
       );
       expect(result).to.be.an('array').of.length(4);
       expect(result.map((m) => m.toString())).contains(
-        'https://github.com/foo/foo.git#6319d9ef0c237907c784a8c472b000d5ff83b49a',
+        'https://github.com/org/foo-miniapp.git#6319d9ef0c237907c784a8c472b000d5ff83b49a',
       );
     });
 
@@ -2533,7 +2534,7 @@ describe('CauldronHelper.js', () => {
       );
       expect(result).to.be.an('array').of.length(4);
       expect(result.map((m) => m.toString())).contains(
-        'https://github.com/foo/foo.git#master',
+        'https://github.com/org/foo-miniapp.git#master',
       );
     });
   });
@@ -3128,9 +3129,6 @@ describe('CauldronHelper.js', () => {
     });
   });
 
-  // ==========================================================
-  // getNapDescriptorStrings
-  // ==========================================================
   describe('getNapDescriptorStrings', () => {
     it('should return an empty array if no match', async () => {
       const fixture = cloneFixture(fixtures.emptyCauldron);
@@ -3221,9 +3219,6 @@ describe('CauldronHelper.js', () => {
     });
   });
 
-  // ==========================================================
-  // getDescriptorsMatchingSemVerDescriptor
-  // ==========================================================
   describe('getDescriptorsMatchingSemVerDescriptor', () => {
     it('should throw if the descriptor does not contain a platform', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);

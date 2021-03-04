@@ -9,8 +9,8 @@ import _ from 'lodash';
  * - 2: Version of the dependency (as seen in package.json)
  *
  * Sample yarn.lock entry:
- * my-miniapp@0.8.3:
- * groups[1] : my-miniapp
+ * test-miniapp@0.8.3:
+ * groups[1] : test-miniapp
  * groups[2] : 0.8.3
  * @param dep The dependency to build a Regular Expression for
  */
@@ -28,8 +28,8 @@ export function getYarnLockTopLevelRegistryDependencyRe(
  * - 2: Version of the dependency (as seen in package.json)
  *
  * Sample yarn.lock entry:
- * "my-miniapp@https://github.com/org/MyMiniApp.git#master":
- * groups[1] : my-miniapp
+ * "test-miniapp@https://github.com/org/test-miniapp.git#master":
+ * groups[1] : test-miniapp
  * groups[2] : master
  * @param dep The dependency to build a Regular Expression for
  */

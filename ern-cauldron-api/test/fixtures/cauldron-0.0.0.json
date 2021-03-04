@@ -3,7 +3,7 @@
   "config": {
     "manifest": {
       "override": {
-        "url": "git@gecgithub01.test.com:react-native/ern-test-manifest.git",
+        "url": "https://github.com/org/ern-test-manifest.git",
         "type": "partial"
       }
     }
@@ -43,7 +43,7 @@
                 "container": [
                   "@test/react-native-foo@4.0.0",
                   "react-native-bar@2.0.0",
-                  "git+ssh://git@github.com/myminiapp.git#master"
+                  "git+ssh://git@github.com/org/test-miniapp.git#master"
                 ]
               },
               "codePush": {
