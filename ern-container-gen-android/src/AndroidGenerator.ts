@@ -269,7 +269,7 @@ You should replace "${dependency}" with "implementation ${dependency}"`,
 ${annotationProcessorPrefix} dependency prefix has been deprecated and will be removed in a future release.
 You should replace "${annotationProcessorPrefix}:${dependency}" with "annotationProcessor '${dependency}'"`,
               );
-            } else if (/^[^:]+:[^:]+:[^:]+$/.test(dependency)) {
+            } else if (/^[^:\s'(]+:[^:]+:[^:]+$/.test(dependency)) {
               androidDependencies.regular.push(dependency);
             } else {
               androidDependencies.raw.push(dependency);
