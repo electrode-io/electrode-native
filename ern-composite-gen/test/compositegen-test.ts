@@ -46,9 +46,6 @@ describe('ern-container-gen utils.js', () => {
     sandbox.restore();
   });
 
-  // ==========================================================
-  // getMiniAppsDeltas
-  // ==========================================================
   describe('getMiniAppsDeltas', () => {
     it('should compute new deltas', () => {
       const miniApps = [
@@ -96,9 +93,6 @@ describe('ern-container-gen utils.js', () => {
     });
   });
 
-  // ==========================================================
-  // runYarnUsingMiniAppDeltas
-  // ==========================================================
   describe('runYarnUsingMiniAppDeltas', () => {
     it('should yarn add new MiniApps', async () => {
       const miniAppsDeltas = {
@@ -150,9 +144,6 @@ describe('ern-container-gen utils.js', () => {
     });
   });
 
-  // ==========================================================
-  // getPackageJsonDependenciesBasedOnMiniAppDeltas
-  // ==========================================================
   describe('getPackageJsonDependenciesBasedOnMiniAppDeltas', () => {
     it('should inject MiniApps that have same version as previous', () => {
       const miniAppsDeltas = {
@@ -239,9 +230,6 @@ describe('ern-container-gen utils.js', () => {
     );
   };
 
-  // ==========================================================
-  // generateComposite [with yarn lock]
-  // ==========================================================
   describe('generateComposite [with yarn lock]', () => {
     it('should throw an exception if at least one of the MiniApp path is using a file scheme [1]', async () => {
       const miniApps = [
@@ -390,9 +378,6 @@ describe('ern-container-gen utils.js', () => {
     });
   });
 
-  // ==========================================================
-  // generateComposite [without yarn lock]
-  // ==========================================================
   const fakeYarnInit = (rootDir: string, rnVersion: string) => {
     fs.writeFileSync(
       path.join(tmpOutDir, 'package.json'),
@@ -452,9 +437,6 @@ describe('ern-container-gen utils.js', () => {
     });
   });
 
-  // ==========================================================
-  // applyYarnResolutions
-  // ==========================================================
   describe('applyYarnResolutions', () => {
     it('should add resolutions field to the package.json', async () => {
       const packageJsonPath = path.join(tmpOutDir, 'package.json');
@@ -496,9 +478,6 @@ describe('ern-container-gen utils.js', () => {
     });
   });
 
-  // ==========================================================
-  // generateComposite [with custom extraNodeModules]
-  // ==========================================================
   describe('generateComposite [with custom extraNodeModules]', () => {
     it('should create custom extraNodeModules in Metro config', async () => {
       yarnCliStub.init.callsFake(() => fakeYarnInit(tmpOutDir, '0.57.0'));

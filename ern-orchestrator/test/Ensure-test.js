@@ -24,9 +24,6 @@ describe('Ensure.js', () => {
     sandbox.restore();
   });
 
-  // ==========================================================
-  // noGitOrFilesystemPath
-  // ==========================================================
   describe('noGitOrFilesystemPath', () => {
     fixtures.withoutGitOrFileSystemPath.forEach((obj) => {
       it('should not throw if no git or file system path', () => {
@@ -47,9 +44,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // noFileSystemPath
-  // ==========================================================
   describe('noFileSystemPath', () => {
     fixtures.withoutFileSystemPath.forEach((obj) => {
       it('should not throw if no file system path', () => {
@@ -70,9 +64,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // napDescritorExistsInCauldron
-  // ==========================================================
   describe('napDescritorExistsInCauldron', () => {
     it('should not throw if nap descriptor exists in Cauldron', async () => {
       cauldronHelperStub.isDescriptorInCauldron.resolves(true);
@@ -115,9 +106,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // napDescritorDoesNotExistsInCauldron
-  // ==========================================================
   describe('napDescritorDoesNotExistsInCauldron', () => {
     it('should throw if nap descriptor exists in Cauldron', async () => {
       cauldronHelperStub.isDescriptorInCauldron.resolves(true);
@@ -142,9 +130,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // dependencyNotInNativeApplicationVersionContainer
-  // ==========================================================
   describe('dependencyNotInNativeApplicationVersionContainer', () => {
     it('should throw if dependency is in native application version Container', async () => {
       cauldronHelperStub.isNativeDependencyInContainer.resolves(true);
@@ -182,9 +167,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // dependencyIsOrphaned
-  // ==========================================================
   describe('dependencyIsOrphaned', async () => {
     it('should throw if dependency is not orphaned', async () => {
       cauldronHelperStub.getYarnLock.resolves(
@@ -229,9 +211,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // dependencyNotInUseByAMiniApp
-  // ==========================================================
   describe('dependencyNotInUseByAMiniApp', () => {
     it('should not throw if dependency is undefined', async () => {
       assert(
@@ -245,9 +224,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // dependencyIsInNativeApplicationVersionContainer
-  // ==========================================================
   describe('dependencyIsInNativeApplicationVersionContainer', () => {
     it('should not throw if dependency is in native application version Container', async () => {
       cauldronHelperStub.getContainerNativeDependency.resolves(
@@ -287,9 +263,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // miniAppIsInNativeApplicationVersionContainer
-  // ==========================================================
   describe('miniAppIsInNativeApplicationVersionContainer', () => {
     it('should not throw if MiniApp is in native application version Container', async () => {
       cauldronHelperStub.isMiniAppInContainer.resolves(true);
@@ -338,9 +311,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // miniAppIsInNativeApplicationVersionContainerWithDifferentVersion
-  // ==========================================================
   describe('miniAppIsInNativeApplicationVersionContainerWithDifferentVersion', () => {
     it('should not throw if miniapp is in native application version Container with different version', async () => {
       cauldronHelperStub.isMiniAppInContainer.resolves(true);
@@ -382,9 +352,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // dependencyIsInNativeApplicationVersionContainerWithDifferentVersion
-  // ==========================================================
   describe('dependencyIsInNativeApplicationVersionContainerWithDifferentVersion', () => {
     it('should not throw if dependency is in native application version Container with different version', async () => {
       cauldronHelperStub.getContainerNativeDependency.resolves(
@@ -429,9 +396,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // miniAppNotInNativeApplicationVersionContainer
-  // ==========================================================
   describe('miniAppNotInNativeApplicationVersionContainer', () => {
     it('should not throw for undefined MiniApp', async () => {
       assert(
@@ -456,9 +420,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // publishedToNpm
-  // ==========================================================
   describe('publishedToNpm', () => {
     it('should not throw if dependency is published to npm', async () => {
       sandbox.stub(utils, 'isPublishedToNpm').resolves(true);
@@ -475,9 +436,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // cauldronIsActive
-  // ==========================================================
   /*describe('cauldronIsActive', () => {
     it('should not throw if a cauldron is active', async () => {
       isActiveStub.returns(true)
@@ -490,9 +448,6 @@ describe('Ensure.js', () => {
     })
   })*/
 
-  // ==========================================================
-  // isValidNpmPackageName
-  // ==========================================================
   describe('isValidNpmPackageName', () => {
     fixtures.validNpmPackageNames.forEach((name) => {
       it('should not throw if name is valid', () => {
@@ -513,9 +468,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // isValidElectrodeNativeModuleName
-  // ==========================================================
   describe('isValidElectrodeNativeModuleName', () => {
     coreFixtures.validElectrodeNativeModuleNames.forEach((name) => {
       it('should not throw if name is valid', () => {
@@ -536,9 +488,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // sameNativeApplicationAndPlatform
-  // ==========================================================
   describe('sameNativeApplicationAndPlatform', () => {
     it('should not throw if descriptors are matching the same native application and platform', () => {
       expect(() =>
@@ -557,9 +506,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // checkIfCodePushOptionsAreValid
-  // ==========================================================
   describe('checkIfCodePushOptionsAreValid', () => {
     it('should not throw if descriptors and semVerDescriptor are specified', () => {
       expect(() =>
@@ -600,9 +546,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // pathExist
-  // ==========================================================
   describe('pathExist', () => {
     it('should not throw if path exist', async () => {
       const tmpDirPath = createTmpDir();
@@ -615,9 +558,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // isFilePath
-  // ==========================================================
   describe('isFilePath', () => {
     it('should not throw if path is a file', async () => {
       const tmpDirPath = createTmpDir();
@@ -637,9 +577,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // isDirectoryPath
-  // ==========================================================
   describe('isDirectoryPath', () => {
     it('should not throw if path is a  directory', async () => {
       const tmpDirPath = createTmpDir();
@@ -661,9 +598,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // isSupportedMiniAppOrJsApiImplVersion
-  // ==========================================================
   describe('isSupportedMiniAppOrJsApiImplVersion', () => {
     fixtures.supportedCauldronMiniAppsVersions.forEach((pkg) => {
       it(`should not throw if suported version (pkg: ${pkg})`, () => {
@@ -684,9 +618,6 @@ describe('Ensure.js', () => {
     });
   });
 
-  // ==========================================================
-  // isContainerPath
-  // ==========================================================
   describe('isContainerPath', () => {
     it('should not throw if path points to a container', async () => {
       const tmpDirPath = createTmpDir();

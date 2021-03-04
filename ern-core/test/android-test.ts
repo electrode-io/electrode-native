@@ -32,9 +32,6 @@ describe('android.js', () => {
     sandbox.restore();
   });
 
-  // ==========================================================
-  // runAndroid
-  // ==========================================================
   describe('runAndroid', () => {
     it('runAndroid throws error with more than 2 running devices', async () => {
       execpStub.resolves(fixtures.getDeviceResult);
@@ -51,9 +48,6 @@ describe('android.js', () => {
     });
   });
 
-  // ==========================================================
-  // runAndroid
-  // ==========================================================
   describe('getDevices', () => {
     it('get adb devices as list from stdout', async () => {
       const avdStdOut = await readFile(
@@ -75,9 +69,6 @@ describe('android.js', () => {
     });
   });
 
-  // ==========================================================
-  // askUserToSelectAvdEmulator
-  // ==========================================================
   describe('askUserToSelectAvdEmulator', () => {
     it('prompt user if previous emulator flag is false', async () => {
       execpStub.resolves(fixtures.oneAvdList);
@@ -146,9 +137,6 @@ describe('android.js', () => {
     });
   });
 
-  // ==========================================================
-  // getAndroidAvds
-  // ==========================================================
   describe('getAndroidAvds', () => {
     it('return non-empty list with 2 avds', async () => {
       const avdStdOut = await readFile(
@@ -178,9 +166,6 @@ describe('android.js', () => {
     });
   });
 
-  // ==========================================================
-  // getGradleByPlatform
-  // ==========================================================
   describe('getGradleByPlatform', () => {
     it('check gradlew is returned for win  ', () => {
       const platform = Object.getOwnPropertyDescriptor(process, 'platform');
@@ -216,9 +201,6 @@ describe('android.js', () => {
     });
   });
 
-  // ==========================================================
-  // androidGetBootAnimProp
-  // ==========================================================
   describe('installApk', () => {
     it('adb install -r', async () => {
       execpStub.resolves('Stopped');
@@ -226,9 +208,6 @@ describe('android.js', () => {
     });
   });
 
-  // ==========================================================
-  // resolveAndroidVersions
-  // ==========================================================
   describe('resolveAndroidVersions', () => {
     it('should return all default versions if no versions are provided', () => {
       const versions = android.resolveAndroidVersions();

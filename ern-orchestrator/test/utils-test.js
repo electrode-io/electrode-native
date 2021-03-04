@@ -66,9 +66,6 @@ describe('utils.js', () => {
     sandbox.restore();
   });
 
-  // ==========================================================
-  // syncCauldronContainer
-  // ==========================================================
   describe('syncCauldronContainer', () => {
     beforeEach(() => {
       cauldronHelperStub.getContainerMiniApps.resolves([]);
@@ -160,10 +157,6 @@ describe('utils.js', () => {
     });
   });
 
-  // ==========================================================
-  // getDefaultExtraConfigurationOfPublisherFromCauldron
-  // ==========================================================
-
   describe('getDefaultExtraConfigurationOfPublisherFromCauldron', () => {
     it('should return the correct default configuration for a maven publisher [1]', () => {
       const conf = getDefaultExtraConfigurationOfPublisherFromCauldron({
@@ -241,9 +234,6 @@ describe('utils.js', () => {
     });
   });
 
-  // ==========================================================
-  // parseJsonFromStringOrFile
-  // ==========================================================
   describe('parseJsonFromStringOrFile', () => {
     it('should throw if the passed string is not valid json', async () => {
       assert(await doesThrow(parseJsonFromStringOrFile, null, 'invalidjson'));

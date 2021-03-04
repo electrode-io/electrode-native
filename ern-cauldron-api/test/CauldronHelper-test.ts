@@ -3129,9 +3129,6 @@ describe('CauldronHelper.js', () => {
     });
   });
 
-  // ==========================================================
-  // getNapDescriptorStrings
-  // ==========================================================
   describe('getNapDescriptorStrings', () => {
     it('should return an empty array if no match', async () => {
       const fixture = cloneFixture(fixtures.emptyCauldron);
@@ -3222,9 +3219,6 @@ describe('CauldronHelper.js', () => {
     });
   });
 
-  // ==========================================================
-  // getDescriptorsMatchingSemVerDescriptor
-  // ==========================================================
   describe('getDescriptorsMatchingSemVerDescriptor', () => {
     it('should throw if the descriptor does not contain a platform', async () => {
       const fixture = cloneFixture(fixtures.defaultCauldron);

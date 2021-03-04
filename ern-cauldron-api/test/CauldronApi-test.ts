@@ -65,9 +65,6 @@ describe('CauldronApi.js', () => {
     sandbox.restore();
   });
 
-  // ==========================================================
-  // upgradeCauldronSchema
-  // ==========================================================
   describe('upgradeCauldronSchema', () => {
     it('should properly upgrade a cauldron [schema 0.0.0 => 3.0.0]', async () => {
       sandbox.stub(utils, 'isGitBranch').resolves(true);
@@ -88,9 +85,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // commit
-  // ==========================================================
   describe('commit', () => {
     it('should call commit on the document store', async () => {
       const api = cauldronApi();
@@ -107,9 +101,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getCauldron
-  // ==========================================================
   describe('getCauldron', () => {
     it('should return the Cauldron document', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -118,9 +109,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getCauldronSchemaVersion
-  // ==========================================================
   describe('getCauldronSchemaVersion', () => {
     it('should return the Cauldron schema version', async () => {
       const schemaVersion = await cauldronApi().getCauldronSchemaVersion();
@@ -137,9 +125,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // beginTransaction
-  // ==========================================================
   describe('beginTransaction', () => {
     it('should call beginTransaction on the document store', async () => {
       const api = cauldronApi();
@@ -159,9 +144,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // discardTransaction
-  // ==========================================================
   describe('discardTransaction', () => {
     it('should call discardTransaction on the document store', async () => {
       const api = cauldronApi();
@@ -184,9 +166,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // commitTransaction
-  // ==========================================================
   describe('commitTransaction', () => {
     it('should call commitTransaction on the document store', async () => {
       const api = cauldronApi();
@@ -229,9 +208,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getNativeApplications
-  // ==========================================================
   describe('getNativeApplications', () => {
     it('should return the native applications', async () => {
       const nativeApps = await cauldronApi().getNativeApplications();
@@ -239,9 +215,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getNativeApplication
-  // ==========================================================
   describe('getNativeApplication', () => {
     it('should return the native applications array', async () => {
       const nativeApp = await cauldronApi().getNativeApplication(
@@ -266,9 +239,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getPlatforms
-  // ==========================================================
   describe('getPlatforms', () => {
     it('should return the platforms array', async () => {
       const platforms = await cauldronApi().getPlatforms(
@@ -285,9 +255,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getPlatform
-  // ==========================================================
   describe('getPlatform', () => {
     it('should return the platform object given its name', async () => {
       const platformObj = await cauldronApi().getPlatform(
@@ -323,9 +290,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getVersions
-  // ==========================================================
   describe('getVersions', () => {
     it('should return the versions array', async () => {
       const versionsArr = await cauldronApi().getVersions(
@@ -361,9 +325,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getVersion
-  // ==========================================================
   describe('getVersion', () => {
     it('should return the version object', async () => {
       const versionObj = await cauldronApi().getVersion(
@@ -410,9 +371,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getCodePushEntries
-  // ==========================================================
   describe('getCodePushEntries', () => {
     it('should return the code push Production entries', async () => {
       const entries = await cauldronApi().getCodePushEntries(
@@ -467,9 +425,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // setCodePushEntries
-  // ==========================================================
   describe('setCodePushEntries', () => {
     it('should set the code push entries', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -501,9 +456,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getContainerMiniApps
-  // ==========================================================
   describe('getContainerMiniApps', () => {
     it('should return the MiniApps array of a native application version Container', async () => {
       const containerMiniApps = await cauldronApi().getContainerMiniApps(
@@ -546,9 +498,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getNativeDependencies
-  // ==========================================================
   describe('getNativeDependencies', () => {
     it('should return the native dependencies of a native application version Container', async () => {
       const containerDependencies = await cauldronApi().getNativeDependencies(
@@ -591,9 +540,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getContainerJsApiImpls
-  // ==========================================================
   describe('getContainerJsApiImpls', () => {
     it('should throw an error if the native application version does not exist', async () => {
       const api = cauldronApi();
@@ -615,9 +561,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getContainerJsApiImpl
-  // ==========================================================
   describe('getContainerJsApiImpl', () => {
     it('should throw an error if the native application version does not exist', async () => {
       const api = cauldronApi();
@@ -648,9 +591,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getNativeDependency
-  // ==========================================================
   describe('getNativeDependency', () => {
     it('should return the native dependency string if no version is provided', async () => {
       const dependency = await cauldronApi().getContainerNativeDependency(
@@ -729,9 +669,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getConfig
-  // ==========================================================
   describe('getConfig', () => {
     it('[get application version config] should return the native application version config', async () => {
       const configObj = await cauldronApi({
@@ -797,9 +734,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // clearCauldron
-  // ==========================================================
   describe('clearCauldron', () => {
     it('should empty the Cauldron', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -808,9 +742,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // addDescriptor
-  // ==========================================================
   describe('addDescriptor', () => {
     it('should add a native application entry', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -846,9 +777,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // removeDescriptor
-  // ==========================================================
   describe('removeDescriptor', () => {
     it('should remove a top level native app', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -884,9 +812,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // createNativeApplication
-  // ==========================================================
   describe('createNativeApplication', () => {
     it('should create the native application object', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -914,9 +839,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // removeNativeApplication
-  // ==========================================================
   describe('removeNativeApplication', () => {
     it('should remove the native application given its name', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -950,9 +872,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // createPlatform
-  // ==========================================================
   describe('createPlatform', () => {
     it('should create the platform object', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -989,9 +908,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // removePlatform
-  // ==========================================================
   describe('removePlatform', () => {
     it('should remove the native application platform given its name', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -1038,9 +954,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // createVersion
-  // ==========================================================
   describe('createVersion', () => {
     it('should create the version object', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -1092,9 +1005,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // removeVersion
-  // ==========================================================
   describe('removeVersion', () => {
     it('should remove the native application version given its name', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -1141,9 +1051,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // updateVersion
-  // ==========================================================
   describe('updateVersion', () => {
     it('should perform the update', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -1183,9 +1090,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // addOrUpdateDescription
-  // ==========================================================
 
   describe('addOrUpdateDescription', () => {
     it('should add a description if it does not exist yet', async () => {
@@ -1256,9 +1160,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // removePackageFromContainer [native dependency]
-  // ==========================================================
   describe('removePackageFromContainer [Native Dependency]', () => {
     it('should remove the native dependency', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -1316,9 +1217,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // updatePackageInContainer [MiniApp]
-  // ==========================================================
   describe('updatePackageInContainer [MiniApp]', () => {
     it('should update the MiniApp version', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -1376,9 +1274,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // updateTopLevelContainerVersion
-  // ==========================================================
   describe('updateTopLevelContainerVersion', () => {
     it('should update the top level container version', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -1407,9 +1302,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // updateContainerVersion
-  // ==========================================================
   describe('updateContainerVersion', () => {
     it('should update the container version of the given native application version', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -1450,9 +1342,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getTopLevelContainerVersion
-  // ==========================================================
   describe('getTopLevelContainerVersion', () => {
     it('should return the top level container version', async () => {
       const result = await cauldronApi().getTopLevelContainerVersion(
@@ -1462,9 +1351,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getContainerVersion
-  // ==========================================================
   describe('getContainerVersion', () => {
     it('should return the container version of the given native application version', async () => {
       const result = await cauldronApi().getContainerVersion(
@@ -1485,9 +1371,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // removePackageFromContainer
-  // ==========================================================
   describe('removePackageFromContainer [MiniApp]', () => {
     it('should remove the MiniApp from the container of the native application version', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -1544,9 +1427,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // addPackageToContainer [MiniApp]
-  // ==========================================================
   describe('addPackageToContainer [MiniApp]', () => {
     it('should add the MiniApp to the container of the native application version', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -1601,9 +1481,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // addPackageToContainer [Native Dependency]
-  // ==========================================================
   describe('addPackageToContainer [Native Dependency]', () => {
     it('should add the native dependency to the container of the native application version', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -1660,9 +1537,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // addPackageToContainer [JS API Implementation]
-  // ==========================================================
   describe('addPackageToContainer [JS API Implementation]', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
@@ -1720,9 +1594,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  //  removePackageFromContainer [JS API Implementation]
-  // ==========================================================
   describe('removePackageFromContainer [JS API Implementation]', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
@@ -1808,9 +1679,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // updatePackageInContainer [JS API Implementation]
-  // ==========================================================
   describe('updatePackageInContainer [JS API Implementation]', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
@@ -1867,9 +1735,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // addCodePushEntry
-  // ==========================================================
   describe('addCodePushEntry', () => {
     it('should add the code push entry to QA', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -1926,9 +1791,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // addFile
-  // ==========================================================
   describe('addFile', () => {
     it('should throw if cauldronFilePath is undefined', async () => {
       const api = cauldronApi();
@@ -1985,9 +1847,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // updateFile
-  // ==========================================================
   describe('updateFile', () => {
     it('should throw if cauldronFilePath is undefined', async () => {
       const api = cauldronApi();
@@ -2054,9 +1913,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // removeFile
-  // ==========================================================
   describe('removeFile', () => {
     it('should throw if cauldronFilePath is undefined', async () => {
       const api = cauldronApi();
@@ -2110,9 +1966,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getFile
-  // ==========================================================
   describe('getFile', () => {
     it('should throw if cauldronFilePath is undefined', async () => {
       const api = cauldronApi();
@@ -2164,9 +2017,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // hasYarnLock
-  // ==========================================================
   describe('hasYarnLock', () => {
     it('should return true if the native application version has the given yarn lock key', async () => {
       const hasYarnLock = await cauldronApi().hasYarnLock(
@@ -2198,9 +2048,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // addYarnLock
-  // ==========================================================
   describe('addYarnLock', () => {
     it('should properly add the yarn lock', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -2242,9 +2089,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getYarnLockId
-  // ==========================================================
   describe('getYarnLockId', () => {
     it('should properly return the yarn lock id if it exists', async () => {
       const id = await cauldronApi().getYarnLockId(
@@ -2275,9 +2119,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getYarnLock
-  // ==========================================================
   describe('getYarnLock', () => {
     it('should throw if the native application version is not found', async () => {
       const newId = '30bf4eff61586d71fe5d52e31a2cfabcbb31e33e';
@@ -2293,9 +2134,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getPathToYarnLock
-  // ==========================================================
   describe('getPathToYarnLock', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
@@ -2310,9 +2148,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // removeYarnLock
-  // ==========================================================
   describe('removeYarnLock', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
@@ -2327,9 +2162,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // updateYarnLock
-  // ==========================================================
   describe('updateYarnLock', () => {
     it('should throw if the native application version is not found', async () => {
       const api = cauldronApi();
@@ -2345,9 +2177,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // updateYarnLockId
-  // ==========================================================
   describe('updateYarnLockId', () => {
     it('should properly update the yarn lock id of an existing key', async () => {
       const newId = '30bf4eff61586d71fe5d52e31a2cfabcbb31e33e';
@@ -2393,9 +2222,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // setYarnLocks
-  // ==========================================================
   describe('setYarnLocks', () => {
     it('should set the yarn locks', async () => {
       const yarnLocks = { test: '30bf4eff61586d71fe5d52e31a2cfabcbb31e33e' };
@@ -2436,9 +2262,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // addBundle
-  // ==========================================================
   describe('addBundle', () => {
     it('should properly add the bundle', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -2449,9 +2272,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // hasBundle
-  // ==========================================================
   describe('hasBundle', () => {
     it('should return true if there is a stored bundle for the given native application descriptor', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -2478,9 +2298,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getBundle
-  // ==========================================================
   describe('getBundle', () => {
     it('should throw if the native application descriptor is partial', async () => {
       const api = cauldronApi();
@@ -2519,9 +2336,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // addPackageToContainer [MiniApp Branch]
-  // ==========================================================
   describe('addPackageToContainer [MiniApp Branch]', () => {
     it('should throw if the native application descriptor is partial', async () => {
       const api = cauldronApi();
@@ -2588,9 +2402,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // addPackageToContainer [JS API Implementation branch]
-  // ==========================================================
   describe('addPackageToContainer [JS API Implementation branch]', () => {
     it('should throw if the native application descriptor is partial', async () => {
       const api = cauldronApi();
@@ -2660,9 +2471,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // updatePackageInContainer [MiniApp branch]
-  // ==========================================================
   describe('updatePackageInContainer [MiniApp branch]', () => {
     it('should throw if the native application descriptor is partial', async () => {
       const api = cauldronApi();
@@ -2718,9 +2526,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // updatePackageInContainer [JS API Implementation branch]
-  // ==========================================================
   describe('updateJsApiImplBranchInContainer', () => {
     it('should throw if the native application descriptor is partial', async () => {
       const api = cauldronApi();
@@ -2778,9 +2583,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // removePackageFromContainer [MiniApp branch]
-  // ==========================================================
   describe('removePackageFromContainer [MiniApp branch]', () => {
     it('should throw if the native application descriptor is partial', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -2869,9 +2671,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // removePackageFromContainer [JS API Implementation branch]
-  // ==========================================================
   describe('removePackageFromContainer [JS API Implementation branch]', () => {
     it('should throw if the native application descriptor is partial', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -2960,9 +2759,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // hasJsPackageBranchInContainer [JS API Implementation branch]
-  // ==========================================================
   describe('hasJsPackageBranchInContainer [JS API Implementation branch]', () => {
     it('should throw if the native application descriptor is partial', async () => {
       const tmpFixture = JSON.parse(JSON.stringify(fixtures.defaultCauldron));
@@ -3011,9 +2807,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // getConfigFilePath
-  // ==========================================================
   describe('getConfigFilePath', () => {
     it('should return default config path if no descriptor is provided', () => {
       const cauldron = cauldronApi();
@@ -3043,9 +2836,6 @@ describe('CauldronApi.js', () => {
     });
   });
 
-  // ==========================================================
-  // emptyContainer
-  // ==========================================================
   describe('emptyContainer', () => {
     it('should throw if provided a partial native application desscriptor', async () => {
       const cauldron = cauldronApi();
