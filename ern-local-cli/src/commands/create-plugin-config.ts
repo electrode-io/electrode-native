@@ -21,7 +21,7 @@ export const builder = (argv: Argv) => {
 
 // Bump this version whenever Electrode Native plugin configuration
 // offers new features or has structural changes
-const manifestBaseErnVersion = '0.14.0';
+const manifestBaseErnVersion = '0.46.0';
 
 export const commandHandler = async ({ plugin }: { plugin: PackagePath }) => {
   if (!(await fs.pathExists('manifest.json'))) {
