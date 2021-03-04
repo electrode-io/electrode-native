@@ -59,6 +59,7 @@ Class | Method |request type | Description
 *complex.SystemTestEventApi* | [**testEvent**](docs/SystemTestEventApi.md#testEvent) | **event** event/testEvent |
 *complex.SystemTestsApi* | [**testArrayOfStrings**](docs/SystemTestsApi.md#testArrayOfStrings) | **request** /testArrayOfStrings |
 *complex.SystemTestsApi* | [**testMultiArgs**](docs/SystemTestsApi.md#testMultiArgs) | **request** /testMultiArgs |
+*complex.TestEventObjectParamApi* | [**testEventObjectParam**](docs/TestEventObjectParamApi.md#testEventObjectParam) | **event** event/testObjectParam |
 
 ## Documentation for Models
  - [complex.ErnObject](docs/ErnObject.md)

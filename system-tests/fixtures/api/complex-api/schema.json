@@ -8,6 +8,31 @@
     "application/json"
   ],
   "paths": {
+    "event/testObjectParam": {
+      "event": {
+        "tags": ["TestEventObjectParam"],
+        "operationId": "TestEventObjectParam",
+        "description": "TestEventObjectParam",
+        "parameters": [
+          {
+            "name": "param1",
+            "in": "body",
+            "description": "This is param1",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "param2",
+            "in": "body",
+            "description": "This is param2",
+            "schema": {
+              "type": "object"
+            }
+          }
+        ]
+      }
+    },
     "/testArrayOfStrings": {
       "post": {
         "tags": [
