@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
-    "react-native": "0.63.3"
+    "react-native": "0.63.4"
   },
   "dependencies": {
     "react-native-ernmovie-api": "0.0.11"
