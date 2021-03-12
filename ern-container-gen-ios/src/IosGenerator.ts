@@ -312,7 +312,7 @@ Make sure to run these commands before building the container.`,
 
           //
           // Build an array of these directories
-          const re = RegExp('"../node_modules/([^"]+)"', 'g');
+          const re = RegExp('"?../node_modules/([^"]+)"?;', 'g');
           const matches = [];
           let match = re.exec(f);
           while (match !== null) {
