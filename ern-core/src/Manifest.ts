@@ -876,10 +876,21 @@ export class Manifest {
                 path: 'APIs',
                 public: true,
               },
+              {
+                from: 'IOS/*.h',
+                group: 'APIs',
+                path: 'APIs',
+                public: true,
+              },
             ],
             addSource: [
               {
                 from: 'IOS/*.swift',
+                group: 'APIs',
+                path: 'APIs',
+              },
+              {
+                from: 'IOS/*.m',
                 group: 'APIs',
                 path: 'APIs',
               },
