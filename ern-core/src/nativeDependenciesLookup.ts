@@ -9,7 +9,7 @@ const NodeModulesLen = 'node_modules'.length;
 
 export function findDirectoriesContainingNativeCode(rootDir: string): string[] {
   return readDir(rootDir)
-    .filter((a) => /.swift$|.pbxproj$|.java$|.framework\//.test(a))
+    .filter((a) => /\.swift$|\.m$|\.pbxproj$|\.java$|\.framework\//.test(a))
     .filter((a) => !/ElectrodeContainer.framework/.test(a));
 }
 
