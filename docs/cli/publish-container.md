@@ -6,7 +6,7 @@
 
 ### Currently Available Official Publishers
 
-- [git](https://github.com/electrode-io/ern-container-publisher-maven)  
+- [git](https://github.com/electrode-io/ern-container-publisher-git)  
   To publish Android and iOS Electrode Native Containers to a remote git repository. The git repository provider does not matter (GitHub, BitBucket, TFS ...).
 
 - [maven](https://github.com/electrode-io/ern-container-publisher-maven)  
