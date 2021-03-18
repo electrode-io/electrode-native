@@ -2,11 +2,25 @@
 
 package com.walmartlabs.ern.container.miniapps;
 
-import com.walmartlabs.ern.container.ElectrodeMiniAppActivity;
+import androidx.annotation.NonNull;
 
-public class {{{pascalCaseName}}}Activity extends ElectrodeMiniAppActivity {
+import com.ern.api.impl.navigation.ElectrodeBaseActivity;
+import com.walmartlabs.ern.container.R;
+
+public class {{{pascalCaseName}}}Activity extends ElectrodeBaseActivity {
     @Override
-    protected String getMiniAppName() {
+    protected int mainLayout() {
+        return R.layout.activity_host_miniapp;
+    }
+
+    @NonNull
+    @Override
+    protected String getRootComponentName() {
         return "{{{name}}}";
+    }
+
+    @Override
+    protected int getFragmentContainerId() {
+        return R.id.fragment_container;
     }
 }

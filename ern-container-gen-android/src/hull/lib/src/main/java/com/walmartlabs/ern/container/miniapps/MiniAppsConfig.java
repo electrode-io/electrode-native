@@ -4,9 +4,9 @@ package com.walmartlabs.ern.container.miniapps;
 
 {{>generatedCode}}
 
-import com.walmartlabs.ern.container.ElectrodeMiniAppActivity;
+import androidx.annotation.NonNull;
 
-import android.support.annotation.NonNull;
+import com.ern.api.impl.navigation.ElectrodeBaseActivity;
 
 import java.util.HashMap;
 
@@ -27,15 +27,15 @@ public class MiniAppsConfig {
         ;
 
         private final String mMiniAppName;
-        private final Class<? extends ElectrodeMiniAppActivity> mActivityClass;
+        private final Class<? extends ElectrodeBaseActivity> mActivityClass;
 
-        MiniApps(String miniAppName, Class<? extends ElectrodeMiniAppActivity> activityClass) {
+        MiniApps(String miniAppName, Class<? extends ElectrodeBaseActivity> activityClass) {
             mMiniAppName = miniAppName;
             mActivityClass = activityClass;
         }
 
         @NonNull
-        public Class<? extends ElectrodeMiniAppActivity> getActivityClass() {
+        public Class<? extends ElectrodeBaseActivity> getActivityClass() {
             return mActivityClass;
         }
 

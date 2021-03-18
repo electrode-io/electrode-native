@@ -20,7 +20,7 @@ android {
         resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.0'
     }
     sourceSets.main {
-        res.srcDirs = [ 'src/main/res/bundle','src/main/res/devassist' ]
+        res.srcDirs = [ 'src/main/res/bundle','src/main/res/devassist','src/main/res/miniapp' ]
     }
     lintOptions {
         abortOnError false

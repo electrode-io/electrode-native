@@ -6,8 +6,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +15,7 @@ import android.view.View;
 import com.facebook.react.modules.core.PermissionAwareActivity;
 import com.facebook.react.modules.core.PermissionListener;
 
+@Deprecated
 public class ElectrodeMiniAppActivity extends Activity
         implements ElectrodeReactActivityDelegate.BackKeyHandler, PermissionAwareActivity {
     private static final String INITIAL_PROPS = "props";
