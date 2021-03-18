@@ -5,8 +5,8 @@ package com.walmartlabs.ern.container.miniapps;
 {{>generatedCode}}
 
 import com.walmartlabs.ern.container.ElectrodeMiniAppActivity;
+import androidx.annotation.NonNull;
 
-import android.support.annotation.NonNull;
 
 import java.util.HashMap;
 
