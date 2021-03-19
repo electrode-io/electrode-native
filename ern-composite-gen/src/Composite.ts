@@ -29,4 +29,5 @@ export interface Composite {
   }: {
     manifestId?: string;
   }): Promise<NativeDependencies>;
+  getReactNativeVersion(): string;
 }

@@ -558,7 +558,9 @@ function switchToOldDirectoryStructure(
 }
 
 export const getDefaultIosDeploymentTarget = (rnVersion: string): string => {
-  if (semver.gte(rnVersion, '0.63.0')) {
+  if (semver.gte(rnVersion, '0.64.0')) {
+    return '11.0';
+  } else if (semver.gte(rnVersion, '0.63.0')) {
     return '10.0';
   } else if (semver.gte(rnVersion, '0.56.0')) {
     return '9.0';

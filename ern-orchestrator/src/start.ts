@@ -194,6 +194,7 @@ export default async function start({
       blacklistRe,
       cwd: composite.path,
       extraNodeModules,
+      reactNativeVersion: composite.getReactNativeVersion(),
       watchFolders: allLocalMiniAppsPaths,
     });
   }

@@ -209,8 +209,10 @@ describe('android.js', () => {
   });
 
   describe('resolveAndroidVersions', () => {
-    it('should return all default versions if no versions are provided', () => {
-      const versions = android.resolveAndroidVersions();
+    it('should return all default versions if no versions are provided [>= RN 0.64.0]', () => {
+      const versions = android.resolveAndroidVersions({
+        reactNativeVersion: '0.64.0',
+      });
       expect(versions).deep.equal({
         androidGradlePlugin: android.DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION,
         androidxAppcompactVersion: android.DEFAULT_ANDROIDX_APPCOMPACT_VERSION,
@@ -219,7 +221,27 @@ describe('android.js', () => {
         buildToolsVersion: android.DEFAULT_BUILD_TOOLS_VERSION,
         compileSdkVersion: android.DEFAULT_COMPILE_SDK_VERSION,
         gradleDistributionVersion: android.DEFAULT_GRADLE_DISTRIBUTION_VERSION,
-        minSdkVersion: android.DEFAULT_MIN_SDK_VERSION,
+        minSdkVersion: android.DEFAULT_MIN_SDK_VERSION_POST_RN64,
+        sourceCompatibility: android.DEFAULT_SOURCE_COMPATIBILITY,
+        supportLibraryVersion: android.DEFAULT_SUPPORT_LIBRARY_VERSION,
+        targetCompatibility: android.DEFAULT_TARGET_COMPATIBILITY,
+        targetSdkVersion: android.DEFAULT_TARGET_SDK_VERSION,
+      });
+    });
+
+    it('should return all default versions if no versions are provided [< RN 0.64.0]', () => {
+      const versions = android.resolveAndroidVersions({
+        reactNativeVersion: '0.63.0',
+      });
+      expect(versions).deep.equal({
+        androidGradlePlugin: android.DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION,
+        androidxAppcompactVersion: android.DEFAULT_ANDROIDX_APPCOMPACT_VERSION,
+        androidxLifecycleExtrnsionsVersion:
+          android.DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION,
+        buildToolsVersion: android.DEFAULT_BUILD_TOOLS_VERSION,
+        compileSdkVersion: android.DEFAULT_COMPILE_SDK_VERSION,
+        gradleDistributionVersion: android.DEFAULT_GRADLE_DISTRIBUTION_VERSION,
+        minSdkVersion: android.DEFAULT_MIN_SDK_VERSION_PRE_RN64,
         sourceCompatibility: android.DEFAULT_SOURCE_COMPATIBILITY,
         supportLibraryVersion: android.DEFAULT_SUPPORT_LIBRARY_VERSION,
         targetCompatibility: android.DEFAULT_TARGET_COMPATIBILITY,

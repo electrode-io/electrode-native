@@ -311,15 +311,16 @@ You should resolve the following version mismatches prior to retrying.${os.EOL}`
       extraPaths: localMiniAppsPaths,
     });
     await createBabelRc({ cwd: outDir, extraPaths: localMiniAppsPaths });
+    const rnVersion = await getNodeModuleVersion({
+      cwd: outDir,
+      name: 'react-native',
+    });
     await createMetroConfig({
       blacklistRe,
       cwd: outDir,
       extraNodeModules,
+      reactNativeVersion: rnVersion,
       watchFolders: localMiniAppsPaths,
-    });
-    const rnVersion = await getNodeModuleVersion({
-      cwd: outDir,
-      name: 'react-native',
     });
     if (semver.gte(rnVersion, '0.57.0')) {
       await createRNCliConfig({ cwd: outDir });

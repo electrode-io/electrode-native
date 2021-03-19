@@ -1,5 +1,6 @@
 import {
   childProcess,
+  createTmpDir,
   injectReactNativeVersionKeysInObject,
   iosUtil,
   kax,
@@ -348,10 +349,45 @@ Make sure to run these commands before building the container.`,
           // overall 'node_modules' directory size, as they are not needed
           // for iOS container builds.
           shell.rm('-rf', path.join(nodeModulesDir, '**/android'));
+
+          if (semver.gte(reactNativePlugin.version!, '0.64.0')) {
+            // Starting with React Native 0.64.0, code generation for Turbo Modules
+            // is performed using react-native-codegen package.
+            // The package entry point is invoked during Xcode build of FBReactNativeSpec
+            // iOS project (run as a build phase script).
+            // It therefore needs to be present in the node modules of the Container.
+            //
+            // TODO : Dig deeper to figure out if we could instead call this script during
+            // container generation and get rid of the the build script phase after doing
+            // that, so that we don't clutter node_modules of the container pushed to git
+            // and that Node does not have to be a requirement to build containers.
+            await this.addReactNativeCodeGen(config.outDir);
+          }
         } finally {
           shell.popd();
         }
       }
+    }
+  }
+
+  public async addReactNativeCodeGen(targetDir: string): Promise<void> {
+    log.debug('Adding react-native-codegen package');
+    const tmpDir = createTmpDir();
+    shell.pushd(tmpDir);
+    try {
+      await yarn.init();
+      await yarn.add(PackagePath.fromString('react-native-codegen'));
+      // mkdirp and invariant are also needed
+      await yarn.add(PackagePath.fromString('mkdirp'));
+      await yarn.add(PackagePath.fromString('invariant'));
+      shell.rm('-rf', [
+        'package.json',
+        'yarn.lock',
+        'node_modules/.yarn-integrity',
+      ]);
+      shell.cp('-Rf', path.join(tmpDir, 'node_modules'), targetDir);
+    } finally {
+      shell.popd();
     }
   }
 

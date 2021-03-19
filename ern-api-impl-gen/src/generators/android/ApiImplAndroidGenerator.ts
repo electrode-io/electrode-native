@@ -114,7 +114,11 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
         paths,
         apis,
       );
-      await this.updateGradleProperties(paths, outputDirectory);
+      await this.updateGradleProperties(
+        paths,
+        reactNativeVersion,
+        outputDirectory,
+      );
       await this.updateBuildGradle(paths, reactNativeVersion, outputDirectory);
     } finally {
       shell.popd();
@@ -157,6 +161,7 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
     let mustacheView: any = {};
     const versions = android.resolveAndroidVersions({
       androidGradlePlugin: '3.2.1',
+      reactNativeVersion,
     });
     mustacheView.reactNativeVersion = reactNativeVersion;
     mustacheView = Object.assign(mustacheView, versions);
@@ -174,10 +179,11 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
 
   public updateGradleProperties(
     paths: any,
+    reactNativeVersion: string,
     outputDirectory: string,
   ): Promise<any> {
     let mustacheView: any = {};
-    const versions = android.resolveAndroidVersions();
+    const versions = android.resolveAndroidVersions({ reactNativeVersion });
     mustacheView = Object.assign(mustacheView, versions);
     return mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
       path.join(
