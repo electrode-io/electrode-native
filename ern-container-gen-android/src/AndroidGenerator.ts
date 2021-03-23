@@ -340,6 +340,7 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
     const pathLibSrcMainJniLibs = path.normalize('lib/src/main/jniLibs');
     const pathLibSrcMainAssets = path.normalize('lib/src/main/assets');
     const pathLibSrcMainJavaCom = path.join(pathLibSrcMain, 'java/com');
+    const pathLibSrcMainRes = path.join(pathLibSrcMain, 'res');
     const pathLibSrcMainJavaComWalmartlabsErnContainer = path.join(
       pathLibSrcMainJavaCom,
       'walmartlabs/ern/container',
@@ -349,7 +350,8 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
         (file.startsWith(pathLibSrcMainJavaCom) &&
           !file.startsWith(pathLibSrcMainJavaComWalmartlabsErnContainer)) ||
         file.startsWith(pathLibSrcMainAssets) ||
-        file.startsWith(pathLibSrcMainJniLibs)
+        file.startsWith(pathLibSrcMainJniLibs) ||
+        file.startsWith(pathLibSrcMainRes)
       ) {
         // We don't want to Mustache process library files. It can lead to bad things
         // We also don't want to process assets files ...
