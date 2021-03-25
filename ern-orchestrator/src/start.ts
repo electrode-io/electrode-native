@@ -186,6 +186,19 @@ export default async function start({
       ...activeLinkedPkgPaths,
     ];
 
+    const nonInstalledMiniAppsPath: string[] = [];
+    allLocalMiniAppsPaths.forEach((p) => {
+      if (!fs.pathExistsSync(path.join(p, 'node_modules'))) {
+        nonInstalledMiniAppsPath.push(p);
+      }
+    });
+    if (nonInstalledMiniAppsPath.length > 0) {
+      throw new Error(`Some linked MiniApp(s) have not been installed.
+Please run 'yarn install' or 'npm install' from the following directories before running 'ern start' :
+${nonInstalledMiniAppsPath.join('\n')}
+      `);
+    }
+
     await patchCompositeBabelRcRoots({
       cwd: composite.path,
       extraPaths: allLocalMiniAppsPaths,
