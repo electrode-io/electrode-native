@@ -2,6 +2,8 @@ import fs from 'fs-extra';
 import path from 'path';
 import beautify from 'js-beautify';
 import os from 'os';
+import semver from 'semver';
+import { getMetroBlacklistPath } from 'ern-core';
 
 export async function createMetroConfig({
   cwd,
@@ -9,16 +11,20 @@ export async function createMetroConfig({
   blacklistRe,
   extraNodeModules,
   watchFolders,
+  reactNativeVersion,
 }: {
   cwd?: string;
   projectRoot?: string;
   blacklistRe?: RegExp[];
   extraNodeModules?: { [pkg: string]: string };
   watchFolders?: string[];
+  reactNativeVersion: string;
 }) {
   return fs.writeFile(
     path.join(cwd ?? path.resolve(), 'metro.config.js'),
-    beautify.js(`const blacklist = require('metro-config/src/defaults/blacklist');
+    beautify.js(`const blacklist = require('${getMetroBlacklistPath(
+      reactNativeVersion,
+    )}');
 module.exports = {
   ${projectRoot ? `projectRoot: "${projectRoot}",` : ''}
   ${

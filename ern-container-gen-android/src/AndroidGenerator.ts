@@ -123,7 +123,10 @@ export default class AndroidGenerator implements ContainerGenerator {
       .run(this.addAndroidPluginHookClasses(config.plugins, config.outDir));
 
     kax.task('Setting Android tools and libraries versions').succeed();
-    const versions = android.resolveAndroidVersions(config.androidConfig);
+    const versions = android.resolveAndroidVersions({
+      reactNativeVersion: reactNativePlugin.version,
+      ...config.androidConfig,
+    });
     mustacheView = Object.assign(mustacheView, versions);
 
     const injectPluginsTaskMsg = 'Injecting Native Dependencies';

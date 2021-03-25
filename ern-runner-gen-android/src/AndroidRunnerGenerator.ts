@@ -86,7 +86,10 @@ function configureMustacheView(
   config: RunnerGeneratorConfig,
   mustacheView: any,
 ) {
-  const versions = android.resolveAndroidVersions(config.extra?.androidConfig);
+  const versions = android.resolveAndroidVersions({
+    reactNativeVersion: config.reactNativeVersion,
+    ...config.extra?.androidConfig,
+  });
   mustacheView = Object.assign(mustacheView, versions);
 
   mustacheView.isReactNativeDevSupportEnabled =

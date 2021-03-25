@@ -21,6 +21,7 @@ import { packageCache } from './packageCache';
 import kax from './kax';
 import { BaseMiniApp } from './BaseMiniApp';
 import _ from 'lodash';
+import { getMetroBlacklistPath } from './getMetroBlacklistPath';
 
 const npmIgnoreContent = `ios/
 android/
@@ -247,7 +248,9 @@ You can find instructions to install CocoaPods @ https://cocoapods.org`);
     if (semver.gt(reactNativeVersion, '0.57.0') && !template) {
       await fs.writeFile(
         path.join(miniAppPath, 'metro.config.js'),
-        `const blacklist = require('metro-config/src/defaults/blacklist');
+        `const blacklist = require('${getMetroBlacklistPath(
+          reactNativeVersion,
+        )}');
 module.exports = {
   resolver: {
     blacklistRE: blacklist([

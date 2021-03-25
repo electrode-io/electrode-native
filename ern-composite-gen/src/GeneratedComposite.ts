@@ -185,4 +185,8 @@ export class GeneratedComposite implements Composite {
     this.cachedNativeDependencies = nativeDependencies;
     return this.cachedNativeDependencies;
   }
+
+  public getReactNativeVersion(): string {
+    return this.packageJson.dependencies['react-native'];
+  }
 }

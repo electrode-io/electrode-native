@@ -9,6 +9,7 @@ import {
   NativePlatform,
   PackagePath,
   readPackageJson,
+  readPackageJsonSync,
 } from 'ern-core';
 import { Composite } from './Composite';
 
@@ -33,6 +34,7 @@ export class WorkspaceComposite implements Composite {
   public constructor(workspacePath: string) {
     this.path = workspacePath;
     this.miniappsDir = path.join(workspacePath, 'miniapps');
+    this.packageJson = readPackageJsonSync(workspacePath);
   }
 
   public async getJsApiImpls(): Promise<PackagePath[]> {
@@ -136,5 +138,9 @@ export class WorkspaceComposite implements Composite {
     );
     this.cachedNativeDependencies = nativeDependencies;
     return this.cachedNativeDependencies;
+  }
+
+  public getReactNativeVersion(): string {
+    return this.packageJson.dependencies['react-native'];
   }
 }

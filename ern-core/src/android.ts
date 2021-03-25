@@ -19,7 +19,8 @@ export const DEFAULT_BUILD_TOOLS_VERSION = '28.0.3';
 export const DEFAULT_COMPILE_SDK_VERSION = '28';
 export const DEFAULT_GRADLE_DISTRIBUTION_VERSION = '5.4.1';
 export const DEFAULT_JSC_VARIANT = 'android-jsc';
-export const DEFAULT_MIN_SDK_VERSION = '19';
+export const DEFAULT_MIN_SDK_VERSION_PRE_RN64 = '19';
+export const DEFAULT_MIN_SDK_VERSION_POST_RN64 = '21';
 export const DEFAULT_SUPPORT_LIBRARY_VERSION = '28.0.0';
 export const DEFAULT_TARGET_SDK_VERSION = '28';
 export const DEFAULT_SOURCE_COMPATIBILITY = 'VERSION_1_8';
@@ -49,12 +50,32 @@ export function resolveAndroidVersions({
   buildToolsVersion = DEFAULT_BUILD_TOOLS_VERSION,
   compileSdkVersion = DEFAULT_COMPILE_SDK_VERSION,
   gradleDistributionVersion = DEFAULT_GRADLE_DISTRIBUTION_VERSION,
-  minSdkVersion = DEFAULT_MIN_SDK_VERSION,
+  minSdkVersion,
   sourceCompatibility = DEFAULT_SOURCE_COMPATIBILITY,
   supportLibraryVersion = DEFAULT_SUPPORT_LIBRARY_VERSION,
   targetCompatibility = DEFAULT_TARGET_COMPATIBILITY,
   targetSdkVersion = DEFAULT_TARGET_SDK_VERSION,
+  reactNativeVersion,
+}: {
+  androidGradlePlugin?: string;
+  androidxAppcompactVersion?: string;
+  androidxLifecycleExtrnsionsVersion?: string;
+  buildToolsVersion?: string;
+  compileSdkVersion?: string;
+  gradleDistributionVersion?: string;
+  minSdkVersion?: string;
+  sourceCompatibility?: string;
+  supportLibraryVersion?: string;
+  targetCompatibility?: string;
+  targetSdkVersion?: string;
+  reactNativeVersion?: string;
 } = {}): AndroidResolvedVersions {
+  const resolvedMinSdkVersion = minSdkVersion
+    ? minSdkVersion
+    : semver.gte(reactNativeVersion!, '0.64.0')
+    ? DEFAULT_MIN_SDK_VERSION_POST_RN64
+    : DEFAULT_MIN_SDK_VERSION_PRE_RN64;
+
   return {
     androidGradlePlugin,
     androidxAppcompactVersion,
@@ -62,7 +83,7 @@ export function resolveAndroidVersions({
     buildToolsVersion,
     compileSdkVersion,
     gradleDistributionVersion,
-    minSdkVersion,
+    minSdkVersion: resolvedMinSdkVersion,
     sourceCompatibility,
     supportLibraryVersion,
     targetCompatibility,
@@ -433,7 +454,10 @@ export function androidEmulatorPath(): string {
 export function getDefaultHermesVersion(
   reactNativeVersion: string,
 ): string | never {
-  if (semver.gte(reactNativeVersion, '0.63.0')) {
+  if (semver.gte(reactNativeVersion, '0.64.0')) {
+    // https://github.com/facebook/react-native/blob/v0.64.0/package.json#L97
+    return '~0.7.0';
+  } else if (semver.gte(reactNativeVersion, '0.63.0')) {
     // https://github.com/facebook/react-native/blob/v0.63.0/package.json#L98
     return '~0.5.0';
   } else if (semver.gte(reactNativeVersion, '0.62.0')) {
