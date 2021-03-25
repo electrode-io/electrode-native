@@ -75,6 +75,12 @@ export default async function start({
     );
   }
 
+  miniapps
+    .filter((m) => m.isFilePath)
+    .forEach((m) => {
+      kax.task(`Auto linking local MiniApp from ${m.basePath}`).succeed();
+    });
+
   let resolutions;
   if (descriptor && cauldron) {
     miniapps = await cauldron.getContainerMiniApps(descriptor, {
@@ -210,6 +216,10 @@ ${nonInstalledMiniAppsPath.join('\n')}
       reactNativeVersion: composite.getReactNativeVersion(),
       watchFolders: allLocalMiniAppsPaths,
     });
+
+    allLocalMiniAppsPaths.forEach((m) =>
+      log.info(`Watching for changes in linked directory ${m}`),
+    );
   }
 
   reactnative.startPackager({
