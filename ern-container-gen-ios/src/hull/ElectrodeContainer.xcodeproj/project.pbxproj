@@ -128,6 +128,13 @@
 			name = APIs;
 			sourceTree = "<group>";
 		};
+		22C096A91EA0893F00E1486B /* MiniAppNavigationControllers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = MiniAppNavigationControllers;
+			sourceTree = "<group>";
+		};
 		22FD4D1E1E96ECBB00FC81DB /* ElectrodeReactNativeBridge */ = {
 			isa = PBXGroup;
 			children = (
@@ -171,6 +178,7 @@
 				301CBA4B1F342FB00048C58B /* Resources */,
 				2265A4A11EB26943007D6C3D /* Info.plist */,
 				22C096A91EA0893F00E1486A /* APIs */,
+				22C096A91EA0893F00E1486B /* MiniAppNavigationControllers */,
 				22FD4D1E1E96ECBB00FC81DB /* ElectrodeReactNativeBridge */,
 				968333D51E54E3470031C565 /* ElectrodeBridgeDelegate.h */,
 				968333D61E54E3470031C565 /* ElectrodeBridgeDelegate.m */,
