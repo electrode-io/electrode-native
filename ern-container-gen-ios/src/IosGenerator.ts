@@ -6,6 +6,7 @@ import {
   kax,
   log,
   manifest,
+  mustacheUtils,
   NativePlatform,
   PackagePath,
   PluginConfig,
@@ -34,6 +35,7 @@ import { Composite } from 'ern-composite-gen';
 import semver from 'semver';
 
 const ROOT_DIR = process.cwd();
+const PATH_TO_TEMPLATES_DIR = path.join(__dirname, 'templates');
 const PATH_TO_HULL_DIR = path.join(__dirname, 'hull');
 
 export default class IosGenerator implements ContainerGenerator {
@@ -266,6 +268,12 @@ Make sure to run these commands before building the container.`,
       mustacheView,
       config.composite,
     );
+
+    await kax
+      .task('Adding MiniAppNavigationController Classes')
+      .run(
+        this.addMiniAppNavigationControllerClasses(config, iosProject),
+      );
 
     await kax
       .task('Adding Native Dependencies Hooks')
@@ -520,6 +528,51 @@ Make sure to run these commands before building the container.`,
           break;
         }
       }
+    }
+  }
+
+  public async addMiniAppNavigationControllerClasses(
+    config: ContainerGeneratorConfig,
+    containerIosProject: any,
+  ) {
+    const partialProxy = (name: string) => {
+      return fs.readFileSync(
+        path.join(PATH_TO_TEMPLATES_DIR, `${name}.mustache`),
+        'utf8',
+      );
+    };
+
+    log.debug('Creating miniapp nav controllers');
+    const compositeMiniApps = await config.composite.getMiniApps();
+    for (const miniApp of compositeMiniApps) {
+      const navControllerFileName = `${miniApp.pascalCaseName}NavigationController.swift`;
+
+      log.debug(`Creating ${navControllerFileName}`);
+      const pathToMiniAppNavControllerMustacheTemplate = path.join(
+        PATH_TO_TEMPLATES_DIR,
+        'MiniAppNavigationController.mustache',
+      );
+      const pathToOutputNavControllerFile = path.join(
+        config.outDir,
+        'ElectrodeContainer',
+        'MiniAppNavigationControllers',
+        navControllerFileName,
+      );
+      await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
+        pathToMiniAppNavControllerMustacheTemplate,
+        miniApp,
+        pathToOutputNavControllerFile,
+        partialProxy,
+      );
+      containerIosProject.addFile(
+        pathToOutputNavControllerFile,
+        containerIosProject.findPBXGroupKey({ name: 'MiniAppNavigationControllers' }),
+      );
+      containerIosProject.addSourceFile(
+        pathToOutputNavControllerFile,
+        null,
+        containerIosProject.findPBXGroupKey({ name: 'MiniAppNavigationControllers' }),
+      );
     }
   }
 }
