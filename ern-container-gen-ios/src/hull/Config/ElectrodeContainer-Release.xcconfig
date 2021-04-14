@@ -28,4 +28,4 @@ LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks @loader_path/
 PRODUCT_BUNDLE_IDENTIFIER = com.walmartlabs.ern.ElectrodeContainer
 PRODUCT_NAME = $(TARGET_NAME)
 SKIP_INSTALL = YES
-SWIFT_VERSION = 4.0
+SWIFT_VERSION = 5.0

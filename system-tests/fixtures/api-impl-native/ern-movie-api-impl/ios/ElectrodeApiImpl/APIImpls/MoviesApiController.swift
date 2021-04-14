@@ -26,7 +26,7 @@ import Foundation
 @objc public final class MoviesApiController: NSObject {
     // Singleton
     static let instance = MoviesApiController()
-    override private init() {}
+    public override init() {}
 
     private var requestHandler: MoviesApiRequestHandlerProvider?
 
