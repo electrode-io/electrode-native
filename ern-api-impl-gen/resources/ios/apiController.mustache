@@ -7,7 +7,7 @@ import Foundation
 @objc public final class {{apiName}}ApiController: NSObject {
     // Singleton
     static let instance = {{apiName}}ApiController()
-    override private init() {}
+    public override init() {}
 
     private var requestHandler: {{apiName}}ApiRequestHandlerProvider?
 
