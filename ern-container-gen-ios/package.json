@@ -54,6 +54,10 @@
     {
       "source": "src/hull",
       "dest": "dist"
+    },
+    {
+      "source": "src/templates",
+      "dest": "dist"
     }
   ]
 }
