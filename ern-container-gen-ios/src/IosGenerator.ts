@@ -564,12 +564,16 @@ Make sure to run these commands before building the container.`,
         pathToOutputNavControllerFile,
         partialProxy,
       );
+      const relativePathToNavControllerFile = path.join(
+        'MiniAppNavigationControllers',
+        navControllerFileName,
+      )
       containerIosProject.addFile(
-        pathToOutputNavControllerFile,
+        relativePathToNavControllerFile,
         containerIosProject.findPBXGroupKey({ name: 'MiniAppNavigationControllers' }),
       );
       containerIosProject.addSourceFile(
-        pathToOutputNavControllerFile,
+        relativePathToNavControllerFile,
         null,
         containerIosProject.findPBXGroupKey({ name: 'MiniAppNavigationControllers' }),
       );
