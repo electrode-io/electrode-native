@@ -267,13 +267,12 @@ Make sure to run these commands before building the container.`,
       config.plugins,
       mustacheView,
       config.composite,
+      config.iosConfig,
     );
 
     await kax
       .task('Adding MiniAppNavigationController Classes')
-      .run(
-        this.addMiniAppNavigationControllerClasses(config, iosProject),
-      );
+      .run(this.addMiniAppNavigationControllerClasses(config, iosProject));
 
     await kax
       .task('Adding Native Dependencies Hooks')
@@ -567,15 +566,19 @@ Make sure to run these commands before building the container.`,
       const relativePathToNavControllerFile = path.join(
         'MiniAppNavigationControllers',
         navControllerFileName,
-      )
+      );
       containerIosProject.addFile(
         relativePathToNavControllerFile,
-        containerIosProject.findPBXGroupKey({ name: 'MiniAppNavigationControllers' }),
+        containerIosProject.findPBXGroupKey({
+          name: 'MiniAppNavigationControllers',
+        }),
       );
       containerIosProject.addSourceFile(
         relativePathToNavControllerFile,
         null,
-        containerIosProject.findPBXGroupKey({ name: 'MiniAppNavigationControllers' }),
+        containerIosProject.findPBXGroupKey({
+          name: 'MiniAppNavigationControllers',
+        }),
       );
     }
   }

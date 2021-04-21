@@ -33,6 +33,7 @@ export async function fillProjectHull(
   plugins: PackagePath[],
   mustacheView?: any,
   composite?: any,
+  iosConfig?: any,
 ) {
   log.debug(`[=== Starting iOS framework project hull filling ===]`);
   shell.pushd(pathSpec.rootDir);
@@ -452,7 +453,17 @@ ${JSON.stringify(options.staticLibs, null, 2)}
           shell.cp(sourcePodspecPath, destPodspecPath);
         }
 
-        if (ignorePodSpec && reExec) {
+        if (
+          (ignorePodSpec && reExec) ||
+          (reExec && iosConfig?.excludedNativeModules?.includes(reExec[1]))
+        ) {
+          log.debug(
+            `Ignoring ${reExec[1]} native module pod ${
+              ignorePodSpec
+                ? '(ignorePodSpec directive set in manifest for this module)'
+                : '(Present in ios container config excludedNativeModules array)'
+            }`,
+          );
           const podspecs: string[] = await new Promise((resolve, reject) => {
             glob(
               path.join(
