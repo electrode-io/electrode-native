@@ -8,7 +8,7 @@
     "build": "ern-typescript && ern-copyfiles",
     "instrument": "yarn nyc instrument dist --in-place && ern-copyfiles",
     "prepublish": "yarn run build",
-    "regen-fixtures": "../node_modules/.bin/ts-node test/regen-fixtures",
+    "regen-fixtures": "yarn build && ../node_modules/.bin/ts-node test/regen-fixtures",
     "test": "ern-mocha"
   },
   "repository": {
