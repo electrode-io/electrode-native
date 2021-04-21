@@ -24,7 +24,7 @@ export default class IosRunerGenerator implements RunnerGenerator {
     shell.cp('-R', path.join(runnerHullPath, '*'), config.outDir);
 
     const filesToMustache = [
-      'ErnRunner/RunnerConfig.m',
+      'ErnRunner/RunnerConfig.swift',
       'ErnRunner.xcodeproj/project.pbxproj',
     ];
 
@@ -53,10 +53,10 @@ export default class IosRunerGenerator implements RunnerGenerator {
     const mustacheView = this.createMustacheView({ config });
     const pathToRunnerConfig = path.join(
       config.outDir,
-      'ErnRunner/RunnerConfig.m',
+      'ErnRunner/RunnerConfig.swift',
     );
     shell.cp(
-      path.join(runnerHullPath, 'ErnRunner/RunnerConfig.m'),
+      path.join(runnerHullPath, 'ErnRunner/RunnerConfig.swift'),
       pathToRunnerConfig,
     );
     await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
@@ -84,7 +84,7 @@ export default class IosRunerGenerator implements RunnerGenerator {
     );
     const mustacheView = {
       isReactNativeDevSupportEnabled:
-        config.reactNativeDevSupportEnabled === true ? 'YES' : 'NO',
+        config.reactNativeDevSupportEnabled === true ? 'true' : 'false',
       miniAppName: config.mainMiniAppName,
       packagerHost:
         config.reactNativePackagerHost ?? defaultReactNativePackagerHost,

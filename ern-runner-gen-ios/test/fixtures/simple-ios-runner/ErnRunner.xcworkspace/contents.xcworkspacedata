@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:ErnRunner.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:/path/to/container/out/ios/Pods/Pods.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:/path/to/container/out/ios/ElectrodeContainer.xcodeproj">
+   </FileRef>
+</Workspace>
