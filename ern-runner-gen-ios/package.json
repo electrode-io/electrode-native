@@ -40,7 +40,8 @@
     "ern-runner-gen": "0.47.4",
     "fs-extra": "^8.1.0",
     "fs-readdir-recursive": "^1.1.0",
-    "mustache": "^4.0.1"
+    "mustache": "^4.0.1",
+    "semver": "^5.5.0"
   },
   "devDependencies": {
     "copyfiles": "^2.3.0",

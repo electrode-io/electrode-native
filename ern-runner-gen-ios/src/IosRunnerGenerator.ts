@@ -7,6 +7,7 @@ import {
 } from 'ern-core';
 import path from 'path';
 import fs from 'fs-extra';
+import semver from 'semver';
 
 const defaultReactNativePackagerHost = 'localhost';
 const defaultReactNativePackagerPort = '8081';
@@ -83,6 +84,8 @@ export default class IosRunerGenerator implements RunnerGenerator {
       path.join(config.extra.containerGenWorkingDir, 'out/ios'),
     );
     const mustacheView = {
+      deploymentTarget:
+        semver.gte(config.reactNativeVersion, '0.64.0') ? '11.0' : '10.3',
       isReactNativeDevSupportEnabled:
         config.reactNativeDevSupportEnabled === true ? 'true' : 'false',
       miniAppName: config.mainMiniAppName,
