@@ -77,6 +77,14 @@ repositories {
 }
 ```
 
+##### Proguard
+Container library does not proguard itself, but supports proguarding. In your module's `proguard.txt` add the rule to be during the applications proguarding phase. 
+
+```
+# keep rules for react-native-electrode-bridge
+-keep class com.walmartlabs.electrode.** {*;}
+```
+
 ##### Adding the container as a Git submodule
 
 Alternatively, you can include an Electrode Native container in a mobile application by adding it as an Android module. Although this is not the recommended way to add third-party dependencies (the container being one) to an Android project, it is however possible and this might be the best process if you don't have a remote Maven repository that you can publish the container to.
