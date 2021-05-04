@@ -79,7 +79,7 @@
 
 - Path to source map file to generate for this container bundle
 
-`--resetCache`\
+`--resetCache`
 
 - Indicates whether to reset the React Native cache prior to bundling
 - **Default** false

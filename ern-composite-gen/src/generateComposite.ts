@@ -194,7 +194,7 @@ async function generateFullComposite(
       );
       // Also add latest version of the bridge
       extraJsDependencies.push(
-        PackagePath.fromString(`react-native-electrode-bridge`),
+        PackagePath.fromString('react-native-electrode-bridge'),
       );
       extraJsDependencies = [...extraJsDependencies, ...jsApiImplDependencies];
     }
