@@ -5,6 +5,7 @@ import { copyRnConfigAssets } from './copyRnConfigAssets';
 import { addContainerMetadata } from './addContainerMetadata';
 import { ContainerGeneratorConfig, ContainerGenResult } from './types';
 import { BundlingResult, kax, shell } from 'ern-core';
+import { executeBundleHooks } from './executeBundleHooks';
 import fs from 'fs-extra';
 import path from 'path';
 import _ from 'lodash';
@@ -65,6 +66,10 @@ export async function generateContainer(
     shell.popd();
   }
 
+  if (config?.hooks?.preBundle) {
+    await executeBundleHooks(config?.hooks?.preBundle, config.composite.path);
+  }
+
   const bundlingResult: BundlingResult = await kax
     .task('Bundling MiniApps')
     .run(
@@ -77,6 +82,10 @@ export async function generateContainer(
         sourceMapOutput: config.sourceMapOutput,
       }),
     );
+
+  if (config?.hooks?.postBundle) {
+    await executeBundleHooks(config?.hooks?.postBundle, config.outDir);
+  }
 
   if (postBundle) {
     await postBundle(config, bundlingResult, reactNativePlugin?.version!);
