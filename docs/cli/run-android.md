@@ -28,6 +28,7 @@
 - Override the Android build config during local container generation and runner project by passing `androidConfig` attributes
   - **As a json string**
     For example `--extra '{"androidConfig": {"androidGradlePlugin": "3.2.1","buildToolsVersion": "28.0.3","compileSdkVersion": "28","gradleDistributionVersion": "4.6","minSdkVersion": "19","sourceCompatibility": "VERSION_1_8","supportLibraryVersion": "28.0.0","targetCompatibility": "VERSION_1_8","targetSdkVersion": "28"}}'`
+    Find more information on [android configuration]
   - **As a file path**
     For example `--extra /home/user/my-container-config.json`
     In that case, the configuration will be read from the file.
@@ -35,6 +36,7 @@
     For example `--extra cauldron://config/container/my-container-config.json`
     In that case, the configuration will be read from the file stored in Cauldron.
     For this way to work, the file must exist in Cauldron (you can add a file to the cauldron by using the [ern cauldron add file] command).
+    Find more information on [configuring via cauldron]
 
 Alternatively, it is also possible to provide this extra configuration in the `package.json` of the MiniApp, inside the `ern` object. For example:
 
@@ -46,6 +48,23 @@ Alternatively, it is also possible to provide this extra configuration in the `p
   }
 }
 ```
+- Optional hooks to run an arbitary script before or after js bundling is possible. 
+  - If a script is defined as a `preBundle` hook, it will be executed after the composite generation, prior to running metro bundler, from the directory containing the generated composite project. 
+    - **As a json string**
+      `--extra '{"containerGenerator": {"hooks": {"preBundle": "/workspace/ern/picking-miniapp/script/pre-script.sh"}}}'`
+    - **As a file path**
+      `--extra <path>/container-config.json`
+    - **As a Cauldron file path**
+      `--extra cauldron://config/config.json`
+  - If a script is defined as a `postBundle` hook, it will be executed just after metro bundler has been run, from the directory containing the bundle.
+    - **As a json string**
+      `--extra '{"containerGenerator": {"hooks": {"postBundle": "/workspace/ern/picking-miniapp/script/post-script.sh"}}}'`
+    - **As a file path**
+      `--extra <path>/container-config.json`
+    - **As a Cauldron file path**
+      `--extra cauldron://config/config.json`
+
+Program to use to run the script should be indicated using [shebang pattern][1] in the script itself as first line.
 
 `--host`
 
@@ -98,3 +117,6 @@ By default Electrode Native will run the MiniApp with a Container that uses Java
 - If you are running the command from the `MainApp` directory, only specify name of the `MiniApp` (Not the path) in the `--mainMiniAppName` option.
 
 [custom composite]: ./platform-parts/composite/index.md
+[android configuration]: ./plaform-parts/container-integration.md
+[configuring via cauldron]: ./plaform-parts/container-integration.md
+[1]: https://en.wikipedia.org/wiki/Shebang_(Unix)
