@@ -824,7 +824,7 @@ describe('codepush', () => {
   });
 
   describe('removeZeroPatchDigit', () => {
-    const x: Array<[string, string]> = [
+    const x: [string, string][] = [
       ['1.0.0', '1.0'],
       ['1.0.0-beta', '1.0-beta'],
       ['1.0.0-beta.1', '1.0-beta.1'],

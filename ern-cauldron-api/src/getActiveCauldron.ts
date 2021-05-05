@@ -12,7 +12,7 @@ let currentCauldronHelperInstance: CauldronHelper;
 let currentCauldronRepoInUse: string;
 const ernPlatformUseCmdMsg = 'ern platform use <version> command';
 
-export async function getActiveCauldron({
+export default async function getActiveCauldron({
   ignoreRequiredErnVersionMismatch,
   ignoreSchemaVersionMismatch,
   localRepoPath,
@@ -25,7 +25,7 @@ export async function getActiveCauldron({
   throwIfNoActiveCauldron: true;
   silent?: boolean;
 }): Promise<CauldronHelper>;
-export async function getActiveCauldron({
+export default async function getActiveCauldron({
   ignoreRequiredErnVersionMismatch,
   ignoreSchemaVersionMismatch,
   localRepoPath,
@@ -38,7 +38,7 @@ export async function getActiveCauldron({
   throwIfNoActiveCauldron: false;
   silent?: boolean;
 }): Promise<CauldronHelper | undefined>;
-export async function getActiveCauldron({
+export default async function getActiveCauldron({
   ignoreRequiredErnVersionMismatch,
   ignoreSchemaVersionMismatch,
   localRepoPath,

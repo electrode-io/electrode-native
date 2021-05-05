@@ -228,7 +228,7 @@ export function logErrorAndExitProcess(e: any, code: number = 1) {
 }
 
 export function coerceToAppNameDescriptorArray(
-  v: string | AnyAppDescriptor | Array<string | AnyAppDescriptor>,
+  v: string | AnyAppDescriptor | (string | AnyAppDescriptor)[],
 ): AppNameDescriptor[] {
   return v instanceof Array
     ? v.map(coerceToAppNameDescriptor)
@@ -240,7 +240,7 @@ export function coerceToAppPlatformDescriptorArray(
     | string
     | AppVersionDescriptor
     | AppPlatformDescriptor
-    | Array<string | AppVersionDescriptor | AppPlatformDescriptor>,
+    | (string | AppVersionDescriptor | AppPlatformDescriptor)[],
 ): AppPlatformDescriptor[] {
   return v instanceof Array
     ? v.map(coerceToAppPlatformDescriptor)
@@ -248,7 +248,7 @@ export function coerceToAppPlatformDescriptorArray(
 }
 
 export function coerceToAnyAppDescriptorArray(
-  v: string | AnyAppDescriptor | Array<string | AnyAppDescriptor>,
+  v: string | AnyAppDescriptor | (string | AnyAppDescriptor)[],
 ) {
   return v instanceof Array
     ? v.map(coerceToAnyAppDescriptor)
@@ -256,7 +256,7 @@ export function coerceToAnyAppDescriptorArray(
 }
 
 export function coerceToAppVersionDescriptorArray(
-  v: string | AppVersionDescriptor | Array<string | AppVersionDescriptor>,
+  v: string | AppVersionDescriptor | (string | AppVersionDescriptor)[],
 ): AppVersionDescriptor[] {
   return v instanceof Array
     ? v.map(coerceToAppVersionDescriptor)
@@ -290,7 +290,7 @@ export function coerceToAnyAppDescriptor(v: string | AnyAppDescriptor) {
 }
 
 export function coerceToPackagePathArray(
-  v: string | PackagePath | Array<string | PackagePath>,
+  v: string | PackagePath | (string | PackagePath)[],
 ): PackagePath[] {
   return v instanceof Array
     ? v.map(coerceToPackagePath)

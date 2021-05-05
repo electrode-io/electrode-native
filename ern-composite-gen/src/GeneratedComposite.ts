@@ -96,17 +96,17 @@ export class GeneratedComposite implements Composite {
    * Get the package name of the MiniApps present in this Composite
    */
   public async getMiniAppsPackages(): Promise<
-    Array<{
+    {
       name: string;
       path: string;
       packagePath: PackagePath;
-    }>
+    }[]
   > {
-    const result: Array<{
+    const result: {
       name: string;
       path: string;
       packagePath: PackagePath;
-    }> = [];
+    }[] = [];
 
     for (const key of Object.keys(this.packageJson.dependencies)) {
       const ppValue = PackagePath.fromString(

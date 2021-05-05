@@ -896,7 +896,7 @@ export class CauldronHelper {
    */
   public async getContainerMiniAppsWithBranches(
     descriptor: AppVersionDescriptor,
-  ): Promise<Array<[PackagePath, PackagePath | undefined]>> {
+  ): Promise<[PackagePath, PackagePath | undefined][]> {
     const miniApps = _.map(
       await this.cauldron.getContainerMiniApps(descriptor),
       PackagePath.fromString,

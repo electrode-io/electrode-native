@@ -92,11 +92,11 @@ export class WorkspaceComposite implements Composite {
   }
 
   public async getMiniAppsPackages(): Promise<
-    Array<{
+    {
       name: string;
       path: string;
       packagePath: PackagePath;
-    }>
+    }[]
   > {
     const miniapps = await this.getMiniApps();
     const res = [];

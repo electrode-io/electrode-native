@@ -69,7 +69,7 @@ export default class Ensure {
   }
 
   public static noGitOrFilesystemPath(
-    obj: string | PackagePath | Array<string | PackagePath> | void,
+    obj: string | PackagePath | (string | PackagePath)[] | void,
     extraErrorMessage: string = '',
   ) {
     if (!obj) {
@@ -99,7 +99,7 @@ export default class Ensure {
   }
 
   public static async napDescritorExistsInCauldron(
-    d: string | AnyAppDescriptor | Array<string | AnyAppDescriptor>,
+    d: string | AnyAppDescriptor | (string | AnyAppDescriptor)[],
     extraErrorMessage: string = '',
   ) {
     const cauldron = await getActiveCauldron();
@@ -115,7 +115,7 @@ export default class Ensure {
   }
 
   public static sameNativeApplicationAndPlatform(
-    descriptors: Array<string | AppVersionDescriptor>,
+    descriptors: (string | AppVersionDescriptor)[],
     extraErrorMessage: string = '',
   ) {
     const basePathDescriptors = _.map(
@@ -143,7 +143,7 @@ export default class Ensure {
   }
 
   public static async publishedToNpm(
-    obj: string | PackagePath | Array<string | PackagePath>,
+    obj: string | PackagePath | (string | PackagePath)[],
     extraErrorMessage: string = '',
   ) {
     const dependencies = coreUtils.coerceToPackagePathArray(obj);
@@ -157,7 +157,7 @@ export default class Ensure {
   }
 
   public static async miniAppNotInNativeApplicationVersionContainer(
-    obj: string | PackagePath | Array<string | PackagePath> | void,
+    obj: string | PackagePath | (string | PackagePath)[] | void,
     napDescriptor: AppVersionDescriptor,
     extraErrorMessage: string = '',
   ) {
@@ -180,7 +180,7 @@ export default class Ensure {
   }
 
   public static async dependencyNotInNativeApplicationVersionContainer(
-    obj: string | PackagePath | Array<string | PackagePath> | void,
+    obj: string | PackagePath | (string | PackagePath)[] | void,
     napDescriptor: AppVersionDescriptor,
     extraErrorMessage: string = '',
   ) {
@@ -206,7 +206,7 @@ export default class Ensure {
   }
 
   public static async miniAppIsInNativeApplicationVersionContainer(
-    obj: string | PackagePath | Array<string | PackagePath> | void,
+    obj: string | PackagePath | (string | PackagePath)[] | void,
     napDescriptor: AppVersionDescriptor,
     extraErrorMessage: string = '',
   ) {
@@ -229,7 +229,7 @@ export default class Ensure {
   }
 
   public static async dependencyIsInNativeApplicationVersionContainer(
-    obj: string | PackagePath | Array<string | PackagePath> | void,
+    obj: string | PackagePath | (string | PackagePath)[] | void,
     napDescriptor: AppVersionDescriptor,
     extraErrorMessage: string = '',
   ) {
@@ -253,7 +253,7 @@ export default class Ensure {
   }
 
   public static async miniAppIsInNativeApplicationVersionContainerWithDifferentVersion(
-    obj: string | PackagePath | Array<string | PackagePath> | void,
+    obj: string | PackagePath | (string | PackagePath)[] | void,
     napDescriptor: AppVersionDescriptor,
     extraErrorMessage: string = '',
   ) {
@@ -283,7 +283,7 @@ export default class Ensure {
   }
 
   public static async dependencyIsInNativeApplicationVersionContainerWithDifferentVersion(
-    obj: string | PackagePath[] | Array<string | PackagePath> | void,
+    obj: string | PackagePath[] | (string | PackagePath)[] | void,
     napDescriptor: AppVersionDescriptor,
     extraErrorMessage: string = '',
   ) {
@@ -315,7 +315,7 @@ export default class Ensure {
   }
 
   public static async dependencyNotInUseByAMiniApp(
-    obj: string | PackagePath | Array<string | PackagePath> | void,
+    obj: string | PackagePath | (string | PackagePath)[] | void,
     napDescriptor: AppVersionDescriptor,
     extraErrorMessage: string = '',
   ) {
@@ -357,7 +357,7 @@ export default class Ensure {
   }
 
   public static async dependencyIsOrphaned(
-    obj: string | PackagePath | Array<string | PackagePath> | void,
+    obj: string | PackagePath | (string | PackagePath)[] | void,
     napDescriptor: AppVersionDescriptor,
     extraErrorMessage: string = '',
   ) {
@@ -456,7 +456,7 @@ export default class Ensure {
   }
 
   public static checkIfCodePushOptionsAreValid(
-    descriptors?: Array<string | AppVersionDescriptor>,
+    descriptors?: (string | AppVersionDescriptor)[],
     targetBinaryVersion?: string,
     semVerDescriptor?: string,
     extraErrorMessage: string = '',
@@ -499,7 +499,7 @@ export default class Ensure {
   // - Git Path       : Branch/Tag/Commit SHA
   // - Registry Path  : Fixed (and valid) semantic version. No Ranges.
   public static isSupportedMiniAppOrJsApiImplVersion(
-    obj: string | PackagePath | Array<string | PackagePath> | void,
+    obj: string | PackagePath | (string | PackagePath)[] | void,
     extraErrorMessage?: string,
   ) {
     if (obj) {

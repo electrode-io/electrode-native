@@ -18,11 +18,11 @@ export interface Composite {
     platform: NativePlatform,
   ): Promise<PackagePath[]>;
   getMiniAppsPackages(): Promise<
-    Array<{
+    {
       name: string;
       path: string;
       packagePath: PackagePath;
-    }>
+    }[]
   >;
   getNativeDependencies({
     manifestId,

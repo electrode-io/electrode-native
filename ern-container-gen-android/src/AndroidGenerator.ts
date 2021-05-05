@@ -132,7 +132,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     const injectPluginsTaskMsg = 'Injecting Native Dependencies';
     const injectPluginsKaxTask = kax.task(injectPluginsTaskMsg);
 
-    const replacements: Array<() => void> = [];
+    const replacements: (() => void)[] = [];
     const androidDependencies: AndroidDependencies = {
       annotationProcessor: [],
       files: [],

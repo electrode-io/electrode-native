@@ -17,11 +17,11 @@ export default class ApiGenUtils {
       const generator = new DefaultGenerator().opts(opts);
       const apis = generator.processPaths(generator.swagger.getPaths()).value;
 
-      const result: Array<{
+      const result: {
         apiName: string;
         requests: string[];
         events: string[];
-      }> = [];
+      }[] = [];
       for (const apiKey in apis) {
         if (apis.hasOwnProperty(apiKey)) {
           const {

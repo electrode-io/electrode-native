@@ -18,16 +18,18 @@ export default class BaseGit implements ITransactional {
     cauldronPath,
     repository,
     branch = 'master',
+    gitClient = gitCli,
   }: {
     cauldronPath: string;
     repository?: string;
     branch?: string;
+    gitClient?: any;
   }) {
     this.fsPath = cauldronPath;
     fs.ensureDirSync(this.fsPath);
     this.repository = repository;
     this.branch = branch;
-    this.git = gitCli(this.fsPath);
+    this.git = gitClient(this.fsPath);
     this.pendingTransaction = false;
     this.hasBeenSynced = false;
   }
