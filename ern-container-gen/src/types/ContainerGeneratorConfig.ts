@@ -1,5 +1,6 @@
 import { NativePlatform, PackagePath } from 'ern-core';
 import { Composite } from 'ern-composite-gen';
+import { ContainerGeneratorHooks } from './ContainerGeneratorHooks';
 
 export interface ContainerGeneratorConfig {
   /**
@@ -47,4 +48,8 @@ export interface ContainerGeneratorConfig {
    * Indicates whether to reset the React Native cache prior to bundling
    */
   resetCache?: boolean;
+  /**
+   * Path to run script pre and/or post js bundling
+   */
+  hooks?: ContainerGeneratorHooks;
 }

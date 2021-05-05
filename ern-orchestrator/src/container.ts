@@ -48,12 +48,12 @@ export async function runLocalContainerGen(
 ): Promise<ContainerGenResult> {
   try {
     const generator = getGeneratorForPlatform(platform);
-
     return kax.task('Generating Container').run(
       generator.generate({
         androidConfig: (extra && extra.androidConfig) || {},
         composite,
         devJsBundle,
+        hooks: extra?.containerGenerator?.hooks ?? {},
         ignoreRnpmAssets,
         iosConfig: (extra && extra.iosConfig) || {},
         jsMainModuleName,
@@ -117,6 +117,7 @@ export async function runCauldronContainerGen(
             devJsBundle === undefined
               ? containerGeneratorConfig && containerGeneratorConfig.devJsBundle
               : devJsBundle,
+          hooks: containerGeneratorConfig?.hooks ?? {},
           ignoreRnpmAssets:
             containerGeneratorConfig &&
             containerGeneratorConfig.ignoreRnpmAssets,
