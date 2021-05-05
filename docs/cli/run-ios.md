@@ -26,6 +26,7 @@
 - Override iOS configuration during local container generation and runner project by passing `iosConfig` attributes
   - **As a json string**
     For example `--extra '{"iosConfig": {"deploymentTarget": "11.0"}}'`
+    Find more information on [iOS configuration]
   - **As a file path**
     For example `--extra /home/user/my-container-config.json`
     In that case, the configuration will be read from the file.
@@ -33,9 +34,9 @@
     For example `--extra cauldron://config/container/my-container-config.json`
     In that case, the configuration will be read from the file stored in Cauldron.
     For this way to work, the file must exist in Cauldron (you can add a file to the cauldron by using the [ern cauldron add file] command).
+    Find more information on [configuring via cauldron]
 
 Alternatively, it is also possible to provide this extra configuration in the `package.json` of the MiniApp, inside the `ern` object. For example:
-
 ```json
 "ern": {
   "iosConfig": {
@@ -43,6 +44,24 @@ Alternatively, it is also possible to provide this extra configuration in the `p
   }
 }
 ```
+
+- Optional hooks to run an arbitary script before or after js bundling is possible. 
+  - If a script is defined as a `preBundle` hook, it will be executed after the composite generation, prior to running metro bundler, from the directory containing the generated composite project. 
+    - **As a json string**
+      `--extra '{"containerGenerator": {"hooks": {"preBundle": "/workspace/ern/picking-miniapp/script/pre-script.sh"}}}'`
+    - **As a file path**
+      `--extra <path>/container-config.json`
+    - **As a Cauldron file path**
+      `--extra cauldron://config/config.json`
+  - If a script is defined as a `postBundle` hook, it will be executed just after metro bundler has been run, from the directory containing the bundle.
+    - **As a json string**
+      `--extra '{"containerGenerator": {"hooks": {"postBundle": "/workspace/ern/picking-miniapp/script/post-script.sh"}}}'`
+    - **As a file path**
+      `--extra <path>/container-config.json`
+    - **As a Cauldron file path**
+      `--extra cauldron://config/config.json`
+
+Program to use to run the script should be indicated using [shebang pattern][1] in the script itself as first line.
 
 - Enable or disable React Native dev support
 
@@ -89,3 +108,6 @@ Alternatively, it is also possible to provide this extra configuration in the `p
 - The `ern run-ios` command is the `ern` equivalent of the `react-native run-ios` command.
 
 [custom composite]: ./platform-parts/composite/index.md
+[iOS configuration]: ./plaform-parts/container-integration.md
+[configuring via cauldron]: ./plaform-parts/container-integration.md
+[1]: https://en.wikipedia.org/wiki/Shebang_(Unix)
