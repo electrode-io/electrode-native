@@ -188,7 +188,7 @@ export async function runMiniApp(
     }
     extra = extra || {};
     extra.androidConfig = {
-      ...(extra && extra.androidConfig),
+      ...extra?.androidConfig,
       artifactId: oldAndroidRunner
         ? `runner-ern-container`
         : `runner-ern-container-${entryMiniAppName.toLowerCase()}`,

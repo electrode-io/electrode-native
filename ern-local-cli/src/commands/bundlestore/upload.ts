@@ -171,9 +171,8 @@ export const commandHandler = async ({
         baseComposite ||
         (compositeGenConfig?.baseComposite &&
           PackagePath.fromString(compositeGenConfig.baseComposite));
-      resolutions = compositeGenConfig && compositeGenConfig.resolutions;
-      metroExtraNodeModules =
-        compositeGenConfig && compositeGenConfig.metroExtraNodeModules;
+      resolutions = compositeGenConfig?.resolutions;
+      metroExtraNodeModules = compositeGenConfig?.metroExtraNodeModules;
     }
 
     const compositeDir = createTmpDir();
