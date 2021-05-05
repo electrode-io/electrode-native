@@ -125,10 +125,28 @@ NS_ASSUME_NONNULL_BEGIN
  @return A UIViewController containing the view of the miniapp.
  */
 - (UIViewController *)miniAppWithName:(NSString *)name
-                           properties:(NSDictionary * _Nullable)properties;
+                           properties:(NSDictionary * _Nullable)properties
+        __attribute((deprecated("use -miniAppWithName:properties:overlay:sizeFlexibility:delegate instead")));
 
 /**
- Returns a react native miniapp (from a JSBundle).
+ Returns a react native miniapp (from a JSBundle) inside a view controller.
+
+ @param name The name of the mini app, preferably the same name as the jsbundle
+ without the extension.
+ @param properties Any configuration to set up the mini app with.
+ @param overlay determines if view should be rendered as an overlay.
+ @param sizeFlexibilty defines size flexibility type of the root view
+ @param delegate the object to register as the miniapp's delegate.
+ @return A UIViewController containing the view of the miniapp.
+ */
+- (UIViewController *)miniAppWithName:(NSString *)name
+                           properties:(NSDictionary *_Nullable)properties
+                              overlay:(BOOL)overlay
+                      sizeFlexibility:(NSInteger)sizeFlexibility
+                             delegate:(id<MiniAppViewDelegate> _Nullable)delegate;
+
+/**
+ Returns a react native miniapp (from a JSBundle) inside a view.
 
  @param name The name of the mini app, preferably the same name as the jsbundle
  without the extension.
@@ -136,23 +154,26 @@ NS_ASSUME_NONNULL_BEGIN
  @return a UIView of the miniapp.
  */
 - (UIView *)miniAppViewWithName:(NSString *)name
-                     properties:(NSDictionary *_Nullable)properties;
+                     properties:(NSDictionary *_Nullable)properties
+        __attribute((deprecated("use -miniAppViewWithName:properties:overlay:sizeFlexibility:delegate instead")));
 
 /**
-Returns a react native miniapp (from a JSBundle).
+ Returns a react native miniapp (from a JSBundle) inside a view.
 
 @param name The name of the mini app, preferably the same name as the jsbundle
 without the extension.
-@param overlay Boolean determines if view should be rendered as an overlay.
+@param overlay determines if view should be rendered as an overlay.
 @param properties Any configuration to set up the mini app with.
 @return a UIView of the miniapp.
 */
 - (UIView *)miniAppViewWithName:(NSString *)name
                      properties:(NSDictionary *_Nullable)properties
-                        overlay:(BOOL)overlay;
+                        overlay:(BOOL)overlay
+        __attribute((deprecated("use -miniAppViewWithName:properties:overlay:sizeFlexibility:delegate instead")));
+
 
 /**
- Returns a react native miniapp (from a JSBundle).
+ Returns a react native miniapp (from a JSBundle) inside a view.
 
  @param name The name of the mini app, that is registered with the AppComponent.
  @param properties initialprops for a React Native miniapp.
@@ -162,10 +183,10 @@ without the extension.
 - (UIView *)miniAppViewWithName:(NSString *)name
                      properties:(NSDictionary *_Nullable)properties
                 sizeFlexibility:(NSInteger)sizeFlexibilty
-        __attribute((deprecated("use -miniAppViewWithName:properties:sizeFlexibility:delegate instead")));
+        __attribute((deprecated("use -miniAppViewWithName:properties:overlay:sizeFlexibility:delegate instead")));
 
 /**
- Returns a react native miniapp (from a JSBundle).
+ Returns a react native miniapp (from a JSBundle) inside a view.
 
  @param name The name of the mini app, that is registered with the AppComponent.
  @param properties initialprops for a React Native miniapp.
@@ -176,6 +197,23 @@ without the extension.
 - (UIView *)miniAppViewWithName:(NSString *)name
                      properties:(NSDictionary *_Nullable)properties
                 sizeFlexibility:(NSInteger)sizeFlexibilty
+                       delegate:(id<MiniAppViewDelegate> _Nullable)delegate
+        __attribute((deprecated("use -miniAppViewWithName:properties:overlay:sizeFlexibility:delegate instead")));
+
+/**
+ Returns a react native miniapp (from a JSBundle) inside a view.
+
+ @param name The name of the mini app, that is registered with the AppComponent.
+ @param properties initialprops for a React Native miniapp.
+ @param overlay determines if view should be rendered as an overlay.
+ @param sizeFlexibilty defines size flexibility type of the root view
+ @param delegate the object to register as the miniapp's delegate.
+ @return a UIView of the miniapp.
+ */
+- (UIView *)miniAppViewWithName:(NSString *)name
+                     properties:(NSDictionary *_Nullable)properties
+                        overlay:(BOOL)overlay
+                sizeFlexibility:(NSInteger)sizeFlexibility
                        delegate:(id<MiniAppViewDelegate> _Nullable)delegate;
 
 /**

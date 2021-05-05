@@ -163,20 +163,27 @@ static NSString *enableBundleStore = @"enableBundleStore";
                            properties:(NSDictionary *_Nullable)properties
 {
     UIViewController *miniAppViewController = [UIViewController new];
-    miniAppViewController.view = [self miniAppViewWithName:name properties:properties];;
+    miniAppViewController.view = [self miniAppViewWithName:name properties:properties];
+    return miniAppViewController;
+}
 
+- (UIViewController *)miniAppWithName:(NSString *)name
+                           properties:(NSDictionary *_Nullable)properties
+                              overlay:(BOOL)overlay
+                      sizeFlexibility:(NSInteger)sizeFlexibility
+                             delegate:(id<MiniAppViewDelegate> _Nullable)delegate {
+    UIViewController *miniAppViewController = [UIViewController new];
+    miniAppViewController.view = [self miniAppViewWithName:name properties:properties overlay:overlay sizeFlexibility:sizeFlexibility delegate:delegate];
     return miniAppViewController;
 }
 
 - (UIView *)miniAppViewWithName:(NSString *)name properties:(NSDictionary *_Nullable)properties {
-    // Use the bridge to generate the view
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
     rootView.backgroundColor = [self rootViewColorWithOverlay:NO];
     return rootView;
 }
 
 - (UIView *)miniAppViewWithName:(NSString *)name properties:(NSDictionary *_Nullable)properties overlay:(BOOL)overlay {
-    // Use the bridge to generate the view
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
     rootView.backgroundColor = [self rootViewColorWithOverlay:overlay];
     return rootView;
@@ -198,6 +205,19 @@ static NSString *enableBundleStore = @"enableBundleStore";
     RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
     rootView.sizeFlexibility = (RCTRootViewSizeFlexibility)sizeFlexibilty;
     rootView.backgroundColor = [self rootViewColorWithOverlay:NO];
+    rootView.delegate = delegate;
+    return rootView;
+}
+
+- (UIView *)miniAppViewWithName:(NSString *)name
+                     properties:(NSDictionary *_Nullable)properties
+                        overlay:(BOOL)overlay
+                sizeFlexibility:(NSInteger)sizeFlexibility
+                       delegate:(id<MiniAppViewDelegate> _Nullable)delegate {
+    // Use the bridge to generate the view
+    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:self.bridge moduleName:name initialProperties:properties];
+    rootView.sizeFlexibility = (RCTRootViewSizeFlexibility)sizeFlexibility;
+    rootView.backgroundColor = [self rootViewColorWithOverlay:overlay];
     rootView.delegate = delegate;
     return rootView;
 }
