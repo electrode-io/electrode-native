@@ -98,7 +98,7 @@ export async function runCauldronCompositeGen(
         miniApps: miniapps,
         outDir,
         pathToYarnLock,
-        resolutions: compositeGenConfig && compositeGenConfig.resolutions,
+        resolutions: compositeGenConfig?.resolutions,
       }),
     );
 

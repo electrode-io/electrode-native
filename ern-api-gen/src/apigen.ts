@@ -71,7 +71,7 @@ export async function regenerateCode(options: any = {}) {
   await _checkDependencyVersion(pkg, options.targetDependencies || []);
 
   const isNewVersion = semver.lt(curVersion, newPluginVer);
-  const extra = (pkg.ern && pkg.ern.message) || {};
+  const extra = pkg?.ern?.message ?? {};
   const config = normalizeConfig({
     apiAuthor: pkg.author,
     apiDescription: pkg.description,
@@ -83,12 +83,7 @@ export async function regenerateCode(options: any = {}) {
     packageName: pkgName,
     ...extra,
     ...options,
-    name:
-      extra && extra.apiName
-        ? extra.apiName
-        : extra && extra.moduleName
-        ? extra.moduleName
-        : pkgName,
+    name: extra?.apiName ?? extra?.moduleName ?? pkgName,
   });
 
   await cleanGenerated();

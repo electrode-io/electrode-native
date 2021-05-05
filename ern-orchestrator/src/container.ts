@@ -50,12 +50,12 @@ export async function runLocalContainerGen(
     const generator = getGeneratorForPlatform(platform);
     return kax.task('Generating Container').run(
       generator.generate({
-        androidConfig: (extra && extra.androidConfig) || {},
+        androidConfig: extra?.androidConfig ?? {},
         composite,
         devJsBundle,
         hooks: extra?.containerGenerator?.hooks ?? {},
         ignoreRnpmAssets,
-        iosConfig: (extra && extra.iosConfig) || {},
+        iosConfig: extra?.iosConfig ?? {},
         jsMainModuleName,
         outDir,
         plugins: [],
@@ -110,12 +110,11 @@ export async function runCauldronContainerGen(
       .task(`Generating Container for ${napDescriptor.toString()}`)
       .run(
         generator.generate({
-          androidConfig:
-            containerGeneratorConfig && containerGeneratorConfig.androidConfig,
+          androidConfig: containerGeneratorConfig?.androidConfig,
           composite,
           devJsBundle:
             devJsBundle === undefined
-              ? containerGeneratorConfig && containerGeneratorConfig.devJsBundle
+              ? containerGeneratorConfig?.devJsBundle
               : devJsBundle,
           hooks: containerGeneratorConfig?.hooks ?? {},
           ignoreRnpmAssets:

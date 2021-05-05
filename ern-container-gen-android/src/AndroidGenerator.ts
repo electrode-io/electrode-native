@@ -473,7 +473,7 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
     reactNativeVersion: string,
   ) {
     let jscVersion =
-      (config.androidConfig && config.androidConfig.jscVersion) ||
+      config?.androidConfig?.jscVersion ??
       android.getDefaultJSCVersion(reactNativeVersion);
     if (/^\d+$/.test(jscVersion)) {
       // For backward compatibility, to avoid breaking clients
@@ -482,8 +482,7 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
       jscVersion = `${jscVersion}.0.0`;
     }
     const jscVariant =
-      (config.androidConfig && config.androidConfig.jscVariant) ||
-      android.DEFAULT_JSC_VARIANT;
+      config?.androidConfig?.jscVariant ?? android.DEFAULT_JSC_VARIANT;
     const workingDir = createTmpDir();
     try {
       shell.pushd(workingDir);
@@ -526,7 +525,7 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
     reactNativeVersion: string,
   ) {
     const hermesVersion =
-      (config.androidConfig && config.androidConfig.hermesVersion) ||
+      config?.androidConfig?.hermesVersion ??
       android.getDefaultHermesVersion(reactNativeVersion);
     const workingDir = createTmpDir();
     try {
