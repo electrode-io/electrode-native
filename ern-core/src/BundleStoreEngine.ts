@@ -70,7 +70,7 @@ export class BundleStoreEngine {
       }
       zipfile.end();
 
-      const assetsProm = new Promise((resolve, reject) => {
+      const assetsProm = new Promise<void>((resolve, reject) => {
         s.on('close', () => {
           resolve();
         });
@@ -111,10 +111,10 @@ export class BundleStoreEngine {
     const sBundle = reqBundle.pipe(streamBundle);
     const sSourceMap = reqSourceMap.pipe(streamSourceMap);
 
-    const pBundle = new Promise((resolve, reject) =>
+    const pBundle = new Promise<void>((resolve, reject) =>
       sBundle.on('finish', () => resolve()),
     );
-    const pSourceMap = new Promise((resolve, reject) => {
+    const pSourceMap = new Promise<void>((resolve, reject) => {
       sSourceMap.on('finish', () => resolve());
     });
 

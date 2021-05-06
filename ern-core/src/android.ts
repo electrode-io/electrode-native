@@ -97,7 +97,7 @@ export function resolveAndroidVersions({
 
 // Returns a promise that will get resolved after a given delay (in ms)
 async function delay(ms: number) {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     setTimeout(() => {
       resolve();
     }, ms);

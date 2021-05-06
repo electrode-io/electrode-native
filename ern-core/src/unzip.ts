@@ -5,7 +5,7 @@ import yauzl from 'yauzl';
 
 export async function unzip(zippedData: Buffer, destPath: string) {
   await fs.ensureDir(destPath);
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     yauzl.fromBuffer(zippedData, { lazyEntries: true }, (err, zipfile) => {
       if (err) {
         reject(err);

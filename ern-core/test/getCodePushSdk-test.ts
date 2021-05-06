@@ -2,7 +2,7 @@ import mockFs from 'mock-fs';
 import path from 'path';
 import os from 'os';
 import { expect } from 'chai';
-import { getCodePushSdk } from '../src/getCodePushSdk';
+import getCodePushSdk from '../src/getCodePushSdk';
 
 const ernRcPath = path.join(os.homedir(), '.ern', '.ernrc');
 const codePushConfigPath = path.join(

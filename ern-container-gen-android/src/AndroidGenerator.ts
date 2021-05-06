@@ -132,7 +132,7 @@ export default class AndroidGenerator implements ContainerGenerator {
     const injectPluginsTaskMsg = 'Injecting Native Dependencies';
     const injectPluginsKaxTask = kax.task(injectPluginsTaskMsg);
 
-    const replacements: Array<() => void> = [];
+    const replacements: (() => void)[] = [];
     const androidDependencies: AndroidDependencies = {
       annotationProcessor: [],
       files: [],
@@ -496,7 +496,7 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
         jscVersionPath,
         `${jscVariant}-r${versionMajor}.aar`,
       );
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         const unzipper = new DecompressZip(jscAARPath);
         const unzipOutDir = createTmpDir();
         const containerJniLibsPath = path.join(
@@ -535,7 +535,7 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
       const hermesAarPath = path.resolve(
         `./node_modules/hermes-engine/android/hermes-release.aar`,
       );
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         const unzipper = new DecompressZip(hermesAarPath);
         const unzipOutDir = createTmpDir();
         const containerJniLibsPath = path.join(

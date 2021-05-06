@@ -14,7 +14,9 @@ export const GitFileStore = _GitFileStore;
 export const GitDocumentStore = _GitDocumentStore;
 
 export * from './types';
-export * from './getActiveCauldron';
+
+import _getActiveCauldron from './getActiveCauldron';
+export const getActiveCauldron = _getActiveCauldron;
 
 export {
   getSchemaVersionMatchingCauldronApiVersion,

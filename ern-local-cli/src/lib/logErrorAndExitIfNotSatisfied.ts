@@ -42,7 +42,7 @@ export async function logErrorAndExitIfNotSatisfied({
   metroServerIsNotRunning,
 }: {
   noGitOrFilesystemPath?: {
-    obj: string | PackagePath | Array<string | PackagePath> | void;
+    obj: string | PackagePath | (string | PackagePath)[] | void;
     extraErrorMessage?: string;
   };
   noFileSystemPath?: {
@@ -55,11 +55,11 @@ export async function logErrorAndExitIfNotSatisfied({
     extraErrorMessage?: string;
   };
   napDescriptorExistInCauldron?: {
-    descriptor: string | AnyAppDescriptor | Array<string | AnyAppDescriptor>;
+    descriptor: string | AnyAppDescriptor | (string | AnyAppDescriptor)[];
     extraErrorMessage?: string;
   };
   sameNativeApplicationAndPlatform?: {
-    descriptors: Array<string | AppVersionDescriptor>;
+    descriptors: (string | AppVersionDescriptor)[];
     extraErrorMessage?: string;
   };
   napDescritorDoesNotExistsInCauldron?: {
@@ -67,46 +67,46 @@ export async function logErrorAndExitIfNotSatisfied({
     extraErrorMessage?: string;
   };
   publishedToNpm?: {
-    obj: string | PackagePath[] | Array<string | PackagePath>;
+    obj: string | PackagePath[] | (string | PackagePath)[];
     extraErrorMessage?: string;
   };
   miniAppNotInNativeApplicationVersionContainer?: {
-    miniApp: string | PackagePath | Array<string | PackagePath> | void;
+    miniApp: string | PackagePath | (string | PackagePath)[] | void;
     descriptor: AppVersionDescriptor;
     extraErrorMessage?: string;
   };
   miniAppIsInNativeApplicationVersionContainer?: {
-    miniApp: string | PackagePath[] | Array<string | PackagePath> | void;
+    miniApp: string | PackagePath[] | (string | PackagePath)[] | void;
     descriptor: AppVersionDescriptor;
     extraErrorMessage?: string;
   };
   miniAppIsInNativeApplicationVersionContainerWithDifferentVersion?: {
-    miniApp: string | PackagePath[] | Array<string | PackagePath> | void;
+    miniApp: string | PackagePath[] | (string | PackagePath)[] | void;
     descriptor: AppVersionDescriptor;
     extraErrorMessage?: string;
   };
   dependencyNotInNativeApplicationVersionContainer?: {
-    dependency: string | PackagePath[] | Array<string | PackagePath> | void;
+    dependency: string | PackagePath[] | (string | PackagePath)[] | void;
     descriptor: AppVersionDescriptor;
     extraErrorMessage?: string;
   };
   dependencyIsOrphaned?: {
-    dependency: string | PackagePath[] | Array<string | PackagePath> | void;
+    dependency: string | PackagePath[] | (string | PackagePath)[] | void;
     descriptor: AppVersionDescriptor;
     extraErrorMessage?: string;
   };
   dependencyIsInNativeApplicationVersionContainer?: {
-    dependency: string | PackagePath[] | Array<string | PackagePath> | void;
+    dependency: string | PackagePath[] | (string | PackagePath)[] | void;
     descriptor: AppVersionDescriptor;
     extraErrorMessage?: string;
   };
   dependencyIsInNativeApplicationVersionContainerWithDifferentVersion?: {
-    dependency: string | PackagePath[] | Array<string | PackagePath> | void;
+    dependency: string | PackagePath[] | (string | PackagePath)[] | void;
     descriptor: AppVersionDescriptor;
     extraErrorMessage?: string;
   };
   dependencyNotInUseByAMiniApp?: {
-    dependency: string | PackagePath | Array<string | PackagePath> | void;
+    dependency: string | PackagePath | (string | PackagePath)[] | void;
     descriptor: AppVersionDescriptor;
     extraErrorMessage?: string;
   };
@@ -122,7 +122,7 @@ export async function logErrorAndExitIfNotSatisfied({
     extraErrorMessage?: string;
   };
   checkIfCodePushOptionsAreValid?: {
-    descriptors?: Array<string | AppVersionDescriptor>;
+    descriptors?: (string | AppVersionDescriptor)[];
     targetBinaryVersion?: string;
     semVerDescriptor?: string;
     extraErrorMessage?: string;
@@ -143,7 +143,7 @@ export async function logErrorAndExitIfNotSatisfied({
     key: string;
   };
   isSupportedMiniAppOrJsApiImplVersion?: {
-    obj: string | PackagePath | Array<string | PackagePath> | void;
+    obj: string | PackagePath | (string | PackagePath)[] | void;
   };
   isContainerPath?: {
     p: string;

@@ -20,7 +20,7 @@
         "--require",
         "tsconfig-paths/register",
         "--require",
-        "ts-node/register",
+        "ts-node/register/transpile-only",
         "${relativeFile}"
       ],
       "cwd": "${workspaceRoot}",

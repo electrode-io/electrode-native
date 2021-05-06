@@ -624,7 +624,7 @@ export function applyVersionModifiers({
 }: {
   deploymentName: string;
   targetBinaryVersion: string;
-  versionModifiers: Array<{ deploymentName: string; modifier: string }>;
+  versionModifiers: { deploymentName: string; modifier: string }[];
 }): string {
   const versionModifier = _.find(
     versionModifiers,
