@@ -19,6 +19,9 @@ const ERN_HOME = process.env.ERN_HOME || path.join(os.homedir(), '.ern')
 shell.mkdir('-p', path.join(ERN_HOME, 'versions'))
 shell.ln('-sf', process.cwd(), path.join(ERN_HOME, 'versions', '1000.0.0'))
 
+// Install Git hooks
+shell.cp('./.githooks/*', '.git/hooks/');
+
 // Create initial .ernrc if necessary
 const ERN_RC = path.join(ERN_HOME, '.ernrc')
 if (!fs.existsSync(ERN_RC)) {
