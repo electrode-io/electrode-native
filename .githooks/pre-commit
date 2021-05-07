@@ -1,0 +1,2 @@
+#!/bin/sh
+yarn check:yarnlock && yarn check:lint && yarn prettier:staged && yarn check:regen-fixtures

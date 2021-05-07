@@ -15,6 +15,18 @@ You'll need to install [Yarn][3].
 
 Electrode Native is using [Yarn Workspaces][1] and [Lerna][2] to manage `ern-` modules, which in turn use Yarn instead of NPM to install all `ern-` module dependencies.
 
+### Git hooks
+
+The repo ships with several optional Git hooks that can be activated using
+
+```sh
+cp -a .githooks/* .git/hooks/
+```
+
+- `post-merge`: Automatically installs dependencies after a merge if yarn.lock was changed.
+- `pre-commit`: Runs various checks, including the linter and formatter when creating a commit.
+- `pre-push`: Builds the project and runs unit tests before pushing a branch to a remote.
+
 ## Electrode Native development setup
 
 If you want to contribute code to the Electrode Native platform, you'll first need to setup a development environment to work on Electrode Native. It's actually quite easy to start working on the platform.
