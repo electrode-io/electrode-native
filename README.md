@@ -53,6 +53,8 @@ The [documentation of Electrode Native] is maintained as [GitBook] pages in the 
 
 We embrace contributions, be it documentation, issue reporting, or contributing code.
 
+Git hooks for local development can be set up using `cp -a .githooks/* .git/hooks/`.
+
 Please read our [CONTRIBUTING guide](docs/overview/contributing.md) for more details on how to contribute.
 
 ## Further Reading
