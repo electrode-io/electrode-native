@@ -78,7 +78,7 @@ repositories {
 ```
 
 ##### Proguard
-Container library does not proguard itself, but supports proguarding. In your module's `proguard.txt` add the rule to be during the applications proguarding phase. 
+Container library does not proguard itself, but supports proguarding. In your module's `proguard.txt` add the rule to be during the applications proguarding phase.
 
 ```
 # keep rules for react-native-electrode-bridge
@@ -107,6 +107,8 @@ The following android build parameters can be configured with application specif
   ```
 
 - `compileSdkVersion` - The API level designated to compile the application.
+
+- `kotlinVersion` - The version of Kotlin to use for the container _(only used in case at least one Kotlin native module is injected in the container)_.
 
 - `minSdkVersion` - The minimum API level that the application targets.
 

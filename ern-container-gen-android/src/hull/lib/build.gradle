@@ -1,4 +1,7 @@
 apply plugin: 'com.android.library'
+{{#isKotlinEnabled}}
+apply plugin: 'kotlin-android'
+{{/isKotlinEnabled}}
 
 android {
     compileSdkVersion {{{compileSdkVersion}}}

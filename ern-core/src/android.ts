@@ -19,6 +19,7 @@ export const DEFAULT_BUILD_TOOLS_VERSION = '28.0.3';
 export const DEFAULT_COMPILE_SDK_VERSION = '28';
 export const DEFAULT_GRADLE_DISTRIBUTION_VERSION = '5.4.1';
 export const DEFAULT_JSC_VARIANT = 'android-jsc';
+export const DEFAULT_KOTLIN_VERSION = '1.4.32';
 export const DEFAULT_MIN_SDK_VERSION_PRE_RN64 = '19';
 export const DEFAULT_MIN_SDK_VERSION_POST_RN64 = '21';
 export const DEFAULT_SUPPORT_LIBRARY_VERSION = '28.0.0';
@@ -36,6 +37,7 @@ export interface AndroidResolvedVersions {
   buildToolsVersion: string;
   compileSdkVersion: string;
   gradleDistributionVersion: string;
+  kotlinVersion: string;
   minSdkVersion: string;
   sourceCompatibility: string;
   supportLibraryVersion: string;
@@ -50,6 +52,7 @@ export function resolveAndroidVersions({
   buildToolsVersion = DEFAULT_BUILD_TOOLS_VERSION,
   compileSdkVersion = DEFAULT_COMPILE_SDK_VERSION,
   gradleDistributionVersion = DEFAULT_GRADLE_DISTRIBUTION_VERSION,
+  kotlinVersion = DEFAULT_KOTLIN_VERSION,
   minSdkVersion,
   sourceCompatibility = DEFAULT_SOURCE_COMPATIBILITY,
   supportLibraryVersion = DEFAULT_SUPPORT_LIBRARY_VERSION,
@@ -63,6 +66,7 @@ export function resolveAndroidVersions({
   buildToolsVersion?: string;
   compileSdkVersion?: string;
   gradleDistributionVersion?: string;
+  kotlinVersion?: string;
   minSdkVersion?: string;
   sourceCompatibility?: string;
   supportLibraryVersion?: string;
@@ -83,6 +87,7 @@ export function resolveAndroidVersions({
     buildToolsVersion,
     compileSdkVersion,
     gradleDistributionVersion,
+    kotlinVersion,
     minSdkVersion: resolvedMinSdkVersion,
     sourceCompatibility,
     supportLibraryVersion,

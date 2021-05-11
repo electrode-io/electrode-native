@@ -5,6 +5,9 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:{{{androidGradlePlugin}}}'
+{{#isKotlinEnabled}}
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:{{{kotlinVersion}}}'
+{{/isKotlinEnabled}}
     }
 }
 
