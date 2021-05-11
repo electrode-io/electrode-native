@@ -28,6 +28,7 @@ import {
   populateApiImplMustacheView,
 } from 'ern-container-gen';
 
+import glob from 'glob';
 import _ from 'lodash';
 import path from 'path';
 import fs from 'fs-extra';
@@ -66,6 +67,20 @@ export default class AndroidGenerator implements ContainerGenerator {
     return generateContainer(config, {
       fillContainerHull: this.fillContainerHull.bind(this),
       postBundle: this.postBundle.bind(this),
+    });
+  }
+
+  public async doesDirectoryContainsKotlinSourceFiles(
+    dir: string,
+  ): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      glob(path.join(dir, '**/*.kt'), (err, files) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(files?.length > 0);
+        }
+      });
     });
   }
 
@@ -141,6 +156,8 @@ export default class AndroidGenerator implements ContainerGenerator {
       transitive: [],
     };
 
+    let isKotlinEnabled = false;
+
     for (const plugin of config.plugins) {
       if (plugin.name === 'react-native') {
         continue;
@@ -171,6 +188,12 @@ export default class AndroidGenerator implements ContainerGenerator {
         populateApiImplMustacheView(pluginSourcePath, mustacheView, true);
       }
       pathToPluginProject = path.join(pluginSourcePath, pluginConfig!.root);
+
+      if (!isKotlinEnabled) {
+        isKotlinEnabled = await this.doesDirectoryContainsKotlinSourceFiles(
+          pathToPluginProject,
+        );
+      }
 
       shell.pushd(pathToPluginProject);
       try {
@@ -304,6 +327,8 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
       .join(',');
     mustacheView.resSrcDirs = resSrcDirs;
 
+    mustacheView.isKotlinEnabled = isKotlinEnabled;
+
     // Dedupe repositories and permissions
     mustacheView.customRepos = _.uniq(mustacheView.customRepos);
     mustacheView.customPermissions = _.uniq(mustacheView.customPermissions);
@@ -314,6 +339,11 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
     androidDependencies.regular.push(
       `com.android.support:appcompat-v7:${versions.supportLibraryVersion}`,
     );
+    if (isKotlinEnabled) {
+      androidDependencies.regular.push(
+        `org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlinVersion}`,
+      );
+    }
     mustacheView.implementations = this.buildImplementationStatements(
       androidDependencies,
       versions,
