@@ -1,6 +1,9 @@
 import { assert, expect } from 'chai';
 import { exec, execSync } from 'child_process';
-import dirCompare from 'dir-compare';
+import {
+  compare as dirCompare,
+  compareSync as dirCompareSync,
+} from 'dir-compare';
 import fs from 'fs';
 import path from 'path';
 import shell from 'shelljs';
@@ -91,49 +94,47 @@ export default function setup(
       shell.cp('-r', src, dest);
       return Promise.resolve(true);
     } else {
-      return dirCompare
-        .compare(src, dest, {
-          compareDate: false,
-          dateTolerance: 500000,
-          compareContent: true,
-        })
-        .then((resp = { diffSet: [] }) => {
-          const { diffSet } = resp;
+      return dirCompare(src, dest, {
+        compareDate: false,
+        dateTolerance: 500000,
+        compareContent: true,
+      }).then((resp = { diffSet: [] }) => {
+        const { diffSet } = resp;
 
-          for (const diff of diffSet) {
-            if (!diff.name2 && !excludeFilter(diff)) {
+        for (const diff of diffSet) {
+          if (!diff.name2 && !excludeFilter(diff)) {
+            assert(
+              false,
+              `${diff.relativePath} is missing ${diff.name1} in ${dest}`,
+            );
+          }
+          const nf = `${diff.path1}/${diff.name1}`;
+          const of = `${dest}/${diff.relativePath.replace(/^\//, '')}/${
+            diff.name2
+          }`;
+          if (!excludeFilter(diff) && diff.state !== 'equal') {
+            const cmd = `git diff --ignore-blank-lines --ignore-space-at-eol -b -w ${nf} ${of}`;
+            try {
+              execSync(cmd);
+            } catch (e) {
+              console.log('ERROR:\n', cmd);
+              const diffOut = e.output
+                .filter(Boolean)
+                .map((v) => v + '')
+                .join('\n');
               assert(
                 false,
-                `${diff.relativePath} is missing ${diff.name1} in ${dest}`,
-              );
-            }
-            const nf = `${diff.path1}/${diff.name1}`;
-            const of = `${dest}/${diff.relativePath.replace(/^\//, '')}/${
-              diff.name2
-            }`;
-            if (!excludeFilter(diff) && diff.state !== 'equal') {
-              const cmd = `git diff --ignore-blank-lines --ignore-space-at-eol -b -w ${nf} ${of}`;
-              try {
-                execSync(cmd);
-              } catch (e) {
-                console.log('ERROR:\n', cmd);
-                const diffOut = e.output
-                  .filter(Boolean)
-                  .map((v) => v + '')
-                  .join('\n');
-                assert(
-                  false,
-                  `Not the same ${diff.relativePath.replace(/^\//, '')}/${
-                    diff.name2
-                  } ${diff.path1}/${diff.name1}
+                `Not the same ${diff.relativePath.replace(/^\//, '')}/${
+                  diff.name2
+                } ${diff.path1}/${diff.name1}
 ${diffOut}
 `,
-                );
-              }
+              );
             }
           }
-          return true;
-        });
+        }
+        return true;
+      });
     }
   };
   const exists = (file) => () =>
@@ -284,7 +285,7 @@ export function afterTest() {
 
 export function sameDirContent(pathA, pathB, filesToIgnoreContentDiff = []) {
   let result = true;
-  const directoriesDiff = dirCompare.compareSync(pathA, pathB, {
+  const directoriesDiff = dirCompareSync(pathA, pathB, {
     compareContent: true,
   });
   for (const diff of directoriesDiff.diffSet) {

@@ -127,39 +127,40 @@ function isNodeVersionCompatible(version: string) {
   return semver.satisfies(version, requiredVersion);
 }
 
-Manifest.getOverrideManifestConfig = async (): Promise<OverrideManifestConfig | void> => {
-  // Try to find override manifest config in .ernrc config first
-  let manifestConfig = config.get('manifest', undefined);
-  if (
-    manifestConfig &&
-    manifestConfig.override &&
-    manifestConfig.override.url
-  ) {
-    return {
-      source: '.ernrc',
-      type: manifestConfig.override.type || 'partial',
-      url: manifestConfig.override.url,
-    };
-  }
-
-  // If not found in .ernrc, look in cauldron config
-  try {
-    const cauldronInstance = await getActiveCauldron({
-      silent: true,
-      throwIfNoActiveCauldron: false,
-    });
-    manifestConfig = await cauldronInstance?.getManifestConfig();
-    if (manifestConfig) {
+Manifest.getOverrideManifestConfig =
+  async (): Promise<OverrideManifestConfig | void> => {
+    // Try to find override manifest config in .ernrc config first
+    let manifestConfig = config.get('manifest', undefined);
+    if (
+      manifestConfig &&
+      manifestConfig.override &&
+      manifestConfig.override.url
+    ) {
       return {
-        source: 'cauldron',
+        source: '.ernrc',
         type: manifestConfig.override.type || 'partial',
         url: manifestConfig.override.url,
       };
     }
-  } catch (e) {
-    log.warn('Cannot reach Cauldron');
-  }
-};
+
+    // If not found in .ernrc, look in cauldron config
+    try {
+      const cauldronInstance = await getActiveCauldron({
+        silent: true,
+        throwIfNoActiveCauldron: false,
+      });
+      manifestConfig = await cauldronInstance?.getManifestConfig();
+      if (manifestConfig) {
+        return {
+          source: 'cauldron',
+          type: manifestConfig.override.type || 'partial',
+          url: manifestConfig.override.url,
+        };
+      }
+    } catch (e) {
+      log.warn('Cannot reach Cauldron');
+    }
+  };
 
 const kaxRendererConfig = {
   colorScheme: {

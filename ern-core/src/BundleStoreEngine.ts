@@ -4,12 +4,12 @@ import createTmpDir from './createTmpDir';
 import log from './log';
 import fs from 'fs';
 import path from 'path';
-import got from 'got';
+import got, { Agents } from 'got';
 import ipc from 'node-ipc';
 import yazl from 'yazl';
 import { NativePlatform } from './NativePlatform';
 import { createProxyAgentFromErnConfig } from './createProxyAgent';
-
+import https from 'https';
 export class BundleStoreEngine {
   private readonly sdk: BundleStoreSdk;
   private assets: any[];
@@ -96,17 +96,23 @@ export class BundleStoreEngine {
     const streamBundle = fs.createWriteStream(bundlePath);
     const streamSourceMap = fs.createWriteStream(sourceMapPath);
 
+    const ernAgent = createProxyAgentFromErnConfig('bundleStoreProxy');
+
+    const agent: Agents = {};
+    if (ernAgent?.isHttpsAgent) {
+      agent.https = ernAgent.agent as https.Agent;
+    } else {
+      agent.http = ernAgent?.agent;
+    }
+    const gotOptions = { agent };
+
     const reqBundle = got.stream(
       `http://localhost:8081/index.bundle?platform=${platform}&dev=${!!dev}&minify=true`,
-      {
-        agent: createProxyAgentFromErnConfig('bundleStoreProxy'),
-      },
+      gotOptions,
     );
     const reqSourceMap = got.stream(
       `http://localhost:8081/index.map?platform=${platform}&dev=${!!dev}&minify=true`,
-      {
-        agent: createProxyAgentFromErnConfig('bundleStoreProxy'),
-      },
+      gotOptions,
     );
     const sBundle = reqBundle.pipe(streamBundle);
     const sSourceMap = reqSourceMap.pipe(streamSourceMap);

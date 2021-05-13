@@ -9,12 +9,8 @@ import got from 'got';
 import FormData from 'form-data';
 import { createProxyAgentFromErnConfig } from './createProxyAgent';
 import DecompressZip = require('decompress-zip');
-
+import { getGotCommonOpts } from './getGotCommonOpts';
 export class ErnBinaryStore implements BinaryStore {
-  public readonly gotCommonOpts = {
-    agent: createProxyAgentFromErnConfig('binaryStoreProxy'),
-  };
-
   private readonly config: any;
 
   constructor(config: any) {
@@ -37,7 +33,7 @@ export class ErnBinaryStore implements BinaryStore {
       const binaryRs = fs.createReadStream(pathToBinary);
       const form = new FormData();
       form.append('file', binaryRs);
-      await got.post(this.config.url, { ...this.gotCommonOpts, body: form });
+      await got.post(this.config.url, { ...getGotCommonOpts(), body: form });
     } catch (err) {
       throw new Error(err.response?.text ?? err.message);
     }
@@ -54,7 +50,7 @@ export class ErnBinaryStore implements BinaryStore {
     await this.throwIfNoBinaryExistForDescriptor(descriptor, { flavor });
     try {
       await got.delete(this.urlToBinary(descriptor, { flavor }), {
-        ...this.gotCommonOpts,
+        ...getGotCommonOpts(),
       });
     } catch (err) {
       throw new Error(err.response?.text ?? err.message);
@@ -91,7 +87,7 @@ export class ErnBinaryStore implements BinaryStore {
   ): Promise<boolean> {
     try {
       const res = await got.head(this.urlToBinary(descriptor, { flavor }), {
-        ...this.gotCommonOpts,
+        ...getGotCommonOpts(),
       });
       return res.statusCode === 200;
     } catch (err) {

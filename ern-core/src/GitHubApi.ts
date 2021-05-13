@@ -1,4 +1,4 @@
-import Octokit from '@octokit/rest';
+import { Octokit } from '@octokit/rest';
 import log from './log';
 
 export class GitHubApi {
@@ -18,7 +18,7 @@ export class GitHubApi {
     owner,
     repo,
   }: {
-    opts: Octokit.Options | undefined;
+    opts: any;
     owner: string;
     repo: string;
   }) {
@@ -171,7 +171,7 @@ export class GitHubApi {
     }
 
     log.debug(`repos.getContents(${JSON.stringify(opts, null, 2)})`);
-    const res = await this.octokit.repos.getContents(opts);
+    const res = await this.octokit.repos.getContent(opts);
     const buff = new Buffer((res.data as any).content, 'base64');
     return buff.toString('utf8');
   }
@@ -196,7 +196,7 @@ export class GitHubApi {
     commitMessage: string;
   }) {
     const sha = ((
-      await this.octokit.repos.getContents({
+      await this.octokit.repos.getContent({
         owner: this.owner,
         path,
         ref: onBranch || undefined,
@@ -207,7 +207,7 @@ export class GitHubApi {
     const buff = new Buffer(newContent);
     const content = buff.toString('base64');
 
-    return this.octokit.repos.createOrUpdateFile({
+    return this.octokit.repos.createOrUpdateFileContents({
       branch: onBranch || undefined,
       content,
       message: commitMessage,

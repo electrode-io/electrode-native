@@ -21,7 +21,7 @@ export const desc =
 
 export const builder = (argv: Argv) => {
   return argv
-    .coerce('dependency', PackagePath.fromString)
+    .coerce('dependency', (d) => PackagePath.fromString(d))
     .option('descriptor', {
       alias: 'd',
       describe: 'A complete native application descriptor',

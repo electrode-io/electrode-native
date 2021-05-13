@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import semver from 'semver';
 import { log, readPackageJson, writePackageJson } from 'ern-core';
 import { getNodeModuleVersion } from './getNodeModuleVersion';
@@ -56,7 +56,7 @@ export async function createBabelRc({
               // it messing with other module-resolver plugin configurations that could
               // be defined in the .babelrc config of individual MiniApps
               // https://babeljs.io/docs/en/options#plugin-preset-merging
-              babelPlugin.push(uuidv4());
+              babelPlugin.push(uuid());
               // Copy over module-resolver plugin & config to top level composite .babelrc
               log.debug(
                 `Taking care of module-resolver Babel plugin for ${miniAppName} MiniApp`,

@@ -111,3 +111,4 @@ export { PackageManager } from './PackageManager';
 export { LogLevel } from './coloredLog';
 export { IosDevice } from './ios';
 export { getMetroBlacklistPath } from './getMetroBlacklistPath';
+export { getGotCommonOpts } from './getGotCommonOpts';

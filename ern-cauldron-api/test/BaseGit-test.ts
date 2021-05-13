@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import sinon from 'sinon';
 import { assert, expect } from 'chai';
-import git from 'simple-git/promise';
+import git from 'simple-git';
 
 const sandbox = sinon.createSandbox();
 

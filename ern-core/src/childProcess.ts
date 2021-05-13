@@ -1,18 +1,6 @@
-import { ChildProcess, exec } from 'child_process';
+import { ChildProcess, exec, ExecOptions } from 'child_process';
 import { spawn } from 'cross-spawn';
 import log from './log';
-
-interface ExecOpts {
-  cwd?: string;
-  env?: any;
-  encoding?: string;
-  shell?: string;
-  timeout?: number;
-  maxBuffer?: number;
-  killSignal?: string;
-  uid?: number;
-  gid?: number;
-}
 
 export function promisifyChildProcess(child: ChildProcess): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -29,7 +17,7 @@ export function promisifyChildProcess(child: ChildProcess): Promise<void> {
 
 export async function execp(
   command: string,
-  options?: ExecOpts,
+  options?: ExecOptions,
   loggers: { stdout: (s: string) => void; stderr: (s: string) => void } = {
     stderr: log.debug.bind(log),
     stdout: log.trace.bind(log),

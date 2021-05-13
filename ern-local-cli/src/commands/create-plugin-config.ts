@@ -16,7 +16,9 @@ import path from 'path';
 export const command = 'create-plugin-config <plugin>';
 export const desc = 'Create plugin configuration for the manifest';
 export const builder = (argv: Argv) => {
-  return argv.coerce('plugin', PackagePath.fromString).epilog(epilog(exports));
+  return argv
+    .coerce('plugin', (p) => PackagePath.fromString(p))
+    .epilog(epilog(exports));
 };
 
 // Bump this version whenever Electrode Native plugin configuration

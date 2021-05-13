@@ -36,12 +36,12 @@
   },
   "homepage": "http://www.electrode.io",
   "dependencies": {
-    "@hapi/joi": "^15.0.1",
+    "@hapi/joi": "^17.1.1",
     "ern-core": "1000.0.0",
-    "fs-extra": "^8.1.0",
-    "lodash": "^4.17.19",
-    "semver": "^5.5.0",
-    "uuid": "^3.3.2"
+    "fs-extra": "^10.0.0",
+    "lodash": "^4.17.21",
+    "semver": "^7.3.5",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "ern-util-dev": "1000.0.0"

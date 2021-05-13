@@ -39,7 +39,7 @@ export const builder = (argv: Argv) => {
       describe: 'The publisher to use',
       type: 'string',
     })
-    .coerce('publisher', PackagePath.fromString)
+    .coerce('publisher', (p) => PackagePath.fromString(p))
     .option('url', {
       alias: 'u',
       describe: 'The publication url',

@@ -28,15 +28,11 @@ export function getNativeBinaryFileExt(platformName: string) {
   return platformName === 'android' ? 'apk' : 'app';
 }
 
-export function joiValidate(payload: any, schema: any): Promise<any> {
-  return new Promise((resolve, reject) => {
-    Joi.validate(payload, schema, (err: Joi.ValidationError, value: any) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve(value);
-    });
-  });
+export async function joiValidate(
+  payload: any,
+  schema: Joi.ObjectSchema<any>,
+): Promise<any> {
+  return schema.validateAsync(payload);
 }
 
 export function getSchemaVersionMatchingCauldronApiVersion(
