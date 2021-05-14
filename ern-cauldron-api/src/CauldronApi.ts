@@ -21,7 +21,7 @@ import {
 } from './types';
 import upgradeScripts from './upgrade-scripts/scripts';
 import path from 'path';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import semver from 'semver';
 
 const yarnLocksStoreDirectory = 'yarnlocks';
@@ -862,7 +862,7 @@ export default class CauldronApi {
     yarnlock: string | Buffer,
   ): Promise<string> {
     const version = await this.getVersion(descriptor);
-    const fileName = uuidv4();
+    const fileName = uuid();
     const pathToYarnLock = this.getRelativePathToYarnLock(fileName);
     await this.fileStore.storeFile(pathToYarnLock, yarnlock);
     version.yarnLocks[key] = fileName;

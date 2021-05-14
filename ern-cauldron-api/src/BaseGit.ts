@@ -45,14 +45,6 @@ export default class BaseGit implements ITransactional {
   }
 
   public async sync(): Promise<boolean> {
-    if (!this.repository) {
-      if (!(await fs.pathExists(path.resolve(this.fsPath, '.git')))) {
-        await this.git.init();
-        await this.doInitialCommit();
-      }
-      return true;
-    }
-
     // We only sync once during a whole "session" (in our context : "an ern command exection")
     // This is done to speed up things as during a single command execution, multiple Cauldron
     // data access can be performed.
@@ -63,6 +55,16 @@ export default class BaseGit implements ITransactional {
     }
 
     log.debug(`[BaseGit] Syncing ${this.fsPath}`);
+
+    if (!this.repository) {
+      if (!(await fs.pathExists(path.resolve(this.fsPath, '.git')))) {
+        await this.git.init();
+        await this.doInitialCommit();
+      } else {
+        await this.git.reset(['--hard']);
+      }
+      return true;
+    }
 
     if (!(await fs.pathExists(path.resolve(this.fsPath, '.git')))) {
       log.debug(`[BaseGit] New local git repository creation`);

@@ -34,19 +34,19 @@
   },
   "homepage": "http://www.electrode.io",
   "dependencies": {
-    "cli-table": "^0.3.1",
+    "cli-table": "^0.3.6",
     "ern-core": "1000.0.0",
-    "fs-extra": "^8.1.0",
+    "fs-extra": "^10.0.0",
     "fs-readdir-recursive": "^1.1.0",
-    "js-beautify": "^1.13.0",
-    "mustache": "^4.0.1",
-    "semver": "^5.5.0",
-    "uuid": "^3.3.2"
+    "js-beautify": "^1.13.13",
+    "mustache": "^4.2.0",
+    "semver": "^7.3.5",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "ern-util-dev": "1000.0.0"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=12"
   }
 }

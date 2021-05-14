@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import shell from './shell';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import getSize from 'get-folder-size';
 
 /**
@@ -198,7 +198,7 @@ export class FsCache<T> {
    * Creates a uniquely named cache directory
    */
   private createUniqueCacheDirectory(): string {
-    const pathToCacheDirectory = path.join(this.rootCachePath, uuidv4());
+    const pathToCacheDirectory = path.join(this.rootCachePath, uuid());
     shell.mkdir(pathToCacheDirectory);
     return pathToCacheDirectory;
   }

@@ -72,9 +72,8 @@ export const commandHandler = async ({
       new AppPlatformDescriptor(descriptor.name, descriptor.platform),
     ))
   ) {
-    const mostRecentVersion = await cauldron.getMostRecentNativeApplicationVersion(
-      descriptor,
-    );
+    const mostRecentVersion =
+      await cauldron.getMostRecentNativeApplicationVersion(descriptor);
     if (
       mostRecentVersion &&
       (await askUserConfirmation(

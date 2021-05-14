@@ -6,7 +6,7 @@ import url from 'url';
 export function createProxyAgentFromUrl(
   proxyUrl: url.URL,
   { https }: { https?: boolean } = {},
-): http.Agent {
+): { agent: http.Agent; isHttpsAgent: boolean } {
   const supportedProtocols = ['http:', 'https:'];
   const protocol = proxyUrl.protocol;
   if (!supportedProtocols.includes(protocol)) {
@@ -24,19 +24,19 @@ export function createProxyAgentFromUrl(
 
   if (https) {
     return protocol === 'http:'
-      ? tunnel.httpsOverHttp({ proxy })
-      : tunnel.httpsOverHttps({ proxy });
+      ? { agent: tunnel.httpsOverHttp({ proxy }), isHttpsAgent: false }
+      : { agent: tunnel.httpsOverHttps({ proxy }), isHttpsAgent: true };
   } else {
     return protocol === 'http:'
-      ? tunnel.httpOverHttp({ proxy })
-      : tunnel.httpOverHttps({ proxy });
+      ? { agent: tunnel.httpOverHttp({ proxy }), isHttpsAgent: false }
+      : { agent: tunnel.httpOverHttps({ proxy }), isHttpsAgent: true };
   }
 }
 
 export function createProxyAgentFromErnConfig(
   configKey: string,
   { https }: { https?: boolean } = {},
-): http.Agent | undefined {
+): { agent: http.Agent; isHttpsAgent: boolean } | undefined {
   const proxyUrl = config.get(configKey);
   if (proxyUrl) {
     return createProxyAgentFromUrl(new url.URL(proxyUrl), { https });

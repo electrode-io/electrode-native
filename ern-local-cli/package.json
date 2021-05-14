@@ -37,9 +37,9 @@
   },
   "homepage": "http://www.electrode.io",
   "dependencies": {
-    "chalk": "^2.4.1",
-    "cli-table": "^0.3.1",
-    "dir-compare": "^1.4.0",
+    "chalk": "^4.1.1",
+    "cli-table": "^0.3.6",
+    "dir-compare": "^3.2.0",
     "ern-api-gen": "1000.0.0",
     "ern-api-impl-gen": "1000.0.0",
     "ern-cauldron-api": "1000.0.0",
@@ -54,19 +54,19 @@
     "ern-runner-gen": "1000.0.0",
     "ern-runner-gen-android": "1000.0.0",
     "ern-runner-gen-ios": "1000.0.0",
-    "fast-levenshtein": "^2.0.6",
-    "fs-extra": "^8.1.0",
+    "fast-levenshtein": "^3.0.0",
+    "fs-extra": "^10.0.0",
     "fs-readdir-recursive": "^1.1.0",
-    "got": "^9.6.0",
-    "inquirer": "^7.3.3",
+    "got": "^11.8.2",
+    "inquirer": "^8.0.0",
     "kax": "^3.0.0",
-    "lodash": "^4.17.19",
-    "node-ipc": "^9.1.1",
-    "semver": "^5.5.0",
+    "lodash": "^4.17.21",
+    "node-ipc": "^9.1.4",
+    "semver": "^7.3.5",
     "treeify": "^1.1.0",
     "untildify": "^4.0.0",
     "validate-npm-package-name": "^3.0.0",
-    "yargs": "^15.3.1",
+    "yargs": "^16.2.0",
     "yauzl": "^2.10.0",
     "yazl": "^2.5.1"
   },
@@ -74,6 +74,6 @@
     "ern-util-dev": "1000.0.0"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=12"
   }
 }

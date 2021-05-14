@@ -1,22 +1,20 @@
 import * as fs from 'fs';
-import got from 'got';
+import https from 'https';
+import got, { Agents } from 'got';
 import FormData from 'form-data';
 import { createProxyAgentFromErnConfig } from './createProxyAgent';
-
+import { getGotCommonOpts } from './getGotCommonOpts';
 export class BundleStoreSdk {
-  public readonly gotCommonOpts = {
-    agent: createProxyAgentFromErnConfig('bundleStoreProxy'),
-  };
-
   constructor(public readonly host: string) {}
 
   public async createStore({ store }: { store: string }): Promise<string> {
     try {
-      const res = await got.post(`http://${this.host}/stores/${store}`, {
-        ...this.gotCommonOpts,
-        json: true,
-      });
-      return res.body.accessKey;
+      const res = await got
+        .post(`http://${this.host}/stores/${store}`, {
+          ...getGotCommonOpts(),
+        })
+        .json();
+      return (res as any).accessKey;
     } catch (err) {
       throw new Error(err.response?.text ?? err.message);
     }
@@ -28,12 +26,15 @@ export class BundleStoreSdk {
     accessKey: string;
   }): Promise<{ id: string }> {
     try {
-      const res = await got.get(`http://${this.host}/stores`, {
-        ...this.gotCommonOpts,
-        json: true,
-        query: `accessKey=${accessKey}`,
-      });
-      return res.body.id;
+      const res = await got
+        .get(`http://${this.host}/stores`, {
+          ...getGotCommonOpts(),
+          searchParams: {
+            query: `accessKey=${accessKey}`,
+          },
+        })
+        .json();
+      return (res as any).id;
     } catch (err) {
       throw new Error(err.response?.text ?? err.message);
     }
@@ -43,7 +44,7 @@ export class BundleStoreSdk {
     try {
       const storeId = await this.getStoreByAccessKey({ accessKey });
       await got.delete(`http://${this.host}/stores/${storeId}`, {
-        ...this.gotCommonOpts,
+        ...getGotCommonOpts(),
         headers: {
           'ERN-BUNDLE-STORE-ACCESS-KEY': accessKey,
         },
@@ -76,7 +77,7 @@ export class BundleStoreSdk {
       const res = await got.post(
         `http://${this.host}/bundles/${store}/${platform}`,
         {
-          ...this.gotCommonOpts,
+          ...getGotCommonOpts(),
           body: form,
           headers: {
             'ERN-BUNDLE-STORE-ACCESS-KEY': accessKey,
@@ -95,7 +96,7 @@ export class BundleStoreSdk {
       const form = new FormData();
       form.append('assets', zippedAssetsFileRs);
       await got.post(`http://${this.host}/assets`, {
-        ...this.gotCommonOpts,
+        ...getGotCommonOpts(),
         body: form,
       });
     } catch (err) {
@@ -106,11 +107,10 @@ export class BundleStoreSdk {
   public async assetsDelta(assets: string[]): Promise<string[]> {
     try {
       const res = await got.post(`http://${this.host}/assets/delta`, {
-        ...this.gotCommonOpts,
-        body: { assets },
-        json: true,
-      });
-      return res.body;
+        ...getGotCommonOpts(),
+        json: { assets },
+      }).json;
+      return (res as any) as string[];
     } catch (err) {
       throw new Error(err.response?.text ?? err.message);
     }

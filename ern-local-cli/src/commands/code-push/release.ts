@@ -167,9 +167,8 @@ export const commandHandler = async ({
     });
   } else if (semVerDescriptor) {
     // User provided a semver Descriptor
-    const semVerNapDescriptor = AppVersionDescriptor.fromString(
-      semVerDescriptor,
-    );
+    const semVerNapDescriptor =
+      AppVersionDescriptor.fromString(semVerDescriptor);
     const cauldron = await getActiveCauldron();
     descriptors = await cauldron.getDescriptorsMatchingSemVerDescriptor(
       semVerNapDescriptor,

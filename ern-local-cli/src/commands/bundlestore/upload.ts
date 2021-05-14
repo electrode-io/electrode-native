@@ -105,7 +105,7 @@ export const commandHandler = async ({
   await logErrorAndExitIfNotSatisfied({
     bundleStoreAccessKeyIsSet: {
       extraErrorMessage: `You can use:
-'ern bundlestore use <accessKey>' to use an existing store OR 
+'ern bundlestore use <accessKey>' to use an existing store OR
 'ern bundlestore create <storeName>' to create a new store`,
     },
     bundleStoreUrlSetInCauldron: {

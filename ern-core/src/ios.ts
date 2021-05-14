@@ -7,7 +7,7 @@ import * as deviceConfigUtil from './deviceConfig';
 import log from './log';
 import os from 'os';
 import kax from './kax';
-import simctl = require('node-simctl');
+import Simctl from 'node-simctl';
 
 export interface IosDevice {
   name: string;
@@ -16,6 +16,7 @@ export interface IosDevice {
 }
 
 export async function getiPhoneSimulators(): Promise<any> {
+  const simctl = new Simctl();
   const iosSims = await simctl.getDevices();
   return _.filter(_.flattenDeep(_.map(iosSims, (val, key) => val)), (device) =>
     device.name.match(/^iPhone|iPad/),
@@ -182,7 +183,10 @@ export async function installApplicationOnSimulator(
   deviceUdid: string,
   pathToAppFile: string,
 ) {
-  return simctl.installApp(deviceUdid, pathToAppFile);
+  const simctl = new Simctl({
+    udid: deviceUdid,
+  });
+  return simctl.installApp(pathToAppFile);
 }
 
 export async function launchApplication(

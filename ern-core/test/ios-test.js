@@ -6,8 +6,7 @@ import inquirer from 'inquirer';
 import * as fixtures from './fixtures/common';
 import ernConfig from '../src/config';
 import util from 'util';
-
-const simctl = require('node-simctl');
+import Simctl from 'node-simctl';
 const ios = require('../src/ios');
 
 const computerName = 'Funny MacBook Pro (47)\n';
@@ -42,7 +41,7 @@ function resolveGetDevices(fixtures) {
 describe('ios utils', () => {
   beforeEach(() => {
     // test stubs
-    getDevicesStub = sandbox.stub(simctl, 'getDevices');
+    getDevicesStub = sandbox.stub(Simctl.prototype, 'getDevices');
     getKnownDevicesStub = sandbox.stub(ios, 'getKnownDevices');
     getComputerNameStub = sandbox.stub(ios, 'getComputerName');
     ernConfigGetStub = sandbox.stub(ernConfig, 'get');

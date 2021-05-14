@@ -21,7 +21,7 @@
 
 ### Prerequisites
 
-- Node.js >= 10
+- Node.js >= 12
 - npm >= 5.6.0
 - Android Studio (for Android apps)
 - Xcode >= 10 (for iOS apps)

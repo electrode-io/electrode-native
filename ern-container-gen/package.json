@@ -39,17 +39,17 @@
   "dependencies": {
     "ern-composite-gen": "1000.0.0",
     "ern-core": "1000.0.0",
-    "fs-extra": "^8.1.0",
+    "fs-extra": "^10.0.0",
     "fs-readdir-recursive": "^1.1.0",
-    "mustache": "^4.0.1",
-    "semver": "^5.5.0",
-    "xcode-ern": "^1.0.12"
+    "mustache": "^4.2.0",
+    "semver": "^7.3.5",
+    "xcode-ern": "^1.0.13"
   },
   "devDependencies": {
     "copyfiles": "^2.3.0",
     "ern-util-dev": "1000.0.0"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=12"
   }
 }

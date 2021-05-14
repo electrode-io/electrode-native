@@ -20,7 +20,7 @@ export const builder = (argv: Argv) => {
         'Full native application selector (target native application version for the push)',
     })
     .coerce('descriptor', (d) => AppVersionDescriptor.fromString(d))
-    .coerce('miniapp', PackagePath.fromString)
+    .coerce('miniapp', (m) => PackagePath.fromString(m))
     .option('miniapps', {
       alias: 'm',
       describe: 'A list of one or more miniapps',

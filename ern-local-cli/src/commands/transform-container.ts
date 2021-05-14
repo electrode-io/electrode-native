@@ -31,7 +31,7 @@ export const builder = (argv: Argv) => {
       describe: 'Transformer to use',
       type: 'string',
     })
-    .coerce('transformer', PackagePath.fromString)
+    .coerce('transformer', (t) => PackagePath.fromString(t))
     .epilog(epilog(exports));
 };
 

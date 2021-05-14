@@ -16,7 +16,7 @@ import path from 'path';
 import semver from 'semver';
 import _ from 'lodash';
 import { CompositeGeneratorConfig } from './types';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import { addRNDepToPjson } from './addRNDepToPjson';
 import { getNodeModuleVersion } from './getNodeModuleVersion';
 import { addRNStartScriptToPjson } from './addRNStartScriptToPjson';
@@ -42,7 +42,7 @@ export async function generateComposite(config: CompositeGeneratorConfig) {
 
   // Set env var ERN_BUGSNAG_CODE_BUNDLE_ID as a unique code bundle id for bugsnag
   process.env.ERN_BUGSNAG_CODE_BUNDLE_ID =
-    process.env.ERN_BUGSNAG_CODE_BUNDLE_ID ?? uuidv4();
+    process.env.ERN_BUGSNAG_CODE_BUNDLE_ID ?? uuid();
 
   if (
     config.miniApps.length === 0 &&

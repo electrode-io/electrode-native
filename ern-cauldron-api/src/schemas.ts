@@ -1,18 +1,24 @@
 import Joi from '@hapi/joi';
 
 export const container = Joi.object({
-  ernVersion: Joi.string().default(undefined),
+  ernVersion: Joi.string()
+    .empty('')
+    .default(() => undefined),
   jsApiImpls: Joi.array().default([]),
   miniApps: Joi.array().default([]),
   nativeDeps: Joi.array().default([]),
 });
 
 export const nativeApplicationVersion = Joi.object({
-  binary: Joi.string().default(null),
+  binary: Joi.string().default(() => undefined),
   codePush: Joi.object().default({}),
   container: container.default(),
-  containerVersion: Joi.string().optional(), // optional for Backward Compat. Required in ERN 0.5.0
-  description: Joi.string().optional(),
+  containerVersion: Joi.string()
+    .optional()
+    .default(() => undefined), // optional for Backward Compat. Required in ERN 0.5.0
+  description: Joi.string()
+    .optional()
+    .default(() => undefined),
   isReleased: Joi.boolean().optional().default(false),
   name: Joi.string().required(),
   nativeDeps: Joi.array().default([]),
@@ -20,11 +26,11 @@ export const nativeApplicationVersion = Joi.object({
 });
 
 export const nativeAplicationVersionPatch = Joi.object({
-  isReleased: Joi.boolean().optional(),
+  isReleased: Joi.boolean().optional().default(false),
 });
 
 export const nativeApplicationPlatform = Joi.object({
-  name: Joi.string().valid(['android', 'ios']),
+  name: Joi.string().valid('android', 'ios'),
   versions: Joi.array().items(nativeApplicationVersion).default([]),
 });
 
