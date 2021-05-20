@@ -47,4 +47,7 @@ dependencies {
   api 'com.example:api:1.0.0'
   compileOnly 'com.example:compile-only:1.0.0'
   implementation('com.example:aar-dep:1.0.0@aar') { transitive = true }
+  implementation fileTree(dir: 'libs', include: ['*.jar'])
+  testImplementation 'com.example:test:1.0.0'
+  testCompile 'com.example:test:1.0.0'
 }
