@@ -59,12 +59,18 @@ export async function patchMetroBabelRcRoots({
     for (const pathToFileToPatch of pathToFilesToPatch) {
       log.debug(`[patchMetroBabelRcRoots] Patching ${pathToFileToPatch}`);
       const fileToPatch = await fs.readFile(pathToFileToPatch);
-      const lineToPatch = `let config = Object.assign({}, babelRC, extraConfig);`;
+      const lineToPatch = semver.lt(metroVersion, '0.64.0')
+        ? `let config = Object.assign({}, babelRC, extraConfig);`
+        : `const extraConfig = {`;
       // Just add extra code line to inject babelrcRoots option
 
-      const patch = `extraConfig.babelrcRoots = [
+      const patch = semver.lt(metroVersion, '0.64.0')
+        ? `extraConfig.babelrcRoots = [
   ${babelRcRootsRe.map((b) => b.toString()).join(',')} ]
-  ${lineToPatch}`;
+  ${lineToPatch}`
+        : `${lineToPatch} babelrcRoots: [${babelRcRootsRe
+            .map((b) => b.toString())
+            .join(',')}],`;
       const patchedFile = fileToPatch.toString().replace(lineToPatch, patch);
       await fs.writeFile(pathToFileToPatch, patchedFile);
     }
