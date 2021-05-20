@@ -216,13 +216,11 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
       fs.ensureDirSync(outputDir);
 
       for (const api of apis) {
-        const {
-          files,
-          classNames,
-        } = ApiImplAndroidGenerator.getMustacheFileNamesMap(
-          resourceDir,
-          api.apiName,
-        );
+        const { files, classNames } =
+          ApiImplAndroidGenerator.getMustacheFileNamesMap(
+            resourceDir,
+            api.apiName,
+          );
         for (const file of files) {
           if (file === 'requestHandlerProvider.mustache') {
             editableFiles.push(path.join(outputDir, classNames[file]));

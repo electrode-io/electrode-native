@@ -590,9 +590,8 @@ export class CauldronHelper {
       descriptor,
       funcAddPackageToContainer: this.addMiniAppToContainer.bind(this),
       funcGetPackagesFromContainer: this.getContainerMiniApps.bind(this),
-      funcUpdatePackageInContainer: this.updateMiniAppVersionInContainer.bind(
-        this,
-      ),
+      funcUpdatePackageInContainer:
+        this.updateMiniAppVersionInContainer.bind(this),
       localPackages,
     });
   }
@@ -605,9 +604,8 @@ export class CauldronHelper {
       descriptor,
       funcAddPackageToContainer: this.addJsApiImplToContainer.bind(this),
       funcGetPackagesFromContainer: this.getContainerJsApiImpls.bind(this),
-      funcUpdatePackageInContainer: this.updateJsApiImplVersionInContainer.bind(
-        this,
-      ),
+      funcUpdatePackageInContainer:
+        this.updateJsApiImplVersionInContainer.bind(this),
       localPackages,
     });
   }
@@ -1254,9 +1252,9 @@ export class CauldronHelper {
     const miniAppsBranches = (
       await this.cauldron.getContainerMiniAppsBranches(descriptor)
     ).map((p) => PackagePath.fromString(p));
-    const miniApps = (
-      await this.cauldron.getContainerMiniApps(descriptor)
-    ).map((p) => PackagePath.fromString(p));
+    const miniApps = (await this.cauldron.getContainerMiniApps(descriptor)).map(
+      (p) => PackagePath.fromString(p),
+    );
     for (const miniAppBranch of miniAppsBranches) {
       const latestCommitSha = await coreUtils.getCommitShaOfGitBranchOrTag(
         miniAppBranch,

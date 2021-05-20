@@ -84,7 +84,8 @@ export default async function getActiveCauldron({
           : cauldronRepoUrlWithoutBranch,
       });
       currentCauldronHelperInstance = new CauldronHelper(cauldronCli);
-      const schemaVersionUsedByCauldron = await currentCauldronHelperInstance.getCauldronSchemaVersion();
+      const schemaVersionUsedByCauldron =
+        await currentCauldronHelperInstance.getCauldronSchemaVersion();
       const schemaVersionOfCurrentCauldronApi = getCurrentSchemaVersion();
       if (
         !ignoreSchemaVersionMismatch &&
@@ -114,9 +115,10 @@ export default async function getActiveCauldron({
         }
       }
       if (!ignoreRequiredErnVersionMismatch) {
-        const requiredErnVersion = await currentCauldronHelperInstance.getConfigForKey(
-          'requiredErnVersion',
-        );
+        const requiredErnVersion =
+          await currentCauldronHelperInstance.getConfigForKey(
+            'requiredErnVersion',
+          );
         if (requiredErnVersion) {
           if (!semver.satisfies(Platform.currentVersion, requiredErnVersion)) {
             throw new Error(

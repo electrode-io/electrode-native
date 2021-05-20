@@ -137,10 +137,11 @@ export function resolveNativeDependenciesVersionsEx(
     apisAndApiImplsNativeDeps.push(..._.flatten(dependencies.nativeApisImpl));
   }
   apisAndApiImplsNativeDeps = _.flatten(apisAndApiImplsNativeDeps);
-  const apiAndApiImplsResolvedVersions = resolvePackageVersionsGivenMismatchLevel(
-    apisAndApiImplsNativeDeps,
-    'major',
-  );
+  const apiAndApiImplsResolvedVersions =
+    resolvePackageVersionsGivenMismatchLevel(
+      apisAndApiImplsNativeDeps,
+      'major',
+    );
 
   // Resolve native dependencies versions third party native modules
   let thirdPartyNativeModules: PackagePath[] = [];
@@ -155,10 +156,8 @@ export function resolveNativeDependenciesVersionsEx(
     );
   }
   thirdPartyNativeModules = _.flatten(thirdPartyNativeModules);
-  const thirdPartyNativeModulesResolvedVersions = resolvePackageVersionsGivenMismatchLevel(
-    thirdPartyNativeModules,
-    'patch',
-  );
+  const thirdPartyNativeModulesResolvedVersions =
+    resolvePackageVersionsGivenMismatchLevel(thirdPartyNativeModules, 'patch');
 
   return {
     pluginsWithMismatchingVersions: [

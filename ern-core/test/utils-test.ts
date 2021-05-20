@@ -393,9 +393,8 @@ describe('utils.js', () => {
   describe('coerceToAppVersionDescriptorArray', () => {
     it('should coerce a string to a AppVersionDescriptor array', () => {
       const descriptor = AppVersionDescriptor.fromString('test:android:1.0.0');
-      const result = utils.coerceToAppVersionDescriptorArray(
-        'test:android:1.0.0',
-      );
+      const result =
+        utils.coerceToAppVersionDescriptorArray('test:android:1.0.0');
       expect(result).is.an('array').of.length(1);
       expect(result[0]).eql(descriptor);
     });

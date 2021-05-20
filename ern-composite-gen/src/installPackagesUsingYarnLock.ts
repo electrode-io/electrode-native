@@ -47,10 +47,8 @@ export async function installPackagesUsingYarnLock({
       `[generateComposite] miniAppsDeltas: ${JSON.stringify(miniAppsDeltas)}`,
     );
 
-    compositePackageJson.dependencies = getPackageJsonDependenciesUsingMiniAppDeltas(
-      miniAppsDeltas,
-      yarnLock,
-    );
+    compositePackageJson.dependencies =
+      getPackageJsonDependenciesUsingMiniAppDeltas(miniAppsDeltas, yarnLock);
 
     await writePackageJson(cwd, compositePackageJson);
 

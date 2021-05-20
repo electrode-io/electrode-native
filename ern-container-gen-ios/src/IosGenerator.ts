@@ -437,9 +437,8 @@ Make sure to run these commands before building the container.`,
       if (plugin.name === 'react-native') {
         continue;
       }
-      const pluginConfig:
-        | PluginConfig<'ios'>
-        | undefined = await manifest.getPluginConfig(plugin, 'ios');
+      const pluginConfig: PluginConfig<'ios'> | undefined =
+        await manifest.getPluginConfig(plugin, 'ios');
       if (!pluginConfig) {
         log.warn(
           `${plugin.name} does not have any injection configuration for ios platform`,

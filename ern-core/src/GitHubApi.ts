@@ -195,14 +195,16 @@ export class GitHubApi {
     newContent: string;
     commitMessage: string;
   }) {
-    const sha = ((
-      await this.octokit.repos.getContent({
-        owner: this.owner,
-        path,
-        ref: onBranch || undefined,
-        repo: this.repo,
-      })
-    ).data as any).sha;
+    const sha = (
+      (
+        await this.octokit.repos.getContent({
+          owner: this.owner,
+          path,
+          ref: onBranch || undefined,
+          repo: this.repo,
+        })
+      ).data as any
+    ).sha;
 
     const buff = new Buffer(newContent);
     const content = buff.toString('base64');

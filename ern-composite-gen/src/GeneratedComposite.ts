@@ -179,9 +179,10 @@ export class GeneratedComposite implements Composite {
     nativeDependencies.all = nativeDependencies.all.filter(
       (x) => !miniAppsPaths.includes(x.basePath),
     );
-    nativeDependencies.thirdPartyNotInManifest = nativeDependencies.thirdPartyNotInManifest.filter(
-      (x) => !miniAppsPaths.includes(x.basePath),
-    );
+    nativeDependencies.thirdPartyNotInManifest =
+      nativeDependencies.thirdPartyNotInManifest.filter(
+        (x) => !miniAppsPaths.includes(x.basePath),
+      );
     this.cachedNativeDependencies = nativeDependencies;
     return this.cachedNativeDependencies;
   }

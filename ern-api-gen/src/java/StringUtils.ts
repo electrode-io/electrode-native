@@ -23,7 +23,8 @@ function indexOfDifference(cs1, cs2?: any) {
 
   return INDEX_NOT_FOUND;
 }
-const smallWords = /^(a|an|and|as|at|but|by|en|for|if|in|nor|of|on|or|per|the|to|vs?\.?|via)$/i;
+const smallWords =
+  /^(a|an|and|as|at|but|by|en|for|if|in|nor|of|on|or|per|the|to|vs?\.?|via)$/i;
 
 const capitalizeFully$inner = (match, index, title) => {
   if (

@@ -213,9 +213,8 @@ async function updatePackageJson({
         log.info(
           `${manifestDependency.basePath} : ${localDependencyVersion} => ${dependencyManifestVersion}`,
         );
-        packageJson.dependencies[
-          manifestDependency.basePath
-        ] = dependencyManifestVersion;
+        packageJson.dependencies[manifestDependency.basePath] =
+          dependencyManifestVersion;
         wasUpdated = true;
       }
     }

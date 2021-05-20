@@ -110,7 +110,7 @@ export class BundleStoreSdk {
         ...getGotCommonOpts(),
         json: { assets },
       }).json;
-      return (res as any) as string[];
+      return res as any as string[];
     } catch (err) {
       throw new Error(err.response?.text ?? err.message);
     }

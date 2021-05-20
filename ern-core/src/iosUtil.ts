@@ -105,13 +105,8 @@ export async function fillProjectHull(
         continue;
       }
 
-      let pluginConfig:
-        | PluginConfig<'ios'>
-        | undefined = await manifest.getPluginConfig(
-        plugin,
-        'ios',
-        projectSpec.projectName,
-      );
+      let pluginConfig: PluginConfig<'ios'> | undefined =
+        await manifest.getPluginConfig(plugin, 'ios', projectSpec.projectName);
       if (!pluginConfig) {
         continue;
       }

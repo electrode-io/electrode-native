@@ -73,9 +73,8 @@ export function getPackageJsonDependenciesUsingMiniAppDeltas(
         // seen in package.json is not know by the PackagePath object
         // Only way to find the name of the dependency is to look in
         // the yarn.lock file as it records the name of git based dependencies
-        const name = getYarnLockTopLevelGitDependencyRe(m).exec(
-          yarnlock,
-        )![1 /*name*/];
+        const name =
+          getYarnLockTopLevelGitDependencyRe(m).exec(yarnlock)![1 /*name*/];
         // Sample package.json entry :
         // "test-miniapp": "https://github.com/org/test-miniapp.git#master"
         result[name] = m.fullPath;
@@ -92,9 +91,8 @@ export function getPackageJsonDependenciesUsingMiniAppDeltas(
       if (m.isRegistryPath) {
         result[m.basePath] = initialVersion;
       } else if (m.isGitPath) {
-        const name = getYarnLockTopLevelGitDependencyRe(m).exec(
-          yarnlock,
-        )![1 /*name*/];
+        const name =
+          getYarnLockTopLevelGitDependencyRe(m).exec(yarnlock)![1 /*name*/];
         result[name] = `${m.basePath}#${initialVersion}`;
       }
     }

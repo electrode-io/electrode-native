@@ -163,9 +163,8 @@ export default class AndroidGenerator implements ContainerGenerator {
         continue;
       }
 
-      let pluginConfig:
-        | PluginConfig<'android'>
-        | undefined = await manifest.getPluginConfig(plugin, 'android');
+      let pluginConfig: PluginConfig<'android'> | undefined =
+        await manifest.getPluginConfig(plugin, 'android');
       if (!pluginConfig) {
         log.warn(
           `Skipping ${plugin.name} as it does not have an Android configuration`,

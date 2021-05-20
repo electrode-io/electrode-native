@@ -8,7 +8,8 @@ const CAULDRON_FILENAME = 'cauldron.json';
 
 export default class GitDocumentStore
   extends BaseGit
-  implements ICauldronDocumentStore {
+  implements ICauldronDocumentStore
+{
   public readonly jsonPath: string;
   private cauldron: Cauldron;
 

@@ -30,9 +30,8 @@ export default class ErnSwiftCodegen extends SwiftCodegen {
   public processOpts() {
     super.processOpts();
     // Events and Requests files.
-    const f = this[
-      `addSupportingFilesFor${SwiftCodegen.camelize(this.getLibrary())}`
-    ];
+    const f =
+      this[`addSupportingFilesFor${SwiftCodegen.camelize(this.getLibrary())}`];
     if (f) {
       f.call(this);
     }

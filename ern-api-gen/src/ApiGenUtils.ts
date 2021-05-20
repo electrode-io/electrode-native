@@ -24,10 +24,8 @@ export default class ApiGenUtils {
       }[] = [];
       for (const apiKey in apis) {
         if (apis.hasOwnProperty(apiKey)) {
-          const {
-            requests,
-            events,
-          } = ApiGenUtils.generateApiEventsAndRequestNames(apis[apiKey]);
+          const { requests, events } =
+            ApiGenUtils.generateApiEventsAndRequestNames(apis[apiKey]);
           result.push({ apiName: apiKey, requests, events });
         }
       }
@@ -37,9 +35,10 @@ export default class ApiGenUtils {
     }
   }
 
-  public static generateApiEventsAndRequestNames(
-    api: any,
-  ): { requests: string[]; events: string[] } {
+  public static generateApiEventsAndRequestNames(api: any): {
+    requests: string[];
+    events: string[];
+  } {
     const requests: string[] = [];
     const events: string[] = [];
     for (const key in api) {

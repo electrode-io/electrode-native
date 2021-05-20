@@ -155,9 +155,8 @@ export async function getNativeAppCompatibilityReport(
                 nativeAppPlatform.name,
                 nativeAppVersion.name,
               );
-              const nativeAppDependencies = await cauldron.getNativeDependencies(
-                napDescriptor,
-              );
+              const nativeAppDependencies =
+                await cauldron.getNativeDependencies(napDescriptor);
               const compatibility = getCompatibility(
                 miniappDependencies,
                 nativeAppDependencies,

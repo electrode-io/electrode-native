@@ -26,11 +26,12 @@ export default class ES6Codegen extends JavascriptClientCodegen {
 
   public processOpts() {
     super.processOpts();
-    const f = this[
-      `addSupportingFilesFor${JavascriptClientCodegen.camelize(
-        this.getLibrary(),
-      )}`
-    ];
+    const f =
+      this[
+        `addSupportingFilesFor${JavascriptClientCodegen.camelize(
+          this.getLibrary(),
+        )}`
+      ];
     if (f) {
       f.call(this);
     }
