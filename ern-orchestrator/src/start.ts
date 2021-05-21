@@ -164,9 +164,10 @@ export default async function start({
       ...allNativeDeps.thirdPartyInManifest,
       ...allNativeDeps.thirdPartyNotInManifest,
     ];
-    const dedupedNativeModules = nativeDepenciesVersionResolution.resolveNativeDependenciesVersionsEx(
-      allNativeDeps,
-    );
+    const dedupedNativeModules =
+      nativeDepenciesVersionResolution.resolveNativeDependenciesVersionsEx(
+        allNativeDeps,
+      );
     const extraNodeModules: { [pkg: string]: string } = {};
     dedupedNativeModules.resolved.forEach((m) => {
       extraNodeModules[m.name!] = m.basePath;

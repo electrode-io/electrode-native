@@ -248,9 +248,10 @@ async function generateFullComposite(
       // Exclude api/api impls as they are not native modules
       allNativeDeps.apis = [];
       allNativeDeps.nativeApisImpl = [];
-      const dedupedNativeModules = nativeDepenciesVersionResolution.resolveNativeDependenciesVersionsEx(
-        allNativeDeps,
-      );
+      const dedupedNativeModules =
+        nativeDepenciesVersionResolution.resolveNativeDependenciesVersionsEx(
+          allNativeDeps,
+        );
 
       if (dedupedNativeModules.pluginsWithMismatchingVersions.length > 0) {
         let errorMsg = `Mismatching native module versions detected.

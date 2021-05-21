@@ -76,9 +76,8 @@ describe('util.js', () => {
 
   describe('getSchemaVersionMatchingCauldronApiVersion', () => {
     it('should return 3.0.0 for version 1000.0.0', () => {
-      const result = util.getSchemaVersionMatchingCauldronApiVersion(
-        '1000.0.0',
-      );
+      const result =
+        util.getSchemaVersionMatchingCauldronApiVersion('1000.0.0');
       expect(result).eql('3.0.0');
     });
 

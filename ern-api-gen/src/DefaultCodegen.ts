@@ -2110,7 +2110,9 @@ Using global produces (${swagger.getProduces()}) for ${op.operationId}`,
       }
       if (property == null) {
         log.warn(
-          `warning!  Property type "${type}" not found for parameter "${(param as any).getName()}", using String`,
+          `warning!  Property type "${type}" not found for parameter "${(
+            param as any
+          ).getName()}", using String`,
         );
         property = (new StringProperty() as any).description(
           '//TODO automatically added by swagger-codegen.  Type was ' +
@@ -2331,11 +2333,19 @@ Using global produces (${swagger.getProduces()}) for ${op.operationId}`,
         schemeDefinition != null &&
         schemeDefinition instanceof BasicAuthDefinition
       ) {
-        sec.isKeyInHeader = sec.isKeyInQuery = sec.isApiKey = sec.isOAuth = false;
+        sec.isKeyInHeader =
+          sec.isKeyInQuery =
+          sec.isApiKey =
+          sec.isOAuth =
+            false;
         sec.isBasic = true;
       } else {
         const oauth2Definition = schemeDefinition;
-        sec.isKeyInHeader = sec.isKeyInQuery = sec.isApiKey = sec.isBasic = false;
+        sec.isKeyInHeader =
+          sec.isKeyInQuery =
+          sec.isApiKey =
+          sec.isBasic =
+            false;
         sec.isOAuth = true;
         sec.flow = oauth2Definition.getFlow();
         switch (sec.flow) {

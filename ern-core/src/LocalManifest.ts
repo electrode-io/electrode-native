@@ -139,11 +139,10 @@ export class LocalManifest {
     //   '/home/user/.ern/ern-override-manifest/plugins/ern_v0.10.0+',
     //   '/home/user/.ern/ern-override-manifest/plugins/ern_v0.5.0+'
     // ]
-    const orderedPluginsConfigurationDirectories = this.getPluginsConfigurationDirectories(
-      platformVersion,
-    ).sort((a, b) =>
-      semver.rcompare(versionRe.exec(a)![1], versionRe.exec(b)![1]),
-    );
+    const orderedPluginsConfigurationDirectories =
+      this.getPluginsConfigurationDirectories(platformVersion).sort((a, b) =>
+        semver.rcompare(versionRe.exec(a)![1], versionRe.exec(b)![1]),
+      );
 
     for (const pluginsConfigurationDirectory of orderedPluginsConfigurationDirectories) {
       let pluginScope: string | undefined;
@@ -210,11 +209,10 @@ export class LocalManifest {
     }
 
     const versionRe = /_v(.+)\+/;
-    const orderedPluginsConfigurationDirectories = this.getPluginsConfigurationDirectories(
-      platformVersion,
-    ).sort((a, b) =>
-      semver.rcompare(versionRe.exec(a)![1], versionRe.exec(b)![1]),
-    );
+    const orderedPluginsConfigurationDirectories =
+      this.getPluginsConfigurationDirectories(platformVersion).sort((a, b) =>
+        semver.rcompare(versionRe.exec(a)![1], versionRe.exec(b)![1]),
+      );
 
     for (const pluginsConfigurationDirectory of orderedPluginsConfigurationDirectories) {
       // Directory names cannot contain '/', so, replaced by ':'

@@ -329,9 +329,8 @@ export default class DefaultGenerator extends AbstractGenerator {
             );
           }
         }
-        allProcessedModels = this.config.postProcessAllModels(
-          allProcessedModels,
-        );
+        allProcessedModels =
+          this.config.postProcessAllModels(allProcessedModels);
         for (const [name, models] of allProcessedModels) {
           try {
             if (this.config.importMapping().containsKey(name)) {
@@ -715,9 +714,8 @@ export default class DefaultGenerator extends AbstractGenerator {
             this.config.getCommonTemplateDir(),
             swaggerCodegenIgnore,
           );
-          const ignoreFileContents = this.readResourceContents(
-            ignoreFileNameSource,
-          );
+          const ignoreFileContents =
+            this.readResourceContents(ignoreFileNameSource);
           try {
             this.writeToFile(ignoreFileNameTarget, ignoreFileContents);
           } catch (e) {

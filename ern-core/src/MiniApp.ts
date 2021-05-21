@@ -320,7 +320,8 @@ module.exports = {
   // This method checks dependencies from the package.json of the MiniApp and
   // exclude native dependencies (plugins).
   public async getJsDependencies(): Promise<PackagePath[]> {
-    const nativeDependencies: NativeDependencies = await this.getNativeDependencies();
+    const nativeDependencies: NativeDependencies =
+      await this.getNativeDependencies();
     const nativeDependenciesNames: string[] = _.map(
       nativeDependencies.all,
       (d) => d.name!,
@@ -503,16 +504,14 @@ does not match version declared in manifest: ${manifestDep.version}`,
     for (const manifestDependency of manifestDependencies) {
       if (this.packageJson.dependencies[manifestDependency.basePath]) {
         const dependencyManifestVersion = manifestDependency.version;
-        const localDependencyVersion = this.packageJson.dependencies[
-          manifestDependency.basePath
-        ];
+        const localDependencyVersion =
+          this.packageJson.dependencies[manifestDependency.basePath];
         if (dependencyManifestVersion !== localDependencyVersion) {
           log.info(
             `${manifestDependency.basePath} : ${localDependencyVersion} => ${dependencyManifestVersion}`,
           );
-          this.packageJson.dependencies[
-            manifestDependency.basePath
-          ] = dependencyManifestVersion;
+          this.packageJson.dependencies[manifestDependency.basePath] =
+            dependencyManifestVersion;
         }
       }
     }

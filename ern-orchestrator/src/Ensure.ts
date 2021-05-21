@@ -297,10 +297,11 @@ export default class Ensure {
     );
     const dependencies = coreUtils.coerceToPackagePathArray(obj);
     for (const dependency of dependencies) {
-      const dependencyFromCauldron = await cauldron.getContainerNativeDependency(
-        napDescriptor,
-        dependency.basePath,
-      );
+      const dependencyFromCauldron =
+        await cauldron.getContainerNativeDependency(
+          napDescriptor,
+          dependency.basePath,
+        );
       if (
         dependencyFromCauldron &&
         dependencyFromCauldron.version === dependency.version
@@ -330,10 +331,11 @@ export default class Ensure {
     const miniApps = await cauldron.getContainerMiniApps(napDescriptor);
 
     for (const dependency of dependencies) {
-      const miniAppsUsingDependency = await dependencyLookup.getMiniAppsUsingNativeDependency(
-        miniApps,
-        dependency,
-      );
+      const miniAppsUsingDependency =
+        await dependencyLookup.getMiniAppsUsingNativeDependency(
+          miniApps,
+          dependency,
+        );
       if (miniAppsUsingDependency?.length > 0) {
         let errorMessage = '';
         errorMessage += 'The following MiniApp(s) are using this dependency\n';

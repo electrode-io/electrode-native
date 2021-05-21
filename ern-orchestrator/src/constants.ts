@@ -82,14 +82,12 @@ export const availableUserConfigKeys = [
     values: ['string'],
   },
   {
-    desc:
-      'Local manifest configuration (takes precedence on manifest configuration from cauldron)',
+    desc: 'Local manifest configuration (takes precedence on manifest configuration from cauldron)',
     name: 'manifest',
     values: ['object'],
   },
   {
-    desc:
-      'Version of CocoaPods to use for iOS container generation (version must be available locally)',
+    desc: 'Version of CocoaPods to use for iOS container generation (version must be available locally)',
     name: 'podVersion',
     values: ['string'],
   },

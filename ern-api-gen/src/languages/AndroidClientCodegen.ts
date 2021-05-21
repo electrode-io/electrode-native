@@ -488,9 +488,10 @@ export default class AndroidClientCodegen extends DefaultCodegen {
     } else {
       this.setLibrary(this.getLibrary());
     }
-    const f = this[
-      `addSupportingFilesFor${DefaultCodegen.camelize(this.getLibrary())}`
-    ];
+    const f =
+      this[
+        `addSupportingFilesFor${DefaultCodegen.camelize(this.getLibrary())}`
+      ];
     if (f) {
       f.call(this);
     }

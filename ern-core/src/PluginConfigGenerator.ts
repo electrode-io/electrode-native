@@ -27,7 +27,8 @@ export class PluginConfigGenerator {
           resolveDependencyVersion,
           revolveBuildGradlePath,
         });
-        const androidPluginSource = await androidGenerator.generatePluginJavaSource();
+        const androidPluginSource =
+          await androidGenerator.generatePluginJavaSource();
         result.pluginConfig = result.pluginConfig || {};
         result.pluginConfig.android = androidConfig;
         result.androidPluginSource = androidPluginSource;

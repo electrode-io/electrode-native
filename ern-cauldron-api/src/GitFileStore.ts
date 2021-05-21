@@ -6,7 +6,8 @@ import { ICauldronFileStore } from './types';
 
 export default class GitFileStore
   extends BaseGit
-  implements ICauldronFileStore {
+  implements ICauldronFileStore
+{
   private readonly prefix: string;
 
   constructor({

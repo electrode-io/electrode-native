@@ -1664,9 +1664,8 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
-      const result = cauldronHelper.getCauldronConfigLevelMatchingDescriptor(
-        undefined,
-      );
+      const result =
+        cauldronHelper.getCauldronConfigLevelMatchingDescriptor(undefined);
       expect(result).eql(CauldronConfigLevel.Top);
     });
 
@@ -2679,9 +2678,8 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       const descriptor = AppVersionDescriptor.fromString('test:android:5.0.0');
-      const result = await cauldronHelper.getDescriptorsMatchingSemVerDescriptor(
-        descriptor,
-      );
+      const result =
+        await cauldronHelper.getDescriptorsMatchingSemVerDescriptor(descriptor);
       expect(result).to.be.an('array').empty;
     });
 
@@ -2693,9 +2691,8 @@ describe('CauldronHelper.js', () => {
       const descriptor = AppVersionDescriptor.fromString(
         'test:android:^17.0.0',
       );
-      const result = await cauldronHelper.getDescriptorsMatchingSemVerDescriptor(
-        descriptor,
-      );
+      const result =
+        await cauldronHelper.getDescriptorsMatchingSemVerDescriptor(descriptor);
       expect(result).to.be.an('array').of.length(2);
     });
 
@@ -2705,9 +2702,8 @@ describe('CauldronHelper.js', () => {
         cauldronDocument: fixture,
       });
       const descriptor = AppVersionDescriptor.fromString('test:android:17.7.x');
-      const result = await cauldronHelper.getDescriptorsMatchingSemVerDescriptor(
-        descriptor,
-      );
+      const result =
+        await cauldronHelper.getDescriptorsMatchingSemVerDescriptor(descriptor);
       expect(result).to.be.an('array').of.length(1);
     });
   });
@@ -2773,9 +2769,8 @@ describe('CauldronHelper.js', () => {
       const cauldronHelper = createCauldronHelper({
         cauldronDocument: fixture,
       });
-      const sourceDescriptor = AppVersionDescriptor.fromString(
-        'test:android:5.0.0',
-      );
+      const sourceDescriptor =
+        AppVersionDescriptor.fromString('test:android:5.0.0');
       const targetDescriptor = AppVersionDescriptor.fromString(
         'test:android:20.0.0',
       );
@@ -3036,9 +3031,8 @@ describe('CauldronHelper.js', () => {
       });
       const descriptor = AppPlatformDescriptor.fromString('test:android');
       const version1780 = jp.query(fixture, testAndroid1780Path)[0];
-      const latestVersion = await cauldronHelper.getMostRecentNativeApplicationVersion(
-        descriptor,
-      );
+      const latestVersion =
+        await cauldronHelper.getMostRecentNativeApplicationVersion(descriptor);
       expect(latestVersion).deep.equal(version1780);
     });
   });

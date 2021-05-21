@@ -65,9 +65,8 @@ export default class ApiImplIosGenerator implements ApiImplGeneratable {
       };
 
       const projectSpec = {
-        deploymentTarget: iosUtil.getDefaultIosDeploymentTarget(
-          reactNativeVersion,
-        ),
+        deploymentTarget:
+          iosUtil.getDefaultIosDeploymentTarget(reactNativeVersion),
         nodeModulesRelativePath: '../node_modules',
         projectName: 'ElectrodeApiImpl',
       };

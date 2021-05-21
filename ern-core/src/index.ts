@@ -80,7 +80,8 @@ export const dependencyLookup = _dependencyLookup;
 export const deviceConfig = _deviceConfig;
 export const getCodePushSdk = _getCodePushSdk;
 export { ErnBinaryStore } from './ErnBinaryStore';
-export const nativeDepenciesVersionResolution = _nativeDepenciesVersionResolution;
+export const nativeDepenciesVersionResolution =
+  _nativeDepenciesVersionResolution;
 export { getPackagePathsDiffs } from './getPackagePathsDiffs';
 export * from './findDirectoriesHavingRnConfig';
 export * from './BundleStoreSdk';

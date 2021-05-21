@@ -181,9 +181,8 @@ async function _checkDependencyVersion(
   targetDependencies: PackagePath[],
 ) {
   const pluginDependency = pkg.peerDependencies || {};
-  const targetNativeDependenciesMap = _constructTargetNativeDependenciesMap(
-    targetDependencies,
-  );
+  const targetNativeDependenciesMap =
+    _constructTargetNativeDependenciesMap(targetDependencies);
   for (const key of Object.keys(pluginDependency)) {
     if (
       targetNativeDependenciesMap.has(key) &&

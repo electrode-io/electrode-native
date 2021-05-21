@@ -148,10 +148,8 @@ export async function performCodePushPromote(
         sourceNapDescriptor.version !== targetNapDescriptor.version &&
         !skipNativeDependenciesVersionAlignedCheck
       ) {
-        const nativeDependenciesVersionAligned = await compatibility.areCompatible(
-          miniApps,
-          targetNapDescriptor,
-        );
+        const nativeDependenciesVersionAligned =
+          await compatibility.areCompatible(miniApps, targetNapDescriptor);
 
         if (!nativeDependenciesVersionAligned && force) {
           log.warn(
@@ -323,10 +321,8 @@ export async function performCodePushOtaUpdate(
 
     const tmpWorkingDir = createTmpDir();
 
-    const miniAppsNativeDependenciesVersionAligned = await compatibility.areCompatible(
-      miniApps,
-      napDescriptor,
-    );
+    const miniAppsNativeDependenciesVersionAligned =
+      await compatibility.areCompatible(miniApps, napDescriptor);
 
     if (!miniAppsNativeDependenciesVersionAligned && force) {
       log.warn(
@@ -554,7 +550,8 @@ export async function performCodePushOtaUpdate(
             await fs.realpath(path.join(composite.path, 'node_modules')),
             await fs.realpath(sourceMapOutput),
           ];
-          const compositeMiniAppsPackages = await composite.getMiniAppsPackages();
+          const compositeMiniAppsPackages =
+            await composite.getMiniAppsPackages();
           await bugsnagUpload({
             apiKey,
             minifiedFile,
