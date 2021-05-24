@@ -39,6 +39,7 @@ export interface AndroidResolvedVersions {
   gradleDistributionVersion: string;
   kotlinVersion: string;
   minSdkVersion: string;
+  reactNativeAarVersion: string;
   sourceCompatibility: string;
   supportLibraryVersion: string;
   targetCompatibility: string;
@@ -54,6 +55,7 @@ export function resolveAndroidVersions({
   gradleDistributionVersion = DEFAULT_GRADLE_DISTRIBUTION_VERSION,
   kotlinVersion = DEFAULT_KOTLIN_VERSION,
   minSdkVersion,
+  reactNativeAarVersion,
   sourceCompatibility = DEFAULT_SOURCE_COMPATIBILITY,
   supportLibraryVersion = DEFAULT_SUPPORT_LIBRARY_VERSION,
   targetCompatibility = DEFAULT_TARGET_COMPATIBILITY,
@@ -68,6 +70,7 @@ export function resolveAndroidVersions({
   gradleDistributionVersion?: string;
   kotlinVersion?: string;
   minSdkVersion?: string;
+  reactNativeAarVersion?: string;
   sourceCompatibility?: string;
   supportLibraryVersion?: string;
   targetCompatibility?: string;
@@ -80,6 +83,8 @@ export function resolveAndroidVersions({
     ? DEFAULT_MIN_SDK_VERSION_POST_RN64
     : DEFAULT_MIN_SDK_VERSION_PRE_RN64;
 
+  reactNativeAarVersion = reactNativeAarVersion ?? reactNativeVersion!;
+
   return {
     androidGradlePlugin,
     androidxAppcompactVersion,
@@ -89,6 +94,7 @@ export function resolveAndroidVersions({
     gradleDistributionVersion,
     kotlinVersion,
     minSdkVersion: resolvedMinSdkVersion,
+    reactNativeAarVersion,
     sourceCompatibility,
     supportLibraryVersion,
     targetCompatibility,

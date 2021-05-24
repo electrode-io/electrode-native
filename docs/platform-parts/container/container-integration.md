@@ -150,6 +150,38 @@ You can configure `androidConfig` in the cauldron as show below.
 }
 ```
 
+##### Android Dynamic Feature Module Support
+
+If the Android client mobile application consuming the container is keeping the container dependency in an Android [dynamic feature module](https://developer.android.com/codelabs/on-demand-dynamic-delivery), there will be issues with resources loading _(your MiniApps images won't be visible for example)_. This is because of React Native Android implementation, that is loading some resources via reflection, using the base package name of the application, instead of the package name of the dynamic module _[see Android documentation for more details](https://developer.android.com/guide/playcore/feature-delivery#resource-uri)_. For this reason we had no way but to fork React Native to update the implementation to properly handle this use case.\
+Our fork of React Native is kept in [electrode-io/react-native](https://github.com/electrode-io/react-native) repository.\
+We are only using it to publish special React Native AARs for Android, not for any iOS changes nor JS ones _(i.e we're not publishing anything to npm)_.\
+Starting with 0.63 line, we will publish custom releases of the AAR, in addition to the official versions, to include support for dynamic feature modules. These versions will have a patch number starting at 100 _(0.63.100, 0.64.100 ...)_.
+
+If you are facing this fringe scenario with dynamic feature modules, here is what can be done:
+
+1. Generate the container with a custom AAR version of React Native that includes support for Dynamic Feature Modules.\
+This can be done by supplying such a configuration to the container generator _(via --extra option or through Cauldron config)_
+
+```json
+{
+  "containerGenerator": {
+    "androidConfig": {
+      "reactNativeAarVersion": "0.64.100"
+    }
+  }
+}
+```
+
+Always use the latest custom AAR version matching the React Native version line that your miniapps(s) are using _(for example if your miniapp is using 0.63.4, you should use 0.63.100 here)_.
+
+2. Update the client application to pass the dynamic feature module package name to the container.\
+For example if the client application base package name is `com.foo` and the dynamic feature module containing the container dependency is named `bar`, the package name used for resources resolution in the dynamic feature module would be `com.foo.bar`.\
+In that case, the client application would need to call the following, prior to initializing the container.
+
+```java
+ElectrodeReactContainer.setPackageName("com.foo.bar");
+```
+
 ##### JavaScript Engine (RN 0.60 and above)
 
 Starting with React Native 0.60, the JavaScript engine is distributed separately from the React Native AAR.
