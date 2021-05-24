@@ -375,16 +375,28 @@ export async function performCodePushOtaUpdate(
       );
     }
 
-    const miniAppsToBeCodePushed = _.unionBy(
-      referenceMiniAppsToCodePush,
+    const miniAppsToBeCodePushedUnordered: PackagePath[] = _.unionBy(
       miniApps,
+      referenceMiniAppsToCodePush,
       (x) => x.basePath,
     );
 
-    const jsApiImplsToBeCodePushed = _.unionBy(
-      referenceJsApiImplsToCodePush,
+    // Reorder MiniApps to preserve current order set in Cauldron
+    const miniAppsToBeCodePushed: PackagePath[] = orderPackagePaths(
+      referenceMiniAppsToCodePush,
+      miniAppsToBeCodePushedUnordered,
+    );
+
+    const jsApiImplsToBeCodePushedUnordered = _.unionBy(
       jsApiImpls,
+      referenceJsApiImplsToCodePush,
       (x) => x.basePath,
+    );
+
+    // Reorder JS API implementations to preserve current order set in Cauldron
+    const jsApiImplsToBeCodePushed: PackagePath[] = orderPackagePaths(
+      referenceJsApiImplsToCodePush,
+      jsApiImplsToBeCodePushedUnordered,
     );
 
     const pathsToMiniAppsToBeCodePushed = _.map(miniAppsToBeCodePushed, (m) =>
@@ -660,4 +672,24 @@ export async function getCodePushAppName(
       napDescriptor.platform === 'ios' ? 'Ios' : 'Android'
     }`
   );
+}
+
+// Reorder packages to preserve current order as set in Cauldron
+export function orderPackagePaths(
+  referencePackagePaths: PackagePath[],
+  packagePaths: PackagePath[],
+): PackagePath[] {
+  const packages: PackagePath[] = [];
+  for (const m of referencePackagePaths) {
+    const x = _.find(packagePaths, (p) => p.basePath === m.basePath) ?? m;
+    packages.push(x);
+  }
+  // Add all new packages if any
+  const newPackages: PackagePath[] = _.differenceBy(
+    packagePaths,
+    referencePackagePaths,
+    (p) => p.basePath,
+  );
+  packages.push(...newPackages);
+  return packages;
 }
