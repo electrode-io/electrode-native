@@ -38,6 +38,7 @@ import semver from 'semver';
 
 const PATH_TO_TEMPLATES_DIR = path.join(__dirname, 'templates');
 const PATH_TO_HULL_DIR = path.join(__dirname, 'hull');
+const ERN_CUSTOM_REACT_NATIVE_AAR_PATCH_VERSION = 100;
 
 export interface AndroidDependencies {
   files: string[];
@@ -333,7 +334,7 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
     mustacheView.customPermissions = _.uniq(mustacheView.customPermissions);
 
     androidDependencies.regular.push(
-      `com.walmartlabs.ern:react-native:${reactNativePlugin.version}`,
+      `com.walmartlabs.ern:react-native:${versions.reactNativeAarVersion}`,
     );
     androidDependencies.regular.push(
       `com.android.support:appcompat-v7:${versions.supportLibraryVersion}`,
@@ -353,6 +354,13 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
         mustacheView.implementations,
       )}`,
     );
+
+    if (
+      semver.patch(versions.reactNativeAarVersion) >=
+      ERN_CUSTOM_REACT_NATIVE_AAR_PATCH_VERSION
+    ) {
+      mustacheView.isCustomReactNativeAar = true;
+    }
 
     injectPluginsKaxTask.succeed(injectPluginsTaskMsg);
 
