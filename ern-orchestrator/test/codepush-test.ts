@@ -851,4 +851,61 @@ describe('codepush', () => {
       expect(result).equal('app-android');
     });
   });
+
+  describe('orderPackagePaths', () => {
+    const referencePackagePaths: PackagePath[] = [
+      PackagePath.fromString(
+        'git+ssh://git@github.com/foo/A.git#24f0eebdd714949ec5af5366a1adcf6aeb759bdf',
+      ),
+      PackagePath.fromString(
+        'git+ssh://git@github.com/foo/B.git#a4e7b1b1f4671330edac9d7ac09be66e29a56e43',
+      ),
+      PackagePath.fromString(
+        'git+ssh://git@github.com/foo/C.git#09f6a4f8c19ced184bad428272b1f02f76ffd5b8',
+      ),
+    ];
+    const [originalPkgA, originalPkgB, originalPkgC] = referencePackagePaths;
+
+    const updatedPackagedPaths: PackagePath[] = [
+      PackagePath.fromString(
+        'git+ssh://git@github.com/foo/A.git#b554f6e7a3433f9118de8a677e34d27b161f501a',
+      ),
+      PackagePath.fromString(
+        'git+ssh://git@github.com/foo/B.git#683c50cd2e50c6146f87cc377b9db1e24e722de6',
+      ),
+      PackagePath.fromString(
+        'git+ssh://git@github.com/foo/C.git#9548e24c79830658be6f038177310b98298653b2',
+      ),
+    ];
+    const [updatedPkgA, updatedPkgB, updatedPkgC] = updatedPackagedPaths;
+
+    it('should preserve packages reference order', () => {
+      const res = sut.orderPackagePaths(referencePackagePaths, [
+        updatedPkgC,
+        updatedPkgA,
+        updatedPkgB,
+      ]);
+      expect(res).deep.equal([updatedPkgA, updatedPkgB, updatedPkgC]);
+    });
+
+    it('should keep reference packages that are not updated', () => {
+      const res = sut.orderPackagePaths(referencePackagePaths, [
+        updatedPkgB,
+        updatedPkgA,
+      ]);
+      expect(res).deep.equal([updatedPkgA, updatedPkgB, originalPkgC]);
+    });
+
+    it('should keep new packages that are not part of reference packages', () => {
+      const newPkg = PackagePath.fromString(
+        'git+ssh://git@github.com/foo/D.git#ccf32848ae53ce9e339090bb3a1b26c971041734',
+      );
+      const res = sut.orderPackagePaths(referencePackagePaths, [
+        updatedPkgB,
+        updatedPkgA,
+        newPkg,
+      ]);
+      expect(res).deep.equal([updatedPkgA, updatedPkgB, originalPkgC, newPkg]);
+    });
+  });
 });
