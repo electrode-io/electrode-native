@@ -26,7 +26,9 @@ import com.ern.api.impl.{{apiName}}ApiRequestHandlerProvider;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
+{{#isCustomReactNativeAar}}
 import com.facebook.react.bridge.ReactApplicationContext;
+{{/isCustomReactNativeAar}}
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.SafeActivityStarter;
 import com.facebook.react.devsupport.interfaces.DevOptionHandler;
@@ -67,8 +69,8 @@ public class ElectrodeReactContainer {
 
     private ElectrodeReactContainer() {
     }
-
 {{#isCustomReactNativeAar}}
+
     public static void setPackageName(String packageName) {
         ReactApplicationContext.PACKAGE_NAME = packageName;
     }
