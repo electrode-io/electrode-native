@@ -1,0 +1,22 @@
+name: Release new Electrode Native version
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  release-ern:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+      - name: Install
+        run: yarn install
+      - name: Release
+        run: |
+          ERN_VERSION=$(cat lerna.json | jq .version)
+          echo "Releasing Electrode Native v${ERN_VERSION}"
+          lerna publish ${ERN_VERSION} --yes --no-git-tag-version --no-push --exact
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
