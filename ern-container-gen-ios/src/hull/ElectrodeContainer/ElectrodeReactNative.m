@@ -155,7 +155,7 @@ static NSString *enableBundleStore = @"enableBundleStore";
 + (void)startWithConfigurations:(id<ElectrodePluginConfig>)reactContainerConfig ernDelegate:(id<ERNDelegate> _Nullable)ernDelegate
                 {{#plugins}}
                 {{#configurable}}
-                {{{lcname}}}: (id<ElectrodePluginConfig>) {{{lcname}}}
+                {{{lcname}}}: (id<ElectrodePluginConfig> _Nullable) {{{lcname}}}
                 {{/configurable}}
                 {{/plugins}}
                 {{#hasAtleastOneApiImplConfig}}
