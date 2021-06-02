@@ -1,30 +1,34 @@
 name: ci
-on: [push, pull_request]
+on:
+  push:
+    branches: ['*']
+  pull_request:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node: [12]
+        node: ['16']
         os: [macos-latest, ubuntu-latest, windows-latest]
         include:
-          - node: 10
+          - node: '12'
             os: ubuntu-latest
-          - node: 14
+          - node: '14'
             os: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
-      - run: yarn
+      - run: yarn --frozen-lockfile
       - run: yarn build
       - run: yarn test:unit
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-      - run: yarn
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - run: yarn --frozen-lockfile
       - run: yarn check:lint
