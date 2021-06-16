@@ -51,6 +51,7 @@ export async function generateContainerForRunner(
         metroExtraNodeModules: extra?.compositeGenerator?.metroExtraNodeModules,
         miniApps,
         outDir: createTmpDir(),
+        resolutions: extra?.compositeGenerator?.resolutions,
       }),
     );
 
