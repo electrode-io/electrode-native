@@ -10,7 +10,14 @@ jobs:
         include:
           - node: 12
             os: ubuntu-latest
-          - node: 16
+          # Fix Node 16 version to 16.2.0
+          # 16.3.0 is causing an issue with mock-fs library
+          # causing some unit tests in cauldron API to fail
+          # This is a temporary solution while waiting for
+          # this issue to be addressed by Node team in a new
+          # release and/or mock-fs library
+          # Reference : https://github.com/tschaub/mock-fs/issues/332
+          - node: 16.2.0
             os: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
