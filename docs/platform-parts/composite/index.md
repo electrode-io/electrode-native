@@ -10,8 +10,8 @@ You can also manually generate a Composite project, with the [ern create-composi
 
 ## Babel support
 
-Electrode Native has support for using Babel plugins in MiniApps.  
-Babel support is still in an early phase and will be improved and simplified over time.  
+Electrode Native has support for using Babel plugins in MiniApps.
+Babel support is still in an early phase and will be improved and simplified over time.
 To enable proper Babel support for a MiniApp, here are the requirements :
 
 - Have a `.babelrc` file at the root of the MiniApp, containing the Babel configuration. Electrode Native doesn't support `babel.config.js` which is appropriate for a top level babel configuration, but given that the MiniApps will end up inside a Composite, they won't be top level anymore.
@@ -40,10 +40,10 @@ React Native Metro bundler will [force set `BABEL_ENV`](https://github.com/faceb
 
 ## Selective dependency resolutions support
 
-Because Electrode Native uses [yarn](https://yarnpkg.com) under the hood to generate the Composite project, it also supports yarn [selective dependency resolutions](https://yarnpkg.com/lang/en/docs/selective-version-resolutions/) feature.  
-This feature allows you to force version resolution of selected dependencies to specific versions.  
-It can be very useful in certain context. For example if a deeply nested package that you don't have direct control on is breaking because a newer version has a bug, you can easily force the use of a previous version while waiting for package maintainer to publish a new version of it.  
-Resolutions configuration can be done in the `compositeGenerator` config in the Cauldron. The `resolutions` field is a 1:1 mapping to the `resolutions` field that will be added to the `package.json` of the composite. Refer to the [selective dependency resolutions](https://yarnpkg.com/lang/en/docs/selective-version-resolutions/) documentation for more information.
+Because Electrode Native uses [yarn](https://yarnpkg.com) under the hood to generate the Composite project, it also supports yarn [selective dependency resolutions](https://yarnpkg.com/lang/en/docs/selective-version-resolutions/) feature.
+This feature allows you to force version resolution of selected dependencies to specific versions.
+It can be very useful in certain context. For example if a deeply nested package that you don't have direct control on is breaking because a newer version has a bug, you can easily force the use of a previous version while waiting for package maintainer to publish a new version of it.
+Resolutions configuration can be done in the `compositeGenerator` config in the Cauldron. It can also be supplied directly to some commands such as `run-android`/`run-ios` or `create-container` via the `--extra` object option. The `resolutions` field is a 1:1 mapping to the `resolutions` field that will be added to the `package.json` of the composite. Refer to the [selective dependency resolutions](https://yarnpkg.com/lang/en/docs/selective-version-resolutions/) documentation for more information.
 
 ```json
 "config": {
@@ -80,8 +80,8 @@ composite. When using a custom composite, `metro.config.json` should be modified
 
 ## Note in regards to local `.npmrc`
 
-When generating a Composite, Electrode Native will not consider any local `.npmrc` file present in the root of a MiniApp.  
-This is due to the fact that when generating a Composite project, Electrode Native just `yarn add` every MiniApp to the Composite project. Each MiniApp becomes a dependency of the Composite project and is not a top level app anymore.  
+When generating a Composite, Electrode Native will not consider any local `.npmrc` file present in the root of a MiniApp.
+This is due to the fact that when generating a Composite project, Electrode Native just `yarn add` every MiniApp to the Composite project. Each MiniApp becomes a dependency of the Composite project and is not a top level app anymore.
 Therefore, when needing a custom `.npmrc` configuration, the `.npmrc` should be global rather than local, or be part of a custom Composite project (see below).
 
 ## Using a custom Composite
@@ -97,7 +97,7 @@ This can be achieved in two steps:
 
 ### Create the custom Composite git repository
 
-This git repository should just contain a basic React Native project structure.  
+This git repository should just contain a basic React Native project structure.
 You can create your own, or copy our [starter custom composite](https://github.com/electrode-io/ern-base-composite-starter).
 
 For example this is the basic file structure of our sample bare custom Composite:
@@ -149,7 +149,7 @@ It is also possible to specify a specific branch/tag or SHA. For example, using 
 }
 ```
 
-As for all configuration stored in the Cauldron, there is no way yet to add or edit the configuration using `ern` commands. You should manually edit your Cauldron.  
+As for all configuration stored in the Cauldron, there is no way yet to add or edit the configuration using `ern` commands. You should manually edit your Cauldron.
 Also, as a reminder, `config` objects can be stored at different levels in the Cauldron, respectively :
 
 ```
@@ -172,7 +172,7 @@ Electrode Native contains a few commands that are generating a Composite as part
 - [ern run-android]
 - [ern start]
 
-These commands are exposing a `baseComposite` option being either a valid git repository path or a local path on the workstation to a custom composite project. Please note that using this option will take precedence over any `baseComposite` configuration stored in Cauldron.  
+These commands are exposing a `baseComposite` option being either a valid git repository path or a local path on the workstation to a custom composite project. Please note that using this option will take precedence over any `baseComposite` configuration stored in Cauldron.
 If you are using a Cauldron, there is very limited use to explicitly providing the `baseComposite` to these command.
 
 This option can however be very useful for experimentation or to test a custom Composite project before committing it to git / using it in Cauldron. For example, if your custom Composite project is stored in `/etc/custom-composite` you can easily try it out with some of the commands above, before committing it to git / setting it up in Cauldron.

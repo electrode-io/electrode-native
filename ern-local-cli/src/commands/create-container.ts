@@ -209,6 +209,9 @@ Output directory should either not exist (it will be created) or should be empty
         metroExtraNodeModules: compositeGenConfig?.metroExtraNodeModules,
         miniApps: miniapps,
         outDir: compositeDir,
+        resolutions:
+          extraObj?.compositeGenerator?.resolutions ??
+          compositeGenConfig?.resolutions,
       }),
     );
 

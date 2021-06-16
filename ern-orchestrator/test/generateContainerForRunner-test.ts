@@ -86,10 +86,12 @@ describe('generateContainerForRunner', () => {
   it('should call runLocalCompositeGen with extra arguments if no descriptor is provided', async () => {
     const metroExtraNodeModules = ['dep-a', '/home/user/path/to/dep-b'];
     const extra = { androidConfig: { compileSdkVersion: '28' } };
+    const resolutions = { 'c/**/left-pad': '^1.1.2' };
     await generateContainerForRunner('android', {
       extra: {
         compositeGenerator: {
           metroExtraNodeModules,
+          resolutions,
         },
       },
       outDir: '/home/user/test',
@@ -100,6 +102,7 @@ describe('generateContainerForRunner', () => {
       metroExtraNodeModules,
       miniApps: sinon.match.array,
       outDir: sinon.match.string,
+      resolutions,
     });
   });
 });
