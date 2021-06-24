@@ -101,6 +101,16 @@ ${sourceMapOutput ? `--sourcemap-output=${sourceMapOutput}` : ''} \
 ${resetCache ? '--reset-cache' : ''}`;
 
     await execp(bundleCommand, { cwd: workingDir });
+    if (!(await fs.pathExists(bundleOutput))) {
+      // Under some circumstances, Metro bundler process might fail
+      // with some logs, but exit the process with a non error status code.
+      // This guard is to make sure that the bundle was generated,
+      // independently of the exit status code returned by Metro process.
+      throw new Error(
+        'Metro failed to generate the JS bundle. Check Metro logs for more details.',
+      );
+    }
+
     return {
       assetsPath: assetsDest,
       bundlePath: bundleOutput,
