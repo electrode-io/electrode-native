@@ -13,6 +13,13 @@ jobs:
       - uses: actions/setup-node@v2
       - name: Install
         run: yarn install
+      - name: Authenticate with Registry
+        run: |
+          yarn logout
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
+          npm whoami
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Release
         run: |
           ERN_VERSION=$(cat lerna.json | jq .version)
@@ -20,3 +27,4 @@ jobs:
           lerna publish ${ERN_VERSION} --yes --no-git-tag-version --no-push --exact
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
