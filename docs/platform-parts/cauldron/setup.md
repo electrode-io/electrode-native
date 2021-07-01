@@ -1,8 +1,8 @@
-Setting up a cauldron is basically the same process as creating a Git repository and storing the data in the repository. If you know how to create a git repository, then you know how to create a Cauldron. To host your cauldron, you can use any provider offering Git repository storage. GitHub and BitBucket are probably two of the most popular providers. Within our documentation, we mention GitHub but you are free to use the provider of your choice.
+Setting up a cauldron is basically the same process as creating a Git repository and storing the data in the repository. If you know how to create a git repository, then you know how to create a Cauldron. To host your cauldron, you can use any provider offering Git repository storage. GitHub, GitLab and BitBucket are some of the most popular providers. Within our documentation, we mention GitHub but you are free to use the provider of your choice.
 
 To create your own mobile application cauldron:
 
-1. Create a new GitHub repository to host your cauldron.  
+1. Create a new GitHub repository to host your cauldron.
    While there are no repository naming conventions, we recommend that you name it: `[mobile_app_name]-cauldron`
 
 Note: A cauldron is bound to one mobile application--even though it can hold multiple mobile applications. We do not recommend holding multiple mobile applications within a cauldron.

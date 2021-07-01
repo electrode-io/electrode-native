@@ -5,8 +5,7 @@
 
 ## Installation
 
-- Make sure you are aligned with all [requirements]
-
+- Before installing the platform, make sure that the [prerequisites] are met
 - Install the platform by running the following command in a terminal :
 
 ```sh
@@ -30,8 +29,8 @@ Please see the [CONTRIBUTING guide]
 ## Support and Acknowledgment
 
 We'd like to thank our employer, WalmartLabs because we can work on the development of Electrode Native platform as Open Sourced Software for the needs of our internal teams and projects.
-We love the public community and the support we get, and we address your requests as much as we can.  
-We are always excited to get feedback, bug reports, and pull requests.  
+We love the public community and the support we get, and we address your requests as much as we can.
+We are always excited to get feedback, bug reports, and pull requests.
 Thank you.
 
 ## License
@@ -42,7 +41,7 @@ Licensed under the [Apache License, Version 2.0].
 
 [announcement blog post]: https://medium.com/walmartlabs/electrode-native-the-platform-for-integrating-react-native-into-your-apps-129cbabda7b8
 [contributing guide]: ./overview/contributing.md
-[requirements]: ./overview/requirements.md
+[prerequisites]: ./overview/prerequisites.md
 [apache license, version 2.0]: https://www.apache.org/licenses/LICENSE-2.0
 [gitbook]: https://www.gitbook.com/
 [what is electrode native]: ./overview/what-is-ern.md
