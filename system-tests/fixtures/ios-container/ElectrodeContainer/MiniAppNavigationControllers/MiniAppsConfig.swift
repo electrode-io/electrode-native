@@ -18,10 +18,13 @@
 // GENERATED CODE: DO NOT MODIFY
 //
 
-open class MovieListMiniAppNavigationController: ENBaseNavigationController {
+open class MiniAppsConfig {
 
-    open override func getRootComponentName() -> String {
-        return "MovieListMiniApp"
-    }
+    public init() {}
+
+    public let miniApps = [
+                "MovieDetailsMiniApp",
+                "MovieListMiniApp",
+    ]
 
 }

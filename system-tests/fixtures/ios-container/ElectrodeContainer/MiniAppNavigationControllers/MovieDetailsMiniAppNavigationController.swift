@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+//
+// GENERATED CODE: DO NOT MODIFY
+//
+
 open class MovieDetailsMiniAppNavigationController: ENBaseNavigationController {
 
     open override func getRootComponentName() -> String {

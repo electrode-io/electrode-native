@@ -1,0 +1,15 @@
+{{>licenseInfo}}
+
+{{>generatedCode}}
+
+open class MiniAppsConfig {
+
+    public init() {}
+
+    public let miniApps = [
+        {{#miniApps}}
+                "{{normalizedName}}",
+        {{/miniApps}}
+    ]
+
+}
