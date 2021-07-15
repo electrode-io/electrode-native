@@ -540,6 +540,44 @@ Make sure to run these commands before building the container.`,
       );
     };
 
+    log.debug('Creating miniapps config');
+    const configFileName = `MiniAppsConfig.swift`;
+    const pathToMiniAppsConfigMustacheTemplate = path.join(
+      PATH_TO_TEMPLATES_DIR,
+      'MiniAppsConfig.mustache',
+    );
+    const pathToOutputConfigFile = path.join(
+      config.outDir,
+      'ElectrodeContainer',
+      'MiniAppNavigationControllers',
+      configFileName,
+    );
+    const mustacheView: any = {};
+    mustacheView.miniApps = await config.composite.getMiniApps();
+    await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
+      pathToMiniAppsConfigMustacheTemplate,
+      mustacheView,
+      pathToOutputConfigFile,
+      partialProxy,
+    );
+    const relativePathToConfigFile = path.join(
+      'MiniAppNavigationControllers',
+      configFileName,
+    );
+    containerIosProject.addFile(
+      relativePathToConfigFile,
+      containerIosProject.findPBXGroupKey({
+        name: 'MiniAppNavigationControllers',
+      }),
+    );
+    containerIosProject.addSourceFile(
+      relativePathToConfigFile,
+      null,
+      containerIosProject.findPBXGroupKey({
+        name: 'MiniAppNavigationControllers',
+      }),
+    );
+
     log.debug('Creating miniapp nav controllers');
     const compositeMiniApps = await config.composite.getMiniApps();
     for (const miniApp of compositeMiniApps) {
