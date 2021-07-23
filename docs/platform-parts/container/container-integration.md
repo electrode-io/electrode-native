@@ -4,7 +4,7 @@ This section describes how to integrate an Electrode Native container in your An
 
 A Container library can be added to a mobile Android application project in one of two ways:
 
-- By adding a dependency on the Electrode Native container AAR (recommended), or
+- By adding a dependency on the Electrode Native container AAR _(recommended way)_, or
 - By directly adding the Electrode Native container module to the Android project (as a git submodule for example)
 
 You will also need to update your `build.gradle` files with the following:
@@ -78,6 +78,7 @@ repositories {
 ```
 
 ##### Proguard
+
 Container library does not proguard itself, but supports proguarding. In your module's `proguard.txt` add the rule to be during the applications proguarding phase.
 
 ```

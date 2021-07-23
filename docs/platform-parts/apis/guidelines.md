@@ -1,5 +1,5 @@
-While the recommended approach to implement Electrode Native APIs is in a dedicated standalone project, which favors reuse and allows for switching implementations, it might not be possible in your context to implement a standalone API. For example if your native API implementation is dependent on your mobile application code itself, you might want to perform the API implementation directly inside your mobile application. This is possible, however we don't recommend this tight coupling approach.
-
-If possible, MiniApps should not directly depend on API implementations; as this makes switching between API implementations for the same API more complex. MiniApps should therefore ideally only depend on APIs. MiniApps can have some API implementations as development dependencies only. For example, if we consider an API with a native implementation of it (iOS and Android), it can be possible to have a cross-platform JavaScript mock implementation of it, that can be used during development to launch the MiniApp standalone.
+While the recommended approach to implement Electrode Native APIs is to do so in a dedicated standalone project, favoring reuse and low coupling, it might not be possible in your context to implement a standalone API.\
+For example if your native API implementation is dependent on the mobile application code itself, it might be needed to write the API implementation directly inside the mobile applicatiosn codebase.\
+While this is possible, we don't recommend this tight coupling approach, and if possible, you should favor a standalone implementation.
 
 Generated standalone API implementations have the following naming convention: `react-native-[name]-api-impl`

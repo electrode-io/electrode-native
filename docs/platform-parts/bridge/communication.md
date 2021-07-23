@@ -1,6 +1,6 @@
 The [Electrode Native Bridge] expose a public client surface that is consistent across all three platforms and allows requests and responses from any side:
 
-- Send Requests (and associated responses)
+- Send Requests _(and associated responses)_
 - Emit Events
 - Register Requests handlers
 - Register/Unregister Event listeners

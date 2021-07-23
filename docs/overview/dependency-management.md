@@ -4,7 +4,7 @@ The term "native" as used throughout the Electrode Native documentation, means a
 
 This means that native app encapsulates code written in C/C++/Java/Kotlin on Android, and C/C++/ObjectiveC/Swift on iOS. This helps us easily distinguish between the JavaScript code itself and the mobile native code.
 
-The JavaScript code itself is executed inside the JavaScript virtual machine and it can be updated using OTA updates.  
+The JavaScript code itself is executed inside the JavaScript virtual machine and it can be updated using OTA updates.
 The native code is part of the binary of the application and cannot be updated using OTA updates.
 
 ### Why the need for native dependencies management?
@@ -25,15 +25,13 @@ The manifest is a GitHub repository containing data used by Electrode Native. Th
 
 This section describes the `manifest.json` file that is stored in the Electrode Native manifest repository.
 
-The `manifest.json` file contains a list of native dependencies along with their versions that are supported by a specific Electrode Native platform version. When you use the `ern add` command to add a JavaScript or native dependency to your MiniApp, Electrode Native queries the manifest to ensure that the native dependency is present in the `manifest.json` file--otherwise it's not supported yet. If the dependency is declared in the manifest, Electrode Native installs the specific version listed in the `manifest.json` file.
+The `manifest.json` file contains a list of native dependencies along with their versions that all of your MiniApp(s) should be aligned on. When you use the `ern add` command to add a JavaScript or native dependency to a MiniApp, Electrode Native queries the manifest to check if the native dependency is present in the `manifest.json` file. If the dependency is declared in the manifest, Electrode Native installs the specific version listed in the `manifest.json` file. If the dependency is not part of the manifest, then Electrode Native will issue a warrning.
 
-Electrode Native also queries the manifest repository when you use the `ern create-miniapp` command to know which version of React Native to use.
+Electrode Native also queries the manifest repository whenever you use the `ern create-miniapp` command to know which version of React Native to use.
 
-Thus any MiniApp developed using a specific Electrode Native version will be properly aligned to the same native dependencies versions.
+Thus any MiniApp developed with Electrode Native and using `ern add` command to add dependencies, will be properly aligned to the same native dependencies versions. Please note that not using `ern add` will not cause issues, as long as you ensure that the native dependencies versions in your MiniApps package.json are aligned.
 
-If you are a MiniApp developer intending to release open source MiniApps, then you'll want to make sure that you use the `ern add` command instead of the `yarn add` or `npm install` command--and that you upgrade the native dependency versions of your MiniApp to any new release of the platform. Use the `ern upgrade-miniapp` command to easily upgrade the native dependency versions to a new platform release.
-
-Electrode Native allows you to override the master open source manifest with your own private manifest. This is helpful if you work with private, non-open sourced native dependencies or if you want to stick to a specific React Native version for a while. Indeed, with each new release of the platform, the master manifest will be aligned with the latest available version of React Native, which might not be what you want.
+By default, Electrode Native will query the [master public manifest](https://github.com/electrode-io/electrode-native-manifest/blob/master/manifest.json) that is maintained by our core team for any open source native dependency. Electrode Native also allows to override the master  manifest with your own private manifest. This is helpful if you also work with private, non-open sourced native dependencies or if you want to use different dependencies versions alignments.
 
 [Learn more about the manifest](../platform-parts/manifest/index.md)
 
@@ -43,13 +41,13 @@ The Electrode Native cauldron is also a GitHub repository and at its core is the
 
 The cauldron is a simple document database, which doesn't come with the downside of having to install and set it up on a dedicated box, as it is just hosted in a git repository.
 
-For each mobile application version, there will be a corresponding entry in the cauldron database. For example, `Walmart iOS 17.14` or `Walmart Android 17.10.0`.  
-The cauldron stores specific information pertaining to each version of your mobile application:
+For each mobile application version, there will be a corresponding entry in the cauldron database. For example, `Walmart iOS 17.14` or `Walmart Android 17.10.0`.
+The cauldron stores specific information pertaining to each version of your mobile application, mostly the following :
 
-- A list of all the MiniApps (and their versions) that are part of any given version of your mobile application(s))
-- A list of all native dependencies (and their versions) used by these MiniApps
+- A list of all the MiniApps _(and their versions)_ that are part of any given version of your mobile application(s))
+- A list of all native dependencies _(and their versions)_ used by these MiniApps
 
-This is mostly all what's needed to generate a container library.
+This is mainly all what's needed for Electrode Native to generate a container library.
 
 Every MiniApp that needs to be added to your mobile application will first need to be added to the cauldron. The cauldron, in addition of keeping track of what is included in your mobile application versions, also acts as a "gatekeeper" to verify native dependencies versions before adding a MiniApp version to a Container (or deliver it through an OTA update).
 

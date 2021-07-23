@@ -4,22 +4,23 @@
 
 - [Overview](overview/what-is-ern.md)
   - [What is Electrode Native](overview/what-is-ern.md)
-  - [Why use Electrode Native](overview/why-use-ern.md)
   - [What is a MiniApp](overview/what-is-a-miniapp.md)
   - [Electrode Native workflow](overview/ern-workflow.md)
   - [Native dependencies management](overview/dependency-management.md)
   - [JS/Native communication](overview/js-native-communication.md)
-  - [Requirements](overview/requirements.md)
+  - [Requirements](overview/prerequisites.md)
   - [Upgrading Electrode Native](overview/upgrading-platform.md)
   - [Contributing](overview/contributing.md)
 
 ### REFERENCE
 
-- [Bundle Store](cli/bundlestore.md)
 - [Composite](platform-parts/composite/index.md)
-- [Container](platform-parts/container/index.md)
-  - [What's inside](platform-parts/container/inside-a-container.md)
+- [Container]
+  - [Overview](platform-parts/container/container-overview.md)
+  - [Generation](platform-parts/container/container-generation.md)
   - [Publication](platform-parts/container/container-publication.md)
+  - [Transformation](platform-parts/container/container-transformation.md)
+  - [Pipeline](platform-parts/container/container-pipeline.md)
   - [Integration](platform-parts/container/container-integration.md)
   - [Initialization](platform-parts/container/container-initialization.md)
   - [Launching MiniApps](platform-parts/container/launching-miniapps.md)
