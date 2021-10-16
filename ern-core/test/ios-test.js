@@ -108,18 +108,18 @@ describe('ios utils', () => {
 
   describe('parse iOS device list', () => {
     it('should return empty list without device', async () => {
-      const instruments = await readFile(
-        path.resolve(__dirname, './fixtures/instruments.txt'),
+      const list = await readFile(
+        path.resolve(__dirname, './fixtures/xctrace_list_no_device.txt'),
       );
-      expect(ios.parseIOSDevicesList(instruments.toString(), computerName)).to
-        .be.empty;
+      expect(ios.parseIOSDevicesList(list.toString(), computerName)).to.be
+        .empty;
     });
     it('should return item with device', async () => {
-      const instrumentsWithDevice = await readFile(
-        path.resolve(__dirname, './fixtures/instruments-with-device.txt'),
+      const list = await readFile(
+        path.resolve(__dirname, './fixtures/xctrace_list.txt'),
       );
       expect(
-        ios.parseIOSDevicesList(instrumentsWithDevice.toString(), computerName),
+        ios.parseIOSDevicesList(list.toString(), computerName),
       ).to.deep.equal([
         {
           name: 'Hilarious Phone Name',
