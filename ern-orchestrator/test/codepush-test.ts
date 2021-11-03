@@ -208,7 +208,7 @@ describe('codepush', () => {
       );
     });
 
-    it('should not alter the Cauldron if call to code push sdk patch method is failing', async () => {
+    it('should not alter the Cauldron if call to code push sdk patch method fails', async () => {
       const nativeAppVersionBefore = jp.query(
         cauldronDoc,
         testAndroid1770Path,
@@ -235,7 +235,7 @@ describe('codepush', () => {
       expect(nativeAppVersionAfter).deep.equal(nativeAppVersionBefore);
     });
 
-    it('should throw if the call to code push sdk patch method is failing', async () => {
+    it('should throw if the call to code push sdk patch method fails', async () => {
       sandbox
         .stub(core, 'getCodePushSdk')
         .returns({ patch: async () => Promise.reject(new Error('Fail')) });
@@ -561,7 +561,7 @@ describe('codepush', () => {
       expect(yarnLockId).equal('2ce473a0-0bcc-4727-a72b-5bcd8bbb4ec9');
     });
 
-    it('should not alter the Cauldron if call to code push sdk promote method is failing', async () => {
+    it('should not alter the Cauldron if call to code push sdk promote method fails', async () => {
       prepareStubs();
       codePushSdkStub.promote.rejects(new Error('fail'));
 
@@ -590,7 +590,7 @@ describe('codepush', () => {
       expect(nativeAppVersionAfter).deep.equal(nativeAppVersionBefore);
     });
 
-    it('should throw if the call to code push sdk patch method is failing', async () => {
+    it('should throw if the call to code push sdk patch method fails', async () => {
       prepareStubs();
       codePushSdkStub.promote.rejects(new Error('fail'));
 
@@ -727,7 +727,7 @@ describe('codepush', () => {
       ).not.undefined;
     });
 
-    it('should not alter the Cauldron if call to code push sdk promote method is failing', async () => {
+    it('should not alter the Cauldron if call to code push sdk promote method fails', async () => {
       prepareStubs();
       codePushSdkStub.releaseReact.rejects(new Error('fail'));
 
@@ -755,7 +755,7 @@ describe('codepush', () => {
       expect(nativeAppVersionAfter).deep.equal(nativeAppVersionBefore);
     });
 
-    it('should throw if the call to code push sdk patch method is failing', async () => {
+    it('should throw if the call to code push sdk patch method fails', async () => {
       prepareStubs();
       codePushSdkStub.releaseReact.rejects(new Error('fail'));
 
