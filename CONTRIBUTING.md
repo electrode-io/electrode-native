@@ -33,7 +33,7 @@ If you want to contribute code to the Electrode Native platform, you'll first ne
     node setup-dev
     ```
 
-   It takes care of installing all the needed dependencies for all Electrode Native modules, and creates a new local version `1000.0.0` of the platform.
+   It takes care of installing all the needed dependencies for all Electrode Native modules, creates a new local version `1000.0.0` of the platform, and installs [Git hooks](#git-hooks).
 
 1. Upon completion, use the following command to switch Electrode Native to this version:  
 
@@ -54,6 +54,20 @@ Electrode Native workspace is composed of multiple independent packages (all pre
 When using the development version, after pulling the latest from our `master`, you might sometimes experience errors such as `Cannot find module ...` when running `ern` again. This is because some new package dependencies might have been added to one or more `ern-` modules and needs to be installed. The same applies if you add a new package dependency to the `package.json` of one of the `ern-` module project, you'll need to install it using Yarn.
 
 The way to do this is to just run `yarn && yarn build` in the root directory of your Electrode Native clone.
+
+### Git hooks
+
+The repo ships with several optional Git hooks. They will be activated
+automatically when following the development setup instructions above, and can
+also be activated manually using
+
+```sh
+cp -a .githooks/* .git/hooks/
+```
+
+- `post-merge`: Automatically install dependencies after a merge if yarn.lock was changed
+- `pre-commit`: Run various checks, including the linter and formatter when creating a commit
+- `pre-push`: Build the project and run unit tests before pushing a branch to a remote
 
 ## Guidelines for code contributions
 
