@@ -1,10 +1,9 @@
 name: publish
 on:
-  push:
-    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+  release:
+    types: [published]
 jobs:
   publish:
-    if: github.event.repository.fork == false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -12,10 +11,7 @@ jobs:
         with:
           node-version: '16'
           registry-url: 'https://registry.npmjs.org'
-      - name: Set variables
-        id: vars
-        run: echo ::set-output name=version::"$(jq -r .version lerna.json)"
       - run: yarn --frozen-lockfile
-      - run: yarn lerna publish ${{ steps.vars.outputs.version }} -y --no-git-tag-version --no-push --exact
+      - run: yarn lerna publish from-git -y
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
