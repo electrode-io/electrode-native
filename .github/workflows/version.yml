@@ -1,0 +1,48 @@
+name: version
+on:
+  workflow_dispatch:
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - name: Set Git user
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+      - name: Set variables
+        id: vars
+        run: |
+          echo ::set-output name=currentVersion::"$(jq -r .version lerna.json)"
+          echo ::set-output name=lastMinor::"$((npm --silent info ern-core version || echo '0.0.0') | sed 's/[0-9]*\.\([0-9]*\).*/\1/')"
+      - run: yarn --frozen-lockfile
+      - name: Minor version
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        run: |
+          git checkout -b v0.$((MINOR+1))
+          git push -u origin v0.$((MINOR+1))
+          yarn lerna version 0.$((MINOR+1)).0 -y --exact --force-publish
+        env:
+          MINOR: ${{ steps.vars.outputs.lastMinor }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Patch version
+        if: startsWith(steps.vars.outputs.currentVersion, '0.')
+        run: yarn lerna version patch -y --exact --force-publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: echo "VERSION=$(jq -r .version lerna.json)" >> $GITHUB_ENV
+      - name: Create Release Notes
+        uses: actions/github-script@v5
+        with:
+          script: |
+            await github.request(`POST /repos/${{ github.repository }}/releases`, {
+              draft: true,
+              generate_release_notes: true,
+              name: "${{ env.VERSION }}",
+              tag_name: "v${{ env.VERSION }}"
+            });
