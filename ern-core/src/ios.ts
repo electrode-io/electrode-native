@@ -24,7 +24,7 @@ export async function getiPhoneSimulators(): Promise<any> {
 }
 
 export function getKnownDevices(): string {
-  return execSync('xcrun instruments -s', { encoding: 'utf8' });
+  return execSync('xcrun xctrace list devices', { encoding: 'utf8' });
 }
 
 export function getComputerName(): string {
@@ -103,31 +103,28 @@ export function parseIOSDevicesList(
   computerName: string,
 ): IosDevice[] {
   const name = computerName.split('\n')[0];
-  const devicePattern = /(.*?) \((.*?)\) \[(.*?)\]/;
-  const noSimulatorPattern = /(.*?) \((.*?)\) \[(.*?)\] \((.*?)\)/;
+  const devicePattern = /(.*?) \((.*?)\) \((.*?)\)/;
 
-  return text.split('\n').reduce((list: any, line: string) => {
-    const device = line.match(devicePattern);
-    if (
-      device &&
-      !noSimulatorPattern.test(line) &&
-      !line.includes(name) &&
-      !line.includes('MacBook')
-    ) {
-      list.push({
-        name: device[1],
-        sdk: device[2],
-        udid: device[3],
-      });
-    }
+  return text
+    .split('== Simulators ==')[0]
+    .split('\n')
+    .reduce((list: any, line: string) => {
+      const device = line.match(devicePattern);
+      if (device && !line.includes(name)) {
+        list.push({
+          name: device[1],
+          sdk: device[2],
+          udid: device[3],
+        });
+      }
 
-    return list;
-  }, []);
+      return list;
+    }, []);
 }
 
 export function killAllRunningSimulators() {
   try {
-    execSync(`killall "Simulator" `);
+    execSync(`killall "Simulator"`);
   } catch (e) {
     // do nothing if there is no simulator launched
   }
@@ -135,19 +132,17 @@ export function killAllRunningSimulators() {
 
 export async function launchSimulator(deviceUdid: string) {
   return new Promise<void>((resolve, reject) => {
-    const xcrunProc = spawn('xcrun', ['instruments', '-w', deviceUdid]);
-    xcrunProc.stdout.on('data', (data) => {
+    const simProc = spawn('open', ['-a', 'Simulator', '--args', '-CurrentDeviceUDID', deviceUdid]);
+    simProc.stdout.on('data', (data) => {
       log.debug(data.toString());
     });
-    xcrunProc.stderr.on('data', (data) => {
+    simProc.stderr.on('data', (data) => {
       log.debug(data.toString());
     });
-    xcrunProc.on('close', (code) => {
-      code === (0 || 255) /* 255 code because we don't provide -t option */
+    simProc.on('close', (code) => {
+      code === 0
         ? resolve()
-        : reject(
-            new Error(`Xcode xcrun command failed with exit code ${code}`),
-          );
+        : reject(new Error(`xcrun failed with exit code ${code}`));
     });
   });
 }
