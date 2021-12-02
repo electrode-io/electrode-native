@@ -315,5 +315,6 @@ export function sameDirContent(pathA, pathB, filesToIgnoreContentDiff = []) {
 
 export const fixtures = {
   defaultCauldron: require('../fixtures/default-cauldron-fixture.json'),
+  defaultCauldronCustomAppName: require('../fixtures/default-cauldron-fixture-custom-app-name.json'),
   emptyCauldron: require('../fixtures/empty-cauldron-fixture.json'),
 };

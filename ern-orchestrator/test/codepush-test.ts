@@ -850,6 +850,15 @@ describe('codepush', () => {
       const result = await sut.getCodePushAppName(testAndroid1780Descriptor);
       expect(result).equal('app-android');
     });
+
+    it('should use the custom app name from cauldron if any', async () => {
+      sandbox.restore();
+      cauldronDoc = cloneFixture(fixtures.defaultCauldronCustomAppName);
+      const cauldronHelper = createCauldronHelper(cauldronDoc);
+      sandbox.stub(cauldronApi, 'getActiveCauldron').resolves(cauldronHelper);
+      const result = await sut.getCodePushAppName(testAndroid1780Descriptor);
+      expect(result).equal('MyCompany-Team/MyAppAndroid');
+    });
   });
 
   describe('orderPackagePaths', () => {
