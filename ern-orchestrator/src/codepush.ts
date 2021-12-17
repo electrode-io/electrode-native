@@ -13,7 +13,7 @@ import {
   SourceMapStoreSdk,
 } from 'ern-core';
 import { GeneratedComposite } from 'ern-composite-gen';
-import { getActiveCauldron } from 'ern-cauldron-api';
+import { CauldronNativeApp, getActiveCauldron } from 'ern-cauldron-api';
 import * as compatibility from './compatibility';
 import _ from 'lodash';
 import path from 'path';
@@ -663,12 +663,18 @@ export async function getCodePushAppName(
 ): Promise<string> {
   const cauldron = await getActiveCauldron();
   const codePushConfig = await cauldron.getCodePushConfig(napDescriptor);
-  return (
-    codePushConfig?.appName ??
-    `${napDescriptor.name}${
-      napDescriptor.platform === 'ios' ? 'Ios' : 'Android'
-    }`
-  );
+  const cauldronCodepushAppName: CauldronNativeApp[] = (
+    (await cauldron.getAllNativeApps()) as CauldronNativeApp[]
+  )
+    .find((app) => app.name === napDescriptor.name)
+    ?.platforms.find((platform) => platform.name === napDescriptor.platform)
+    ?.config?.codePush?.appName;
+  return cauldronCodepushAppName
+    ? cauldronCodepushAppName
+    : codePushConfig?.appName ??
+        `${napDescriptor.name}${
+          napDescriptor.platform === 'ios' ? 'Ios' : 'Android'
+        }`;
 }
 
 // Reorder packages to preserve current order as set in Cauldron

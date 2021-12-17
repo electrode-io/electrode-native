@@ -1,0 +1,132 @@
+{
+  "schemaVersion": "3.0.0",
+  "nativeApps": [
+    {
+      "name": "test",
+      "platforms": [
+        {
+          "name": "android",
+          "config": {
+            "codePush": {
+              "appName": "MyCompany-Team/MyAppAndroid"
+            }
+          },
+          "containerVersion": "1.16.44",
+          "versions": [
+            {
+              "name": "17.7.0",
+              "containerVersion": "1.16.44",
+              "ernPlatformVersion": "1000.0.0",
+              "isReleased": true,
+              "binary": null,
+              "yarnLocks": {
+                "container": "66fba131-2f4f-440d-a81b-492e11858bea",
+                "Production": "a0112c49-4bbc-47a9-ba45-d43e1e84a1a5",
+                "QA": "2ce473a0-0bcc-4727-a72b-5bcd8bbb4ec9"
+              },
+              "container": {
+                "nativeDeps": [
+                  "react-native-electrode-bridge@1.4.9",
+                  "@test/react-native-test-api@0.17.8",
+                  "react-native@0.42.0",
+                  "react-native-code-push@1.17.1-beta"
+                ],
+                "miniApps": [
+                  "@test/react-native-foo@4.0.0",
+                  "react-native-bar@2.0.0"
+                ],
+                "jsApiImpls": ["react-native-my-api-impl@1.0.0"]
+              },
+              "codePush": {
+                "Production": [
+                  {
+                    "metadata": {
+                      "deploymentName": "Production",
+                      "isMandatory": false,
+                      "appVersion": "17.7",
+                      "size": 522937,
+                      "releaseMethod": "Upload",
+                      "label": "v16",
+                      "releasedBy": "test@gmail.com",
+                      "rollout": "100"
+                    },
+                    "miniapps": [
+                      "@test/react-native-foo@4.0.2",
+                      "react-native-bar@2.0.1",
+                      "react-native-abc@1.0.0"
+                    ],
+                    "jsApiImpls": []
+                  },
+                  {
+                    "metadata": {
+                      "deploymentName": "Production",
+                      "isMandatory": false,
+                      "appVersion": "17.7",
+                      "size": 522938,
+                      "releaseMethod": "Upload",
+                      "label": "v17",
+                      "releasedBy": "test@gmail.com",
+                      "rollout": "100"
+                    },
+                    "miniapps": [
+                      "@test/react-native-foo@4.0.2",
+                      "react-native-bar@2.0.2"
+                    ],
+                    "jsApiImpls": ["react-native-my-api-impl@1.0.0"]
+                  }
+                ],
+                "QA": [
+                  {
+                    "metadata": {
+                      "deploymentName": "QA",
+                      "isMandatory": true,
+                      "appVersion": "~17.7",
+                      "size": 522938,
+                      "releaseMethod": "Upload",
+                      "label": "v18",
+                      "releasedBy": "test@gmail.com",
+                      "rollout": "100"
+                    },
+                    "miniapps": [
+                      "@test/react-native-foo@4.0.3",
+                      "react-native-bar@2.0.2"
+                    ],
+                    "jsApiImpls": ["react-native-my-api-impl@1.1.0"]
+                  }
+                ]
+              }
+            },
+            {
+              "name": "17.8.0",
+              "ernPlatformVersion": "1000.0.0",
+              "isReleased": false,
+              "binary": null,
+              "yarnLocks": {},
+              "container": {
+                "nativeDeps": [
+                  "react-native-electrode-bridge@1.4.9",
+                  "@test/react-native-test-api@0.17.8",
+                  "react-native@0.42.0",
+                  "react-native-code-push@1.17.1-beta"
+                ],
+                "miniAppsBranches": [
+                  "https://github.com/org/foo-miniapp.git#master"
+                ],
+                "miniApps": [
+                  "@test/react-native-foo@5.0.0",
+                  "react-native-bar@3.0.0",
+                  "git+ssh://git@github.com:org/test-miniapp.git#0.0.9",
+                  "https://github.com/org/foo-miniapp.git#6319d9ef0c237907c784a8c472b000d5ff83b49a"
+                ],
+                "jsApiImpls": ["react-native-my-api-impl@1.0.0"],
+                "ernVersion": "1000.0.0"
+              },
+              "codePush": {},
+              "description": "Some description for 17.8.0 version"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
