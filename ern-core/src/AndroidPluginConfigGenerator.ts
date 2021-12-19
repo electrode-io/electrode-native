@@ -87,6 +87,12 @@ export class AndroidPluginConfigGenerator {
     resolveDependencyVersion: (dependency: string) => Promise<string>,
   ) {
     const parsed: any = await g2js.parseFile(p);
+    // A bug in g2js can result in issues parsing the dependencies block
+    // Details: https://github.com/ninetwozero/gradle-to-js/issues/32
+    // TODO: Remove after the issue has been fixed in gradle-to-js
+    if (!parsed.dependencies && parsed.buildscript) {
+      parsed.dependencies = parsed.buildscript.dependencies;
+    }
     const res = await Promise.all(
       parsed.dependencies
         .filter((x: any) => !/testImplementation|testCompile/.test(x.type))
