@@ -12,11 +12,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.facebook.react.ReactPackage;
-import {{fullyQualifiedPackageClassName}};
+import {{packageName}}.{{className}};
 
-public class {{packageClassName}}Plugin implements ReactPlugin {
+public class {{className}}Plugin implements ReactPlugin {
     public ReactPackage hook(@NonNull Application application, @Nullable ReactPluginConfig config) {
-        return new {{packageClassName}}();
+        return new {{className}}();
     }
 }
 `;
@@ -127,93 +127,83 @@ export class AndroidPluginConfigGenerator {
     return res.filter((x: string) => x !== '');
   }
 
-  public async generatePluginJavaSource(): Promise<any> {
-    const packageImpl = await this.findReactPackageImplementationFile();
-    const absPath = path.join(this.root, packageImpl);
-    const packageName = await this.getJavaPackageDeclarationFromSource(absPath);
-    const packageClassName = await this.getClassNameFromSource(absPath);
-    const fullyQualifiedPackageClassName = `${packageName}.${packageClassName}`;
-
-    if (await this.hasNonDefaultConstructor(absPath, packageClassName)) {
-      if (!(await this.hasDefaultConstructor(absPath, packageClassName))) {
-        throw new Error(
-          `Non default constructors found in ${packageClassName} class.
-${packageImpl}.
-A Configurable Plugin implementation might be required.
-Automated Configurable Plugin generation is not yet supported`,
-        );
-      } else {
-        log.warn(`Non default constructors detected.
-It might be needed to manually update the plugin config to make it a configurable plugin.`);
-      }
+  public async generatePluginSource() {
+    const impls = await this.findReactPackageImplementations();
+    if (impls.length === 0) {
+      throw new Error('ReactPackage implementation not found');
     }
+    if (impls.length > 1) {
+      log.warn(
+        'Multiple ReactPackage impls detected. Manually verify the generated plugin and make modifications as necessary.',
+      );
+    }
+    log.info(`Using ReactPackage from: ${impls[0].file}`);
+    log.debug(JSON.stringify(impls[0], null, 2));
 
     return {
-      content: Mustache.render(template, {
-        fullyQualifiedPackageClassName,
-        packageClassName,
-      }),
-      filename: `${packageClassName}Plugin.java`,
+      content: Mustache.render(template, impls[0]),
+      filename: `${impls[0].className}Plugin.java`,
     };
   }
 
-  public async findReactPackageImplementationFile(): Promise<string> {
-    let candidates = this.files.filter((x) => x.endsWith('Package.java'));
-    let result;
-    if (candidates.length === 0) {
-      candidates = this.files.filter((x) => x.endsWith('.java'));
+  public async findReactPackageImplementations() {
+    const results = [];
+    let files = this.files.filter((x) => /Package.(java|kt)$/.test(x));
+    if (files.length === 0) {
+      files = this.files.filter((x) => /.(java|kt)$/.test(x));
     }
-    for (const candidate of candidates) {
-      const content = await fs.readFile(path.join(this.root, candidate));
-      if (/implements ReactPackage/.test(content.toString())) {
-        // Found it ! Unless there are multiple ReactPackage impls
-        // Should check if that's the case and fail
-        result = candidate;
+    for (const file of files) {
+      const content = await fs.readFile(path.join(this.root, file));
+      const source = content.toString();
+      const packageName = this.getPackageDeclarationFromSource(source);
+      const className = this.getClassNameFromSource(source);
+      if (packageName && className) {
+        results.push({ file, packageName, className });
+
+        if (this.hasCustomConstructors(source, className)) {
+          log.info(`Custom constructors found in ${className}.`);
+          if (this.hasNoArgumentConstructor(source, className)) {
+            log.warn(
+              'It might be necessary to manually update the plugin config to make it a configurable plugin.',
+            );
+          } else {
+            log.warn(
+              'Manual updates are required in generated plugin for packages without a no-argument constructor.',
+            );
+          }
+        }
       }
     }
-    if (!result) {
-      throw new Error('ReactPackage implementation not found');
-    }
-    return result;
+    return results;
   }
 
-  public async getJavaPackageDeclarationFromSource(p: string): Promise<string> {
-    const content = await fs.readFile(p);
-    const match = content.toString().match(/package (.+);/);
-    if (!match) {
-      throw new Error(`No package declaration found in ${p}`);
-    }
-    return match[1];
+  public getPackageDeclarationFromSource(source: string): string | null {
+    const match = source.match(/package ([\w.]+);?/);
+    return match ? match[1] : null;
   }
 
-  public async getClassNameFromSource(p: string): Promise<string> {
-    const content = await fs.readFile(p);
-    const match = content
-      .toString()
-      .match(/class (.+) implements ReactPackage/);
-    if (!match) {
-      throw new Error(`No class implementing ReactPackage found in ${p}`);
-    }
-    return match[1];
+  public getClassNameFromSource(source: string): string | null {
+    const match = source.match(
+      /class\s+(\w+)\(?.*\)?\s*(implements|:)\s*ReactPackage/,
+    );
+    return match ? match[1] : null;
   }
 
-  public async hasDefaultConstructor(
-    p: string,
-    className: string,
-  ): Promise<boolean> {
-    const content = await fs.readFile(p);
-    const re = new RegExp(`public ${className}\\((\\t*|\\s*)\\)`, 'g');
-    return re.test(content.toString());
+  public hasNoArgumentConstructor(source: string, className: string): boolean {
+    const re = new RegExp(
+      `(public ${className}|constructor)\\((\\t*|\\s*)\\)`,
+      'g',
+    );
+    return re.test(source);
   }
 
-  public async hasNonDefaultConstructor(
-    p: string,
-    className: string,
-  ): Promise<any | null> {
-    const content = await fs.readFile(p);
-    const re = new RegExp(`public ${className}\\(\\S+`, 'g');
-    const match = content.toString().match(re);
-    return match && match.length > 0;
+  public hasCustomConstructors(source: string, className: string): boolean {
+    const re = new RegExp(
+      `((public|class) ${className}|constructor)\\s*\\([^\\s).]+`,
+      'g',
+    );
+    const match = source.match(re);
+    return match !== null && match.length > 0;
   }
 
   get gradlePaths(): string[] {

@@ -23,16 +23,13 @@ export class PluginConfigGenerator {
 
     if (androidGenerator.doesPluginSupportAndroid) {
       try {
-        const androidConfig = await androidGenerator.generateConfig({
+        result.pluginConfig = result.pluginConfig || {};
+        result.pluginConfig.android = await androidGenerator.generateConfig({
           resolveDependencyVersion,
           revolveBuildGradlePath,
         });
-        const androidPluginSource =
-          await androidGenerator.generatePluginJavaSource();
-        result.pluginConfig = result.pluginConfig || {};
-        result.pluginConfig.android = androidConfig;
-        result.androidPluginSource = androidPluginSource;
-
+        result.androidPluginSource =
+          await androidGenerator.generatePluginSource();
         log.info('Generated Android plugin configuration');
       } catch (e) {
         throw new Error(`Failed to generate Android Plugin Configuration.
@@ -47,11 +44,10 @@ Reason: ${e.message}`);
 
     if (iosGenerator.doesPluginSupportIos) {
       try {
-        const iosConfig = await iosGenerator.generateConfig({
+        result.pluginConfig = result.pluginConfig || {};
+        result.pluginConfig.ios = await iosGenerator.generateConfig({
           resolvePbxProjPath,
         });
-        result.pluginConfig = result.pluginConfig || {};
-        result.pluginConfig.ios = iosConfig;
         log.info('Generated iOS plugin configuration');
       } catch (e) {
         throw new Error(`Failed to generate iOS Plugin Configuration.
