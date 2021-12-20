@@ -32,3 +32,4 @@ jobs:
           node-version: '16'
       - run: yarn --frozen-lockfile
       - run: yarn check:lint
+      - run: yarn prettier:check

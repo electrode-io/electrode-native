@@ -132,7 +132,13 @@ export function killAllRunningSimulators() {
 
 export async function launchSimulator(deviceUdid: string) {
   return new Promise<void>((resolve, reject) => {
-    const simProc = spawn('open', ['-a', 'Simulator', '--args', '-CurrentDeviceUDID', deviceUdid]);
+    const simProc = spawn('open', [
+      '-a',
+      'Simulator',
+      '--args',
+      '-CurrentDeviceUDID',
+      deviceUdid,
+    ]);
     simProc.stdout.on('data', (data) => {
       log.debug(data.toString());
     });
