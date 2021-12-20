@@ -100,7 +100,11 @@ export class YarnCli {
           // 'warning' and 'error' packet types are sent to stderr
           // we want to fail only on 'error'
           if (jsonLine.type === 'error') {
-            reject(jsonLine.data);
+            if (jsonLine.data.includes('Received invalid response from npm.')) {
+              reject(new Error('Package not found'));
+            } else {
+              reject(jsonLine.data);
+            }
           }
         });
       });
