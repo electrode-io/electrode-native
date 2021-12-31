@@ -191,7 +191,11 @@ export default class Platform {
 
   public static isYarnInstalled() {
     try {
-      execSync('yarn --version 1>/dev/null 2>/dev/null');
+      if (process.platform === 'win32') {
+        execSync('yarn --version > NUL 2>&1');
+      } else {
+        execSync('yarn --version 1>/dev/null 2>/dev/null');
+      }
       return true;
     } catch (e) {
       return false;
