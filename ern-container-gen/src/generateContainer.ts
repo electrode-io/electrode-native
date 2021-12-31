@@ -32,6 +32,7 @@ export async function generateContainer(
     postBundle?: PostBundleAction;
   } = {},
 ): Promise<ContainerGenResult> {
+  config.outDir = path.resolve(config.outDir);
   fs.ensureDirSync(config.outDir);
   shell.rm('-rf', path.join(config.outDir, '{.*,*}'));
 
