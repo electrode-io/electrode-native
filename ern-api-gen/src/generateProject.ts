@@ -82,7 +82,7 @@ export function generatePackageJson({
       name: npmScope ? `@${npmScope}/${packageName}` : packageName,
       version: apiVersion ?? '1.0.0',
       description: apiDescription,
-      main: 'javascript/src/index.js',
+      main: 'javascript/src/index.d.ts',
       scripts: {
         flow: 'flow',
       },
