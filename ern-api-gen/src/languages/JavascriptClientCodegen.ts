@@ -132,10 +132,10 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
 
   constructor() {
     super();
-    this.__modelTemplateFiles.put('model.mustache', '.js');
-    this.__modelTestTemplateFiles.put('model_test.mustache', '.js');
-    this.__apiTemplateFiles.put('api.mustache', '.js');
-    this.__apiTestTemplateFiles.put('api_test.mustache', '.js');
+    this.__modelTemplateFiles.put('model.mustache', '.ts');
+    this.__modelTestTemplateFiles.put('model_test.mustache', '.ts');
+    this.__apiTemplateFiles.put('api.mustache', '.ts');
+    this.__apiTestTemplateFiles.put('api_test.mustache', '.ts');
     this.__modelDocTemplateFiles.put('model_doc.mustache', '.md');
     this.__apiDocTemplateFiles.put('api_doc.mustache', '.md');
     this.__defaultIncludes = newHashSet(...this.__languageSpecificPrimitives);
@@ -566,14 +566,14 @@ export default class JavascriptClientCodegen extends DefaultCodegen {
       new SupportingFile(
         'index.mustache',
         this.createPath(this.sourceFolder, this.invokerPackage),
-        'index.js',
+        'index.d.ts',
       ),
     );
     this.__supportingFiles.push(
       new SupportingFile(
         'ApiClient.mustache',
         this.createPath(this.sourceFolder, this.invokerPackage),
-        'ApiClient.js',
+        'ApiClient.ts',
       ),
     );
   }
