@@ -39,7 +39,7 @@ describe('generatePackageJson', function () {
     expect(result).to.deep.equal({
       name: 'test',
       version: '1.0.0',
-      main: 'javascript/src/index.js',
+      main: 'javascript/src/index.d.ts',
       scripts: {
         flow: 'flow',
       },
