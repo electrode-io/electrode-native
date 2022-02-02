@@ -70,7 +70,7 @@ describe('generatePackageJson', function () {
       name: 'test',
       version: '1.0.0',
       license: 'ISC',
-      main: 'javascript/src/index.js',
+      main: 'javascript/src/index.d.ts',
       scripts: {
         flow: 'flow',
       },
