@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid, validate as uuidValidate } from 'uuid';
 import semver from 'semver';
 import { log, readPackageJson, writePackageJson } from 'ern-core';
 import { getNodeModuleVersion } from './getNodeModuleVersion';
@@ -56,7 +56,11 @@ export async function createBabelRc({
               // it messing with other module-resolver plugin configurations that could
               // be defined in the .babelrc config of individual MiniApps
               // https://babeljs.io/docs/en/options#plugin-preset-merging
-              babelPlugin.push(uuid());
+              // Check if lastItem of babel plugin is not uuid
+              const lastItem = babelPlugin.slice(-1)[0];
+              if (typeof lastItem !== 'string' || !uuidValidate(lastItem)) {
+                babelPlugin.push(uuid());
+              }
               // Copy over module-resolver plugin & config to top level composite .babelrc
               log.debug(
                 `Taking care of module-resolver Babel plugin for ${miniAppName} MiniApp`,
@@ -68,6 +72,14 @@ export async function createBabelRc({
                 for (const x of babelPlugin) {
                   if (x instanceof Object && x.alias) {
                     moduleResolverAliases = x.alias;
+                    Object.keys(moduleResolverAliases).map((key) => {
+                      if (!moduleResolverAliases[key].startsWith(miniAppName))
+                        moduleResolverAliases[
+                          key
+                        ] = `${miniAppName}/${moduleResolverAliases[
+                          key
+                        ].replace('./', '')}`;
+                    });
                     break;
                   }
                 }
@@ -105,7 +117,6 @@ export async function createBabelRc({
       log.debug(
         `Removing babel object from ${miniAppName} MiniApp package.json`,
       );
-      delete miniAppPackageJson.babel;
       await writePackageJson(p, miniAppPackageJson);
     }
   }
