@@ -58,7 +58,7 @@
     "lodash": "^4.17.21",
     "mustache": "^4.2.0",
     "node-fetch": "^2.6.1",
-    "node-ipc": "^9.1.4",
+    "node-ipc": "9.2.1",
     "node-simctl": "^6.4.1",
     "react-native-cli": "^2.0.1",
     "semver": "^7.3.5",
