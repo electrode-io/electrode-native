@@ -61,7 +61,7 @@
     "inquirer": "^8.0.0",
     "kax": "^3.0.0",
     "lodash": "^4.17.21",
-    "node-ipc": "^9.1.4",
+    "node-ipc": "9.2.1",
     "semver": "^7.3.5",
     "treeify": "^1.1.0",
     "untildify": "^4.0.0",
