@@ -465,7 +465,13 @@ export function androidEmulatorPath(): string {
 export function getDefaultHermesVersion(
   reactNativeVersion: string,
 ): string | never {
-  if (semver.gte(reactNativeVersion, '0.64.0')) {
+  if (semver.gte(reactNativeVersion, '0.66.0')) {
+    // https://github.com/facebook/react-native/blob/v0.66.0/package.json#L98
+    return '~0.9.0';
+  } else if (semver.gte(reactNativeVersion, '0.65.0')) {
+    // https://github.com/facebook/react-native/blob/v0.65.0/package.json#L98
+    return '~0.8.1';
+  } else if (semver.gte(reactNativeVersion, '0.64.0')) {
     // https://github.com/facebook/react-native/blob/v0.64.0/package.json#L97
     return '~0.7.0';
   } else if (semver.gte(reactNativeVersion, '0.63.0')) {
@@ -491,7 +497,9 @@ export function getDefaultHermesVersion(
 export function getDefaultJSCVersion(
   reactNativeVersion: string,
 ): string | never {
-  if (semver.gte(reactNativeVersion, '0.61.0')) {
+  if (semver.gte(reactNativeVersion, '0.65.0')) {
+    return '^250230.2.1';
+  } else if (semver.gte(reactNativeVersion, '0.61.0')) {
     return '^245459.0.0';
   } else if (semver.gte(reactNativeVersion, '0.60.0')) {
     return '245459.0.0';
