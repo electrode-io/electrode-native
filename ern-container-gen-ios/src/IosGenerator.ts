@@ -357,7 +357,10 @@ Make sure to run these commands before building the container.`,
           // for iOS container builds.
           shell.rm('-rf', path.join(nodeModulesDir, '**/android'));
 
-          if (semver.gte(reactNativePlugin.version!, '0.64.0')) {
+          const codegenVersion = iosUtil.getReactNativeCodegenVersion(
+            reactNativePlugin.version,
+          );
+          if (codegenVersion) {
             // Starting with React Native 0.64.0, code generation for Turbo Modules
             // is performed using react-native-codegen package.
             // The package entry point is invoked during Xcode build of FBReactNativeSpec
@@ -368,7 +371,7 @@ Make sure to run these commands before building the container.`,
             // container generation and get rid of the the build script phase after doing
             // that, so that we don't clutter node_modules of the container pushed to git
             // and that Node does not have to be a requirement to build containers.
-            await this.addReactNativeCodeGen(config.outDir);
+            await this.addReactNativeCodegen(config.outDir, codegenVersion);
           }
         } finally {
           shell.popd();
@@ -377,13 +380,13 @@ Make sure to run these commands before building the container.`,
     }
   }
 
-  public async addReactNativeCodeGen(targetDir: string): Promise<void> {
+  public async addReactNativeCodegen(targetDir: string, version: string) {
     log.debug('Adding react-native-codegen package');
     const tmpDir = createTmpDir();
     shell.pushd(tmpDir);
     try {
       await yarn.init();
-      await yarn.add(PackagePath.fromString('react-native-codegen'));
+      await yarn.add(PackagePath.fromString(`react-native-codegen@${version}`));
       // mkdirp and invariant are also needed
       await yarn.add(PackagePath.fromString('mkdirp'));
       await yarn.add(PackagePath.fromString('invariant'));
