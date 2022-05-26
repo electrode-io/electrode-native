@@ -62,7 +62,7 @@ Check our [dummy publisher]([https://github.com/electrode-io/ern-container-publi
 
 A few things to keep in mind when creating a Container publisher :
 
-- The package name must be prefixed with `ern-container-publisher-`. This is a convention for Electrode Native Container publishers, and is enforced by Electrode Native.
+- The package name must include `ern-container-publisher`. This is a convention for Electrode Native Container publishers, and is enforced by Electrode Native.
 
 - You should add a keyword `ern-container-publisher` in the keywords list of the package.json. This is not required, but could be leveraged later on by Electrode Native to facilitate container publishers discovery.
 

@@ -59,6 +59,6 @@ Check our [dummy transforrmer]([https://github.com/electrode-io/ern-container-tr
 
 A few things to keep in mind when creating a Container publisher :
 
-- The package name must be prefixed with `ern-container-transformer-`. This is a convention for Electrode Native Container transformers, and is enforced by Electrode Native.
+- The package name must include `ern-container-transformer`. This is a convention for Electrode Native Container transformers, and is enforced by Electrode Native.
 
 - You should add a keyword `ern-container-transformer` in the keywords list of the package.json. This is not required, but could be leveraged later on by Electrode Native to facilitate container transformers discovery.
