@@ -336,9 +336,7 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
     androidDependencies.regular.push(
       `com.walmartlabs.ern:react-native:${versions.reactNativeAarVersion}`,
     );
-    androidDependencies.regular.push(
-      `com.android.support:appcompat-v7:${versions.supportLibraryVersion}`,
-    );
+
     if (isKotlinEnabled) {
       androidDependencies.regular.push(
         `org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlinVersion}`,
@@ -600,9 +598,9 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
 
     // Replace versions of support libraries with set version
     dependencies.regular = dependencies.regular.map((d) =>
-      d.startsWith('com.android.support:')
+      d.startsWith('androidx.appcompat:')
         ? `${d.slice(0, d.lastIndexOf(':'))}:${
-            androidVersions.supportLibraryVersion
+            androidVersions.androidxAppcompactVersion
           }`
         : d,
     );
