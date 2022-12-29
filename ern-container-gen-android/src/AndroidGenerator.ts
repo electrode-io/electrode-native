@@ -333,8 +333,8 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
     mustacheView.customRepos = _.uniq(mustacheView.customRepos);
     mustacheView.customPermissions = _.uniq(mustacheView.customPermissions);
 
-    androidDependencies.regular.push(
-      `com.walmartlabs.ern:react-native:${versions.reactNativeAarVersion}`,
+    androidDependencies.raw.push(
+      `api 'com.walmartlabs.ern:react-native:${versions.reactNativeAarVersion}'`,
     );
 
     if (isKotlinEnabled) {
