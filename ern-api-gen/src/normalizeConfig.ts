@@ -1,5 +1,4 @@
 import { PackagePath } from 'ern-core';
-import { MODEL_FILE } from './Constants';
 
 // Generate a configuration. This looks in the apigen schema
 // and the things passed in.
@@ -14,7 +13,7 @@ import { MODEL_FILE } from './Constants';
 // - apiAuthor : Author of the API [Default: EMAIL or USER env variable]
 // - namespace : Namespace to use for messages [Default: com.{npmscope}.{name}.ern]
 // - npmScope: Npm scope to use for the module [Default: no scope]
-// - apiSchemaPath : Path to the file holding the api schema [Default : no path]
+// - apiSchemaPath : Path to the file holding the api schema [Default: schema.json]
 // - moduleName : Name of the generated module
 // - artifactId : The artifact id
 // - packageName : npm package name of the module
@@ -28,7 +27,7 @@ export default function normalizeConfig({
   apiAuthor,
   namespace,
   npmScope,
-  apiSchemaPath = MODEL_FILE,
+  apiSchemaPath = 'schema.json',
   moduleName,
   artifactId,
   packageName,

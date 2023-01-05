@@ -35,18 +35,11 @@ describe('generatePackageJson', function () {
         packageName: 'test',
       }),
     );
-    console.log(result);
     expect(result).to.deep.equal({
       name: 'test',
       version: '1.0.0',
       main: 'javascript/src/index.js',
-      scripts: {
-        flow: 'flow',
-      },
       keywords: ['ern-api'],
-      devDependencies: {
-        'flow-bin': '^0.47.0',
-      },
       ern: {
         message: {
           apiSchemaPath: 'schema.json',
@@ -65,21 +58,14 @@ describe('generatePackageJson', function () {
         apiLicense: 'ISC',
       }),
     );
-    console.log(result);
     expect(result).to.deep.equal({
       name: 'test',
       version: '1.0.0',
       license: 'ISC',
       main: 'javascript/src/index.js',
-      scripts: {
-        flow: 'flow',
-      },
       keywords: ['ern-api'],
       dependencies: {
         'react-native-electrode-bridge': '1.2.x',
-      },
-      devDependencies: {
-        'flow-bin': '^0.47.0',
       },
       ern: {
         message: {
