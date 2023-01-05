@@ -3,6 +3,7 @@ import {
   getDefaultMavenLocalDirectory,
   kax,
   log,
+  manifest,
   MiniApp,
   NativePlatform,
   PackagePath,
@@ -36,7 +37,9 @@ export async function runMiniApp(
     launchEnvVars,
     launchFlags,
     mainMiniAppName,
+    manifestId,
     miniapps,
+    platformVersion = Platform.currentVersion,
     port,
   }: {
     baseComposite?: PackagePath;
@@ -50,7 +53,9 @@ export async function runMiniApp(
     launchEnvVars?: string;
     launchFlags?: string;
     mainMiniAppName?: string;
+    manifestId?: string;
     miniapps?: PackagePath[];
+    platformVersion?: string;
     port?: string;
   } = {},
 ) {
@@ -200,12 +205,28 @@ export async function runMiniApp(
         ? `com.walmartlabs.ern`
         : `com.walmartlabs.ern.${entryMiniAppName.toLowerCase()}`,
     };
+
+    const mavenPublisher =
+      (await kax
+        .task(
+          'Querying Manifest for ern-container-publisher-maven version to use',
+        )
+        .run(
+          manifest.getNativeDependency(
+            PackagePath.fromString('ern-container-publisher-maven'),
+            {
+              manifestId,
+              platformVersion,
+            },
+          ),
+        )) || PackagePath.fromString('ern-container-publisher-maven');
+
     await publishContainer({
       containerPath: outDir,
       containerVersion: '1.0.0',
       extra: extra.androidConfig,
       platform: 'android',
-      publisher: PackagePath.fromString('ern-container-publisher-maven'),
+      publisher: mavenPublisher,
       url: getDefaultMavenLocalDirectory(),
     });
   }
