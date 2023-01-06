@@ -1,6 +1,6 @@
 {
   "name": "ern-runner-gen",
-  "version": "0.48.5",
+  "version": "0.48.6",
   "description": "Electrode Native Runner Project Generator",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -36,10 +36,10 @@
   },
   "homepage": "http://www.electrode.io",
   "dependencies": {
-    "ern-core": "0.48.5"
+    "ern-core": "0.48.6"
   },
   "devDependencies": {
-    "ern-util-dev": "0.48.5"
+    "ern-util-dev": "0.48.6"
   },
   "engines": {
     "node": ">=12"
