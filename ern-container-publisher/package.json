@@ -1,6 +1,6 @@
 {
   "name": "ern-container-publisher",
-  "version": "1000.0.0",
+  "version": "0.47.4",
   "description": "Electrode Native Container Publisher",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -37,10 +37,10 @@
   },
   "homepage": "http://www.electrode.io",
   "dependencies": {
-    "ern-core": "1000.0.0"
+    "ern-core": "0.47.4"
   },
   "devDependencies": {
-    "ern-util-dev": "1000.0.0"
+    "ern-util-dev": "0.47.4"
   },
   "engines": {
     "node": ">=10"
