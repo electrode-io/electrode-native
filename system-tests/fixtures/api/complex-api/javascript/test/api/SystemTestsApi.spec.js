@@ -7,38 +7,36 @@
  * Do not edit the class manually.
  */
 
-import {expect} from 'chai';
-
 import SystemTestsRequests from '../../src/api/SystemTestsRequests';
 
 describe('SystemTestsApi', function () {
   let requests;
   beforeEach(function () {
+    let requestHandler;
     requests = new SystemTestsRequests({
-      registerHandler() {
+      registerRequestHandler(name, handler) {
+        requestHandler = handler;
       },
-      sendRequest() {
+      sendRequest(name, data) {
+        requestHandler && requestHandler(data);
+        return Promise.resolve(data);
       },
     });
   });
 
-  describe('testArrayOfStrings', function () {
-    it('should send request testArrayOfStrings successfully', () => {
-      // uncomment below and update the code to test testArrayOfStrings
-      //return requests.testArrayOfStrings(key: any).then(response => {
-      //  if (error) throw error;
-      //  expect(response).to.be();
-      //});
+  describe('testArrayOfStrings', () => {
+    it('sends "testArrayOfStrings" request', () => {
+      return requests.testArrayOfStrings('id').then(response => {
+        expect(response).toEqual({data: 'id', timeout: undefined});
+      });
     });
   });
 
-  describe('testMultiArgs', function () {
-    it('should send request testMultiArgs successfully', () => {
-      // uncomment below and update the code to test testMultiArgs
-      //return requests.testMultiArgs(key1: string, key2: number).then(response => {
-      //  if (error) throw error;
-      //  expect(response).to.be();
-      //});
+  describe('testMultiArgs', () => {
+    it('sends "testMultiArgs" request', () => {
+      return requests.testMultiArgs('id').then(response => {
+        expect(response).toEqual({data: 'id', timeout: undefined});
+      });
     });
   });
 });

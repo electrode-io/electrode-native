@@ -7,27 +7,28 @@
  * Do not edit the class manually.
  */
 
-import {expect} from 'chai';
-
 import TestEventObjectParamEvents from '../../src/api/TestEventObjectParamEvents';
 
 describe('TestEventObjectParamApi', function () {
   let events;
   beforeEach(function () {
+    let eventListener;
     events = new TestEventObjectParamEvents({
-      registerEventListener() {
+      registerEventListener(name, listener) {
+        eventListener = listener;
       },
-      emitEvent() {
+      emitEvent(name, data) {
+        eventListener && eventListener(data);
       },
     });
   });
 
-  describe('testEventObjectParam', function () {
-    it('should emit event testEventObjectParam successfully', done => {
-      // uncomment below and update the code to test testEventObjectParam
-      //events.addTestEventObjectParamEventListener(() => done());
-      //events.emitTestEventObjectParam(opts: any);
-      done();
+  describe('testEventObjectParam', () => {
+    it('emits "testEventObjectParam" event', () => {
+      const listener = jest.fn();
+      events.addTestEventObjectParamEventListener(listener);
+      events.emitTestEventObjectParam('id');
+      expect(listener).toHaveBeenCalledWith({data: 'id'});
     });
   });
 });

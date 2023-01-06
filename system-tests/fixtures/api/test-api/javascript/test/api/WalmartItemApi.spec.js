@@ -7,8 +7,6 @@
  * Do not edit the class manually.
  */
 
-import {expect} from 'chai';
-
 import WalmartItemRequests from '../../src/api/WalmartItemRequests';
 import WalmartItemEvents from '../../src/api/WalmartItemEvents';
 
@@ -16,46 +14,49 @@ describe('WalmartItemApi', function () {
   let requests;
   let events;
   beforeEach(function () {
+    let requestHandler;
     requests = new WalmartItemRequests({
-      registerHandler() {
+      registerRequestHandler(name, handler) {
+        requestHandler = handler;
       },
-      sendRequest() {
+      sendRequest(name, data) {
+        requestHandler && requestHandler(data);
+        return Promise.resolve(data);
       },
     });
+    let eventListener;
     events = new WalmartItemEvents({
-      registerEventListener() {
+      registerEventListener(name, listener) {
+        eventListener = listener;
       },
-      emitEvent() {
+      emitEvent(name, data) {
+        eventListener && eventListener(data);
       },
     });
   });
 
-  describe('addItem', function () {
-    it('should send request addItem successfully', () => {
-      // uncomment below and update the code to test addItem
-      //return requests.addItem(item: any).then(response => {
-      //  if (error) throw error;
-      //  expect(response).to.be();
-      //});
+  describe('addItem', () => {
+    it('sends "addItem" request', () => {
+      return requests.addItem('id').then(response => {
+        expect(response).toEqual({data: 'id', timeout: undefined});
+      });
     });
   });
 
-  describe('findItems', function () {
-    it('should send request findItems successfully', () => {
-      // uncomment below and update the code to test findItems
-      //return requests.findItems(opts: any).then(response => {
-      //  if (error) throw error;
-      //  expect(response).to.be();
-      //});
+  describe('findItems', () => {
+    it('sends "findItems" request', () => {
+      return requests.findItems('id').then(response => {
+        expect(response).toEqual({data: 'id', timeout: undefined});
+      });
     });
   });
 
-  describe('itemAdded', function () {
-    it('should emit event itemAdded successfully', done => {
-      // uncomment below and update the code to test itemAdded
-      //events.addItemAddedEventListener(() => done());
-      //events.emitItemAdded(itemId: string);
-      done();
+  describe('itemAdded', () => {
+    it('emits "itemAdded" event', () => {
+      const listener = jest.fn();
+      events.addItemAddedEventListener(listener);
+      events.emitItemAdded('id');
+      expect(listener).toHaveBeenCalledWith({data: 'id'});
     });
   });
 });
