@@ -1,6 +1,6 @@
 {
   "name": "ern-container-gen",
-  "version": "1000.0.0",
+  "version": "0.46.3",
   "description": "Electrode Native Container Generator",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -37,8 +37,8 @@
   },
   "homepage": "http://www.electrode.io",
   "dependencies": {
-    "ern-composite-gen": "1000.0.0",
-    "ern-core": "1000.0.0",
+    "ern-composite-gen": "0.46.3",
+    "ern-core": "0.46.3",
     "fs-extra": "^8.1.0",
     "fs-readdir-recursive": "^1.1.0",
     "mustache": "^4.0.1",
@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "copyfiles": "^2.3.0",
-    "ern-util-dev": "1000.0.0"
+    "ern-util-dev": "0.46.3"
   },
   "engines": {
     "node": ">=10"
