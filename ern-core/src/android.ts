@@ -12,18 +12,18 @@ import semver from 'semver';
 // Default value for android build config
 // ==============================================================================
 
-export const DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION = '3.4.2';
+export const DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION = '4.2.2';
 export const DEFAULT_ANDROIDX_APPCOMPACT_VERSION = '1.1.0';
 export const DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION = '2.1.0';
-export const DEFAULT_BUILD_TOOLS_VERSION = '28.0.3';
-export const DEFAULT_COMPILE_SDK_VERSION = '28';
-export const DEFAULT_GRADLE_DISTRIBUTION_VERSION = '5.4.1';
+export const DEFAULT_BUILD_TOOLS_VERSION = '30.0.2';
+export const DEFAULT_COMPILE_SDK_VERSION = '30';
+export const DEFAULT_GRADLE_DISTRIBUTION_VERSION = '7.2';
 export const DEFAULT_JSC_VARIANT = 'android-jsc';
-export const DEFAULT_KOTLIN_VERSION = '1.4.32';
+export const DEFAULT_KOTLIN_VERSION = '1.5.31';
 export const DEFAULT_MIN_SDK_VERSION_PRE_RN64 = '19';
 export const DEFAULT_MIN_SDK_VERSION_POST_RN64 = '21';
 export const DEFAULT_SUPPORT_LIBRARY_VERSION = '28.0.0';
-export const DEFAULT_TARGET_SDK_VERSION = '28';
+export const DEFAULT_TARGET_SDK_VERSION = '30';
 export const DEFAULT_SOURCE_COMPATIBILITY = 'VERSION_1_8';
 export const DEFAULT_TARGET_COMPATIBILITY = 'VERSION_1_8';
 const ANDROID_DEVICE_INFO = `
