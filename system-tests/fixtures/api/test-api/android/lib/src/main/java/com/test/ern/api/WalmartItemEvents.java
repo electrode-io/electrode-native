@@ -16,7 +16,7 @@
 
 package com.test.ern.api;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeEvent;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeEventListener;

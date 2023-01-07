@@ -22,7 +22,7 @@ describe('AndroidPluginConfigGenerator', () => {
         () => Promise.resolve('1.0.0'),
       );
       expect(dependencies).deep.equal([
-        "implementation 'com.android.support:support-v4:28.0.0'",
+        "implementation 'androidx.appcompat:appcompat:1.1.0'",
         "annotationProcessor 'com.example:annotation-processor:1.0.0'",
         "api 'com.example:api:1.0.0'",
         "compileOnly 'com.example:compile-only:1.0.0'",
