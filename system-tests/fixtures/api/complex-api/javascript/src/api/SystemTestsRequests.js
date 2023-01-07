@@ -1,7 +1,9 @@
 // @flow
 
 export default class SystemTestsRequests {
-  constructor(bridge) {
+  _bridge: Object;
+
+  constructor(bridge: Object) {
     this._bridge = bridge;
   }
 
@@ -9,7 +11,7 @@ export default class SystemTestsRequests {
    * Registers a handler for a particular api. This allows JavaScript to handle a request from native.
    * @param handler The handler function, taking a single parameter being the data of the request and returning a Promise. Implementer of the handler should either resolve the promise with an object being the response data (if any) or reject the promise with an Error
    */
-  registerTestArrayOfStringsRequestHandler(handler: Function): Promise<any> {
+  registerTestArrayOfStringsRequestHandler(handler: Function) {
     this._bridge.registerRequestHandler(
       'com.complex.ern.api.request.testArrayOfStrings',
       handler,
@@ -20,7 +22,7 @@ export default class SystemTestsRequests {
    * Registers a handler for a particular api. This allows JavaScript to handle a request from native.
    * @param handler The handler function, taking a single parameter being the data of the request and returning a Promise. Implementer of the handler should either resolve the promise with an object being the response data (if any) or reject the promise with an Error
    */
-  registerTestMultiArgsRequestHandler(handler: Function): Promise<any> {
+  registerTestMultiArgsRequestHandler(handler: Function) {
     this._bridge.registerRequestHandler(
       'com.complex.ern.api.request.testMultiArgs',
       handler,

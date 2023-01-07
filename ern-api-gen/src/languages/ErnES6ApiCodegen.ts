@@ -4,18 +4,15 @@ import ernify from './ERNMixin';
 import { newHashMap } from '../java/javaUtil';
 
 const { postProcessOperations } = ES6Codegen.prototype;
-export const ERN_SUPPORTING = [
-  'index.mustache',
-  'package.mustache',
-  'README.mustache',
-];
 export const ERN_REMOVING = ['ApiClient.mustache'];
-const contains = (arr, val) => {
-  if (arr == null) {
-    return false;
-  }
-  return arr.indexOf(val) > -1;
-};
+export const ES6_IGNORED_FILES = [
+  'README.mustache',
+  'babelrc.mustache',
+  'git_push.sh.mustache',
+  'gitignore.mustache',
+  'npmignore.mustache',
+  'travis.yml',
+];
 
 export default class ErnES6ApiCodegen extends ES6Codegen {
   public library = 'ern';
@@ -24,6 +21,13 @@ export default class ErnES6ApiCodegen extends ES6Codegen {
     'ern',
     'ERN plugin makes this platform work',
   ]);
+
+  constructor() {
+    super();
+    this.__supportingFiles = this.__supportingFiles.filter(
+      (v) => !ES6_IGNORED_FILES.includes(v.templateFile),
+    );
+  }
 
   public addSupportingFilesForErn() {
     this.__modelTemplateFiles.clear();
@@ -48,7 +52,7 @@ export default class ErnES6ApiCodegen extends ES6Codegen {
     super.preprocessSwagger(swagger);
     if (!this.classy) {
       this.__supportingFiles = this.__supportingFiles.filter(
-        (v) => !contains(ERN_REMOVING, v.templateFile),
+        (v) => !ERN_REMOVING.includes(v.templateFile),
       );
     }
   }

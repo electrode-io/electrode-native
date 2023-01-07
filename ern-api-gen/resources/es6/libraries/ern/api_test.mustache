@@ -1,7 +1,5 @@
 {{>licenseInfo}}
 
-import {expect} from 'chai';
-
 {{#hasRequest}}
 import {{baseName}}Requests from '../../src/api/{{baseName}}Requests';
 {{/hasRequest}}
@@ -18,18 +16,25 @@ describe('{{classname}}', function () {
 {{/hasEvent}}
   beforeEach(function () {
 {{#hasRequest}}
+    let requestHandler;
     requests = new {{baseName}}Requests({
-      registerHandler() {
+      registerRequestHandler(name, handler) {
+        requestHandler = handler;
       },
-      sendRequest() {
+      sendRequest(name, data) {
+        requestHandler && requestHandler(data);
+        return Promise.resolve(data);
       },
     });
 {{/hasRequest}}
 {{#hasEvent}}
+    let eventListener;
     events = new {{baseName}}Events({
-      registerEventListener() {
+      registerEventListener(name, listener) {
+        eventListener = listener;
       },
-      emitEvent() {
+      emitEvent(name, data) {
+        eventListener && eventListener(data);
       },
     });
 {{/hasEvent}}
@@ -37,22 +42,20 @@ describe('{{classname}}', function () {
 {{#operations}}
 {{#operation}}
 
-  describe('{{operationId}}', function () {
+  describe('{{operationId}}', () => {
 {{^isEvent}}
-    it('should send request {{operationId}} successfully', () => {
-      // uncomment below and update the code to test {{operationId}}
-      //return requests.{{operationId}}({{_argList}}).then(response => {
-      //  if (error) throw error;
-      //  expect(response).to.be();
-      //});
+    it('sends "{{operationId}}" request', () => {
+      return requests.{{operationId}}('id').then(response => {
+        expect(response).toEqual({data: 'id', timeout: undefined});
+      });
     });
 {{/isEvent}}
 {{#isEvent}}
-    it('should emit event {{operationId}} successfully', done => {
-      // uncomment below and update the code to test {{operationId}}
-      //events.add{{{camelizedNickName}}}EventListener(() => done());
-      //events.emit{{camelizedNickName}}({{_argList}});
-      done();
+    it('emits "{{operationId}}" event', () => {
+      const listener = jest.fn();
+      events.add{{{camelizedNickName}}}EventListener(listener);
+      events.emit{{camelizedNickName}}('id');
+      expect(listener).toHaveBeenCalledWith({data: 'id'});
     });
 {{/isEvent}}
   });

@@ -1,7 +1,9 @@
 // @flow
 
 export default class WalmartItemRequests {
-  constructor(bridge) {
+  _bridge: Object;
+
+  constructor(bridge: Object) {
     this._bridge = bridge;
   }
 
@@ -9,7 +11,7 @@ export default class WalmartItemRequests {
    * Registers a handler for a particular api. This allows JavaScript to handle a request from native.
    * @param handler The handler function, taking a single parameter being the data of the request and returning a Promise. Implementer of the handler should either resolve the promise with an object being the response data (if any) or reject the promise with an Error
    */
-  registerAddItemRequestHandler(handler: Function): Promise<any> {
+  registerAddItemRequestHandler(handler: Function) {
     this._bridge.registerRequestHandler(
       'com.test.ern.api.request.addItem',
       handler,
@@ -20,7 +22,7 @@ export default class WalmartItemRequests {
    * Registers a handler for a particular api. This allows JavaScript to handle a request from native.
    * @param handler The handler function, taking a single parameter being the data of the request and returning a Promise. Implementer of the handler should either resolve the promise with an object being the response data (if any) or reject the promise with an Error
    */
-  registerFindItemsRequestHandler(handler: Function): Promise<any> {
+  registerFindItemsRequestHandler(handler: Function) {
     this._bridge.registerRequestHandler(
       'com.test.ern.api.request.findItems',
       handler,

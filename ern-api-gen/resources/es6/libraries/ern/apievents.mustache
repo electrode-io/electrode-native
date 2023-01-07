@@ -1,7 +1,9 @@
 // @flow
 
 export default class {{{baseName}}}Events {
-  constructor(bridge) {
+  _bridge: Object;
+
+  constructor(bridge: Object) {
     this._bridge = bridge;
   }
 {{#operations}}

@@ -3,18 +3,12 @@
   "version": "1.0.0",
   "description": "ERN Generated API for test",
   "main": "javascript/src/index.js",
-  "scripts": {
-    "flow": "flow"
-  },
   "keywords": [
     "ern-api"
   ],
   "author": "generated",
   "dependencies": {
     "react-native-electrode-bridge": "1.5.x"
-  },
-  "devDependencies": {
-    "flow-bin": "^0.47.0"
   },
   "ern": {
     "message": {

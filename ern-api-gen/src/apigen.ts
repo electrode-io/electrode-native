@@ -1,5 +1,4 @@
 import generateProject, {
-  generateFlowConfig,
   generatePackageJson,
   generateSwagger,
 } from './generateProject';
@@ -7,7 +6,6 @@ import normalizeConfig from './normalizeConfig';
 import fs from 'fs-extra';
 import path from 'path';
 import semver from 'semver';
-import { FLOW_CONFIG_FILE, PKG_FILE } from './Constants';
 import {
   childProcess,
   log,
@@ -90,13 +88,8 @@ export async function regenerateCode(options: any = {}) {
 
   // Regenerate package.json
   await fs.writeFile(
-    path.join(process.cwd(), PKG_FILE),
+    path.join(process.cwd(), 'package.json'),
     generatePackageJson(config),
-  );
-  // Regenerate .flowconfig file
-  await fs.writeFile(
-    path.join(process.cwd(), FLOW_CONFIG_FILE),
-    generateFlowConfig(),
   );
 
   await generateSwagger(config, process.cwd());
@@ -112,12 +105,11 @@ export async function cleanGenerated(outFolder: string = process.cwd()) {
     'This is not a properly named API directory. Naming convention is react-native-{name}-api',
   );
 
-  shell.rm('-rf', path.join(outFolder, 'javascript'));
-  shell.rm('-rf', path.join(outFolder, 'swift'));
+  shell.rm('-rf', path.join(outFolder, 'IOS')); // APIs generated with ERN <= 0.49
   shell.rm('-rf', path.join(outFolder, 'android'));
-  shell.rm('-rf', path.join(outFolder, 'IOS'));
-  shell.rm('-rf', path.join(outFolder, FLOW_CONFIG_FILE));
-  shell.rm('-rf', path.join(outFolder, PKG_FILE));
+  shell.rm('-rf', path.join(outFolder, 'ios'));
+  shell.rm('-rf', path.join(outFolder, 'javascript'));
+  shell.rm('-rf', path.join(outFolder, 'package.json'));
   return pkg;
 }
 
@@ -130,7 +122,7 @@ async function validateApiNameAndGetPackageJson(message: string) {
 }
 
 async function readPackage() {
-  return fs.readJson(path.join(process.cwd(), PKG_FILE));
+  return fs.readJson(path.join(process.cwd(), 'package.json'));
 }
 
 const nextVersion = (curVersion: string, userPluginVer: string) => {

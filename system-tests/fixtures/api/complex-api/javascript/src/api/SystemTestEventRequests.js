@@ -1,7 +1,9 @@
 // @flow
 
 export default class SystemTestEventRequests {
-  constructor(bridge) {
+  _bridge: Object;
+
+  constructor(bridge: Object) {
     this._bridge = bridge;
   }
 }

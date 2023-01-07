@@ -7,27 +7,28 @@
  * Do not edit the class manually.
  */
 
-import {expect} from 'chai';
-
 import SystemTestEventEvents from '../../src/api/SystemTestEventEvents';
 
 describe('SystemTestEventApi', function () {
   let events;
   beforeEach(function () {
+    let eventListener;
     events = new SystemTestEventEvents({
-      registerEventListener() {
+      registerEventListener(name, listener) {
+        eventListener = listener;
       },
-      emitEvent() {
+      emitEvent(name, data) {
+        eventListener && eventListener(data);
       },
     });
   });
 
-  describe('testEvent', function () {
-    it('should emit event testEvent successfully', done => {
-      // uncomment below and update the code to test testEvent
-      //events.addTestEventEventListener(() => done());
-      //events.emitTestEvent(buttonId: string);
-      done();
+  describe('testEvent', () => {
+    it('emits "testEvent" event', () => {
+      const listener = jest.fn();
+      events.addTestEventEventListener(listener);
+      events.emitTestEvent('id');
+      expect(listener).toHaveBeenCalledWith({data: 'id'});
     });
   });
 });
