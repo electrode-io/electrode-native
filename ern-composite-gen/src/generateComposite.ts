@@ -194,7 +194,7 @@ async function generateFullComposite(
       );
       // Also add latest version of the bridge
       extraJsDependencies.push(
-        PackagePath.fromString('react-native-electrode-bridge'),
+        PackagePath.fromString('react-native-electrode-bridge@^1.0.0'),
       );
       extraJsDependencies = [...extraJsDependencies, ...jsApiImplDependencies];
     }
@@ -213,8 +213,8 @@ async function generateFullComposite(
       installExtraPackages({
         cwd: outDir,
         extraJsDependencies: [
-          PackagePath.fromString('ern-bundle-store-metro-asset-plugin'),
-          PackagePath.fromString('react-native-svg-transformer'),
+          PackagePath.fromString('ern-bundle-store-metro-asset-plugin@^1.0.0'),
+          PackagePath.fromString('react-native-svg-transformer@^1.0.0'),
           ...extraJsDependencies,
         ],
       }),
