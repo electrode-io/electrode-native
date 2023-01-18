@@ -17,7 +17,7 @@
 package com.walmartlabs.electrode.reactnative.bridge.helpers;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;

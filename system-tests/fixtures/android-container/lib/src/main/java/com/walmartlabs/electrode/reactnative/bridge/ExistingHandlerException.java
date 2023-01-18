@@ -16,7 +16,7 @@
 
 package com.walmartlabs.electrode.reactnative.bridge;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Exception thrown when trying to register a request handler for a request name that already
