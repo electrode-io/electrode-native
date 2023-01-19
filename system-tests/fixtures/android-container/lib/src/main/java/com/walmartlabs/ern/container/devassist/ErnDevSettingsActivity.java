@@ -9,9 +9,10 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
-import androidx.annotation.NonNull;
 import android.text.format.DateFormat;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.facebook.react.modules.network.OkHttpClientProvider;
 import com.walmartlabs.ern.container.ElectrodeReactContainer;
