@@ -16,8 +16,8 @@ package com.ernmovie.ern.model;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import java.util.List;
 
 import com.walmartlabs.electrode.reactnative.bridge.Bridgeable;

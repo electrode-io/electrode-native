@@ -23,9 +23,10 @@ import com.walmartlabs.ern.container.plugins.BridgePlugin;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.Log;
 
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;

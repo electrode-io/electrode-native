@@ -13,7 +13,7 @@
 
 package com.ernnavigation.ern.api;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeHolder;
 import com.walmartlabs.electrode.reactnative.bridge.ElectrodeBridgeRequestHandler;

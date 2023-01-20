@@ -16,7 +16,7 @@
 
 package com.walmartlabs.electrode.reactnative.bridge;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.modules.core.DeviceEventManagerModule;

@@ -216,6 +216,27 @@ export default class AndroidGenerator implements ContainerGenerator {
             config.outDir,
             'lib/src/main',
           );
+          if (semver.gte(reactNativePlugin.version, '0.60.0')) {
+            const filesWithSupportLib: string[] = [];
+            shell.pushd(relPathToPluginSource);
+            shell.ls('**/*.java').forEach((file) => {
+              if (shell.grep('android.support', file).trim().length !== 0) {
+                filesWithSupportLib.push(file);
+              }
+            });
+            if (filesWithSupportLib.length !== 0) {
+              log.info(
+                `${plugin.name} contains source files with references to the Android Support Library (android.support.*)`,
+              );
+              filesWithSupportLib.forEach((file) => {
+                shell.sed('-i', 'android.support', 'androidx', file);
+              });
+              log.info(
+                `${filesWithSupportLib.length} files successfully converted to use AndroidX (androidx.*)`,
+              );
+            }
+            shell.popd();
+          }
           shell.cp('-R', relPathToPluginSource, absPathToCopyPluginSourceTo);
         }
 

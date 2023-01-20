@@ -17,7 +17,7 @@
 package com.walmartlabs.electrode.reactnative.bridge;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Class that is used to represent an emplty request or response type.

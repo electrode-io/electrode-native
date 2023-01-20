@@ -17,7 +17,7 @@
 package com.walmartlabs.electrode.reactnative.bridge;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Indicates that any class that implements this interface can be sent across the ElectrodeNativeBridge.

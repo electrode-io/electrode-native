@@ -13,9 +13,10 @@ import com.walmartlabs.ern.container.plugins.{{name}};
 import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.Log;
 
 {{#apiImplementations}}
 import com.ern.api.impl.{{apiName}}ApiController;
