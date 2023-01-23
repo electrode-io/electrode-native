@@ -23,14 +23,22 @@ import { BaseMiniApp } from './BaseMiniApp';
 import _ from 'lodash';
 import { getMetroBlacklistPath } from './getMetroBlacklistPath';
 
-const npmIgnoreContent = `ios/
-android/
-yarn.lock
-.flowconfig
-.buckconfig
-.gitattributes
+const npmIgnoreContent = `android/
+ios/
 .watchmanconfig
 `;
+
+const filesToRemove = [
+  '.bundle/',
+  'android/',
+  'ios/',
+  '.buckconfig',
+  '.flowconfig',
+  '.node-version',
+  '.ruby-version',
+  'Gemfile',
+  'Gemfile.lock',
+];
 
 export class MiniApp extends BaseMiniApp {
   // Session cache
@@ -205,7 +213,7 @@ You can find instructions to install CocoaPods @ https://cocoapods.org`);
 
     // Create .npmignore if it does not exist
     const npmIgnorePath = path.join(process.cwd(), miniAppName, '.npmignore');
-    if (!npmIgnorePath) {
+    if (!fs.existsSync(npmIgnorePath)) {
       await fs.writeFile(npmIgnorePath, npmIgnoreContent);
     }
 
@@ -281,8 +289,12 @@ module.exports = {
     // Also add ern-navigation dependency to the MiniApp.
     shell.pushd(miniAppPath);
     try {
-      shell.rm('-rf', 'android');
-      shell.rm('-rf', 'ios');
+      await kax.task('Removing unnecessary files from generated project').run(
+        new Promise<void>((resolve) => {
+          filesToRemove.forEach((file) => shell.rm('-rf', file));
+          resolve();
+        }),
+      );
       const ernNavigationDependency =
         (await kax
           .task('Querying Manifest for ern-navigation version to use')
