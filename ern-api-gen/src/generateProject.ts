@@ -64,9 +64,7 @@ export function generatePackageJson({
   const options = { ...conf, apiSchemaPath: 'schema.json' };
   const dependencies = bridgeVersion
     ? {
-        'react-native-electrode-bridge': `${bridgeVersion.split('.')[0]}.${
-          bridgeVersion.split('.')[1]
-        }.x`,
+        'react-native-electrode-bridge': `^${bridgeVersion}`,
       }
     : undefined;
   // tslint:disable:object-literal-sort-keys

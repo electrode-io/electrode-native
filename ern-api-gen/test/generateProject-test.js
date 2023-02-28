@@ -65,7 +65,7 @@ describe('generatePackageJson', function () {
       main: 'javascript/src/index.js',
       keywords: ['ern-api'],
       dependencies: {
-        'react-native-electrode-bridge': '1.2.x',
+        'react-native-electrode-bridge': '^1.2.3',
       },
       ern: {
         message: {
