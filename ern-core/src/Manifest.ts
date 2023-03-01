@@ -811,12 +811,12 @@ export class Manifest {
     let result;
     if (await isDependencyApi(plugin)) {
       log.debug(
-        'API plugin detected. Retrieving API plugin default configuration',
+        `Using default config for API plugin: ${plugin.name}@${plugin.version}.`,
       );
       result = this.getApiPluginDefaultConfig(plugin, projectName, platform);
     } else if (await isDependencyApiImpl(plugin)) {
       log.debug(
-        'APIImpl plugin detected. Retrieving APIImpl plugin default configuration',
+        `Using default config for APIImpl plugin: ${plugin.name}@${plugin.version}.`,
       );
       result = this.getApiImplPluginDefaultConfig(
         plugin,
@@ -825,7 +825,7 @@ export class Manifest {
       );
     } else if (await this.isPluginConfigInManifest(plugin, platformVersion)) {
       log.debug(
-        'Third party plugin detected. Retrieving plugin configuration from manifest',
+        `Using config from manifest for third party plugin: ${plugin.name}@${plugin.version}.`,
       );
       result = await this.getPluginConfigFromManifest(
         plugin,
@@ -835,7 +835,7 @@ export class Manifest {
       );
     } else {
       log.warn(
-        `Unsupported plugin. No configuration found in manifest for ${plugin.name}.`,
+        `Unsupported plugin. No configuration found in manifest for ${plugin.name}@${plugin.version}.`,
       );
       return;
     }
@@ -854,6 +854,8 @@ export class Manifest {
     projectName: string = 'UNKNOWN',
     platform: NativePlatform,
   ): PluginConfig<'android' | 'ios'> {
+    // APIs generated with ERN <= 0.49 use upper case 'IOS'
+    const iosPath = fs.pathExistsSync(`${plugin.fullPath}/ios`) ? 'ios' : 'IOS';
     return platform === 'android'
       ? {
           moduleName: 'lib',
@@ -864,20 +866,20 @@ export class Manifest {
           copy: [
             {
               dest: `${projectName}/APIs`,
-              source: 'IOS/*',
+              source: `${iosPath}/*`,
             },
           ],
           origin: this.getDefaultNpmPluginOrigin(plugin),
           pbxproj: {
             addHeader: [
               {
-                from: 'IOS/*.swift',
+                from: `${iosPath}/*.swift`,
                 group: 'APIs',
                 path: 'APIs',
                 public: true,
               },
               {
-                from: 'IOS/*.h',
+                from: `${iosPath}/*.h`,
                 group: 'APIs',
                 path: 'APIs',
                 public: true,
@@ -885,12 +887,12 @@ export class Manifest {
             ],
             addSource: [
               {
-                from: 'IOS/*.swift',
+                from: `${iosPath}/*.swift`,
                 group: 'APIs',
                 path: 'APIs',
               },
               {
-                from: 'IOS/*.m',
+                from: `${iosPath}/*.m`,
                 group: 'APIs',
                 path: 'APIs',
               },
