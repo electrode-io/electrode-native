@@ -45,9 +45,6 @@
     "copyfiles": "^2.4.1",
     "ern-util-dev": "1000.0.0"
   },
-  "engines": {
-    "node": ">=12"
-  },
   "copyFiles": [
     {
       "source": "src/hull",

@@ -104,9 +104,6 @@
     "tslint-no-unused-expression-chai": "^0.1.4",
     "typescript": "^4.2.4"
   },
-  "engines": {
-    "node": ">=12"
-  },
   "workspaces": [
     "ern-*"
   ]

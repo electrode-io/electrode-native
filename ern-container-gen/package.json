@@ -48,8 +48,5 @@
   "devDependencies": {
     "copyfiles": "^2.3.0",
     "ern-util-dev": "1000.0.0"
-  },
-  "engines": {
-    "node": ">=12"
   }
 }

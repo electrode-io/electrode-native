@@ -37,8 +37,5 @@
   "dependencies": {
     "ora": "^5.4.0",
     "update-notifier": "^5.1.0"
-  },
-  "engines": {
-    "node": ">=8"
   }
 }
