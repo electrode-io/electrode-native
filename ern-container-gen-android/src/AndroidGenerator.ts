@@ -33,8 +33,10 @@ import _ from 'lodash';
 import path from 'path';
 import fs from 'fs-extra';
 import readDir from 'fs-readdir-recursive';
-import DecompressZip from 'decompress-zip';
 import semver from 'semver';
+
+// tslint:disable-next-line:no-var-requires
+const AdmZip = require('adm-zip');
 
 const PATH_TO_TEMPLATES_DIR = path.join(__dirname, 'templates');
 const PATH_TO_HULL_DIR = path.join(__dirname, 'hull');
@@ -552,20 +554,18 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
         jscVersionPath,
         `${jscVariant}-r${versionMajor}.aar`,
       );
-      return new Promise<void>((resolve, reject) => {
-        const unzipper = new DecompressZip(jscAARPath);
+
+      return new Promise<void>((resolve) => {
         const unzipOutDir = createTmpDir();
+        const zip = new AdmZip(jscAARPath);
+        zip.extractAllTo(unzipOutDir);
+        const unzippedJniPath = path.join(unzipOutDir, 'jni');
         const containerJniLibsPath = path.join(
           config.outDir,
           'lib/src/main/jniLibs',
         );
-        const unzippedJniPath = path.join(unzipOutDir, 'jni');
-        unzipper.on('error', (err: any) => reject(err));
-        unzipper.on('extract', () => {
-          shell.cp('-Rf', unzippedJniPath, containerJniLibsPath);
-          resolve();
-        });
-        unzipper.extract({ path: unzipOutDir });
+        shell.cp('-Rf', unzippedJniPath, containerJniLibsPath);
+        resolve();
       });
     } finally {
       shell.popd();
@@ -591,20 +591,17 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
       const hermesAarPath = path.resolve(
         `./node_modules/hermes-engine/android/hermes-release.aar`,
       );
-      return new Promise<void>((resolve, reject) => {
-        const unzipper = new DecompressZip(hermesAarPath);
+      return new Promise<void>((resolve) => {
         const unzipOutDir = createTmpDir();
+        const zip = new AdmZip(hermesAarPath);
+        zip.extractAllTo(unzipOutDir);
+        const unzippedJniPath = path.join(unzipOutDir, 'jni');
         const containerJniLibsPath = path.join(
           config.outDir,
           'lib/src/main/jniLibs',
         );
-        const unzippedJniPath = path.join(unzipOutDir, 'jni');
-        unzipper.on('error', (err: any) => reject(err));
-        unzipper.on('extract', () => {
-          shell.cp('-Rf', unzippedJniPath, containerJniLibsPath);
-          resolve();
-        });
-        unzipper.extract({ path: unzipOutDir });
+        shell.cp('-Rf', unzippedJniPath, containerJniLibsPath);
+        resolve();
       });
     } finally {
       shell.popd();

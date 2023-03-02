@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "@types/adm-zip": "^0.5.0",
     "@types/archiver": "^5.1.0",
     "@types/chai": "^4.2.18",
     "@types/cli-table": "^0.3.0",
