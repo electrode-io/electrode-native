@@ -8,8 +8,11 @@ import archiver from 'archiver';
 import got from 'got';
 import FormData from 'form-data';
 import { createProxyAgentFromErnConfig } from './createProxyAgent';
-import DecompressZip = require('decompress-zip');
 import { getGotCommonOpts } from './getGotCommonOpts';
+
+// tslint:disable-next-line:no-var-requires
+const AdmZip = require('adm-zip');
+
 export class ErnBinaryStore implements BinaryStore {
   private readonly config: any;
 
@@ -176,25 +179,22 @@ export class ErnBinaryStore implements BinaryStore {
       outDir?: string;
     } = {},
   ): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
+    return new Promise<string>((resolve) => {
       const outputDirectory = outDir || createTmpDir();
       const pathToOutputBinary = path.join(
         outputDirectory,
         this.buildNativeBinaryFileName(descriptor, { flavor }),
       );
-      const unzipper = new DecompressZip(zippedBinaryPath);
-      unzipper.on('error', (err: any) => reject(err));
-      unzipper.on('extract', () => {
-        if (descriptor.platform === 'android') {
-          shell.mv(path.join(outputDirectory, '*.apk'), pathToOutputBinary);
-        }
-        resolve(pathToOutputBinary);
-      });
+      const zip = new AdmZip(zippedBinaryPath);
       if (descriptor.platform === 'android') {
-        unzipper.extract({ path: outputDirectory });
+        zip.extractAllTo(outputDirectory);
       } else {
-        unzipper.extract({ path: pathToOutputBinary });
+        zip.extractAllTo(pathToOutputBinary);
       }
+      if (descriptor.platform === 'android') {
+        shell.mv(path.join(outputDirectory, '*.apk'), pathToOutputBinary);
+      }
+      resolve(pathToOutputBinary);
     });
   }
 
