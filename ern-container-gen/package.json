@@ -26,10 +26,11 @@
   ],
   "contributors": [
     "Benoit Lemaire <blemaire@walmartlabs.com>",
-    "Bharath Marulasiddappa <BMarulasiddappa@walmartlabs.com>",
-    "Deepu Ganapathiyadan <DGanapathiyadan@walmartlabs.com>",
-    "Krunal Shah <KShah1@walmartlabs.com>",
-    "Weijie Li <WLi@walmartlabs.com>"
+    "Claire Weijie Li <wli@walmartlabs.com>",
+    "Deepu Ganapathiyadan <dganapathiyadan@walmartlabs.com>",
+    "Frieder Bluemle <frieder.bluemle@walmart.com>",
+    "Justin Spears <jspears@walmartlabs.com>",
+    "Krunal Shah <kshah1@walmartlabs.com>"
   ],
   "license": "Apache-2.0",
   "bugs": {
