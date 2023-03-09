@@ -1,7 +1,7 @@
 {
   "name": "ern-api-impl-gen",
   "version": "1000.0.0",
-  "description": "Electrode Native API implementation projects generator",
+  "description": "Electrode Native API Implementation Generator",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {

@@ -1,7 +1,7 @@
 {
   "name": "ern-container-gen-ios",
   "version": "1000.0.0",
-  "description": "Electrode Native Official iOS Container Generator",
+  "description": "Electrode Native Container Generator for iOS",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {

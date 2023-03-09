@@ -1,7 +1,7 @@
 {
   "name": "ern-runner-gen-android",
   "version": "1000.0.0",
-  "description": "Electrode Native Official Android Runner Project Generator",
+  "description": "Electrode Native Runner Generator for Android",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {

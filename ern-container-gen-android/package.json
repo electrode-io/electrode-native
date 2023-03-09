@@ -1,7 +1,7 @@
 {
   "name": "ern-container-gen-android",
   "version": "1000.0.0",
-  "description": "Electrode Native Official Android Container Generator",
+  "description": "Electrode Native Container Generator for Android",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {

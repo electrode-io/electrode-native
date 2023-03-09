@@ -2,7 +2,8 @@
 
 This package is part of [Electrode Native][1].
 
-The Electrode Native API Generator creates APIs and models from Swagger specs.
+The Electrode Native API Generator creates new API projects based on a Swagger
+schema.
 
 The generated code uses [react-native-electrode-bridge][5] to facilitate
 bi-directional message exchange between native code (Android/iOS) and
@@ -96,7 +97,7 @@ In **May 2019**, the JavaScript sources in `ern-api-gen` were converted to
 TypeScript: [92b69b9b][12] (as well as [6d8f166a][13], [2e7d2327][14]).
 
 [1]: https://native.electrode.io/
-[2]: https://native.electrode.io/cli-commands/create-api.html
+[2]: https://native.electrode.io/cli-commands/create-api
 [3]: https://swagger.io/
 [4]: https://github.com/swagger-api/swagger-codegen
 [5]: https://github.com/electrode-io/react-native-electrode-bridge

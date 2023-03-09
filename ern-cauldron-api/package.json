@@ -1,7 +1,7 @@
 {
   "name": "ern-cauldron-api",
   "version": "1000.0.0",
-  "description": "Electrode Native Cauldron Client",
+  "description": "Electrode Native Cauldron API",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {

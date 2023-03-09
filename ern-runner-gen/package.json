@@ -1,7 +1,7 @@
 {
   "name": "ern-runner-gen",
   "version": "1000.0.0",
-  "description": "Electrode Native Runner Project Generator",
+  "description": "Electrode Native Runner Generator",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {

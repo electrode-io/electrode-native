@@ -1,7 +1,7 @@
 {
   "name": "ern-api-gen",
   "version": "1000.0.0",
-  "description": "Electrode Native API generator",
+  "description": "Electrode Native API Generator",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
