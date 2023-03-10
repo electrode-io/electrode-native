@@ -35,7 +35,7 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports));
 };
 
-const transformerPackagePrefix = 'ern-container-transformer-';
+const transformerPackageId = 'ern-container-transformer';
 
 export const commandHandler = async ({
   containerPath,
@@ -67,14 +67,14 @@ export const commandHandler = async ({
 
   if (
     transformer.isRegistryPath &&
-    !transformer.basePath.startsWith(transformerPackagePrefix)
+    !transformer.basePath.includes(transformerPackageId)
   ) {
     transformer = transformer.version
       ? PackagePath.fromString(
-          `${transformerPackagePrefix}${transformer.basePath}@${transformer.version}`,
+          `${transformerPackageId}-${transformer.basePath}@${transformer.version}`,
         )
       : PackagePath.fromString(
-          `${transformerPackagePrefix}${transformer.basePath}`,
+          `${transformerPackageId}-${transformer.basePath}`,
         );
   }
 

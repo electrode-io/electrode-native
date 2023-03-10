@@ -54,7 +54,7 @@ export const builder = (argv: Argv) => {
     .epilog(epilog(exports));
 };
 
-const publisherPackagePrefix = 'ern-container-publisher-';
+const publisherPackageId = 'ern-container-publisher';
 
 export const commandHandler = async ({
   containerPath,
@@ -92,15 +92,13 @@ export const commandHandler = async ({
 
   if (
     publisher.isRegistryPath &&
-    !publisher.basePath.startsWith(publisherPackagePrefix)
+    !publisher.basePath.includes(publisherPackageId)
   ) {
     publisher = publisher.version
       ? PackagePath.fromString(
-          `${publisherPackagePrefix}${publisher.basePath}@${publisher.version}`,
+          `${publisherPackageId}-${publisher.basePath}@${publisher.version}`,
         )
-      : PackagePath.fromString(
-          `${publisherPackagePrefix}${publisher.basePath}`,
-        );
+      : PackagePath.fromString(`${publisherPackageId}-${publisher.basePath}`);
   }
 
   await publishContainer({
