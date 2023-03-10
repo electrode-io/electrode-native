@@ -26,16 +26,18 @@
   ],
   "contributors": [
     "Benoit Lemaire <blemaire@walmartlabs.com>",
-    "Bharath Marulasiddappa <BMarulasiddappa@walmartlabs.com>",
-    "Deepu Ganapathiyadan <DGanapathiyadan@walmartlabs.com>",
-    "Krunal Shah <KShah1@walmartlabs.com>",
-    "Weijie Li <WLi@walmartlabs.com>"
+    "Bharath Marulasiddappa <bmarulasiddappa@walmartlabs.com>",
+    "Claire Weijie Li <wli@walmartlabs.com>",
+    "Deepu Ganapathiyadan <dganapathiyadan@walmartlabs.com>",
+    "Frieder Bluemle <frieder.bluemle@walmart.com>",
+    "Justin Spears <jspears@walmartlabs.com>",
+    "Krunal Shah <kshah1@walmartlabs.com>"
   ],
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
-  "homepage": "http://www.electrode.io",
+  "homepage": "https://www.electrode.io",
   "dependencies": {
     "chalk": "^4.1.1",
     "cli-table": "^0.3.6",

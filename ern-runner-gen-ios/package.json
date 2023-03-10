@@ -1,7 +1,7 @@
 {
   "name": "ern-runner-gen-ios",
   "version": "1000.0.0",
-  "description": "Electrode Native Offical iOS Runner Project Generator",
+  "description": "Electrode Native Runner Generator for iOS",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
@@ -25,16 +25,16 @@
   ],
   "contributors": [
     "Benoit Lemaire <blemaire@walmartlabs.com>",
-    "Bharath Marulasiddappa <BMarulasiddappa@walmartlabs.com>",
-    "Deepu Ganapathiyadan <DGanapathiyadan@walmartlabs.com>",
-    "Krunal Shah <KShah1@walmartlabs.com>",
-    "Weijie Li <WLi@walmartlabs.com>"
+    "Frieder Bluemle <frieder.bluemle@walmart.com>",
+    "Jeffrey Wang <jw2175@gmail.com>",
+    "Lee Kuo <lee.kuo@gmail.com>",
+    "Lianci Liu <lianciliu@gmail.com>"
   ],
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
-  "homepage": "http://www.electrode.io",
+  "homepage": "https://www.electrode.io",
   "dependencies": {
     "ern-core": "1000.0.0",
     "ern-runner-gen": "1000.0.0",
@@ -46,9 +46,6 @@
   "devDependencies": {
     "copyfiles": "^2.4.1",
     "ern-util-dev": "1000.0.0"
-  },
-  "engines": {
-    "node": ">=12"
   },
   "copyFiles": [
     {

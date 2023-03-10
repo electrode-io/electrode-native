@@ -22,19 +22,16 @@
     "react-native",
     "utilities"
   ],
-  "author": "",
   "contributors": [
     "Benoit Lemaire <blemaire@walmartlabs.com>",
-    "Bharath Marulasiddappa <BMarulasiddappa@walmartlabs.com>",
-    "Deepu Ganapathiyadan <DGanapathiyadan@walmartlabs.com>",
-    "Krunal Shah <KShah1@walmartlabs.com>",
-    "Weijie Li <WLi@walmartlabs.com>"
+    "Frieder Bluemle <frieder.bluemle@walmart.com>",
+    "Justin Spears <jspears@walmartlabs.com>"
   ],
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
-  "homepage": "http://www.electrode.io",
+  "homepage": "https://www.electrode.io",
   "dependencies": {
     "colors": "^1.4.0",
     "diff": "^5.0.0",
@@ -42,8 +39,5 @@
     "fs-readdir-recursive": "^1.1.0",
     "shelljs": "^0.8.4",
     "tmp": "^0.2.1"
-  },
-  "engines": {
-    "node": ">=12"
   }
 }

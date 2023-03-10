@@ -1,7 +1,7 @@
 {
   "name": "ern-cauldron-api",
   "version": "1000.0.0",
-  "description": "Electrode Native Cauldron Client",
+  "description": "Electrode Native Cauldron API",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
@@ -25,16 +25,16 @@
   ],
   "contributors": [
     "Benoit Lemaire <blemaire@walmartlabs.com>",
-    "Bharath Marulasiddappa <BMarulasiddappa@walmartlabs.com>",
-    "Deepu Ganapathiyadan <DGanapathiyadan@walmartlabs.com>",
-    "Krunal Shah <KShah1@walmartlabs.com>",
-    "Weijie Li <WLi@walmartlabs.com>"
+    "Deepu Ganapathiyadan <dganapathiyadan@walmartlabs.com>",
+    "Frieder Bluemle <frieder.bluemle@walmart.com>",
+    "Justin Spears <jspears@walmartlabs.com>",
+    "Krunal Shah <kshah1@walmartlabs.com>"
   ],
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/electrode-io/electrode-native/issues"
   },
-  "homepage": "http://www.electrode.io",
+  "homepage": "https://www.electrode.io",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "ern-core": "1000.0.0",
@@ -45,8 +45,5 @@
   },
   "devDependencies": {
     "ern-util-dev": "1000.0.0"
-  },
-  "engines": {
-    "node": ">=12"
   }
 }
