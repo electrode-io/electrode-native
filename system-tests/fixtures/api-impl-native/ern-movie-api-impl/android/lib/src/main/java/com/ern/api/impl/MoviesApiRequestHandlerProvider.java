@@ -16,7 +16,7 @@
 
 package com.ern.api.impl;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * A generated placeholder for your Movies implementation.

@@ -16,8 +16,9 @@
 
 package com.ern.api.impl;
 
-import android.support.annotation.Nullable;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
 
 //
 // GENERATED CODE: DO NOT MODIFY
