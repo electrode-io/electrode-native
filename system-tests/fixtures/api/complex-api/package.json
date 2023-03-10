@@ -8,7 +8,7 @@
   ],
   "author": "generated",
   "dependencies": {
-    "react-native-electrode-bridge": "^1.6.0"
+    "react-native-electrode-bridge": "^1.5.27"
   },
   "ern": {
     "message": {
