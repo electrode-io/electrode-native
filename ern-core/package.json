@@ -1,6 +1,6 @@
 {
   "name": "ern-core",
-  "version": "0.47.4",
+  "version": "0.47.5",
   "description": "Electrode Native Core",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -75,7 +75,7 @@
     "yazl": "^2.5.1"
   },
   "devDependencies": {
-    "ern-util-dev": "0.47.4"
+    "ern-util-dev": "0.47.5"
   },
   "engines": {
     "node": ">=10"

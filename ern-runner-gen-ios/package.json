@@ -1,6 +1,6 @@
 {
   "name": "ern-runner-gen-ios",
-  "version": "0.47.4",
+  "version": "0.47.5",
   "description": "Electrode Native Offical iOS Runner Project Generator",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -36,8 +36,8 @@
   },
   "homepage": "http://www.electrode.io",
   "dependencies": {
-    "ern-core": "0.47.4",
-    "ern-runner-gen": "0.47.4",
+    "ern-core": "0.47.5",
+    "ern-runner-gen": "0.47.5",
     "fs-extra": "^8.1.0",
     "fs-readdir-recursive": "^1.1.0",
     "mustache": "^4.0.1",
@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "copyfiles": "^2.3.0",
-    "ern-util-dev": "0.47.4"
+    "ern-util-dev": "0.47.5"
   },
   "engines": {
     "node": ">=10"
