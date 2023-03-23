@@ -317,7 +317,7 @@ static NSString *enableBundleStore = @"enableBundleStore";
     RCTDevMenuItem *enableDevMenu = [RCTDevMenuItem buttonItemWithTitle:enableDevTitle handler:^{
         [[RCTBundleURLProvider sharedSettings] setEnableDev:!enableDev];
         __strong RCTBridge *strongBridge = self.bridge;
-        strongBridge.bundleURL = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+        strongBridge.bundleURL = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
         [strongBridge reload];
     }];
     [[self.bridge devMenu] addItem:enableDevMenu];
@@ -326,7 +326,7 @@ static NSString *enableBundleStore = @"enableBundleStore";
     RCTDevMenuItem *enableMinifyMenu = [RCTDevMenuItem buttonItemWithTitle:minifyTitle handler:^{
         [[RCTBundleURLProvider sharedSettings] setEnableMinification:!enableMinify];
         __strong RCTBridge *strongBridge = self.bridge;
-        strongBridge.bundleURL = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+        strongBridge.bundleURL = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
         [strongBridge reload];
     }];
     [[self.bridge devMenu] addItem:enableMinifyMenu];
