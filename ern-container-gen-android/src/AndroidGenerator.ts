@@ -218,27 +218,21 @@ export default class AndroidGenerator implements ContainerGenerator {
             config.outDir,
             'lib/src/main',
           );
+
           if (semver.gte(reactNativePlugin.version, '0.60.0')) {
-            const filesWithSupportLib: string[] = [];
-            shell.pushd(relPathToPluginSource);
-            shell.ls('**/*.java').forEach((file) => {
-              if (shell.grep('android.support', file).trim().length !== 0) {
-                filesWithSupportLib.push(file);
-              }
-            });
-            if (filesWithSupportLib.length !== 0) {
+            const convertedFiles = this.convertToAndroidX(
+              relPathToPluginSource,
+            );
+            if (convertedFiles > 0) {
               log.info(
                 `${plugin.name} contains source files with references to the Android Support Library (android.support.*)`,
               );
-              filesWithSupportLib.forEach((file) => {
-                shell.sed('-i', 'android.support', 'androidx', file);
-              });
               log.info(
-                `${filesWithSupportLib.length} files successfully converted to use AndroidX (androidx.*)`,
+                `${convertedFiles} files successfully converted to use AndroidX (androidx.*)`,
               );
             }
-            shell.popd();
           }
+
           shell.cp('-R', relPathToPluginSource, absPathToCopyPluginSourceTo);
         }
 
@@ -707,8 +701,49 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
           'lib/src/main/java/com/walmartlabs/ern/container/plugins',
         );
         shell.cp(pathToPluginConfigHook, pathToCopyPluginConfigHookTo);
+
+        if (semver.gte(rnVersion, '0.60.0')) {
+          const filesConverted = this.convertToAndroidX(
+            pathToCopyPluginConfigHookTo,
+          );
+          if (filesConverted > 0) {
+            log.info(
+              `${plugin.name} contains source files with references to the Android Support Library (android.support.*)`,
+            );
+            log.info(
+              `${filesConverted} files successfully converted to use AndroidX (androidx.*)`,
+            );
+          }
+        }
       }
     }
+  }
+
+  /**
+   * Convert files in a directory from support library to AndroidX
+   * eg: import android.support.annotation.NonNull => import androidx.annotation.NonNull
+   */
+  public convertToAndroidX(dir: string): number {
+    const filesWithSupportLib: string[] = [];
+    shell.pushd(dir);
+    shell
+      .ls('-R', '.')
+      .filter((file) => file.match(/\.(java|kt)$/))
+      .forEach((file) => {
+        if (shell.grep('android.support', file).trim().length !== 0) {
+          filesWithSupportLib.push(file);
+        }
+      });
+
+    if (filesWithSupportLib.length !== 0) {
+      filesWithSupportLib.forEach((file) => {
+        shell.sed('-i', 'android.support', 'androidx', file);
+      });
+    }
+
+    shell.popd();
+
+    return filesWithSupportLib.length;
   }
 
   public async buildAndroidPluginsViews(
