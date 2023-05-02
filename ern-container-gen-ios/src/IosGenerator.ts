@@ -388,8 +388,33 @@ Make sure to run these commands before building the container.`,
       await yarn.init();
       await yarn.add(PackagePath.fromString(`react-native-codegen@${version}`));
       // mkdirp and invariant are also needed
-      await yarn.add(PackagePath.fromString('mkdirp'));
-      await yarn.add(PackagePath.fromString('invariant'));
+      const requiredPackages = ['mkdirp', 'invariant'];
+
+      let yarnFile = '';
+      // Check if a yarn.lock file exists
+      const yarnLockFilePath = targetDir + '/yarn.lock';
+      if (fs.existsSync(yarnLockFilePath)) {
+        // Read the yarn.lock file
+        yarnFile = fs.readFileSync(yarnLockFilePath, {
+          encoding: 'utf8',
+        });
+      }
+
+      for (const requiredPackage of requiredPackages) {
+        // Check if the the required libraries are already in the yarn.lock file (if one exists)
+        let packageName = requiredPackage;
+        const re = RegExp(`${packageName}\@(.*):`);
+        const match = re.exec(yarnFile);
+
+        if (match !== null && match[1]) {
+          // Add the same version specified in the yarn.lock file
+          packageName += `@${match[1]}`;
+        }
+
+        // Include the required library
+        await yarn.add(PackagePath.fromString(packageName));
+      }
+
       shell.rm('-rf', [
         'package.json',
         'yarn.lock',
