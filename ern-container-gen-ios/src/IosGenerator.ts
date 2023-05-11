@@ -390,6 +390,11 @@ Make sure to run these commands before building the container.`,
       // mkdirp and invariant are also needed
       await yarn.add(PackagePath.fromString('mkdirp'));
       await yarn.add(PackagePath.fromString('invariant'));
+
+      // yargs is needed since this package is missing from generate-specs-cli script. - https://github.com/facebook/react-native/issues/36315
+      // Resolved from RN 0.72.0-rc.0 to prevent script failures - https://github.com/facebook/react-native/commit/5093e557efac35632d99cd2094527f9e01cbc519
+      await yarn.add(PackagePath.fromString('yargs'));
+
       shell.rm('-rf', [
         'package.json',
         'yarn.lock',

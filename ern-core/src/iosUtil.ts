@@ -578,7 +578,13 @@ export const getDefaultIosDeploymentTarget = (rnVersion: string): string => {
 export const getReactNativeCodegenVersion = (
   rnVersion: string,
 ): string | null => {
-  if (semver.gte(rnVersion, '0.67.0')) {
+  if (semver.gte(rnVersion, '0.68.4')) {
+    return '^0.0.18';
+  } else if (semver.gte(rnVersion, '0.68.2')) {
+    return '^0.0.17';
+  } else if (semver.gte(rnVersion, '0.68.0')) {
+    return '^0.0.13';
+  } else if (semver.gte(rnVersion, '0.67.0')) {
     return '^0.0.8';
   } else if (semver.gte(rnVersion, '0.65.0')) {
     return '^0.0.7';
