@@ -284,6 +284,7 @@ Make sure to run these commands before building the container.`,
 
     if (semver.gte(reactNativePlugin.version!, '0.61.0')) {
       // For full iOS container generation, run 'pod install'
+      // repo-update - to update local specs
       // and also add all essential node_modules (needed for the build)
       // to the container
       if (!config?.iosConfig?.skipInstall) {
@@ -291,9 +292,12 @@ Make sure to run these commands before building the container.`,
           ? `_${ernConfig.get('podVersion')}_`
           : '';
 
-        const podCmdArgs = [podVersionArg, 'install', '--verbose'].filter(
-          (x: string) => x !== '',
-        );
+        const podCmdArgs = [
+          podVersionArg,
+          'install',
+          '--repo-update',
+          '--verbose',
+        ].filter((x: string) => x !== '');
 
         shell.pushd(config.outDir);
 
