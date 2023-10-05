@@ -386,6 +386,18 @@ You can override the iOS deployment target version to use by setting `iosConfig`
 }
 ```
 
+You can run pod repo update before pod install by setting `podRepoUpdate` in the cauldron as show below.
+
+```json
+{
+  "containerGenerator": {
+    "iosConfig": {
+      "podRepoUpdate": true
+    }
+  }
+}
+```
+
 [1]: https://github.com/electrode-io/ern-container-transformer-xcframework
 [2]: https://github.com/electrode-io/ern-container-publisher-cocoapod-git
 [transform-container]: ../../cli/transform-container

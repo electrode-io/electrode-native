@@ -291,9 +291,16 @@ Make sure to run these commands before building the container.`,
           ? `_${ernConfig.get('podVersion')}_`
           : '';
 
-        const podCmdArgs = [podVersionArg, 'install', '--verbose'].filter(
-          (x: string) => x !== '',
-        );
+        const podRepoUpdateArg = config?.iosConfig?.podRepoUpdate
+          ? '--repo-update'
+          : '';
+
+        const podCmdArgs = [
+          podVersionArg,
+          'install',
+          podRepoUpdateArg,
+          '--verbose',
+        ].filter((x: string) => x !== '');
 
         shell.pushd(config.outDir);
 
