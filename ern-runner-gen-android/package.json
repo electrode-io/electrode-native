@@ -1,6 +1,6 @@
 {
   "name": "ern-runner-gen-android",
-  "version": "0.51.0",
+  "version": "0.51.1",
   "description": "Electrode Native Runner Generator for Android",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -36,14 +36,14 @@
   },
   "homepage": "https://www.electrode.io",
   "dependencies": {
-    "ern-core": "0.51.0",
-    "ern-runner-gen": "0.51.0",
+    "ern-core": "0.51.1",
+    "ern-runner-gen": "0.51.1",
     "fs-readdir-recursive": "^1.1.0",
     "mustache": "^4.2.0"
   },
   "devDependencies": {
     "copyfiles": "^2.4.1",
-    "ern-util-dev": "0.51.0"
+    "ern-util-dev": "0.51.1"
   },
   "copyFiles": [
     {
