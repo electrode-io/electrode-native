@@ -133,9 +133,15 @@ run(
   { expectedExitCode: 1 },
 );
 
+// Escape backslashes on Windows
+const miniApp = `file:${
+  process.platform === 'win32'
+    ? miniAppPath.replace(/\\/g, '\\\\')
+    : miniAppPath
+}`;
 // Container gen should be successful for the two following commands
-run(`create-container --miniapps file:${miniAppPath} -p android`);
-run(`create-container --miniapps file:${miniAppPath} -p ios --skipInstall`);
+run(`create-container -m ${miniApp} -p android`);
+run(`create-container -m ${miniApp} -p ios --skipInstall`);
 
 // transform-container / publish-container should be successful
 run(
