@@ -35,7 +35,7 @@
   },
   "homepage": "https://www.electrode.io",
   "dependencies": {
-    "adm-zip": "^0.5.10",
+    "adm-zip": "0.5.12",
     "ern-container-gen": "1000.0.0",
     "ern-core": "1000.0.0",
     "fs-extra": "^10.0.0",
