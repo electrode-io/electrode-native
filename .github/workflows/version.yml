@@ -36,13 +36,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: echo "VERSION=$(jq -r .version lerna.json)" >> $GITHUB_ENV
-      - name: Create Release Notes
-        uses: actions/github-script@v5
-        with:
-          script: |
-            await github.request(`POST /repos/${{ github.repository }}/releases`, {
-              draft: true,
-              generate_release_notes: true,
-              name: "${{ env.VERSION }}",
-              tag_name: "v${{ env.VERSION }}"
-            });
+      - run: gh release create v$VERSION -d --generate-notes -t $VERSION
+        env:
+          GH_TOKEN: ${{ github.token }}
