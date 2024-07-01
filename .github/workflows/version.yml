@@ -18,8 +18,8 @@ jobs:
       - name: Set variables
         id: vars
         run: |
-          echo ::set-output name=currentVersion::"$(jq -r .version lerna.json)"
-          echo ::set-output name=lastMinor::"$((npm --silent info ern-core version || echo '0.0.0') | sed 's/[0-9]*\.\([0-9]*\).*/\1/')"
+          echo currentVersion="$(jq -r .version lerna.json)" >> $GITHUB_OUTPUT
+          echo lastMinor="$((npm --silent info ern-core version || echo '0.0.0') | sed 's/[0-9]*\.\([0-9]*\).*/\1/')" >> $GITHUB_OUTPUT
       - run: yarn --frozen-lockfile
       - name: Minor version
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
