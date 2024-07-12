@@ -8,16 +8,16 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node: ['16']
+        node: ['20']
         os: [macos-latest, ubuntu-latest, windows-latest]
         include:
-          - node: '14'
-            os: ubuntu-latest
           - node: '18'
             os: ubuntu-latest
+          - node: '22'
+            os: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
       - run: yarn --frozen-lockfile
@@ -26,10 +26,10 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: '20'
       - run: yarn --frozen-lockfile
       - run: yarn check:lint
       - run: yarn prettier:check
