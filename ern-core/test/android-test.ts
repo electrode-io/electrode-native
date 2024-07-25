@@ -209,12 +209,36 @@ describe('android.js', () => {
   });
 
   describe('resolveAndroidVersions', () => {
+    it('should return all default versions if no versions are provided [>= RN 0.72.0]', () => {
+      const versions = android.resolveAndroidVersions({
+        reactNativeVersion: '0.72.0',
+      });
+      expect(versions).deep.equal({
+        androidGradlePlugin: '7.4.2',
+        rnGradlePlugin: '0.72.11',
+        androidxAppcompactVersion: android.DEFAULT_ANDROIDX_APPCOMPACT_VERSION,
+        androidxLifecycleExtrnsionsVersion:
+          android.DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION,
+        buildToolsVersion: android.DEFAULT_BUILD_TOOLS_VERSION,
+        compileSdkVersion: android.DEFAULT_COMPILE_SDK_VERSION,
+        gradleDistributionVersion: android.DEFAULT_GRADLE_DISTRIBUTION_VERSION,
+        kotlinVersion: android.DEFAULT_KOTLIN_VERSION,
+        minSdkVersion: android.DEFAULT_MIN_SDK_VERSION_POST_RN64,
+        reactNativeAarVersion: '0.72.0',
+        sourceCompatibility: android.DEFAULT_SOURCE_COMPATIBILITY,
+        supportLibraryVersion: android.DEFAULT_SUPPORT_LIBRARY_VERSION,
+        targetCompatibility: android.DEFAULT_TARGET_COMPATIBILITY,
+        targetSdkVersion: android.DEFAULT_TARGET_SDK_VERSION,
+      });
+    });
+
     it('should return all default versions if no versions are provided [>= RN 0.64.0]', () => {
       const versions = android.resolveAndroidVersions({
         reactNativeVersion: '0.64.0',
       });
       expect(versions).deep.equal({
         androidGradlePlugin: android.DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION,
+        rnGradlePlugin: android.DEFAULT_RN_GRADLE_PLUGIN_VERSION,
         androidxAppcompactVersion: android.DEFAULT_ANDROIDX_APPCOMPACT_VERSION,
         androidxLifecycleExtrnsionsVersion:
           android.DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION,
@@ -237,6 +261,7 @@ describe('android.js', () => {
       });
       expect(versions).deep.equal({
         androidGradlePlugin: android.DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION,
+        rnGradlePlugin: android.DEFAULT_RN_GRADLE_PLUGIN_VERSION,
         androidxAppcompactVersion: android.DEFAULT_ANDROIDX_APPCOMPACT_VERSION,
         androidxLifecycleExtrnsionsVersion:
           android.DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION,
@@ -255,14 +280,17 @@ describe('android.js', () => {
 
     it('should return default versions along with user provided versions', () => {
       const versions = android.resolveAndroidVersions({
-        androidGradlePlugin: '3.0.0',
+        androidGradlePlugin: '7.4.2',
+        rnGradlePlugin: '0.72.11',
         kotlinVersion: '1.4.0',
         minSdkVersion: '15',
         sourceCompatibility: 'VERSION_1_9',
         targetCompatibility: 'VERSION_1_9',
+        reactNativeVersion: '0.72.0',
       });
       expect(versions).deep.equal({
-        androidGradlePlugin: '3.0.0',
+        androidGradlePlugin: '7.4.2',
+        rnGradlePlugin: '0.72.11',
         androidxAppcompactVersion: android.DEFAULT_ANDROIDX_APPCOMPACT_VERSION,
         androidxLifecycleExtrnsionsVersion:
           android.DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION,
@@ -271,7 +299,7 @@ describe('android.js', () => {
         gradleDistributionVersion: android.DEFAULT_GRADLE_DISTRIBUTION_VERSION,
         kotlinVersion: '1.4.0',
         minSdkVersion: '15',
-        reactNativeAarVersion: undefined,
+        reactNativeAarVersion: '0.72.0',
         sourceCompatibility: 'VERSION_1_9',
         supportLibraryVersion: android.DEFAULT_SUPPORT_LIBRARY_VERSION,
         targetCompatibility: 'VERSION_1_9',
@@ -281,7 +309,8 @@ describe('android.js', () => {
 
     it('should return only user provided versions', () => {
       const versions = android.resolveAndroidVersions({
-        androidGradlePlugin: '3.0.0',
+        androidGradlePlugin: '7.4.2',
+        rnGradlePlugin: '3.0.0',
         androidxAppcompactVersion: '1.0.0',
         androidxLifecycleExtrnsionsVersion: '2.0.0',
         buildToolsVersion: '27.0.0',
@@ -293,9 +322,11 @@ describe('android.js', () => {
         supportLibraryVersion: '27.0.0',
         targetCompatibility: 'VERSION_1_9',
         targetSdkVersion: '27',
+        reactNativeVersion: '0.63.0',
       });
       expect(versions).deep.equal({
-        androidGradlePlugin: '3.0.0',
+        androidGradlePlugin: '7.4.2',
+        rnGradlePlugin: '3.0.0',
         androidxAppcompactVersion: '1.0.0',
         androidxLifecycleExtrnsionsVersion: '2.0.0',
         buildToolsVersion: '27.0.0',
@@ -303,7 +334,7 @@ describe('android.js', () => {
         gradleDistributionVersion: '4.5',
         kotlinVersion: '1.4.0',
         minSdkVersion: '15',
-        reactNativeAarVersion: undefined,
+        reactNativeAarVersion: '0.63.0',
         sourceCompatibility: 'VERSION_1_9',
         supportLibraryVersion: '27.0.0',
         targetCompatibility: 'VERSION_1_9',

@@ -27,7 +27,7 @@
 - Optional extra configuration specific to local container and runner
 - Override the Android build config during local container generation and runner project by passing `androidConfig` attributes
   - **As a json string**
-    For example `--extra '{"androidConfig": {"androidGradlePlugin": "3.2.1","buildToolsVersion": "28.0.3","compileSdkVersion": "28","gradleDistributionVersion": "4.6","minSdkVersion": "19","sourceCompatibility": "VERSION_1_8","supportLibraryVersion": "28.0.0","targetCompatibility": "VERSION_1_8","targetSdkVersion": "28"}}'`
+    For example `--extra '{"androidConfig": {"androidGradlePlugin": "3.2.1","rnGradlePlugin": "0.0.6","buildToolsVersion": "28.0.3","compileSdkVersion": "28","gradleDistributionVersion": "4.6","minSdkVersion": "19","sourceCompatibility": "VERSION_1_8","supportLibraryVersion": "28.0.0","targetCompatibility": "VERSION_1_8","targetSdkVersion": "28"}}'`
     Find more information on [android configuration]
   - **As a file path**
     For example `--extra /home/user/my-container-config.json`

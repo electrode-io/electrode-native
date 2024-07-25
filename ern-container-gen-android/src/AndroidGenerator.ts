@@ -69,7 +69,6 @@ export default class AndroidGenerator implements ContainerGenerator {
   ): Promise<ContainerGenResult> {
     return generateContainer(config, {
       fillContainerHull: this.fillContainerHull.bind(this),
-      postBundle: this.postBundle.bind(this),
     });
   }
 
@@ -351,7 +350,7 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
     mustacheView.customPermissions = _.uniq(mustacheView.customPermissions);
 
     androidDependencies.raw.push(
-      `api 'com.walmartlabs.ern:react-native:${versions.reactNativeAarVersion}'`,
+      `api 'com.walmartlabs.ern:react-android:${versions.reactNativeAarVersion}'`,
     );
 
     if (isKotlinEnabled) {
@@ -450,44 +449,6 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
     for (const perform of replacements) {
       perform();
     }
-
-    if (semver.gte(reactNativePlugin.version, '0.60.0')) {
-      this.getJavaScriptEngine(config) === JavaScriptEngine.JSC
-        ? await kax
-            .task('Injecting JavaScript engine [JavaScriptCore]')
-            .run(
-              this.injectJavaScriptCoreEngine(
-                config,
-                reactNativePlugin.version,
-              ),
-            )
-        : await kax
-            .task('Injecting JavaScript engine [Hermes]')
-            .run(this.injectHermesEngine(config, reactNativePlugin.version));
-    }
-  }
-
-  public async postBundle(
-    config: ContainerGeneratorConfig,
-    bundle: BundlingResult,
-    reactNativeVersion: string,
-  ) {
-    if (this.getJavaScriptEngine(config) === JavaScriptEngine.HERMES) {
-      const hermesVersion =
-        config.androidConfig.hermesVersion ||
-        android.getDefaultHermesVersion(reactNativeVersion);
-      const hermesCli = await kax
-        .task(`Installing hermes-engine@${hermesVersion}`)
-        .run(HermesCli.fromVersion(hermesVersion));
-      await kax.task('Compiling JS bundle to Hermes bytecode').run(
-        hermesCli.compileReleaseBundle({
-          bundleSourceMapPath: bundle.sourceMapPath,
-          compositePath: config.composite.path,
-          jsBundlePath: bundle.bundlePath,
-        }),
-      );
-      bundle.isHermesBundle = true;
-    }
   }
 
   public getJavaScriptEngine(
@@ -500,106 +461,6 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
         ? JavaScriptEngine.HERMES
         : JavaScriptEngine.JSC
       : JavaScriptEngine.JSC;
-  }
-
-  /**
-   * Starting with React Native 0.60.0, JavaScriptCore engine is distributed
-   * separately from React Native and comes in two variants :
-   * 'android-jsc' and 'android-jsc-intl'.
-   *
-   * More details@ https://github.com/react-native-community/jsc-android-buildscript
-   *
-   * Prior to React Native 0.60.0, the 'libjsc.so' native library files were
-   * shipped inside React Native AAR itself. This is not the case anymore.
-   * The 'libjsc.so' files are now distributed in the 'jsc-android' npm package,
-   * inside an aar library.
-   *
-   * This function retrieve the 'jsc-android' package and unzip the AAR
-   * matching the desired JSC variant ('android-jsc' or 'android-jsc-intl').
-   * It then copy the 'libjsc.so' files to the 'jniLibs' directory of the
-   * Container. This way, the JSC engine is shipped within the Container and
-   * applications won't crash at runtime when trying to load this library.
-   */
-  public async injectJavaScriptCoreEngine(
-    config: ContainerGeneratorConfig,
-    reactNativeVersion: string,
-  ) {
-    let jscVersion =
-      config?.androidConfig?.jscVersion ??
-      android.getDefaultJSCVersion(reactNativeVersion);
-    if (/^\d+$/.test(jscVersion)) {
-      // For backward compatibility, to avoid breaking clients
-      // that are already providing a version through config that
-      // only specifies major excluding minor/patch
-      jscVersion = `${jscVersion}.0.0`;
-    }
-    const jscVariant =
-      config?.androidConfig?.jscVariant ?? android.DEFAULT_JSC_VARIANT;
-    const workingDir = createTmpDir();
-    try {
-      shell.pushd(workingDir);
-      await yarn.init();
-      await yarn.add(PackagePath.fromString(`jsc-android@${jscVersion}`));
-      const versionMajor = semver.major(semver.coerce(jscVersion)!.version);
-      const jscVersionPath = path.resolve(
-        `./node_modules/jsc-android/dist/org/webkit/${jscVariant}/r${versionMajor}`,
-      );
-      const jscAARPath = path.join(
-        jscVersionPath,
-        `${jscVariant}-r${versionMajor}.aar`,
-      );
-
-      return new Promise<void>((resolve) => {
-        const unzipOutDir = createTmpDir();
-        const zip = new AdmZip(jscAARPath);
-        zip.extractAllTo(unzipOutDir);
-        const unzippedJniPath = path.join(unzipOutDir, 'jni');
-        const containerJniLibsPath = path.join(
-          config.outDir,
-          'lib/src/main/jniLibs',
-        );
-        shell.cp('-Rf', unzippedJniPath, containerJniLibsPath);
-        resolve();
-      });
-    } finally {
-      shell.popd();
-    }
-  }
-
-  /**
-   * Inject hermes engine into the Container
-   * Done in a similar way as injectJavaScriptCoreEngine method
-   */
-  public async injectHermesEngine(
-    config: ContainerGeneratorConfig,
-    reactNativeVersion: string,
-  ) {
-    const hermesVersion =
-      config?.androidConfig?.hermesVersion ??
-      android.getDefaultHermesVersion(reactNativeVersion);
-    const workingDir = createTmpDir();
-    try {
-      shell.pushd(workingDir);
-      await yarn.init();
-      await yarn.add(PackagePath.fromString(`hermes-engine@${hermesVersion}`));
-      const hermesAarPath = path.resolve(
-        `./node_modules/hermes-engine/android/hermes-release.aar`,
-      );
-      return new Promise<void>((resolve) => {
-        const unzipOutDir = createTmpDir();
-        const zip = new AdmZip(hermesAarPath);
-        zip.extractAllTo(unzipOutDir);
-        const unzippedJniPath = path.join(unzipOutDir, 'jni');
-        const containerJniLibsPath = path.join(
-          config.outDir,
-          'lib/src/main/jniLibs',
-        );
-        shell.cp('-Rf', unzippedJniPath, containerJniLibsPath);
-        resolve();
-      });
-    } finally {
-      shell.popd();
-    }
   }
 
   public buildImplementationStatements(

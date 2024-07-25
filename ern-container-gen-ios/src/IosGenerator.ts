@@ -388,12 +388,14 @@ Make sure to run these commands before building the container.`,
   }
 
   public async addReactNativeCodegen(targetDir: string, version: string) {
-    log.debug('Adding react-native-codegen package');
+    log.debug('Adding @react-native/codegen package');
     const tmpDir = createTmpDir();
     shell.pushd(tmpDir);
     try {
       await yarn.init();
-      await yarn.add(PackagePath.fromString(`react-native-codegen@${version}`));
+      await yarn.add(
+        PackagePath.fromString(`@react-native/codegen@${version}`),
+      );
       // mkdirp and invariant are also needed
       await yarn.add(PackagePath.fromString('mkdirp'));
       await yarn.add(PackagePath.fromString('invariant'));
