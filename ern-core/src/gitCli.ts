@@ -1,5 +1,14 @@
-import simpleGit = require('simple-git/promise');
+import simpleGit from 'simple-git';
 
 export function gitCli(workingDir?: string) {
-  return simpleGit(workingDir);
+  const sGit = simpleGit(workingDir);
+
+  if (process.env.ERN_GITHUB_TOKEN) {
+    sGit.addConfig(
+      'http.extraheader',
+      `Authorization: Basic ${process.env.ERN_GITHUB_TOKEN}`,
+    );
+  }
+
+  return sGit;
 }
