@@ -3,7 +3,8 @@
     "target": "es2018",
     "allowJs": false,
     "esModuleInterop": true,
-    "lib": ["es2018"],
+    // Simple-git uses DOM object (Abort Signal) here - https://github.com/steveukx/git-js/blob/859699d0cc1d0c9b94f53de9c61a060a2cecb656/simple-git/src/lib/types/index.ts#L66.
+    "lib": ["es2018", "DOM"],
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
