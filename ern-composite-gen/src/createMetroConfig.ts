@@ -83,7 +83,7 @@ module.exports = {
       // Archives (virtual files)
       "zip"
     ],
-    sourceExts: ["js", "json", "ts", "tsx", "svg"],
+    sourceExts: ["js", "json", "ts", "tsx", "svg", "mjs"],
   },
   transformer: {
     getTransformOptions: async () => ({
