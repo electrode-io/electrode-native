@@ -564,7 +564,9 @@ function switchToOldDirectoryStructure(
 }
 
 export const getDefaultIosDeploymentTarget = (rnVersion: string): string => {
-  if (semver.gte(rnVersion, '0.64.0')) {
+  if (semver.gte(rnVersion, '0.72.0')) {
+    return '12.4';
+  } else if (semver.gte(rnVersion, '0.64.0')) {
     return '11.0';
   } else if (semver.gte(rnVersion, '0.63.0')) {
     return '10.0';
@@ -578,7 +580,9 @@ export const getDefaultIosDeploymentTarget = (rnVersion: string): string => {
 export const getReactNativeCodegenVersion = (
   rnVersion: string,
 ): string | null => {
-  if (semver.gte(rnVersion, '0.68.4')) {
+  if (semver.gte(rnVersion, '0.72.0')) {
+    return '0.72.8';
+  } else if (semver.gte(rnVersion, '0.68.4')) {
     return '^0.0.18';
   } else if (semver.gte(rnVersion, '0.68.2')) {
     return '^0.0.17';

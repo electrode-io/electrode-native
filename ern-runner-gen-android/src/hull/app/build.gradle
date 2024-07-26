@@ -1,4 +1,18 @@
 apply plugin: 'com.android.application'
+apply plugin: "com.facebook.react"
+
+/**
+ * The preferred build flavor of JavaScriptCore (JSC)
+ *
+ * For example, to use the international variant, you can use:
+ * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
+ *
+ * The international variant includes ICU i18n library and necessary data
+ * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
+ * give correct results when using with locales other than en-US. Note that
+ * this variant is about 6MiB larger per architecture than default.
+ */
+def jscFlavor = 'org.webkit:android-jsc:+'
 
 android {
     compileSdkVersion {{{compileSdkVersion}}}
@@ -28,15 +42,14 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
-    packagingOptions {
-        pickFirst "lib/armeabi-v7a/libc++_shared.so"
-        pickFirst "lib/arm64-v8a/libc++_shared.so"
-        pickFirst "lib/x86/libc++_shared.so"
-        pickFirst "lib/x86_64/libc++_shared.so"
-    }
 }
 
 dependencies {
     // Recompile this dependency on every build as it can be updated at any time (snapshot)
     implementation('{{{groupId}}}:{{{artifactId}}}:1.0.0') { changing = true }
+    if (hermesEnabled.toBoolean()) {
+        implementation("com.facebook.react:hermes-android")
+    } else {
+        implementation jscFlavor
+    }
 }

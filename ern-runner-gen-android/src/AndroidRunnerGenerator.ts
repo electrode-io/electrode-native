@@ -8,6 +8,7 @@ import {
 } from 'ern-core';
 import readDir from 'fs-readdir-recursive';
 import path from 'path';
+import semver from 'semver';
 
 const defaultReactNativePackagerHost = 'localhost';
 const defaultReactNativePackagerPort = '8081';
@@ -94,6 +95,12 @@ function configureMustacheView(
 
   mustacheView.isReactNativeDevSupportEnabled =
     config.reactNativeDevSupportEnabled === true ? 'true' : 'false';
+  mustacheView.isReactNativeGradlePluginEnabled = semver.gte(
+    config.reactNativeVersion,
+    '0.68.0',
+  )
+    ? 'true'
+    : null;
   mustacheView.miniAppName = config.mainMiniAppName;
   mustacheView.packagerHost =
     config.reactNativePackagerHost || defaultReactNativePackagerHost;

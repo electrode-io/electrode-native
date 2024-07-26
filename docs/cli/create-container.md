@@ -58,7 +58,7 @@
 - Optional extra configuration specific to creating container
 - Override some ios or android container generation configuration by passing `androidConfig` and/or `iosConfig` attributes
   - **As a json string**
-    For example `--extra '{"androidConfig": {"androidGradlePlugin": "3.2.1","buildToolsVersion": "28.0.3","compileSdkVersion": "28","gradleDistributionVersion": "4.6","minSdkVersion": "19","sourceCompatibility": "VERSION_1_8","supportLibraryVersion": "28.0.0","targetCompatibility": "VERSION_1_8","targetSdkVersion": "28"}}'`
+    For example `--extra '{"androidConfig": {"androidGradlePlugin": "3.2.1","rnGradlePlugin": "0.0.6","buildToolsVersion": "28.0.3","compileSdkVersion": "28","gradleDistributionVersion": "4.6","minSdkVersion": "19","sourceCompatibility": "VERSION_1_8","supportLibraryVersion": "28.0.0","targetCompatibility": "VERSION_1_8","targetSdkVersion": "28"}}'`
     Find more information on [android configuration]
 
     or

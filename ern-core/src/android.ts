@@ -13,25 +13,27 @@ import semver from 'semver';
 // ==============================================================================
 
 export const DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION = '7.0.4';
+export const DEFAULT_RN_GRADLE_PLUGIN_VERSION = '0.0.6';
 export const DEFAULT_ANDROIDX_APPCOMPACT_VERSION = '1.1.0';
 export const DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION = '2.1.0';
-export const DEFAULT_BUILD_TOOLS_VERSION = '31.0.0';
-export const DEFAULT_COMPILE_SDK_VERSION = '31';
-export const DEFAULT_GRADLE_DISTRIBUTION_VERSION = '7.3.3';
+export const DEFAULT_BUILD_TOOLS_VERSION = '33.0.0';
+export const DEFAULT_COMPILE_SDK_VERSION = '33';
+export const DEFAULT_GRADLE_DISTRIBUTION_VERSION = '8.0.1';
 export const DEFAULT_JSC_VARIANT = 'android-jsc';
-export const DEFAULT_KOTLIN_VERSION = '1.6.10';
+export const DEFAULT_KOTLIN_VERSION = '1.7.22';
 export const DEFAULT_MIN_SDK_VERSION_PRE_RN64 = '19';
 export const DEFAULT_MIN_SDK_VERSION_POST_RN64 = '21';
 export const DEFAULT_SUPPORT_LIBRARY_VERSION = '28.0.0';
-export const DEFAULT_TARGET_SDK_VERSION = '30';
-export const DEFAULT_SOURCE_COMPATIBILITY = 'VERSION_1_8';
-export const DEFAULT_TARGET_COMPATIBILITY = 'VERSION_1_8';
+export const DEFAULT_TARGET_SDK_VERSION = '33';
+export const DEFAULT_SOURCE_COMPATIBILITY = 'VERSION_11';
+export const DEFAULT_TARGET_COMPATIBILITY = 'VERSION_11';
 const ANDROID_DEVICE_INFO = `
 https://developer.android.com/studio/run/emulator-commandline
 https://developer.android.com/studio/run/emulator`;
 
 export interface AndroidResolvedVersions {
   androidGradlePlugin: string;
+  rnGradlePlugin: string;
   androidxAppcompactVersion: string;
   androidxLifecycleExtrnsionsVersion: string;
   buildToolsVersion: string;
@@ -47,7 +49,8 @@ export interface AndroidResolvedVersions {
 }
 
 export function resolveAndroidVersions({
-  androidGradlePlugin = DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION,
+  rnGradlePlugin,
+  androidGradlePlugin,
   androidxAppcompactVersion = DEFAULT_ANDROIDX_APPCOMPACT_VERSION,
   androidxLifecycleExtrnsionsVersion = DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION,
   buildToolsVersion = DEFAULT_BUILD_TOOLS_VERSION,
@@ -62,6 +65,7 @@ export function resolveAndroidVersions({
   targetSdkVersion = DEFAULT_TARGET_SDK_VERSION,
   reactNativeVersion,
 }: {
+  rnGradlePlugin?: string;
   androidGradlePlugin?: string;
   androidxAppcompactVersion?: string;
   androidxLifecycleExtrnsionsVersion?: string;
@@ -84,9 +88,14 @@ export function resolveAndroidVersions({
     : DEFAULT_MIN_SDK_VERSION_PRE_RN64;
 
   reactNativeAarVersion = reactNativeAarVersion ?? reactNativeVersion!;
+  const resolvedRNGradlePlugin =
+    rnGradlePlugin ?? getReactNativeGradlePluginVersion(reactNativeVersion!);
+  const resolvedAndroidGradlePlugin =
+    androidGradlePlugin ?? getGradlePluginVersion(reactNativeVersion!);
 
   return {
-    androidGradlePlugin,
+    rnGradlePlugin: resolvedRNGradlePlugin,
+    androidGradlePlugin: resolvedAndroidGradlePlugin,
     androidxAppcompactVersion,
     androidxLifecycleExtrnsionsVersion,
     buildToolsVersion,
@@ -458,6 +467,37 @@ export function androidEmulatorPath(): string {
   return 'emulator';
 }
 
+// ERN Android plugins supports backward compatibility until react native version 68.
+function getGradlePluginVersion(reactNativeVersion: string): string | never {
+  if (semver.gte(reactNativeVersion, '0.72.0')) {
+    return '7.4.2';
+  } else if (semver.gte(reactNativeVersion, '0.71.0')) {
+    return '7.3.1';
+  } else if (semver.gte(reactNativeVersion, '0.70.0')) {
+    return '7.2.1';
+  } else if (semver.gte(reactNativeVersion, '0.69.0')) {
+    return '7.1.1';
+  }
+
+  return DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION;
+}
+
+function getReactNativeGradlePluginVersion(
+  reactNativeVersion: string,
+): string | never {
+  if (semver.gte(reactNativeVersion, '0.72.0')) {
+    return '0.72.11';
+  } else if (semver.gte(reactNativeVersion, '0.71.0')) {
+    return '0.71.19';
+  } else if (semver.gte(reactNativeVersion, '0.70.0')) {
+    return '0.70.3';
+  } else if (semver.gte(reactNativeVersion, '0.69.0')) {
+    return '0.0.7';
+  }
+
+  return DEFAULT_RN_GRADLE_PLUGIN_VERSION;
+}
+
 /**
  * Returns the default Hermes engine (hermes-engine) package version used by a given React Native version.
  * Only works for versions of RN >= 0.60.0 as hermes-engine package was introduced in this version.
@@ -497,7 +537,9 @@ export function getDefaultHermesVersion(
 export function getDefaultJSCVersion(
   reactNativeVersion: string,
 ): string | never {
-  if (semver.gte(reactNativeVersion, '0.65.0')) {
+  if (semver.gte(reactNativeVersion, '0.72.0')) {
+    return '^250231.0.0';
+  } else if (semver.gte(reactNativeVersion, '0.65.0')) {
     return '^250230.2.1';
   } else if (semver.gte(reactNativeVersion, '0.61.0')) {
     return '^245459.0.0';
