@@ -191,7 +191,7 @@ public class ElectrodeReactActivityDelegate extends ReactActivityDelegate {
         ReactRootViewHolder rootViewHolder = mReactRootViews.get(componentName);
 
         if (rootViewHolder == null || newInstance || rootViewHolder.size() > 1) {
-            ReactRootView rootView = createRootView();
+            ReactRootView rootView = new ReactRootView(getContext());
             rootView.startReactApplication(
                     ElectrodeReactContainer.getReactInstanceManager(), componentName, props);
             if (rootViewHolder == null) {

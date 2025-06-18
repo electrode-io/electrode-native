@@ -187,19 +187,27 @@ Make sure to run these commands before building the container.`,
       try {
         await yarn.init();
 
-        // Add @react-native-community/cli-platform-ios because
-        // it contains the scripts needed for native modules pods linking
+        // Add @react-native-community/cli and @react-native-community/cli-platform-ios
+        // because they contain the scripts needed for native modules pods linking
         // look in composite to match proper version
         const compositeNodeModulesPath = path.join(
           config.composite.path,
           'node_modules',
         );
+
+        const cliPkg = '@react-native-community/cli';
+        const cliPkgVersion = (
+          await readPackageJson(path.join(compositeNodeModulesPath, cliPkg))
+        ).version;
+
         const cliPlatformIosPkg = '@react-native-community/cli-platform-ios';
         const cliPlatformIosPkgVersion = (
           await readPackageJson(
             path.join(compositeNodeModulesPath, cliPlatformIosPkg),
           )
         ).version;
+
+        await yarn.add(PackagePath.fromString(`${cliPkg}@${cliPkgVersion}`));
 
         await yarn.add(
           PackagePath.fromString(

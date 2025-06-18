@@ -209,6 +209,29 @@ describe('android.js', () => {
   });
 
   describe('resolveAndroidVersions', () => {
+    it('should return all default versions if no versions are provided [>= RN 0.77.0]', () => {
+      const versions = android.resolveAndroidVersions({
+        reactNativeVersion: '0.77.0',
+      });
+      expect(versions).deep.equal({
+        androidGradlePlugin: '8.7.2',
+        rnGradlePlugin: '0.77.2',
+        androidxAppcompactVersion: android.DEFAULT_ANDROIDX_APPCOMPACT_VERSION,
+        androidxLifecycleExtrnsionsVersion:
+          android.DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION,
+        buildToolsVersion: android.DEFAULT_BUILD_TOOLS_VERSION,
+        compileSdkVersion: android.DEFAULT_COMPILE_SDK_VERSION,
+        gradleDistributionVersion: android.DEFAULT_GRADLE_DISTRIBUTION_VERSION,
+        kotlinVersion: android.DEFAULT_KOTLIN_VERSION,
+        minSdkVersion: android.DEFAULT_MIN_SDK_VERSION_POST_RN77,
+        reactNativeAarVersion: '0.77.0',
+        sourceCompatibility: android.DEFAULT_SOURCE_COMPATIBILITY,
+        supportLibraryVersion: android.DEFAULT_SUPPORT_LIBRARY_VERSION,
+        targetCompatibility: android.DEFAULT_TARGET_COMPATIBILITY,
+        targetSdkVersion: android.DEFAULT_TARGET_SDK_VERSION,
+      });
+    });
+
     it('should return all default versions if no versions are provided [>= RN 0.72.0]', () => {
       const versions = android.resolveAndroidVersions({
         reactNativeVersion: '0.72.0',

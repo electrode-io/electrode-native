@@ -1,2 +1,2 @@
-<manifest package="com.walmartlabs.ern.movie">
+<manifest package="com.walmartlabs.ern.{{{apiName}}}">
 </manifest>

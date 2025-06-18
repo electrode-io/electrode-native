@@ -170,6 +170,11 @@ async function generateFullComposite(
         miniApps: remoteMiniapps,
         pathToYarnLock,
       });
+
+      // If we also have local MiniApps, add them as extra dependencies
+      if (localMiniApps.length > 0) {
+        extraJsDependencies = [...extraJsDependencies, ...localMiniApps];
+      }
     } else {
       await yarn.init();
       // We need to install react-native in top level composite as it won't
@@ -196,7 +201,12 @@ async function generateFullComposite(
       extraJsDependencies.push(
         PackagePath.fromString('react-native-electrode-bridge@^1.0.0'),
       );
-      extraJsDependencies = [...extraJsDependencies, ...jsApiImplDependencies];
+      // Add local MiniApps as file dependencies
+      extraJsDependencies = [
+        ...extraJsDependencies,
+        ...localMiniApps,
+        ...jsApiImplDependencies,
+      ];
     }
 
     await addRNStartScriptToPjson({ cwd: outDir });
@@ -320,13 +330,18 @@ You should resolve the following version mismatches prior to retrying.${os.EOL}`
       blacklistRe,
       cwd: outDir,
       extraNodeModules,
-      reactNativeVersion: rnVersion,
       watchFolders: localMiniAppsPaths,
     });
     if (semver.gte(rnVersion, '0.57.0')) {
-      await createRNCliConfig({ cwd: outDir });
+      await createRNCliConfig({ cwd: outDir, reactNativeVersion: rnVersion });
     }
     await addRNDepToPjson(outDir, rnVersion);
+
+    // Install any new dependencies that were added for RN 0.73+
+    if (semver.gte(rnVersion, '0.73.0')) {
+      await yarn.install();
+    }
+
     if (semver.lt(rnVersion, '0.60.0')) {
       await patchMetro51AssetsBug({ cwd: outDir });
     }

@@ -1,6 +1,7 @@
 import {
   android,
   fileUtils,
+  injectReactNativeVersionKeysInObject,
   log,
   manifest,
   mustacheUtils,
@@ -119,7 +120,12 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
         reactNativeVersion,
         outputDirectory,
       );
-      await this.updateBuildGradle(paths, reactNativeVersion, outputDirectory);
+      await this.updateBuildGradle(
+        apiDependency,
+        paths,
+        reactNativeVersion,
+        outputDirectory,
+      );
     } finally {
       shell.popd();
     }
@@ -154,6 +160,7 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
   }
 
   public updateBuildGradle(
+    apiDependency: PackagePath,
     paths: any,
     reactNativeVersion: string,
     outputDirectory: string,
@@ -165,6 +172,7 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
     });
     mustacheView.reactNativeVersion = reactNativeVersion;
     mustacheView = Object.assign(mustacheView, versions);
+    injectReactNativeVersionKeysInObject(mustacheView, reactNativeVersion);
     mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
       path.join(paths.apiImplHull, 'android/build.gradle'),
       mustacheView,
@@ -185,6 +193,7 @@ export default class ApiImplAndroidGenerator implements ApiImplGeneratable {
     let mustacheView: any = {};
     const versions = android.resolveAndroidVersions({ reactNativeVersion });
     mustacheView = Object.assign(mustacheView, versions);
+    injectReactNativeVersionKeysInObject(mustacheView, reactNativeVersion);
     return mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
       path.join(
         paths.apiImplHull,

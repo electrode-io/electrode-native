@@ -5,6 +5,7 @@ def safeExtGet(prop, fallback) {
 buildscript {
   repositories {
     google()
+    mavenCentral()
     jcenter()
   }
 
@@ -30,6 +31,7 @@ android {
 
 repositories {
   google()
+  mavenCentral()
   jcenter()
   maven { url "https://jitpack.io" }
   maven {
