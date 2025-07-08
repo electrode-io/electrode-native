@@ -4,6 +4,7 @@ import sinon from 'sinon';
 import path from 'path';
 import fs from 'fs-extra';
 import { applyYarnResolutions } from '../src/applyYarnResolutions';
+import { addRNDepToPjson } from '../src/addRNDepToPjson';
 import { generateComposite } from '../src/generateComposite';
 import {
   getMiniAppsDeltas,
@@ -502,6 +503,9 @@ describe('ern-container-gen utils.js', () => {
         path.join(tmpOutDir, 'node_modules/metro-config/src/defaults'),
       );
       fs.mkdirpSync(
+        path.join(tmpOutDir, 'node_modules/@react-native/metro-config'),
+      );
+      fs.mkdirpSync(
         path.join(tmpOutDir, 'node_modules/react-native-svg-transformer'),
       );
       fs.writeFileSync(
@@ -510,6 +514,20 @@ describe('ern-container-gen utils.js', () => {
           'node_modules/metro-config/src/defaults/blacklist',
         ),
         'module.exports = () => {};\n',
+      );
+      // Mock @react-native/metro-config module
+      fs.writeFileSync(
+        path.join(
+          tmpOutDir,
+          'node_modules/@react-native/metro-config/index.js',
+        ),
+        `module.exports = {
+          getDefaultConfig: () => ({
+            resolver: { assetExts: [], sourceExts: [] },
+            transformer: {}
+          }),
+          mergeConfig: (defaultConfig, config) => ({ ...defaultConfig, ...config })
+        };`,
       );
       fs.writeFileSync(
         path.join(
@@ -529,6 +547,39 @@ describe('ern-container-gen utils.js', () => {
       expect(metroConfig.resolver.extraNodeModules)
         .to.have.property('pkg-b')
         .which.equals(path.join('/absolute/path/to/new-pkg-b'));
+    });
+  });
+
+  describe('addRNDepToPjson', () => {
+    it('should add react-native dependency to package.json', async () => {
+      const packageJsonPath = path.join(tmpOutDir, 'package.json');
+      fs.writeFileSync(packageJsonPath, JSON.stringify({ dependencies: {} }));
+
+      await addRNDepToPjson(tmpOutDir, '0.77.2');
+
+      const packageJson: any = JSON.parse(
+        fs.readFileSync(packageJsonPath).toString(),
+      );
+      expect(packageJson.dependencies).to.have.property(
+        'react-native',
+        '0.77.2',
+      );
+      expect(packageJson.dependencies).to.have.property(
+        '@react-native/metro-config',
+        '0.77.2',
+      );
+      expect(packageJson.dependencies).to.have.property(
+        '@react-native/babel-preset',
+        '0.77.2',
+      );
+      expect(packageJson.dependencies).to.have.property(
+        '@react-native-community/cli-platform-android',
+        '15.0.1',
+      );
+      expect(packageJson.dependencies).to.have.property(
+        '@react-native-community/cli-platform-ios',
+        '15.0.1',
+      );
     });
   });
 });
