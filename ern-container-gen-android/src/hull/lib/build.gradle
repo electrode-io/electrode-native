@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android'
 {{/isKotlinEnabled}}
 
 android {
+    namespace "com.walmartlabs.ern.container"
     compileSdkVersion {{{compileSdkVersion}}}
     buildToolsVersion "{{{buildToolsVersion}}}"
     defaultConfig {

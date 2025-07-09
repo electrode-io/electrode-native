@@ -2,8 +2,6 @@ import fs from 'fs-extra';
 import path from 'path';
 import beautify from 'js-beautify';
 import os from 'os';
-import semver from 'semver';
-import { getMetroBlacklistPath } from 'ern-core';
 
 export async function createMetroConfig({
   cwd,
@@ -11,21 +9,18 @@ export async function createMetroConfig({
   blacklistRe,
   extraNodeModules,
   watchFolders,
-  reactNativeVersion,
 }: {
   cwd?: string;
   projectRoot?: string;
   blacklistRe?: RegExp[];
   extraNodeModules?: { [pkg: string]: string };
   watchFolders?: string[];
-  reactNativeVersion: string;
 }) {
-  return fs.writeFile(
-    path.join(cwd ?? path.resolve(), 'metro.config.js'),
-    beautify.js(`const blacklist = require('${getMetroBlacklistPath(
-      reactNativeVersion,
-    )}');
-module.exports = {
+  // Metro config format for React Native 0.73+
+  const metroConfigContent = `const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
+const defaultConfig = getDefaultConfig(__dirname);
+
+const config = {
   ${projectRoot ? `projectRoot: "${projectRoot}",` : ''}
   ${
     watchFolders
@@ -37,7 +32,23 @@ module.exports = {
       : ''
   }
   resolver: {
-    blacklistRE: blacklist([
+    ...defaultConfig.resolver,
+    ${
+      extraNodeModules
+        ? `extraNodeModules: ${JSON.stringify(extraNodeModules, null, 2)},`
+        : ''
+    }
+    assetExts: [
+      ...defaultConfig.resolver.assetExts,
+      // Archives (virtual files)
+      "zip"
+    ],
+    sourceExts: [
+      ...defaultConfig.resolver.sourceExts,
+      "svg", 
+      "mjs"
+    ],
+    blockList: [
       // Ignore IntelliJ directories
       /.*\\.idea\\/.*/,
       // ignore git directories
@@ -45,47 +56,10 @@ module.exports = {
       // Ignore android directories
       /.*\\/app\\/build\\/.*/,
       ${blacklistRe ? blacklistRe.join(`,${os.EOL}`) : ''}
-    ]),
-    ${
-      extraNodeModules
-        ? `extraNodeModules: ${JSON.stringify(extraNodeModules, null, 2)},`
-        : ''
-    }
-    assetExts: [
-      // Image formats
-      "bmp",
-      "gif",
-      "jpg",
-      "jpeg",
-      "png",
-      "psd",
-      "webp",
-      // Video formats
-      "m4v",
-      "mov",
-      "mp4",
-      "mpeg",
-      "mpg",
-      "webm",
-      // Audio formats
-      "aac",
-      "aiff",
-      "caf",
-      "m4a",
-      "mp3",
-      "wav",
-      // Document formats
-      "html",
-      "pdf",
-      // Font formats
-      "otf",
-      "ttf",
-      // Archives (virtual files)
-      "zip"
     ],
-    sourceExts: ["js", "json", "ts", "tsx", "svg", "mjs"],
   },
   transformer: {
+    ...defaultConfig.transformer,
     getTransformOptions: async () => ({
       transform: {
         experimentalImportSupport: false,
@@ -96,6 +70,11 @@ module.exports = {
     babelTransformerPath: require.resolve("react-native-svg-transformer"),
   },
 };
-`),
+
+module.exports = mergeConfig(defaultConfig, config);`;
+
+  return fs.writeFile(
+    path.join(cwd ?? path.resolve(), 'metro.config.js'),
+    beautify.js(metroConfigContent),
   );
 }

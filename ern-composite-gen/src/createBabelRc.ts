@@ -110,7 +110,10 @@ export async function createBabelRc({
     }
   }
 
-  if (semver.gte(compositeReactNativeVersion, '0.57.0')) {
+  if (semver.gte(compositeReactNativeVersion, '0.73.0')) {
+    // For React Native 0.73+, use the new @react-native/babel-preset
+    compositeBabelRc.presets = ['@react-native/babel-preset'];
+  } else if (semver.gte(compositeReactNativeVersion, '0.57.0')) {
     compositeBabelRc.presets = ['module:metro-react-native-babel-preset'];
   } else {
     compositeBabelRc.presets = ['react-native'];

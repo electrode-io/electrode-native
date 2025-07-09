@@ -4,9 +4,7 @@ import fs from 'fs';
 import path from 'path';
 
 export const yarn = new YarnCli(getInternalBinaryPath('yarn'));
-export const reactnative = new ReactNativeCli(
-  getInternalBinaryPath('react-native'),
-);
+export const reactnative = new ReactNativeCli(getInternalBinaryPath('rnc-cli'));
 
 function getInternalBinaryPath(binaryName: string): string {
   const pathWhenInstalledWithYarn = path.resolve(

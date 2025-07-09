@@ -214,7 +214,6 @@ ${nonInstalledMiniAppsPath.join('\n')}
       blacklistRe,
       cwd: composite.path,
       extraNodeModules,
-      reactNativeVersion: composite.getReactNativeVersion(),
       watchFolders: allLocalMiniAppsPaths,
     });
 

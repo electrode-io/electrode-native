@@ -84,9 +84,9 @@ export default class IosRunerGenerator implements RunnerGenerator {
       path.join(config.extra.containerGenWorkingDir, 'out/ios'),
     );
     const mustacheView = {
-      deploymentTarget: semver.gte(config.reactNativeVersion, '0.72.0')
-        ? '12.4'
-        : '11.0',
+      deploymentTarget: semver.gte(config.reactNativeVersion, '0.77.0')
+        ? '15.1'
+        : '12.4',
       isReactNativeDevSupportEnabled:
         config.reactNativeDevSupportEnabled === true ? 'true' : 'false',
       miniAppName: config.mainMiniAppName,
