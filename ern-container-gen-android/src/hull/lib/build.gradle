@@ -29,6 +29,11 @@ android {
     lintOptions {
         abortOnError false
     }
+    publishing {
+        multipleVariants {
+            allVariants()
+        }
+    }
 }
 
 dependencies {
