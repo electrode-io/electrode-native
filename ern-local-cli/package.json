@@ -77,5 +77,8 @@
   },
   "engines": {
     "node": ">=12"
+  },
+  "resolutions": {
+    "path-loader": "1.0.10"
   }
 }
