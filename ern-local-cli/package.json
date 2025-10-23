@@ -1,6 +1,6 @@
 {
   "name": "ern-local-cli",
-  "version": "0.53.3",
+  "version": "0.53.4",
   "description": "Electrode Native Local CLI",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -42,20 +42,20 @@
     "chalk": "^4.1.1",
     "cli-table": "^0.3.6",
     "dir-compare": "^3.2.0",
-    "ern-api-gen": "0.53.3",
-    "ern-api-impl-gen": "0.53.3",
-    "ern-cauldron-api": "0.53.3",
-    "ern-composite-gen": "0.53.3",
-    "ern-container-gen": "0.53.3",
-    "ern-container-gen-android": "0.53.3",
-    "ern-container-gen-ios": "0.53.3",
-    "ern-container-publisher": "0.53.3",
-    "ern-container-transformer": "0.53.3",
-    "ern-core": "0.53.3",
-    "ern-orchestrator": "0.53.3",
-    "ern-runner-gen": "0.53.3",
-    "ern-runner-gen-android": "0.53.3",
-    "ern-runner-gen-ios": "0.53.3",
+    "ern-api-gen": "0.53.4",
+    "ern-api-impl-gen": "0.53.4",
+    "ern-cauldron-api": "0.53.4",
+    "ern-composite-gen": "0.53.4",
+    "ern-container-gen": "0.53.4",
+    "ern-container-gen-android": "0.53.4",
+    "ern-container-gen-ios": "0.53.4",
+    "ern-container-publisher": "0.53.4",
+    "ern-container-transformer": "0.53.4",
+    "ern-core": "0.53.4",
+    "ern-orchestrator": "0.53.4",
+    "ern-runner-gen": "0.53.4",
+    "ern-runner-gen-android": "0.53.4",
+    "ern-runner-gen-ios": "0.53.4",
     "fast-levenshtein": "^3.0.0",
     "fs-extra": "^10.0.0",
     "fs-readdir-recursive": "^1.1.0",
@@ -73,7 +73,7 @@
     "yazl": "^2.5.1"
   },
   "devDependencies": {
-    "ern-util-dev": "0.53.3"
+    "ern-util-dev": "0.53.4"
   },
   "engines": {
     "node": ">=12"
