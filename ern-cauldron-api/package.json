@@ -1,6 +1,6 @@
 {
   "name": "ern-cauldron-api",
-  "version": "0.53.2",
+  "version": "0.53.3",
   "description": "Electrode Native Cauldron API",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -37,13 +37,13 @@
   "homepage": "https://www.electrode.io",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
-    "ern-core": "0.53.2",
+    "ern-core": "0.53.3",
     "fs-extra": "^10.0.0",
     "lodash": "^4.17.21",
     "semver": "^7.3.5",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "ern-util-dev": "0.53.2"
+    "ern-util-dev": "0.53.3"
   }
 }
