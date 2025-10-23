@@ -117,6 +117,20 @@ export default class Platform {
       if (this.isYarnInstalled()) {
         // Favor yarn if it is installed as it will greatly speed up install
         execSync(`yarn init --yes`, { cwd: pathToVersion });
+        // Inject resolutions field into package.json
+        const packageJsonPath = path.join(pathToVersion, 'package.json');
+        if (fs.existsSync(packageJsonPath)) {
+          const packageJson = JSON.parse(
+            fs.readFileSync(packageJsonPath, 'utf-8'),
+          );
+          packageJson.resolutions = {
+            'path-loader': '1.0.10',
+          };
+          fs.writeFileSync(
+            packageJsonPath,
+            JSON.stringify(packageJson, null, 2),
+          );
+        }
         execSync(
           `yarn add ${ERN_LOCAL_CLI_PACKAGE}@${version} --exact --ignore-engines`,
           {
