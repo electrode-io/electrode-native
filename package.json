@@ -106,5 +106,8 @@
   },
   "workspaces": [
     "ern-*"
-  ]
+  ],
+  "resolutions": {
+    "path-loader": "1.0.10"
+  }
 }
