@@ -52,8 +52,5 @@
   },
   "devDependencies": {
     "ern-util-dev": "0.53.6"
-  },
-  "resolutions": {
-    "path-loader": "1.0.10"
   }
 }
