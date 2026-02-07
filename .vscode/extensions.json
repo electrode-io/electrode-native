@@ -6,7 +6,7 @@
 		"ms-vscode.vscode-typescript-tslint-plugin",
 		"esbenp.prettier-vscode",
 		"eamodio.gitlens",
-		"pflannery.vscode-versionlens",
+		"legalfina.npm-version-lens",
 		"dkundel.vscode-npm-source"
 	]
 }
