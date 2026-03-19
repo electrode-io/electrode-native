@@ -76,6 +76,6 @@
     "yazl": "^2.5.1"
   },
   "devDependencies": {
-    "ern-util-dev": "^0.53.8"
+    "ern-util-dev": "1000.0.0"
   }
 }

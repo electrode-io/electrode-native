@@ -36,8 +36,8 @@
   },
   "homepage": "https://www.electrode.io",
   "dependencies": {
-    "ern-container-gen": "^0.53.8",
-    "ern-core": "^0.53.8",
+    "ern-container-gen": "1000.0.0",
+    "ern-core": "1000.0.0",
     "fs-extra": "^10.0.0",
     "fs-readdir-recursive": "^1.1.0",
     "lodash": "^4.17.21",
@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "copyfiles": "^2.4.1",
-    "ern-util-dev": "^0.53.8"
+    "ern-util-dev": "1000.0.0"
   },
   "copyFiles": [
     {

@@ -2,9 +2,15 @@ const chalk = require('chalk');
 
 var execSync = require('child_process').execSync;
 
-var stdout = execSync(
-  'git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD',
-);
+var stdout;
+try {
+  stdout = execSync(
+    'git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD',
+  );
+} catch (e) {
+  // ORIG_HEAD is not available (e.g. first commit on a new branch)
+  process.exit(0);
+}
 
 const yellow = (str) => console.log(chalk.yellow(str));
 const green = (str) => console.log(chalk.green(str));

@@ -4,7 +4,7 @@
   "private": true,
   "description": "",
   "scripts": {
-    "build": "lerna run build",
+    "build": "lerna run build --sort --concurrency 1",
     "build:instrument": "npm run build && npm run instrument",
     "check": "npm run check:lint && npm run check:yarnlock",
     "check:lint": "tslint -c tslint.json '**/src/**/*.ts' '**/test/**/*.ts' -e '**/node_modules/**'",
@@ -166,5 +166,8 @@
     "lodash.set": "^4.3.2",
     "lodash.template": "^4.5.0",
     "vm2": "^3.9.19"
+  },
+  "resolutions": {
+    "sway/js-yaml": "3.14.1"
   }
 }

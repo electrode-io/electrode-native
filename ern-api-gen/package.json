@@ -38,7 +38,7 @@
   },
   "homepage": "https://www.electrode.io",
   "dependencies": {
-    "ern-core": "^0.53.8",
+    "ern-core": "1000.0.0",
     "fs-extra": "^10.0.0",
     "inquirer": "^8.0.0",
     "json-stable-stringify": "^1.0.1",
@@ -51,6 +51,6 @@
     "sway": "^1.0.0"
   },
   "devDependencies": {
-    "ern-util-dev": "^0.53.8"
+    "ern-util-dev": "1000.0.0"
   }
 }
