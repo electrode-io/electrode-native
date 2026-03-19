@@ -37,13 +37,13 @@
   "homepage": "https://www.electrode.io",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
-    "ern-core": "1000.0.0",
+    "ern-core": "^0.53.8",
     "fs-extra": "^10.0.0",
-    "lodash": "^4.17.21",
-    "semver": "^7.3.5",
+    "lodash": "^4.17.23",
+    "semver": "^7.5.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "ern-util-dev": "1000.0.0"
+    "ern-util-dev": "^0.53.8"
   }
 }

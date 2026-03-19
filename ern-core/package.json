@@ -57,13 +57,13 @@
     "gradle-to-js": "^2.0.0",
     "inquirer": "^8.0.0",
     "kax": "^3.0.0",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "mustache": "^4.2.0",
-    "node-fetch": "^2.6.1",
-    "node-ipc": "9.2.1",
+    "node-fetch": "^2.6.7",
+    "node-ipc": "^10.1.0",
     "node-simctl": "^6.4.1",
-    "semver": "^7.3.5",
-    "shelljs": "^0.8.4",
+    "semver": "^7.5.2",
+    "shelljs": "^0.8.5",
     "simple-git": "^3.25.0",
     "tmp": "^0.2.1",
     "treeify": "^1.1.0",
@@ -76,6 +76,6 @@
     "yazl": "^2.5.1"
   },
   "devDependencies": {
-    "ern-util-dev": "1000.0.0"
+    "ern-util-dev": "^0.53.8"
   }
 }

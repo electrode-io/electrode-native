@@ -36,9 +36,9 @@
   },
   "homepage": "https://www.electrode.io",
   "dependencies": {
-    "ern-core": "1000.0.0"
+    "ern-core": "^0.53.8"
   },
   "devDependencies": {
-    "ern-util-dev": "1000.0.0"
+    "ern-util-dev": "^0.53.8"
   }
 }
