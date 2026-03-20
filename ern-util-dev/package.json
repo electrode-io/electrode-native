@@ -34,10 +34,10 @@
   "homepage": "https://www.electrode.io",
   "dependencies": {
     "colors": "^1.4.0",
-    "diff": "^5.0.0",
+    "diff": "^5.2.2",
     "dir-compare": "^3.3.0",
     "fs-readdir-recursive": "^1.1.0",
-    "shelljs": "^0.8.4",
-    "tmp": "^0.2.1"
+    "shelljs": "^0.10.0",
+    "tmp": "^0.2.5"
   }
 }
