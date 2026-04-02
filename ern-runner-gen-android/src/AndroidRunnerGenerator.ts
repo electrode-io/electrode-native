@@ -59,6 +59,7 @@ export default class AndroidRunnerGenerator implements RunnerGenerator {
       getPackageFilePath(config),
       'RunnerConfig.java',
     );
+    shell.mkdir('-p', path.dirname(pathToRunnerConfig));
     shell.cp(pathToRunnerConfigHull, pathToRunnerConfig);
     await mustacheUtils.mustacheRenderToOutputFileUsingTemplateFile(
       pathToRunnerConfig,

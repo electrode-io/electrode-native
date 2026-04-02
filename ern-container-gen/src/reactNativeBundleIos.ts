@@ -56,6 +56,7 @@ export async function reactNativeBundleIos({
       platform: 'ios',
       resetCache,
       sourceMapOutput,
+      workingDir: cwd,
     });
     return result;
   } finally {

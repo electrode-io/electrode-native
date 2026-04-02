@@ -330,6 +330,7 @@ You should resolve the following version mismatches prior to retrying.${os.EOL}`
       blacklistRe,
       cwd: outDir,
       extraNodeModules,
+      reactNativeVersion: rnVersion,
       watchFolders: localMiniAppsPaths,
     });
     if (semver.gte(rnVersion, '0.57.0')) {

@@ -92,6 +92,13 @@ android {
     configurations.all {
         resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.0'
     }
+    // For RN >= 0.77, the React Native Gradle Plugin automatically adds
+    // com.facebook.react:react-android. The electrode container already provides
+    // it via com.walmartlabs.ern:react-android, so exclude the com.facebook.react
+    // version to avoid duplicate classes.
+    configurations.all {
+        exclude group: 'com.facebook.react', module: 'react-android'
+    }
     // Needs this for okio issue (should be more restrictive to only okio)
     lintOptions {
         disable 'InvalidPackage'
@@ -102,10 +109,12 @@ dependencies {
     // Recompile this dependency on every build as it can be updated at any time (snapshot)
     implementation('com.walmartlabs.ern:runner-ern-container-dummy:1.0.0') { changing = true }
     implementation "androidx.appcompat:appcompat:1.1.0"
-    // The version of react-native is set by the React Native Gradle Plugin
-    implementation "com.facebook.react:react-android:0.77.0"
+    // For RN >= 0.77, hermes-android is still needed for the native libhermes.so,
+    // but we exclude react-android from it since the container already provides it.
     if (hermesEnabled.toBoolean()) {
-        implementation("com.facebook.react:hermes-android")
+        implementation("com.facebook.react:hermes-android") {
+            exclude group: 'com.facebook.react', module: 'react-android'
+        }
     } else {
         implementation jscFlavor
     }

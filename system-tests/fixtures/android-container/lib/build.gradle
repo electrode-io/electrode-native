@@ -1,11 +1,13 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion "31.0.0"
+    namespace "com.walmartlabs.ern.container"
+    compileSdkVersion 35
+    buildToolsVersion "35.0.0"
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 30
+        targetSdkVersion 35
     }
     buildTypes {
         release {
@@ -13,8 +15,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     configurations.all {
         resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.0'
@@ -25,10 +27,15 @@ android {
     lintOptions {
         abortOnError false
     }
+    publishing {
+        multipleVariants {
+            allVariants()
+        }
+    }
 }
 
 dependencies {
-    api 'com.walmartlabs.ern:react-native:0.63.4'
+    api 'com.walmartlabs.ern:react-android:0.63.4'
 }
 
 gradle.projectsEvaluated {
