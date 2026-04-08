@@ -209,6 +209,28 @@ describe('android.js', () => {
   });
 
   describe('resolveAndroidVersions', () => {
+    it('should return all default versions if no versions are provided [>= RN 0.81.0]', () => {
+      const versions = android.resolveAndroidVersions({
+        reactNativeVersion: '0.81.0',
+      });
+      expect(versions).deep.equal({
+        androidGradlePlugin: '8.11.0',
+        rnGradlePlugin: '0.81.5',
+        androidxAppcompactVersion: '1.1.0',
+        androidxLifecycleExtrnsionsVersion: '2.1.0',
+        buildToolsVersion: '36.0.0',
+        compileSdkVersion: '36',
+        gradleDistributionVersion: '8.14.3',
+        kotlinVersion: '2.1.20',
+        minSdkVersion: '24',
+        reactNativeAarVersion: '0.81.0',
+        sourceCompatibility: 'VERSION_17',
+        supportLibraryVersion: '28.0.0',
+        targetCompatibility: 'VERSION_17',
+        targetSdkVersion: '36',
+      });
+    });
+
     it('should return all default versions if no versions are provided [>= RN 0.77.0]', () => {
       const versions = android.resolveAndroidVersions({
         reactNativeVersion: '0.77.0',
@@ -216,19 +238,18 @@ describe('android.js', () => {
       expect(versions).deep.equal({
         androidGradlePlugin: '8.7.2',
         rnGradlePlugin: '0.77.2',
-        androidxAppcompactVersion: android.DEFAULT_ANDROIDX_APPCOMPACT_VERSION,
-        androidxLifecycleExtrnsionsVersion:
-          android.DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION,
-        buildToolsVersion: android.DEFAULT_BUILD_TOOLS_VERSION,
-        compileSdkVersion: android.DEFAULT_COMPILE_SDK_VERSION,
-        gradleDistributionVersion: android.DEFAULT_GRADLE_DISTRIBUTION_VERSION,
-        kotlinVersion: android.DEFAULT_KOTLIN_VERSION,
-        minSdkVersion: android.DEFAULT_MIN_SDK_VERSION_POST_RN77,
+        androidxAppcompactVersion: '1.1.0',
+        androidxLifecycleExtrnsionsVersion: '2.1.0',
+        buildToolsVersion: '35.0.0',
+        compileSdkVersion: '35',
+        gradleDistributionVersion: '8.11.1',
+        kotlinVersion: '2.0.21',
+        minSdkVersion: '24',
         reactNativeAarVersion: '0.77.0',
-        sourceCompatibility: android.DEFAULT_SOURCE_COMPATIBILITY,
-        supportLibraryVersion: android.DEFAULT_SUPPORT_LIBRARY_VERSION,
-        targetCompatibility: android.DEFAULT_TARGET_COMPATIBILITY,
-        targetSdkVersion: android.DEFAULT_TARGET_SDK_VERSION,
+        sourceCompatibility: 'VERSION_17',
+        supportLibraryVersion: '28.0.0',
+        targetCompatibility: 'VERSION_17',
+        targetSdkVersion: '35',
       });
     });
 
@@ -239,19 +260,18 @@ describe('android.js', () => {
       expect(versions).deep.equal({
         androidGradlePlugin: '7.4.2',
         rnGradlePlugin: '0.72.11',
-        androidxAppcompactVersion: android.DEFAULT_ANDROIDX_APPCOMPACT_VERSION,
-        androidxLifecycleExtrnsionsVersion:
-          android.DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION,
-        buildToolsVersion: android.DEFAULT_BUILD_TOOLS_VERSION,
-        compileSdkVersion: android.DEFAULT_COMPILE_SDK_VERSION,
-        gradleDistributionVersion: android.DEFAULT_GRADLE_DISTRIBUTION_VERSION,
-        kotlinVersion: android.DEFAULT_KOTLIN_VERSION,
-        minSdkVersion: android.DEFAULT_MIN_SDK_VERSION_POST_RN64,
+        androidxAppcompactVersion: '1.1.0',
+        androidxLifecycleExtrnsionsVersion: '2.1.0',
+        buildToolsVersion: '35.0.0',
+        compileSdkVersion: '35',
+        gradleDistributionVersion: '8.11.1',
+        kotlinVersion: '2.0.21',
+        minSdkVersion: '21',
         reactNativeAarVersion: '0.72.0',
-        sourceCompatibility: android.DEFAULT_SOURCE_COMPATIBILITY,
-        supportLibraryVersion: android.DEFAULT_SUPPORT_LIBRARY_VERSION,
-        targetCompatibility: android.DEFAULT_TARGET_COMPATIBILITY,
-        targetSdkVersion: android.DEFAULT_TARGET_SDK_VERSION,
+        sourceCompatibility: 'VERSION_17',
+        supportLibraryVersion: '28.0.0',
+        targetCompatibility: 'VERSION_17',
+        targetSdkVersion: '35',
       });
     });
 
@@ -260,21 +280,20 @@ describe('android.js', () => {
         reactNativeVersion: '0.64.0',
       });
       expect(versions).deep.equal({
-        androidGradlePlugin: android.DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION,
-        rnGradlePlugin: android.DEFAULT_RN_GRADLE_PLUGIN_VERSION,
-        androidxAppcompactVersion: android.DEFAULT_ANDROIDX_APPCOMPACT_VERSION,
-        androidxLifecycleExtrnsionsVersion:
-          android.DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION,
-        buildToolsVersion: android.DEFAULT_BUILD_TOOLS_VERSION,
-        compileSdkVersion: android.DEFAULT_COMPILE_SDK_VERSION,
-        gradleDistributionVersion: android.DEFAULT_GRADLE_DISTRIBUTION_VERSION,
-        kotlinVersion: android.DEFAULT_KOTLIN_VERSION,
-        minSdkVersion: android.DEFAULT_MIN_SDK_VERSION_POST_RN64,
+        androidGradlePlugin: '7.0.4',
+        rnGradlePlugin: '0.0.6',
+        androidxAppcompactVersion: '1.1.0',
+        androidxLifecycleExtrnsionsVersion: '2.1.0',
+        buildToolsVersion: '35.0.0',
+        compileSdkVersion: '35',
+        gradleDistributionVersion: '8.11.1',
+        kotlinVersion: '2.0.21',
+        minSdkVersion: '21',
         reactNativeAarVersion: '0.64.0',
-        sourceCompatibility: android.DEFAULT_SOURCE_COMPATIBILITY,
-        supportLibraryVersion: android.DEFAULT_SUPPORT_LIBRARY_VERSION,
-        targetCompatibility: android.DEFAULT_TARGET_COMPATIBILITY,
-        targetSdkVersion: android.DEFAULT_TARGET_SDK_VERSION,
+        sourceCompatibility: 'VERSION_17',
+        supportLibraryVersion: '28.0.0',
+        targetCompatibility: 'VERSION_17',
+        targetSdkVersion: '35',
       });
     });
 
@@ -283,21 +302,20 @@ describe('android.js', () => {
         reactNativeVersion: '0.63.0',
       });
       expect(versions).deep.equal({
-        androidGradlePlugin: android.DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION,
-        rnGradlePlugin: android.DEFAULT_RN_GRADLE_PLUGIN_VERSION,
-        androidxAppcompactVersion: android.DEFAULT_ANDROIDX_APPCOMPACT_VERSION,
-        androidxLifecycleExtrnsionsVersion:
-          android.DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION,
-        buildToolsVersion: android.DEFAULT_BUILD_TOOLS_VERSION,
-        compileSdkVersion: android.DEFAULT_COMPILE_SDK_VERSION,
-        gradleDistributionVersion: android.DEFAULT_GRADLE_DISTRIBUTION_VERSION,
-        kotlinVersion: android.DEFAULT_KOTLIN_VERSION,
-        minSdkVersion: android.DEFAULT_MIN_SDK_VERSION_PRE_RN64,
+        androidGradlePlugin: '7.0.4',
+        rnGradlePlugin: '0.0.6',
+        androidxAppcompactVersion: '1.1.0',
+        androidxLifecycleExtrnsionsVersion: '2.1.0',
+        buildToolsVersion: '35.0.0',
+        compileSdkVersion: '35',
+        gradleDistributionVersion: '8.11.1',
+        kotlinVersion: '2.0.21',
+        minSdkVersion: '19',
         reactNativeAarVersion: '0.63.0',
-        sourceCompatibility: android.DEFAULT_SOURCE_COMPATIBILITY,
-        supportLibraryVersion: android.DEFAULT_SUPPORT_LIBRARY_VERSION,
-        targetCompatibility: android.DEFAULT_TARGET_COMPATIBILITY,
-        targetSdkVersion: android.DEFAULT_TARGET_SDK_VERSION,
+        sourceCompatibility: 'VERSION_17',
+        supportLibraryVersion: '28.0.0',
+        targetCompatibility: 'VERSION_17',
+        targetSdkVersion: '35',
       });
     });
 
@@ -314,19 +332,18 @@ describe('android.js', () => {
       expect(versions).deep.equal({
         androidGradlePlugin: '7.4.2',
         rnGradlePlugin: '0.72.11',
-        androidxAppcompactVersion: android.DEFAULT_ANDROIDX_APPCOMPACT_VERSION,
-        androidxLifecycleExtrnsionsVersion:
-          android.DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION,
-        buildToolsVersion: android.DEFAULT_BUILD_TOOLS_VERSION,
-        compileSdkVersion: android.DEFAULT_COMPILE_SDK_VERSION,
-        gradleDistributionVersion: android.DEFAULT_GRADLE_DISTRIBUTION_VERSION,
+        androidxAppcompactVersion: '1.1.0',
+        androidxLifecycleExtrnsionsVersion: '2.1.0',
+        buildToolsVersion: '35.0.0',
+        compileSdkVersion: '35',
+        gradleDistributionVersion: '8.11.1',
         kotlinVersion: '1.4.0',
         minSdkVersion: '15',
         reactNativeAarVersion: '0.72.0',
         sourceCompatibility: 'VERSION_1_9',
-        supportLibraryVersion: android.DEFAULT_SUPPORT_LIBRARY_VERSION,
+        supportLibraryVersion: '28.0.0',
         targetCompatibility: 'VERSION_1_9',
-        targetSdkVersion: android.DEFAULT_TARGET_SDK_VERSION,
+        targetSdkVersion: '35',
       });
     });
 

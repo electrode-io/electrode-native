@@ -388,7 +388,12 @@ You should replace "${annotationProcessorPrefix}:${dependency}" with "annotation
     log.debug('Patching hull');
     const files = readDir(
       config.outDir,
-      (f) => !f.endsWith('.jar') && !f.endsWith('.aar') && !f.endsWith('.git'),
+      (f) =>
+        !f.endsWith('.jar') &&
+        !f.endsWith('.aar') &&
+        !f.endsWith('.git') &&
+        f !== '.gradle' &&
+        f !== 'build',
     );
     const pathLibSrcMain = path.normalize('lib/src/main');
     const pathLibSrcMainJniLibs = path.normalize('lib/src/main/jniLibs');

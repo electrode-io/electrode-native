@@ -1,33 +1,57 @@
-require_relative '../node_modules/react-native/scripts/react_native_pods'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+ENV['RCT_NEW_ARCH_ENABLED'] = '0'
+# Resolve react_native_pods.rb with node to allow for hoisting
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
 
-platform :ios, '11.0'
+platform :ios, '15.1'
+prepare_react_native_project!
 
 
+
+linkage = ENV['USE_FRAMEWORKS']
+if linkage != nil
+  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+  use_frameworks! :linkage => linkage.to_sym
+end
 
 target 'ElectrodeApiImpl' do
   config = use_native_modules!
 
   use_react_native!(
-    :path => "../node_modules/react-native"
+    :path => config[:reactNativePath],
+    :fabric_enabled => false,
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}"
   )
 
 
   post_install do |installer|
-    react_native_post_install(installer)
+    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      :mac_catalyst_enabled => false,
+      # :ccache_enabled => true
+    )
 
-    # Workaround for FBReactNativeSpec dependency cycle issue
-    # https://github.com/facebook/react-native/issues/31034#issuecomment-812564390
-    # https://github.com/electrode-io/electrode-native-manifest/pull/217
+    # https://github.com/facebook/react-native/issues/35863#issuecomment-1414536814
+    PLIST_BUDDY_PATH = '/usr/libexec/PlistBuddy'
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
-        config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
-      end
-
-      if (target.name&.eql?('FBReactNativeSpec'))
-        target.build_phases.each do |build_phase|
-          if (build_phase.respond_to?(:name) && build_phase.name.eql?('[CP-User] Generate Specs'))
-            target.build_phases.move(build_phase, 0)
+        if target.name == "hermes-engine"
+          installer.pods_project.files.each do |fileref|
+            if fileref.path.end_with? "hermes.xcframework"
+              hermes_plist_file = "#{fileref.real_path}/Info.plist"
+              # Patch Hermes to remove the debug symbols entry from the Info.plist (as it's not shipped with it)
+              # This might be removed once Hermes starts to ship with Debug symbols or we remove our
+              # direct dependency from the Main iOS target on "hermes.xcframework"
+              Open3.capture3(PLIST_BUDDY_PATH, '-c', 'Delete :AvailableLibraries:0:DebugSymbolsPath', hermes_plist_file)
+              Open3.capture3(PLIST_BUDDY_PATH, '-c', 'Delete :AvailableLibraries:1:DebugSymbolsPath', hermes_plist_file)
+              Open3.capture3(PLIST_BUDDY_PATH, '-c', 'Delete :AvailableLibraries:2:DebugSymbolsPath', hermes_plist_file)
+            end
           end
         end
       end

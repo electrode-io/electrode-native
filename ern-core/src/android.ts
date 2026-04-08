@@ -16,16 +16,16 @@ export const DEFAULT_ANDROID_GRADLE_PLUGIN_VERSION = '7.0.4';
 export const DEFAULT_RN_GRADLE_PLUGIN_VERSION = '0.0.6';
 export const DEFAULT_ANDROIDX_APPCOMPACT_VERSION = '1.1.0';
 export const DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION = '2.1.0';
-export const DEFAULT_BUILD_TOOLS_VERSION = '35.0.0';
-export const DEFAULT_COMPILE_SDK_VERSION = '35';
-export const DEFAULT_GRADLE_DISTRIBUTION_VERSION = '8.11.1';
+export const DEFAULT_BUILD_TOOLS_VERSION = '36.0.0';
+export const DEFAULT_COMPILE_SDK_VERSION = '36';
+export const DEFAULT_GRADLE_DISTRIBUTION_VERSION = '8.14.3';
 export const DEFAULT_JSC_VARIANT = 'android-jsc';
-export const DEFAULT_KOTLIN_VERSION = '2.0.21';
+export const DEFAULT_KOTLIN_VERSION = '2.1.20';
 export const DEFAULT_MIN_SDK_VERSION_PRE_RN64 = '19';
 export const DEFAULT_MIN_SDK_VERSION_POST_RN64 = '21';
 export const DEFAULT_MIN_SDK_VERSION_POST_RN77 = '24';
 export const DEFAULT_SUPPORT_LIBRARY_VERSION = '28.0.0';
-export const DEFAULT_TARGET_SDK_VERSION = '35';
+export const DEFAULT_TARGET_SDK_VERSION = '36';
 export const DEFAULT_SOURCE_COMPATIBILITY = 'VERSION_17';
 export const DEFAULT_TARGET_COMPATIBILITY = 'VERSION_17';
 const ANDROID_DEVICE_INFO = `
@@ -54,16 +54,16 @@ export function resolveAndroidVersions({
   androidGradlePlugin,
   androidxAppcompactVersion = DEFAULT_ANDROIDX_APPCOMPACT_VERSION,
   androidxLifecycleExtrnsionsVersion = DEFAULT_ANDROIDX_LIFECYCLE_EXTENSIONS_VERSION,
-  buildToolsVersion = DEFAULT_BUILD_TOOLS_VERSION,
-  compileSdkVersion = DEFAULT_COMPILE_SDK_VERSION,
-  gradleDistributionVersion = DEFAULT_GRADLE_DISTRIBUTION_VERSION,
-  kotlinVersion = DEFAULT_KOTLIN_VERSION,
+  buildToolsVersion,
+  compileSdkVersion,
+  gradleDistributionVersion,
+  kotlinVersion,
   minSdkVersion,
   reactNativeAarVersion,
   sourceCompatibility = DEFAULT_SOURCE_COMPATIBILITY,
   supportLibraryVersion = DEFAULT_SUPPORT_LIBRARY_VERSION,
   targetCompatibility = DEFAULT_TARGET_COMPATIBILITY,
-  targetSdkVersion = DEFAULT_TARGET_SDK_VERSION,
+  targetSdkVersion,
   reactNativeVersion,
 }: {
   rnGradlePlugin?: string;
@@ -95,22 +95,33 @@ export function resolveAndroidVersions({
     rnGradlePlugin ?? getReactNativeGradlePluginVersion(reactNativeVersion!);
   const resolvedAndroidGradlePlugin =
     androidGradlePlugin ?? getGradlePluginVersion(reactNativeVersion!);
+  const resolvedBuildToolsVersion =
+    buildToolsVersion ?? getDefaultBuildToolsVersion(reactNativeVersion!);
+  const resolvedCompileSdkVersion =
+    compileSdkVersion ?? getDefaultCompileSdkVersion(reactNativeVersion!);
+  const resolvedGradleDistributionVersion =
+    gradleDistributionVersion ??
+    getDefaultGradleDistributionVersion(reactNativeVersion!);
+  const resolvedKotlinVersion =
+    kotlinVersion ?? getDefaultKotlinVersion(reactNativeVersion!);
+  const resolvedTargetSdkVersion =
+    targetSdkVersion ?? getDefaultTargetSdkVersion(reactNativeVersion!);
 
   return {
     rnGradlePlugin: resolvedRNGradlePlugin,
     androidGradlePlugin: resolvedAndroidGradlePlugin,
     androidxAppcompactVersion,
     androidxLifecycleExtrnsionsVersion,
-    buildToolsVersion,
-    compileSdkVersion,
-    gradleDistributionVersion,
-    kotlinVersion,
+    buildToolsVersion: resolvedBuildToolsVersion,
+    compileSdkVersion: resolvedCompileSdkVersion,
+    gradleDistributionVersion: resolvedGradleDistributionVersion,
+    kotlinVersion: resolvedKotlinVersion,
     minSdkVersion: resolvedMinSdkVersion,
     reactNativeAarVersion,
     sourceCompatibility,
     supportLibraryVersion,
     targetCompatibility,
-    targetSdkVersion,
+    targetSdkVersion: resolvedTargetSdkVersion,
   };
 }
 
@@ -470,9 +481,48 @@ export function androidEmulatorPath(): string {
   return 'emulator';
 }
 
+function getDefaultBuildToolsVersion(reactNativeVersion: string): string {
+  if (semver.gte(reactNativeVersion, '0.81.0')) {
+    return '36.0.0';
+  }
+  return '35.0.0';
+}
+
+function getDefaultCompileSdkVersion(reactNativeVersion: string): string {
+  if (semver.gte(reactNativeVersion, '0.81.0')) {
+    return '36';
+  }
+  return '35';
+}
+
+function getDefaultGradleDistributionVersion(
+  reactNativeVersion: string,
+): string {
+  if (semver.gte(reactNativeVersion, '0.81.0')) {
+    return '8.14.3';
+  }
+  return '8.11.1';
+}
+
+function getDefaultKotlinVersion(reactNativeVersion: string): string {
+  if (semver.gte(reactNativeVersion, '0.81.0')) {
+    return '2.1.20';
+  }
+  return '2.0.21';
+}
+
+function getDefaultTargetSdkVersion(reactNativeVersion: string): string {
+  if (semver.gte(reactNativeVersion, '0.81.0')) {
+    return '36';
+  }
+  return '35';
+}
+
 // ERN Android plugins supports backward compatibility until react native version 68.
 function getGradlePluginVersion(reactNativeVersion: string): string | never {
-  if (semver.gte(reactNativeVersion, '0.77.0')) {
+  if (semver.gte(reactNativeVersion, '0.81.0')) {
+    return '8.11.0';
+  } else if (semver.gte(reactNativeVersion, '0.77.0')) {
     return '8.7.2';
   } else if (semver.gte(reactNativeVersion, '0.72.0')) {
     return '7.4.2';
@@ -490,7 +540,9 @@ function getGradlePluginVersion(reactNativeVersion: string): string | never {
 function getReactNativeGradlePluginVersion(
   reactNativeVersion: string,
 ): string | never {
-  if (semver.gte(reactNativeVersion, '0.77.0')) {
+  if (semver.gte(reactNativeVersion, '0.81.0')) {
+    return '0.81.5';
+  } else if (semver.gte(reactNativeVersion, '0.77.0')) {
     return '0.77.2';
   } else if (semver.gte(reactNativeVersion, '0.72.0')) {
     return '0.72.11';

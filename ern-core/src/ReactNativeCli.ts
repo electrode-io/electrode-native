@@ -9,7 +9,6 @@ import log from './log';
 import kax from './kax';
 import util from 'util';
 import semver from 'semver';
-import os from 'os';
 
 const ex = util.promisify(exec);
 const sp = util.promisify(spawn);
@@ -89,7 +88,9 @@ export default class ReactNativeCli {
     }
     const initCmd = `init ${projectName} ${options.join(' ')}`;
 
-    if (semver.gte(rnVersion, '0.77.0')) {
+    if (semver.gte(rnVersion, '0.81.0')) {
+      return execp(`npx @react-native-community/cli@15.1.3 ${initCmd}`);
+    } else if (semver.gte(rnVersion, '0.77.0')) {
       return execp(`npx @react-native-community/cli@15.0.1 ${initCmd}`);
     } else if (semver.gte(rnVersion, '0.60.0')) {
       return execp(
@@ -123,28 +124,36 @@ export default class ReactNativeCli {
     const shouldUseCommunityCliForProject =
       await this.shouldUseCommunityCliForProject(workingDir);
 
+    const bundleArgs = `\
+${entryFile ? `--entry-file=${entryFile}` : ''} \
+${dev ? '--dev=true' : '--dev=false'} \
+${platform ? `--platform=${platform}` : ''} \
+${bundleOutput ? `--bundle-output=${bundleOutput}` : ''} \
+${assetsDest ? `--assets-dest=${assetsDest}` : ''} \
+${sourceMapOutput ? `--sourcemap-output=${sourceMapOutput}` : ''} \
+${resetCache ? '--reset-cache' : ''}`;
+
     let bundleCommand: string;
+    const execOptions: any = { cwd: workingDir };
     if (shouldUseCommunityCliForProject) {
-      bundleCommand = `npx @react-native-community/cli bundle \
-${entryFile ? `--entry-file=${entryFile}` : ''} \
-${dev ? '--dev=true' : '--dev=false'} \
-${platform ? `--platform=${platform}` : ''} \
-${bundleOutput ? `--bundle-output=${bundleOutput}` : ''} \
-${assetsDest ? `--assets-dest=${assetsDest}` : ''} \
-${sourceMapOutput ? `--sourcemap-output=${sourceMapOutput}` : ''} \
-${resetCache ? '--reset-cache' : ''}`;
+      // RN >= 0.77: Use npx @react-native-community/cli (ships metro plugin via RN itself)
+      bundleCommand = `npx @react-native-community/cli bundle ${bundleArgs}`;
     } else {
-      bundleCommand = `${this.binaryPath} bundle \
-${entryFile ? `--entry-file=${entryFile}` : ''} \
-${dev ? '--dev=true' : '--dev=false'} \
-${platform ? `--platform=${platform}` : ''} \
-${bundleOutput ? `--bundle-output=${bundleOutput}` : ''} \
-${assetsDest ? `--assets-dest=${assetsDest}` : ''} \
-${sourceMapOutput ? `--sourcemap-output=${sourceMapOutput}` : ''} \
-${resetCache ? '--reset-cache' : ''}`;
+      // RN < 0.77: Use the project-local react-native CLI from node_modules
+      // The composite project's react-native dependency ships its own CLI version
+      // that includes the bundle command (via cli-plugin-metro)
+      const localCliBin = workingDir
+        ? path.join(workingDir, 'node_modules', '.bin', 'react-native')
+        : 'react-native';
+      bundleCommand = `${localCliBin} bundle ${bundleArgs}`;
+      // Older Metro versions use md4 hash which is unsupported in Node 17+ (OpenSSL 3)
+      execOptions.env = {
+        ...process.env,
+        NODE_OPTIONS: '--openssl-legacy-provider',
+      };
     }
 
-    await execp(bundleCommand, { cwd: workingDir });
+    await execp(bundleCommand, execOptions);
     if (!(await fs.pathExists(bundleOutput))) {
       // Under some circumstances, Metro bundler process might fail
       // with some logs, but exit the process with a non error status code.
@@ -209,17 +218,19 @@ ${resetCache ? '--reset-cache' : ''}`;
         stdio: 'inherit',
       });
     } else {
-      spawn(
-        path.join(
-          cwd,
-          `node_modules/.bin/rnc-cli${os.platform() === 'win32' ? '.cmd' : ''}`,
-        ),
-        ['start', ...args],
-        {
-          cwd,
-          stdio: 'inherit',
-        },
+      // RN < 0.77: Use the project-local react-native CLI from node_modules
+      // The project's react-native dependency ships its own CLI version
+      // that includes the start command (via cli-plugin-metro)
+      const localCliBin = path.join(
+        cwd,
+        'node_modules',
+        '.bin',
+        'react-native',
       );
+      spawn(localCliBin, ['start', ...args], {
+        cwd,
+        stdio: 'inherit',
+      });
     }
   }
 
@@ -329,20 +340,35 @@ ${resetCache ? '--reset-cache' : ''}`;
     const tmpDir = createTmpDir();
     const tmpScriptPath = path.join(tmpDir, scriptFileName);
 
-    // Check if we should use @react-native-community/cli for RN 0.77+
-    let command = `${this.binaryPath} start ${args.join(' ')}`;
+    // Determine which CLI to use based on RN version
+    let command: string;
+    let useCommunityCliLatest = false;
     try {
       const packageJsonPath = path.join(cwd, 'package.json');
       if (await fs.pathExists(packageJsonPath)) {
         const packageJson = await fs.readJSON(packageJsonPath);
         const rnVersion =
           packageJson.dependencies?.['react-native'] || '0.60.0';
-        if (semver.gte(rnVersion.replace(/[\^~]/, ''), '0.77.0')) {
-          command = `npx @react-native-community/cli start ${args.join(' ')}`;
-        }
+        useCommunityCliLatest = semver.gte(
+          rnVersion.replace(/[\^~]/, ''),
+          '0.77.0',
+        );
       }
     } catch (e) {
       // If we can't determine version, use legacy approach
+    }
+
+    if (useCommunityCliLatest) {
+      command = `npx @react-native-community/cli start ${args.join(' ')}`;
+    } else {
+      // RN < 0.77: Use the project-local react-native CLI from node_modules
+      const localCliBin = path.join(
+        cwd,
+        'node_modules',
+        '.bin',
+        'react-native',
+      );
+      command = `${localCliBin} start ${args.join(' ')}`;
     }
 
     await fs.writeFile(

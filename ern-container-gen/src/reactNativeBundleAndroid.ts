@@ -43,6 +43,7 @@ export async function reactNativeBundleAndroid({
       platform: 'android',
       resetCache,
       sourceMapOutput,
+      workingDir: cwd,
     });
     return result;
   } finally {
