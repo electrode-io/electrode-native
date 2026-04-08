@@ -12,6 +12,6 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
       - run: yarn --frozen-lockfile
-      - run: yarn lerna publish from-git -y
+      - run: yarn lerna publish from-git -y --no-verify-access
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
