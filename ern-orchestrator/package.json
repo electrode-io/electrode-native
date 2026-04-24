@@ -36,7 +36,7 @@
   },
   "homepage": "https://www.electrode.io",
   "dependencies": {
-    "@octokit/rest": "18.5.3",
+    "@octokit/rest": "^20.1.1",
     "@yarnpkg/lockfile": "^1.1.0",
     "chalk": "^4.1.1",
     "cli-table": "^0.3.6",

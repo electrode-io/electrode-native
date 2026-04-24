@@ -47,7 +47,7 @@ export class GitHubApi {
     fromSha?: string;
     fromTag?: string;
     name: string;
-  }) {
+  }): Promise<any> {
     if (!fromBranch && !fromSha && !fromTag) {
       fromBranch = await this.getDefaultBranch();
     }
@@ -73,7 +73,7 @@ export class GitHubApi {
    *
    * name: Name of the branch to delete
    */
-  public async deleteBranch({ name }: { name: string }) {
+  public async deleteBranch({ name }: { name: string }): Promise<any> {
     const opts = {
       owner: this.owner,
       ref: this.shortBranchRef(name),
@@ -105,7 +105,7 @@ export class GitHubApi {
     fromSha?: string;
     fromTag?: string;
     name: string;
-  }) {
+  }): Promise<any> {
     if (!fromBranch && !fromSha && !fromTag) {
       fromBranch = await this.getDefaultBranch();
     }
@@ -127,7 +127,7 @@ export class GitHubApi {
    *
    * name: Name of the tag to delete
    */
-  public async deleteTag({ name }: { name: string }) {
+  public async deleteTag({ name }: { name: string }): Promise<any> {
     const opts = {
       owner: this.owner,
       ref: this.shortTagRef(name),
@@ -172,7 +172,7 @@ export class GitHubApi {
 
     log.debug(`repos.getContents(${JSON.stringify(opts, null, 2)})`);
     const res = await this.octokit.repos.getContent(opts);
-    const buff = new Buffer((res.data as any).content, 'base64');
+    const buff = Buffer.from((res.data as any).content, 'base64');
     return buff.toString('utf8');
   }
 
@@ -194,7 +194,7 @@ export class GitHubApi {
     onBranch?: string;
     newContent: string;
     commitMessage: string;
-  }) {
+  }): Promise<any> {
     const sha = (
       (
         await this.octokit.repos.getContent({
@@ -206,7 +206,7 @@ export class GitHubApi {
       ).data as any
     ).sha;
 
-    const buff = new Buffer(newContent);
+    const buff = Buffer.from(newContent);
     const content = buff.toString('base64');
 
     return this.octokit.repos.createOrUpdateFileContents({

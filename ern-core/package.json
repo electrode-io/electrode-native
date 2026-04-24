@@ -36,7 +36,7 @@
   },
   "homepage": "https://www.electrode.io",
   "dependencies": {
-    "@octokit/rest": "18.5.3",
+    "@octokit/rest": "^20.1.1",
     "@react-native-community/cli": "15.0.1",
     "@react-native-community/cli-platform-android": "15.0.1",
     "@react-native-community/cli-platform-ios": "15.0.1",
