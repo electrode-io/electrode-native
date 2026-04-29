@@ -41,8 +41,8 @@
     "fs-extra": "^10.0.0",
     "fs-readdir-recursive": "^1.1.0",
     "lodash": "^4.17.21",
-    "semver": "^7.3.5",
-    "xcode-ern": "^1.0.13"
+    "semver": "^7.5.2",
+    "ern-xcode": "^1.0.14"
   },
   "devDependencies": {
     "copyfiles": "^2.4.1",

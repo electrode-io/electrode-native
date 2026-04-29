@@ -41,7 +41,7 @@
     "fs-extra": "^10.0.0",
     "fs-readdir-recursive": "^1.1.0",
     "mustache": "^4.2.0",
-    "semver": "^7.3.5"
+    "semver": "^7.5.2"
   },
   "devDependencies": {
     "copyfiles": "^2.4.1",

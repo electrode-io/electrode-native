@@ -8,7 +8,7 @@ import log from './log';
 import { isDependencyOfType, isDependencyPathNativeApiImpl } from './utils';
 import { JS_API_IMPL } from './ModuleTypes';
 import path from 'path';
-import xcode from 'xcode-ern';
+import xcode from 'ern-xcode';
 import fs from 'fs-extra';
 import _ from 'lodash';
 import kax from './kax';
@@ -177,7 +177,7 @@ export async function fillProjectHull(
             const pathToPbxProj = path.join(pathSpec.outputDir, s.path);
             // Add any missing section in the target pbxproj
             // This is necessary for proper parsing and modification of
-            // the pbxproj with the xcode-ern library
+            // the pbxproj with the ern-xcode library
             xcode.pbxProjFileUtils().addMissingSectionsToPbxProj(pathToPbxProj);
             const iosProj = await getIosProject(pathToPbxProj);
             const buildSettings =

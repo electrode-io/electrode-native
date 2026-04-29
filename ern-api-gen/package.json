@@ -45,10 +45,10 @@
     "lodash": "^4.17.21",
     "minimatch": "^3.0.4",
     "mustache": "^4.2.0",
-    "semver": "^7.3.5",
+    "semver": "^7.5.2",
     "shelljs": "^0.8.4",
     "swagger-methods": "^1.0.8",
-    "sway": "^1.0.0"
+    "ern-sway": "^2.0.8"
   },
   "devDependencies": {
     "ern-util-dev": "0.54.0"
