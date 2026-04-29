@@ -9,7 +9,7 @@ import {
 import { ApiImplGeneratable } from '../../ApiImplGeneratable';
 import fs from 'fs-extra';
 import path from 'path';
-import xcode from 'xcode-ern';
+import xcode from 'ern-xcode';
 import readDir from 'fs-readdir-recursive';
 
 export const ROOT_DIR = shell.pwd();

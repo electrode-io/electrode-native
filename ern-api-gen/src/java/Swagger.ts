@@ -2,16 +2,16 @@
 /* tslint:disable:max-classes-per-file */
 import { newHashMap } from './javaUtil';
 import factory from '../models/factory';
-import Response from 'sway/lib/types/response';
-import SwaggerApi from 'sway/lib/types/api';
-import Path from 'sway/lib/types/path';
-import Operation from 'sway/lib/types/operation';
+import Response from 'ern-sway/lib/types/response';
+import SwaggerApi from 'ern-sway/lib/types/api';
+import Path from 'ern-sway/lib/types/path';
+import Operation from 'ern-sway/lib/types/operation';
 import parameterFactory from '../models/parameters';
 import { apply, beanify } from './beanUtils';
 import { Property } from '../models/properties';
 import { toModel } from '../models/PropertyBuilder';
 import authFactory from '../models/auth';
-import Sway from 'sway';
+import Sway from 'ern-sway';
 import { upperFirst } from './StringUtils';
 import supportedHttpMethods from 'swagger-methods';
 
