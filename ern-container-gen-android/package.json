@@ -42,7 +42,7 @@
     "fs-readdir-recursive": "^1.1.0",
     "glob": "^7.1.7",
     "lodash": "^4.17.21",
-    "semver": "^7.3.5"
+    "semver": "^7.5.2"
   },
   "devDependencies": {
     "copyfiles": "^2.4.1",

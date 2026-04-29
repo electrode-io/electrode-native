@@ -28,7 +28,7 @@ import {
 
 import fs from 'fs-extra';
 import path from 'path';
-import xcode from 'xcode-ern';
+import xcode from 'ern-xcode';
 import _ from 'lodash';
 import readDir from 'fs-readdir-recursive';
 import { Composite } from 'ern-composite-gen';
