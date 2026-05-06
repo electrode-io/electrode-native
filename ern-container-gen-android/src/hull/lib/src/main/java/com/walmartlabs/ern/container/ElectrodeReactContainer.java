@@ -12,6 +12,7 @@ import com.walmartlabs.ern.container.plugins.{{name}};
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
@@ -27,6 +28,7 @@ import com.ern.api.impl.{{apiName}}ApiRequestHandlerProvider;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
+import com.facebook.react.ReactApplication;
 {{#isCustomReactNativeAar}}
 import com.facebook.react.bridge.ReactApplicationContext;
 {{/isCustomReactNativeAar}}
@@ -66,6 +68,7 @@ public class ElectrodeReactContainer {
     private static List<ReactPackage> sReactPackages = new ArrayList<>();
     private static ElectrodeReactNativeHost sElectrodeReactNativeHost;
     private static Config sConfig;
+    private static ReactApplicationWrapper sReactApplicationWrapper;
 
     private static boolean isReactNativeDeveloperSupport;
 
@@ -154,16 +157,27 @@ public class ElectrodeReactContainer {
         if (sElectrodeReactNativeHost == null) {
             sConfig = reactContainerConfig;
 
+            // Create ReactApplication wrapper for RN 0.77 compatibility before any RN initialization
+            sReactApplicationWrapper = new ReactApplicationWrapper(application);
+            
+
+            // Verify our wrapper properly implements ReactApplication
+            if (sReactApplicationWrapper instanceof ReactApplication) {
+                Log.d(TAG, "ReactApplicationWrapper successfully implements ReactApplication interface");
+            } else {
+                Log.e(TAG, "CRITICAL: ReactApplicationWrapper does not implement ReactApplication!");
+            }
+
 {{#RN_VERSION_GTE_77}}
             try {
-                SoLoader.init(application, OpenSourceMergedSoMapping.INSTANCE);
+                SoLoader.init(sReactApplicationWrapper, OpenSourceMergedSoMapping.INSTANCE);
             } catch (java.io.IOException e) {
                 throw new RuntimeException("Failed to initialize SoLoader", e);
             }
 {{/RN_VERSION_GTE_77}}
 {{#RN_VERSION_GTE_60_1}}
 {{^RN_VERSION_GTE_77}}
-            SoLoader.init(application, /* native exopackage */ false);
+            SoLoader.init(sReactApplicationWrapper, /* native exopackage */ false);
 {{/RN_VERSION_GTE_77}}
 {{/RN_VERSION_GTE_60_1}}
 
@@ -188,7 +202,7 @@ public class ElectrodeReactContainer {
 {{/RN_VERSION_GTE_54}}
             }
 
-            sElectrodeReactNativeHost = new ElectrodeReactNativeHost(application);
+            sElectrodeReactNativeHost = new ElectrodeReactNativeHost(sReactApplicationWrapper);
 {{#isCodePushPluginIncluded}}
             CodePush.setReactInstanceHolder(sElectrodeReactNativeHost);
 {{/isCodePushPluginIncluded}}
@@ -196,10 +210,10 @@ public class ElectrodeReactContainer {
             sReactPackages.add(new MainReactPackage());
 {{#plugins}}
 {{#configurable}}
-            sReactPackages.add(new {{name}}().hook(application, {{lcname}}Config));
+            sReactPackages.add(new {{name}}().hook(sReactApplicationWrapper, {{lcname}}Config));
 {{/configurable}}
 {{^configurable}}
-            sReactPackages.add(new {{name}}().hook(application, null));
+            sReactPackages.add(new {{name}}().hook(sReactApplicationWrapper, null));
 {{/configurable}}
 {{/plugins}}
             sReactPackages.removeAll(Collections.singleton((ReactPackage) null));
@@ -240,6 +254,16 @@ public class ElectrodeReactContainer {
 
     public static ReactNativeHost getReactNativeHost() {
         return sElectrodeReactNativeHost;
+    }
+
+    /**
+     * Internal method to get ReactApplication wrapper for RN 0.77+ compatibility
+     * This is used internally when React Native needs to cast Application to
+     * ReactApplication
+     */
+    public static ReactApplication getReactApplicationWrapper() {
+        throwIfNotInitialized();
+        return sReactApplicationWrapper;
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -334,91 +358,218 @@ public class ElectrodeReactContainer {
     }
 
     private static class ElectrodeReactNativeHost extends ReactNativeHost{{#isCodePushPluginIncluded}} implements ReactInstanceHolder{{/isCodePushPluginIncluded}} {
-        private ElectrodeReactNativeHost(Application application) {
-            super(application);
-        }
 
-        @Override
-        public boolean getUseDeveloperSupport() {
-            return isReactNativeDeveloperSupport;
-        }
+    private ElectrodeReactNativeHost(ReactApplication reactApplication) {
+        // For RN versions that don't support ReactApplication in constructor, cast to Application
+        super((Application) reactApplication);
+    }
 
-        @Override
-        protected List<ReactPackage> getPackages() {
-            return sReactPackages;
-        }
+    @Override
+    public boolean getUseDeveloperSupport() {
+        return isReactNativeDeveloperSupport;
+    }
 
-        @Nullable
-        @Override
-        protected String getBundleAssetName() {
-            return "index.android.bundle";
-        }
+    @Override
+    protected List<ReactPackage> getPackages() {
+        return sReactPackages;
+    }
 
-        @Override
-        protected String getJSMainModuleName() {
-            return "{{{jsMainModuleName}}}";
-        }
+    @Nullable
+    @Override
+    protected String getBundleAssetName() {
+        return "index.android.bundle";
+    }
 
-        @Override
-        protected ReactInstanceManager createReactInstanceManager() {
-            ReactInstanceManager reactInstanceManager = super.createReactInstanceManager();
-            reactInstanceManager.addReactInstanceEventListener(
-                    new ReactInstanceManager.ReactInstanceEventListener() {
-                        @Override
-                        public void onReactContextInitialized(ReactContext context) {
-                            sIsReactNativeReady = true;
-                            notifyReactNativeReadyListeners();
-                            for (ReactPackage instance : getPackages()) {
-                                try {
-                                    Method onReactNativeInitialized =
-                                            instance.getClass()
-                                                    .getMethod("onReactNativeInitialized");
-                                    onReactNativeInitialized.invoke(instance);
-                                } catch (NoSuchMethodException e) {
-                                    // Expected since not all react packages would have
-                                    // onReactNativeInitialized() method.
-                                } catch (IllegalAccessException e) {
-                                    Log.e(
-                                            TAG,
-                                            "IllegalAccessException: Container Initialization"
-                                                    + " failed: "
-                                                    + e.getMessage());
-                                    e.printStackTrace();
-                                } catch (InvocationTargetException e) {
-                                    Log.e(
-                                            TAG,
-                                            "InvocationTargetException: Container Initialization"
-                                                    + " failed: "
-                                                    + e.getMessage());
-                                    e.printStackTrace();
-                                }
+    @Override
+    protected String getJSMainModuleName() {
+        return "{{{jsMainModuleName}}}";
+    }
+
+    @Override
+    protected ReactInstanceManager createReactInstanceManager() {
+        ReactInstanceManager reactInstanceManager = super.createReactInstanceManager();
+        reactInstanceManager.addReactInstanceEventListener(
+                new ReactInstanceManager.ReactInstanceEventListener() {
+                    @Override
+                    public void onReactContextInitialized(ReactContext context) {
+                        sIsReactNativeReady = true;
+                        notifyReactNativeReadyListeners();
+
+                        // Patch ReactApplicationContext to return our ReactApplicationWrapper
+                        // This fixes react-native-reanimated and other libraries that cast
+                        // getApplicationContext() to ReactApplication
+                        boolean patched = false;
+                        String[] possibleFieldNames = { "mApplicationContext", "mApplication", "applicationContext" };
+
+                        for (String fieldName : possibleFieldNames) {
+                            try {
+                                java.lang.reflect.Field field = context.getClass().getDeclaredField(fieldName);
+                                field.setAccessible(true);
+                                field.set(context, sReactApplicationWrapper);
+                                Log.d(TAG, "Successfully patched ReactApplicationContext field '" + fieldName
+                                        + "' to use ReactApplicationWrapper");
+                                patched = true;
+                                break;
+                            } catch (NoSuchFieldException e) {
+                                // Try next field name
+                                continue;
+                            } catch (Exception e) {
+                                Log.w(TAG, "Failed to patch field '" + fieldName + "': " + e.getMessage());
                             }
                         }
-                    });
-            return reactInstanceManager;
-        }
+
+                        if (!patched) {
+                            Log.w(TAG,
+                                    "Could not patch ReactApplicationContext, some libraries might fail. Available fields:");
+                            for (java.lang.reflect.Field field : context.getClass().getDeclaredFields()) {
+                                Log.w(TAG, "  - " + field.getName() + " (" + field.getType().getSimpleName() + ")");
+                            }
+                        }
+
+                        for (ReactPackage instance : getPackages()) {
+                            try {
+                                Method onReactNativeInitialized = instance.getClass()
+                                        .getMethod("onReactNativeInitialized");
+                                onReactNativeInitialized.invoke(instance);
+                            } catch (NoSuchMethodException e) {
+                                // Expected since not all react packages would have
+                                // onReactNativeInitialized() method.
+                            } catch (IllegalAccessException e) {
+                                Log.e(
+                                        TAG,
+                                        "IllegalAccessException: Container Initialization"
+                                                + " failed: "
+                                                + e.getMessage());
+                                e.printStackTrace();
+                            } catch (InvocationTargetException e) {
+                                Log.e(
+                                        TAG,
+                                        "InvocationTargetException: Container Initialization"
+                                                + " failed: "
+                                                + e.getMessage());
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+        return reactInstanceManager;
+    }
+
 {{#isCodePushPluginIncluded}}
 
-        @Nullable
-        @Override
-        protected String getJSBundleFile() {
-            return CodePush.getJSBundleFile();
-        }
+    @Nullable
+    @Override
+    protected String getJSBundleFile() {
+        return CodePush.getJSBundleFile();
+    }
+
 {{/isCodePushPluginIncluded}}
+}{{#RN_VERSION_GTE_54}}
+
+private static class OkHttpClientFactoryImpl implements OkHttpClientFactory {
+    private final OkHttpClient mOkHttpClient;
+
+    private OkHttpClientFactoryImpl(@NonNull OkHttpClient okHttpClient) {
+        mOkHttpClient = okHttpClient;
     }
-{{#RN_VERSION_GTE_54}}
 
-    private static class OkHttpClientFactoryImpl implements OkHttpClientFactory {
-        private final OkHttpClient mOkHttpClient;
+    @Override
+    public OkHttpClient createNewNetworkModuleClient() {
+        return mOkHttpClient;
+    }
+}{{/RN_VERSION_GTE_54}}
 
-        private OkHttpClientFactoryImpl(@NonNull OkHttpClient okHttpClient) {
-            mOkHttpClient = okHttpClient;
-        }
+/**
+ * Internal wrapper to make any Application compatible with ReactApplication
+ * interface
+ * This handles the React Native 0.77+ casting requirements without modifying
+ * user apps
+ */
+private static class ReactApplicationWrapper extends Application implements ReactApplication {
+    private final Application mDelegateApplication;
 
-        @Override
-        public OkHttpClient createNewNetworkModuleClient() {
-            return mOkHttpClient;
+    public ReactApplicationWrapper(Application application) {
+        mDelegateApplication = application;
+
+        Log.d("ReactApplicationWrapper", "Creating wrapper for: " + application.getClass().getName());
+        
+        // Only attach base context if the delegate application has one
+        if (application.getBaseContext() != null) {
+            attachBaseContext(application.getBaseContext());
         }
     }
-{{/RN_VERSION_GTE_54}}
-}
+
+    @Override
+    public ReactNativeHost getReactNativeHost() {
+
+        Log.d("ReactApplicationWrapper", "getReactNativeHost() called, returning: " + sElectrodeReactNativeHost);
+        return sElectrodeReactNativeHost;
+    }
+
+    @Override
+    public com.facebook.react.ReactHost getReactHost() {
+        return null; // Electrode Native uses legacy architecture
+    }
+
+    // Delegate critical Application lifecycle methods to the original application
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        // Don't call delegate.onCreate() as it's already been called
+    }
+
+    @Override
+    public Context getApplicationContext() {
+
+        // For ReactApplication casting (like react-native-reanimated), return this wrapper
+        // Log this call to help debug where the casting is happening
+        Log.d("ReactApplicationWrapper", "getApplicationContext() called from: " + getStackTrace());
+        return this;
+    }
+
+    private String getStackTrace() {
+        StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 3; i < Math.min(6, elements.length); i++) { // Skip getStackTrace, getApplicationContext, and this method
+            sb.append(elements[i].getClassName()).append(".").append(elements[i].getMethodName()).append(" ");
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public Context getBaseContext() {
+        Context baseContext = mDelegateApplication.getBaseContext();
+        return baseContext != null ? baseContext : super.getBaseContext();
+    }
+
+    @Override
+    public String getPackageName() {
+        return mDelegateApplication.getPackageName();
+    }
+
+    @Override
+    public android.content.pm.ApplicationInfo getApplicationInfo() {
+        return mDelegateApplication.getApplicationInfo();
+    }
+
+    @Override
+    public android.content.res.Resources getResources() {
+        return mDelegateApplication.getResources();
+    }
+
+    @Override
+    public Object getSystemService(String name) {
+        return mDelegateApplication.getSystemService(name);
+    }
+
+    @Override
+    public android.content.SharedPreferences getSharedPreferences(String name, int mode) {
+        return mDelegateApplication.getSharedPreferences(name, mode);
+    }
+
+    @Override
+    public String toString() {
+
+        return "ReactApplicationWrapper{delegate=" + mDelegateApplication.getClass().getName() + ", implements=ReactApplication}";
+    }
+}}
